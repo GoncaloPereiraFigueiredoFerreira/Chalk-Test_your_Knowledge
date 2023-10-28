@@ -1,0 +1,65 @@
+.bg_color{
+    font-family: system-ui;
+    background-image: linear-gradient(to top, rgb(255, 191, 117), rgb(255, 238, 164), rgb(255, 191, 117));
+    background-repeat: repeat;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.whitebox{
+    background-color: white;
+    margin: 30px;
+    padding: 60px;
+    display: flex;
+    min-height: 300px;
+    width: 400px;
+    border-radius: 30px;
+    gap: 20px;
+}
+
+
+
+
+
+
+
+.form_login{
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+    width: 100%;
+}
+
+.form_title_login{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form_content_login{
+    display: flex;
+    flex-direction: column;
+    padding-left: 30px;
+}
+
+.register_label_login{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 10px;
+    font-size: medium;
+}
+
+.buttons_login{
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.error_login{
+    color: rgb(240, 38, 38);
+    border-color: rgb(240, 38, 38);
+}
