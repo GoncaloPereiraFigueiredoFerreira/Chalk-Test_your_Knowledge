@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .center-options {
+    @apply flex flex-col items-center justify-center h-screen text-5xl m-auto text-center space-y-20;
+  }
+}
