@@ -9,16 +9,21 @@ export function Register({}) {
   const [cpass, setCPass] = useState("");
   const [error, setError] = useState(0);
 
-  const validateForm = () => {
+  const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
     if (password === cpass) {
       let register = {
         email: email,
         password: password,
         name: name,
       };
+      alert("Registered!");
+      return true;
+
       // send register to auth and backend
     } else {
-      alert("error register");
+      e.preventDefault();
+      alert("Diferent password registered");
+      return false;
     }
   };
 
@@ -31,7 +36,7 @@ export function Register({}) {
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form>
+            <form onSubmit={validateForm}>
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
                 <p className="mb-0 mr-4 text-2xl">Create an account with</p>
 
@@ -151,7 +156,6 @@ export function Register({}) {
                 <button
                   type="submit"
                   className="inline-block rounded bg-slate-700 px-7 pb-2.5 pt-3 text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  onClick={() => validateForm()}
                 >
                   Register
                 </button>
