@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .dropdown {
+    @apply flex-shrink-0
+    flex
+    items-center
+    justify-between
+    gap-2
+    min-w-fit
+    w-40
+    px-4
+    font-medium
+    border
+    rounded-l-lg
+    focus:outline-none
+    bg-gray-100
+    text-gray-900
+    border-gray-300
+    dark:bg-gray-700
+    dark:text-white
+    dark:border-gray-600;
+  }
+}
