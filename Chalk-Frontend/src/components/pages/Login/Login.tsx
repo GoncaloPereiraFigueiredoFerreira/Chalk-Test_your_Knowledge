@@ -9,6 +9,14 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [errorState, setErrorState] = useState(false);
 
+  const googleDetails = {
+    scope: "https://www.googleapis.com/auth/userinfo.email",
+    client_id:
+      "665062865084-9ta4mjgrv95f7h5vi3cn7tbu9jmjah01.apps.googleusercontent.com",
+    redirect_uri: "http://localhost:3000/google",
+    response_type: "code",
+  };
+
   const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
     let login = {
       email: email,
@@ -40,7 +48,18 @@ export function Login() {
 
                 <a
                   className="mb-3 bg-white text-black flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href="#!"
+                  href={
+                    "https://accounts.google.com/o/oauth2/v2/auth?" +
+                    "scope=" +
+                    googleDetails.scope +
+                    "&response_type=" +
+                    googleDetails.response_type +
+                    "&redirect_uri=" +
+                    googleDetails.redirect_uri +
+                    "&client_id=" +
+                    googleDetails.client_id +
+                    "&include_granted_scopes=true"
+                  }
                   role="button"
                 >
                   <svg
@@ -88,7 +107,7 @@ export function Login() {
                 </a>
                 <a
                   className="mb-3 bg-blue-400 flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href="#!"
+                  href="!#"
                   role="button"
                 >
                   <svg
