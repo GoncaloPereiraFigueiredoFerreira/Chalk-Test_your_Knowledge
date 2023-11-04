@@ -14,7 +14,7 @@ import {
   UpArrowIcon,
 } from "../SVGImages/SVGImages.tsx";
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const groups: { [key: string]: string } = {
   "1": "Professores da escola AFS Gualtar",
@@ -34,7 +34,7 @@ export function Sidebar() {
     if (num === "0" || showGroup) {
       return (
         <>
-          <GroupIcon style={"sidebar-icon"} />
+          <GroupIcon style={"group-gray-icon"} />
           <span
             className={`sidebar-dropdown-item ${sidebarIsOpen ? "" : "hidden"}`}
           >
@@ -46,7 +46,7 @@ export function Sidebar() {
     } else if (num in groups) {
       return (
         <>
-          <GraduateIcon style={"sidebar-icon"} />
+          <GraduateIcon style={"group-gray-icon"} />
           <span
             className={`sidebar-dropdown-item ${sidebarIsOpen ? "" : "hidden"}`}
           >
@@ -73,7 +73,7 @@ export function Sidebar() {
               setShowGroup(false);
             }}
           >
-            <SidebarIcon style={"white-icon"} />
+            <SidebarIcon style={"group-gray-icon"} />
           </button>
           <div className={`flex mr-4 ${sidebarIsOpen ? "" : "hidden"}`}>
             <img
@@ -104,7 +104,7 @@ export function Sidebar() {
                   onClick={() => setGroup("0")}
                   className="sidebar-item group"
                 >
-                  <GraduateIcon style={"sidebar-icon"} />
+                  <GraduateIcon style={"group-gray-icon"} />
                   <span className={sidebarIsOpen ? "" : "hidden"}>Geral</span>
                 </button>
               </li>
@@ -114,7 +114,7 @@ export function Sidebar() {
                     onClick={() => setGroup(key)}
                     className="sidebar-item group"
                   >
-                    <GraduateIcon style={"sidebar-icon"} />
+                    <GraduateIcon style={"group-gray-icon"} />
                     <span className={sidebarIsOpen ? "" : "hidden"}>
                       {item}
                     </span>
@@ -128,19 +128,21 @@ export function Sidebar() {
         <ul className="sidebar-divisions">
           <li>
             <button className="sidebar-item group">
-              <CheckListIcon style={"sidebar-icon"} />
+              <CheckListIcon style={"group-gray-icon"} />
               <span className={sidebarIsOpen ? "" : "hidden"}>Avaliações</span>
             </button>
           </li>
           <li>
-            <button className="sidebar-item group">
-              <PenIcon style={"sidebar-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Exercicos</span>
-            </button>
+            <Link to={"/user"}>
+              <button className="sidebar-item group">
+                <PenIcon style={"group-gray-icon"} />
+                <span className={sidebarIsOpen ? "" : "hidden"}>Exercicos</span>
+              </button>
+            </Link>
           </li>
           <li>
             <button className="sidebar-item group">
-              <FoldersIcon style={"sidebar-icon"} />
+              <FoldersIcon style={"group-gray-icon"} />
               <span className={sidebarIsOpen ? "" : "hidden"}>Rubricas</span>
             </button>
           </li>
@@ -148,27 +150,31 @@ export function Sidebar() {
         <ul className="sidebar-divisions">
           <li>
             <button className="sidebar-item group">
-              <HelpIcon style={"sidebar-icon"} />
+              <HelpIcon style={"group-gray-icon"} />
               <span className={sidebarIsOpen ? "" : "hidden"}>Ajuda</span>
             </button>
           </li>
           <li>
             <button className="sidebar-item group">
-              <TeacherIcon style={"sidebar-icon"} />
+              <TeacherIcon style={"group-gray-icon"} />
               <span className={sidebarIsOpen ? "" : "hidden"}>Tutoriais</span>
             </button>
           </li>
           <li>
             <button className="sidebar-item group">
-              <MessageBoxIcon style={"sidebar-icon"} />
+              <MessageBoxIcon style={"group-gray-icon"} />
               <span className={sidebarIsOpen ? "" : "hidden"}>Sugestões</span>
             </button>
           </li>
           <li>
-            <button className="sidebar-item group">
-              <SettingsIcon style={"sidebar-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Defenições</span>
-            </button>
+            <Link to={"/user/catalog"}>
+              <button className="sidebar-item group">
+                <SettingsIcon style={"group-gray-icon"} />
+                <span className={sidebarIsOpen ? "" : "hidden"}>
+                  Defenições
+                </span>
+              </button>
+            </Link>
           </li>
         </ul>
       </aside>

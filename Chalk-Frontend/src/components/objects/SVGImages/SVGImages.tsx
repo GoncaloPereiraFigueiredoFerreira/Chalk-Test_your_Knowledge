@@ -45,7 +45,7 @@ export function SidebarIcon({ style, size }: IconProps) {
   return (
     <svg
       className={`icon 
-      ${style ? style : ""}
+      ${style ? style : "black-icon"}
       ${size ? size : "size-6"}`}
       aria-hidden="true"
       fill="currentColor"
@@ -118,7 +118,7 @@ export function PageIcon({ style, size }: IconProps) {
   return (
     <svg
       aria-hidden="true"
-      className={`icon 
+      className={`icon
         ${style ? style : ""}
         ${size ? size : "size-6"}`}
       fill="currentColor"
@@ -199,7 +199,7 @@ export function CheckListIcon({ style, size }: IconProps) {
         ${style ? style : ""}
         ${size ? size : "size-6"}`}
       fill="currentColor"
-      viewBox="0 0 20 20"
+      viewBox="2 2 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
@@ -276,7 +276,7 @@ export function PenIcon({ style, size }: IconProps) {
         ${style ? style : ""}
         ${size ? size : "size-6"}`}
       fill="currentColor"
-      viewBox="0 0 20 20"
+      viewBox="-2 -1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -358,6 +358,94 @@ export function SearchIcon({ style, size }: IconProps) {
         stroke-width="2"
         d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
       />
+    </svg>
+  );
+}
+
+export function WorldIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path />
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+      <path d="M3.6 9h16.8" />
+      <path d="M3.6 15h16.8" />
+      <path d="M11.5 3a17 17 0 0 0 0 18" />
+      <path d="M12.5 3a17 17 0 0 1 0 18" />
+    </svg>
+  );
+}
+
+export function GarbageIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M4 7l16 0"></path>
+      <path d="M10 11l0 6"></path>
+      <path d="M14 11l0 6"></path>
+      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+    </svg>
+  );
+}
+
+export function EyeIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+    </svg>
+  );
+}
+
+export function EyeSlashIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"></path>
     </svg>
   );
 }

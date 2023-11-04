@@ -4,6 +4,7 @@ import { Register } from "./components/pages/Register/Register.js";
 import { HomePage } from "./components/pages/HomePage/HomePage.js";
 import { FrontPage } from "./components/pages/FrontPage/FrontPage.js";
 import { Sidebar } from "./components/objects/Sidebar/Sidebar.js";
+import { Catalog } from "./components/objects/SVGImages/catalog.js";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/user" element={<Sidebar />}>
           <Route index element={<FrontPage />} />
+          <Route path="catalog" element={<Catalog />} />
         </Route>
       </Routes>
     </Router>
