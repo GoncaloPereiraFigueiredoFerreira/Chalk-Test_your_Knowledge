@@ -97,6 +97,18 @@ export function HomePage() {
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
           <button
             type="button"
+            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+          >
+            <Link to="/login">Login</Link>
+          </button>
+          <button
+            type="button"
+            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+          >
+            <Link to="/register">Register</Link>
+          </button>
+          <button
+            type="button"
             className="relative rounded-full bg-white p-1 text-gray-400 hover:text-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-200"
           >
             <span className="absolute -inset-1.5"></span>
@@ -120,12 +132,6 @@ export function HomePage() {
           {/**<!-- Profile dropdown -->*/}
           <div className="relative ml-3 float-right">
             <div>
-              <button type="button">
-                <Link to="/login">Login</Link>
-              </button>
-              <button type="button">
-                <Link to="/register">Register</Link>
-              </button>
               <button
                 type="button"
                 className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -580,10 +586,7 @@ export function HomePage() {
                     id="exampleInput90"
                     placeholder="Name"
                   />
-                  <label
-                    className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-                    for="exampleInput90"
-                  >
+                  <label className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
                     Name
                   </label>
                 </div>
@@ -594,10 +597,7 @@ export function HomePage() {
                     id="exampleInput91"
                     placeholder="Email address"
                   />
-                  <label
-                    className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-                    for="exampleInput91"
-                  >
+                  <label className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
                     Email address
                   </label>
                 </div>
@@ -605,13 +605,9 @@ export function HomePage() {
                   <textarea
                     className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                     id="exampleFormControlTextarea1"
-                    rows="3"
                     placeholder="Message"
                   ></textarea>
-                  <label
-                    for="exampleFormControlTextarea1"
-                    className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-                  >
+                  <label className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
                     Message
                   </label>
                 </div>
@@ -623,10 +619,7 @@ export function HomePage() {
                     id="exampleCheck96"
                     checked
                   />
-                  <label
-                    className="inline-block pl-[0.15rem] hover:cursor-pointer"
-                    for="exampleCheck96"
-                  >
+                  <label className="inline-block pl-[0.15rem] hover:cursor-pointer">
                     Send me a copy of this message
                   </label>
                 </div>
@@ -812,10 +805,7 @@ export function HomePage() {
 
               <div className="col-span-2 lg:col-span-3 lg:flex lg:items-end">
                 <form className="w-full">
-                  <label for="UserEmail" className="sr-only">
-                    {" "}
-                    Email{" "}
-                  </label>
+                  <label className="sr-only"> Email </label>
 
                   <div className="border border-gray-100 p-2 focus-within:ring sm:flex sm:items-center sm:gap-4">
                     <input
