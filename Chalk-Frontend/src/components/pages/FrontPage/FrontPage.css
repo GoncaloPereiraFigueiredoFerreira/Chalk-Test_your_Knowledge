@@ -3,12 +3,4 @@
 @tailwind utilities;
 
 @layer components {
-    
-    .front-page{
-        @apply
-        flex
-        flex-col
-        h-screen
-        w-screen
-    }
 }

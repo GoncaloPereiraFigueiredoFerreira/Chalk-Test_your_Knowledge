@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily:{
+        'pacifico': ['Pacifico','sans-serif'],
+        'jetbrains': ["JetBrains Mono"]
+    }
   },
   plugins: [
     require('@tailwindcss/forms'),

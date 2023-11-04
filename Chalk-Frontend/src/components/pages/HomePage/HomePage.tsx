@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./HomePage.css";
 
 export function HomePage() {
@@ -119,6 +120,12 @@ export function HomePage() {
           {/**<!-- Profile dropdown -->*/}
           <div className="relative ml-3 float-right">
             <div>
+              <button type="button">
+                <Link to="/login">Login</Link>
+              </button>
+              <button type="button">
+                <Link to="/register">Register</Link>
+              </button>
               <button
                 type="button"
                 className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"

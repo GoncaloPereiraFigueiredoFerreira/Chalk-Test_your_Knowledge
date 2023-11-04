@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .sidebar-background {
+    @apply fixed
+    top-0
+    left-0
+    h-screen
+    overflow-y-auto
+    py-5
+    w-64
+    px-3
+    bg-gray-200
+    dark:bg-gray-800;
+  }
+
+  .sidebar-content {
+    @apply;
+  }
+
+  .sidebar-divisions {
+    @apply pt-5
+    mt-5
+    space-y-2
+    border-t
+    border-gray-300
+    dark:border-gray-700;
+  }
+  .sidebar-item {
+    @apply flex
+    items-center
+    p-2
+    w-full 
+    text-left
+    gap-3
+    font-normal
+    text-gray-900
+    rounded-lg
+    transition
+    duration-75
+    hover:bg-gray-100
+    dark:hover:bg-gray-700
+    dark:text-white
+    dark:bg-gray-800;
+  }
+
+  .sidebar-dropdown {
+    @apply p-2
+    pl-7
+    space-y-2;
+  }
+  .sidebar-dropdown-item {
+    @apply flex-1
+    text-left;
+  }
+}
