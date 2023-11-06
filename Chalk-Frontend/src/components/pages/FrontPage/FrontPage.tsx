@@ -2,7 +2,6 @@ import { Searchbar } from "../../objects/Searchbar/Searchbar";
 import { Exercise } from "../../objects/Exercise/Exercise";
 import "./FrontPage.css";
 import { useState } from "react";
-import { PopUp } from "../../interactiveElements/PopUp";
 
 export function FrontPage() {
   const [selectedExercise, setSelectedExercise] = useState(-1);
@@ -16,47 +15,25 @@ export function FrontPage() {
         <Exercise
           name={"Quantas canetas"}
           visibility={"private"}
-          type={"multiple-choice"}
+          type={"true-or-false"}
           author={"Dudu"}
-          enunciado={
-            "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas"
-          }
-          problema={[
-            "Existem 9 canetas roxas ou vermelhas",
-            "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-            "Existem 8 canetas pretas",
-            "Existem mais canetas castanhas que amarelas",
-          ]}
+          enunciado={{
+            text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+          }}
+          problema={{
+            justify: false,
+            statements: [
+              "Existem 9 canetas roxas ou vermelhas",
+              "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+              "Existem 8 canetas pretas",
+              "Existem mais canetas castanhas que amarelas",
+            ],
+          }}
           exerciseKey={1}
           selectedExercise={selectedExercise}
           setSelectedExercise={(value) => setSelectedExercise(value)}
         ></Exercise>
       </div>
-      <PopUp
-        children={
-          <>
-            <Exercise
-              name={"Quantas canetas"}
-              visibility={"private"}
-              type={"multiple-choice"}
-              author={"Dudu"}
-              enunciado={
-                "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas"
-              }
-              problema={[
-                "Existem 9 canetas roxas ou vermelhas",
-                "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-                "Existem 8 canetas pretas",
-                "Existem mais canetas castanhas que amarelas",
-              ]}
-              exerciseKey={1}
-              selectedExercise={selectedExercise}
-              setSelectedExercise={(value) => setSelectedExercise(value)}
-            ></Exercise>
-          </>
-        }
-        closePopUp={() => setSelectedExercise(selectedExercise)}
-      ></PopUp>
     </div>
   );
 }

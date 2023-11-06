@@ -14,14 +14,15 @@ import {
   WorldSearchIcon,
 } from "../SVGImages/SVGImages";
 import "./Exercise.css";
+import { TFExercise } from "./TFExercise";
 
 type ExerciseProps = {
   name: String;
   visibility: String; // privado, não listado, curso, institucional ou público
   type: String; // escolha múltipla, resposta aberta, verdadeiro e falso, preenchimento de espaços e código
   author: String;
-  enunciado: String;
-  problema?: String | String[];
+  enunciado: object;
+  problema?: object;
   exerciseKey: number;
   selectedExercise: number;
   setSelectedExercise: (value: number) => void;
@@ -99,7 +100,7 @@ export function Exercise({
         return (
           <label className="caracteristics-exercise">
             <CheckboxIcon size="size-4" />
-            Verdadeiro e falso
+            Verdadeiro ou falso
           </label>
         );
       case "fill-in-the-blank":
@@ -201,7 +202,13 @@ export function Exercise({
           <div className="bg-green-600 tag-exercise">escolinha</div>
           <div className="bg-blue-600 tag-exercise">4º ano</div>
         </div>
-        <div className="flex w-full h-96 border rounded-lg border-gray-300 dark:border-gray-500"></div>
+        <div className="flex-col w-full min-h-[24rem] border rounded-lg border-gray-300 dark:border-gray-500">
+          <TFExercise
+            enunciado={enunciado}
+            problema={problema}
+            contexto=""
+          ></TFExercise>
+        </div>
       </div>
     </div>
   );
