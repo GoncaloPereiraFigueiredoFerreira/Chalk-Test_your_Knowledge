@@ -33,27 +33,43 @@ export function Dropdown({
       <div
         className={`${
           dropdownIsOpen ? "" : "hidden"
-        } z-10 absolute mt-12 w-40 bg-white divide-y divide-gray-100 rounded-lg shadow-xl dark:bg-gray-600`}
+        } z-20 absolute mt-12 w-40 min-w-max bg-gray-200 divide-y divide-gray-100 rounded-lg shadow-xl dark:bg-gray-600`}
       >
-        <ul className="py-2 text-gray-700 dark:text-gray-200">
-          {options.map((value, index) => (
-            <li key={index}>
+        <ul className="py-2 text-gray-700 dark:text-white">
+          {chosenOption >= 0 ? (
+            <li>
               <button
                 type="button"
                 onClick={() => {
-                  setChosenOption(index);
+                  setChosenOption(-1);
                   setDropdownIsOpen(false);
                 }}
-                className={`${
-                  index === chosenOption
-                    ? "dark:bg-gray-500 dark:text-white bg-gray-200"
-                    : "dark:hover:bg-gray-500 dark:hover:text-white hover:bg-gray-200"
-                } inline-flex w-full px-4 py-2`}
+                className={
+                  "dark:hover:bg-gray-500 hover:bg-gray-300 inline-flex w-full px-4 py-2"
+                }
               >
-                {value}
+                {"Todos os conteudos"}
               </button>
             </li>
-          ))}
+          ) : null}
+          {options.map((value, index) =>
+            chosenOption === index ? null : (
+              <li key={index}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setChosenOption(index);
+                    setDropdownIsOpen(false);
+                  }}
+                  className={
+                    "dark:hover:bg-gray-500 hover:bg-gray-300 inline-flex w-full px-4 py-2"
+                  }
+                >
+                  {value}
+                </button>
+              </li>
+            )
+          )}
         </ul>
       </div>
     </>

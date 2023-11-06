@@ -45,7 +45,7 @@ export function SidebarIcon({ style, size }: IconProps) {
   return (
     <svg
       className={`icon 
-      ${style ? style : ""}
+      ${style ? style : "black-icon"}
       ${size ? size : "size-6"}`}
       aria-hidden="true"
       fill="currentColor"
@@ -118,7 +118,7 @@ export function PageIcon({ style, size }: IconProps) {
   return (
     <svg
       aria-hidden="true"
-      className={`icon 
+      className={`icon
         ${style ? style : ""}
         ${size ? size : "size-6"}`}
       fill="currentColor"
@@ -199,7 +199,7 @@ export function CheckListIcon({ style, size }: IconProps) {
         ${style ? style : ""}
         ${size ? size : "size-6"}`}
       fill="currentColor"
-      viewBox="0 0 20 20"
+      viewBox="2 2 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
@@ -276,7 +276,7 @@ export function PenIcon({ style, size }: IconProps) {
         ${style ? style : ""}
         ${size ? size : "size-6"}`}
       fill="currentColor"
-      viewBox="0 0 20 20"
+      viewBox="-2 -1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -357,6 +357,269 @@ export function SearchIcon({ style, size }: IconProps) {
         stroke-linejoin="round"
         stroke-width="2"
         d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+      />
+    </svg>
+  );
+}
+
+export function WorldIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path />
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+      <path d="M3.6 9h16.8" />
+      <path d="M3.6 15h16.8" />
+      <path d="M11.5 3a17 17 0 0 0 0 18" />
+      <path d="M12.5 3a17 17 0 0 1 0 18" />
+    </svg>
+  );
+}
+
+export function WorldSearchIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M21 12a9 9 0 1 0 -9 9"></path>
+      <path d="M3.6 9h16.8"></path>
+      <path d="M3.6 15h7.9"></path>
+      <path d="M11.5 3a17 17 0 0 0 0 18"></path>
+      <path d="M12.5 3a16.984 16.984 0 0 1 2.574 8.62"></path>
+      <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+      <path d="M20.2 20.2l1.8 1.8"></path>
+    </svg>
+  );
+}
+
+export function GarbageIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M4 7l16 0"></path>
+      <path d="M10 11l0 6"></path>
+      <path d="M14 11l0 6"></path>
+      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+    </svg>
+  );
+}
+
+export function EyeIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+    </svg>
+  );
+}
+
+export function EyeSlashIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"></path>
+    </svg>
+  );
+}
+
+export function LinkIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M9 15l6 -6"></path>
+      <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+      <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
+    </svg>
+  );
+}
+
+export function SchoolIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M6 11.4999H7M6 15.4999H7M17 15.4999H18M17 11.4999H18M11.5 11.4999H12.5M10 20.9999V16.9999C10 15.8954 10.8954 14.9999 12 14.9999C13.1046 14.9999 14 15.8954 14 16.9999V20.9999M17 7.49995L18.5761 7.89398C19.4428 8.11064 19.8761 8.21898 20.1988 8.46057C20.4834 8.67373 20.7061 8.95895 20.8439 9.28682C21 9.65843 21 10.1051 21 10.9984V17.7999C21 18.9201 21 19.4801 20.782 19.9079C20.5903 20.2843 20.2843 20.5902 19.908 20.782C19.4802 20.9999 18.9201 20.9999 17.8 20.9999H6.2C5.0799 20.9999 4.51984 20.9999 4.09202 20.782C3.71569 20.5902 3.40973 20.2843 3.21799 19.9079C3 19.4801 3 18.9201 3 17.7999V10.9984C3 10.1051 3 9.65843 3.15613 9.28682C3.29388 8.95895 3.51657 8.67373 3.80124 8.46057C4.12389 8.21898 4.55722 8.11064 5.42388 7.89398L7 7.49995L9.85931 4.92657C10.6159 4.2456 10.9943 3.90512 11.4221 3.77598C11.799 3.66224 12.201 3.66224 12.5779 3.77598C13.0057 3.90512 13.3841 4.2456 14.1407 4.92657L17 7.49995Z"></path>
+    </svg>
+  );
+}
+
+export function CheckedListIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="1 1 22 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M11 6L21 6.00072M11 12L21 12.0007M11 18L21 18.0007M3 11.9444L4.53846 13.5L8 10M3 5.94444L4.53846 7.5L8 4M4.5 18H4.51M5 18C5 18.2761 4.77614 18.5 4.5 18.5C4.22386 18.5 4 18.2761 4 18C4 17.7239 4.22386 17.5 4.5 17.5C4.77614 17.5 5 17.7239 5 18Z"></path>
+    </svg>
+  );
+}
+
+export function CheckboxIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+      <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+    </svg>
+  );
+}
+
+export function TextIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M12.258 3h-8.51l-.083 2.46h.479c.26-1.544.758-1.783 2.693-1.845l.424-.013v7.827c0 .663-.144.82-1.3.923v.52h4.082v-.52c-1.162-.103-1.306-.26-1.306-.923V3.602l.431.013c1.934.062 2.434.301 2.693 1.846h.479L12.258 3z" />
+    </svg>
+  );
+}
+
+export function CodeIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z" />
+    </svg>
+  );
+}
+
+export function InputIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-6"}`}
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z" />
+      <path
+        fill-rule="evenodd"
+        d="M8 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13A.5.5 0 0 1 8 1z"
       />
     </svg>
   );

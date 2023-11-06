@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-options-exercise {
+    @apply flex
+    flex-col
+    gap-1
+    items-center;
+  }
+
+  .caracteristics-exercise {
+    @apply flex
+    gap-2
+    items-center
+    justify-end
+    text-gray-400;
+  }
+
+  .tag-exercise {
+    @apply min-w-max
+    px-2.5
+    py-0.5
+    rounded-lg;
+  }
+}
