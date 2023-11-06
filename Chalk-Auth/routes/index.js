@@ -102,6 +102,11 @@ router.get("/google", (req, res, next) => {
                 last_access: data,
               })
             );
+          } else {
+            User.updateOne(
+              { username: req.user.username },
+              { last_access: date }
+            );
           }
           var token = authenticate.getToken({
             username: gres2.data.email,

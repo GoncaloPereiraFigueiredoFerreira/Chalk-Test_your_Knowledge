@@ -3,12 +3,14 @@ import "./Login.css";
 import { Link } from "react-router-dom";
 import "../../MainLogo";
 import { MainLogo } from "../../MainLogo";
+import axios from "axios";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorState, setErrorState] = useState(false);
 
+  // Should be removed, in favor of a .env
   const googleDetails = {
     scope: "https://www.googleapis.com/auth/userinfo.email",
     client_id:
@@ -18,10 +20,6 @@ export function Login() {
   };
 
   const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
-    let login = {
-      email: email,
-      password: password,
-    };
     let valid = true;
     if (valid) {
       alert("Valid Form");
@@ -42,7 +40,11 @@ export function Login() {
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form onSubmit={(e) => validateForm(e)}>
+            <form
+              action="http://localhost:3000/login"
+              onSubmit={(e) => validateForm(e)}
+              method="POST"
+            >
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
                 <p className="mb-0 mr-4 text-2xl">Log in with</p>
 
@@ -128,6 +130,7 @@ export function Login() {
               <div className="relative mb-6">
                 <input
                   type="text"
+                  name="username"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Email address"
                   onChange={(e) => setEmail(e.target.value)}
@@ -137,6 +140,7 @@ export function Login() {
 
               <div className="relative mb-6">
                 <input
+                  name="password"
                   type="password"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Password"

@@ -9,13 +9,17 @@ export function Register({}) {
   const [cpass, setCPass] = useState("");
   const [error, setError] = useState(0);
 
+  // Should be removed, in favor of a .env
+  const googleDetails = {
+    scope: "https://www.googleapis.com/auth/userinfo.email",
+    client_id:
+      "665062865084-9ta4mjgrv95f7h5vi3cn7tbu9jmjah01.apps.googleusercontent.com",
+    redirect_uri: "http://localhost:3000/google",
+    response_type: "code",
+  };
+
   const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
     if (password === cpass) {
-      let register = {
-        email: email,
-        password: password,
-        name: name,
-      };
       alert("Registered!");
       return true;
 
@@ -36,13 +40,28 @@ export function Register({}) {
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form onSubmit={validateForm}>
+            <form
+              action="http://localhost:3000/register"
+              method="POST"
+              onSubmit={validateForm}
+            >
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
                 <p className="mb-0 mr-4 text-2xl">Create an account with</p>
 
                 <a
                   className="mb-3 bg-white text-black flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href="#!"
+                  href={
+                    "https://accounts.google.com/o/oauth2/v2/auth?" +
+                    "scope=" +
+                    googleDetails.scope +
+                    "&response_type=" +
+                    googleDetails.response_type +
+                    "&redirect_uri=" +
+                    googleDetails.redirect_uri +
+                    "&client_id=" +
+                    googleDetails.client_id +
+                    "&include_granted_scopes=true"
+                  }
                   role="button"
                 >
                   <svg
@@ -109,6 +128,7 @@ export function Register({}) {
               </div>
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
+                  name="name"
                   type="text"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Name"
@@ -120,6 +140,7 @@ export function Register({}) {
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
                   type="text"
+                  name="email"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Email address"
                   onChange={(e) => setEmail(e.target.value)}
@@ -130,6 +151,7 @@ export function Register({}) {
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
                   type="password"
+                  name="password"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Password"
                   onChange={(e) => setPassword(e.target.value)}
@@ -139,6 +161,7 @@ export function Register({}) {
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
                   type="password"
+                  name="cpassword"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Confirm Password"
                   onChange={(e) => setCPass(e.target.value)}

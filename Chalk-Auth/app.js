@@ -10,7 +10,6 @@ var usersRouter = require("./routes/users");
 var app = express();
 
 var mongoose = require("mongoose");
-const { exit } = require("process");
 var connectString = "mongodb://127.0.0.1:27017/Chalk-Test-Auth";
 mongoose.connect(connectString);
 var db = mongoose.connection;
@@ -39,8 +38,11 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
-  console.log(err);
-  exit();
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+  console.error("Error: " + err);
+  // send error status
+  res.sendStatus(err.status || 500);
 });
 
 module.exports = app;
