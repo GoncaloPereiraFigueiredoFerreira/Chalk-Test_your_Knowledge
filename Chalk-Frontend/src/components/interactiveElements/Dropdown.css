@@ -16,10 +16,8 @@
     border
     rounded-l-lg
     focus:outline-none
-    bg-gray-100
     text-gray-900
     border-gray-300
-    dark:bg-gray-700
     dark:text-white
     dark:border-gray-600;
   }
