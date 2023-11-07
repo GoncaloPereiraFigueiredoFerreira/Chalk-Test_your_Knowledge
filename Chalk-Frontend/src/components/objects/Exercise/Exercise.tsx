@@ -206,7 +206,7 @@ export function Exercise({
           <TFExercise
             enunciado={enunciado}
             problema={problema}
-            contexto=""
+            contexto="solve"
           ></TFExercise>
         </div>
       </div>
