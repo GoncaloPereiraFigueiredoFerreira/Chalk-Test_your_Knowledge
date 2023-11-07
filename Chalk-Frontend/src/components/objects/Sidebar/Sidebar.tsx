@@ -127,10 +127,14 @@ export function Sidebar() {
 
         <ul className="sidebar-divisions">
           <li>
-            <button className="sidebar-item group">
-              <CheckListIcon style={"group-gray-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Avaliações</span>
-            </button>
+            <Link to={"/user/test"}>
+              <button className="sidebar-item group">
+                <CheckListIcon style={"group-gray-icon"} />
+                <span className={sidebarIsOpen ? "" : "hidden"}>
+                  Avaliações
+                </span>
+              </button>
+            </Link>
           </li>
           <li>
             <Link to={"/user"}>

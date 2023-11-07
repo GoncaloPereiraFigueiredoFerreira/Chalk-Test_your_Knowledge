@@ -353,9 +353,9 @@ export function SearchIcon({ style, size }: IconProps) {
     >
       <path
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
         d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
       />
     </svg>
@@ -371,9 +371,9 @@ export function WorldIcon({ style, size }: IconProps) {
         ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -397,9 +397,9 @@ export function WorldSearchIcon({ style, size }: IconProps) {
         ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -424,9 +424,9 @@ export function GarbageIcon({ style, size }: IconProps) {
         ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -449,7 +449,7 @@ export function EyeIcon({ style, size }: IconProps) {
         ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -468,7 +468,7 @@ export function EyeSlashIcon({ style, size }: IconProps) {
         ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -486,9 +486,9 @@ export function LinkIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -509,9 +509,9 @@ export function SchoolIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -529,9 +529,9 @@ export function CheckedListIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="1 1 22 22"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -549,9 +549,9 @@ export function CheckboxIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1"
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -570,9 +570,9 @@ export function TextIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1"
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -590,9 +590,9 @@ export function CodeIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1"
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -610,15 +610,15 @@ export function InputIcon({ style, size }: IconProps) {
       ${size ? size : "size-6"}`}
       fill="none"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1"
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z" />
       <path
-        fill-rule="evenodd"
+        fillRule="evenodd"
         d="M8 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13A.5.5 0 0 1 8 1z"
       />
     </svg>

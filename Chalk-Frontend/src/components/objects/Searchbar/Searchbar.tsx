@@ -21,7 +21,7 @@ export function Searchbar() {
           <div className="relative w-full">
             <input
               type="search"
-              className="searchbar-input"
+              className="block outline-none py-2.5 px-4 rounded-r-lg w-full z-20 text-black border-l-0 border border-gray-300 focus:border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring-0 focus:dark:border-gray-600"
               placeholder="Search..."
               value={searchText}
               onChange={(text) => setSearchText(text.target.value)}
