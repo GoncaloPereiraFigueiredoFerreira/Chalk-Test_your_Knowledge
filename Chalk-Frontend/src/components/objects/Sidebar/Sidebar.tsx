@@ -12,8 +12,10 @@ import {
   TeacherIcon,
   GraduateIcon,
   UpArrowIcon,
+  MoonIcon,
+  SunIcon,
 } from "../SVGImages/SVGImages.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 const groups: { [key: string]: string } = {
@@ -27,6 +29,16 @@ export function Sidebar() {
   const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
   const [group, setGroup] = useState("0");
   const [showGroup, setShowGroup] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("color-theme", darkMode ? "true" : "false");
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode);
+  };
 
   function getGroup(num: string) {
     console.log(groups[num]);
@@ -171,11 +183,30 @@ export function Sidebar() {
             </button>
           </li>
           <li>
+            <button className="sidebar-item group" onClick={toggleDarkMode}>
+              {darkMode ? (
+                <>
+                  <SunIcon style={"group-gray-icon"}></SunIcon>
+                  <span className={sidebarIsOpen ? "" : "hidden"}>
+                    Light Mode Toogle
+                  </span>
+                </>
+              ) : (
+                <>
+                  <MoonIcon style={"group-gray-icon"}></MoonIcon>{" "}
+                  <span className={sidebarIsOpen ? "" : "hidden"}>
+                    Dark Mode Toogle
+                  </span>
+                </>
+              )}
+            </button>
+          </li>
+          <li>
             <Link to={"/user/catalog"}>
               <button className="sidebar-item group">
                 <SettingsIcon style={"group-gray-icon"} />
                 <span className={sidebarIsOpen ? "" : "hidden"}>
-                  Defenições
+                  Definições
                 </span>
               </button>
             </Link>
