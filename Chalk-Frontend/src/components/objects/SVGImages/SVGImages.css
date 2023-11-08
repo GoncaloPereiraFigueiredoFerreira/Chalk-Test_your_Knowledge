@@ -10,6 +10,11 @@
     justify-center;
   }
 
+  .size-12 {
+    @apply w-12
+    h-12;
+  }
+
   .size-6 {
     @apply w-6
     h-6;
@@ -44,6 +49,11 @@
   }
 
   .black-icon {
-    @apply text-black dark:text-white;
+    @apply text-black
+    dark:text-white;
+  }
+
+  .inherit-icon {
+    @apply text-inherit;
   }
 }

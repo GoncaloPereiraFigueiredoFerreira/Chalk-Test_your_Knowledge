@@ -4,9 +4,7 @@
 
 @layer components {
   .popup-btn {
-    @apply bg-black
-    bg-opacity-40
-    h-full
+    @apply h-full
     w-full;
   }
 }

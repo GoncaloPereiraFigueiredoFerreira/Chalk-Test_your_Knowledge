@@ -3,4 +3,23 @@
 @tailwind utilities;
 
 @layer components {
+  .btn-frontpage {
+    @apply flex
+      items-center
+      justify-start
+      gap-4
+      p-4
+      m-2
+      rounded-xl;
+  }
+  .btn-normal-frontpage {
+    @apply bg-gray-200
+      hover:bg-gray-300
+      dark:bg-gray-500
+      dark:hover:bg-gray-700;
+  }
+  .btn-selected-frontpage {
+    @apply bg-blue-600
+      hover:bg-blue-700;
+  }
 }
