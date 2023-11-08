@@ -17,7 +17,7 @@ export function Dropdown({
 }: DropdownProps) {
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
   return (
-    <>
+    <div className="relative h-full">
       <button
         className={`${
           dropdownIsOpen
@@ -33,7 +33,7 @@ export function Dropdown({
       <div
         className={`${
           dropdownIsOpen ? "" : "hidden"
-        } z-20 absolute mt-12 w-40 min-w-max bg-gray-200 divide-y divide-gray-100 rounded-lg shadow-xl dark:bg-gray-600`}
+        } z-20 absolute top-12 w-40 min-w-max bg-gray-200 divide-y divide-gray-100 rounded-lg shadow-xl dark:bg-gray-600`}
       >
         <ul className="py-2 text-gray-700 dark:text-white">
           {chosenOption >= 0 ? (
@@ -72,6 +72,6 @@ export function Dropdown({
           )}
         </ul>
       </div>
-    </>
+    </div>
   );
 }
