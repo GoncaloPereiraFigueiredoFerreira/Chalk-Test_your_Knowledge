@@ -7,25 +7,6 @@ type TFExerciseProps = {
   cotacao?: number;
 };
 
-enum SolveActionKind {
-  CHOOSE = "CHOOSE",
-  JUSTIFY = "JUSTIFY",
-}
-
-type SolveAction = {
-  type: SolveActionKind;
-  index: number;
-  value: string;
-};
-
-type Solve = {
-  phrase: string;
-  tfvalue: string;
-  justification: string;
-};
-
-type SolveState = Solve[];
-
 export function TFExercise(props: TFExerciseProps) {
   let exerciseDisplay = <></>;
 
@@ -63,6 +44,25 @@ export function TFExercise(props: TFExerciseProps) {
     </>
   );
 }
+
+enum SolveActionKind {
+  CHOOSE = "CHOOSE",
+  JUSTIFY = "JUSTIFY",
+}
+
+type SolveAction = {
+  type: SolveActionKind;
+  index: number;
+  value: string;
+};
+
+type Solve = {
+  phrase: string;
+  tfvalue: string;
+  justification: string;
+};
+
+type SolveState = Solve[];
 
 function SolveReducer(state: SolveState, action: SolveAction): SolveState {
   switch (action.type) {
@@ -123,7 +123,7 @@ function TFStatement(props: any) {
     <tr>
       <td className="p-3">
         <input
-          className="relative h-5 w-5 cursor-pointer appearance-none rounded-full focus:ring-0 border text-green-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-green-500 checked:before:bg-green-500 hover:before:opacity-10"
+          className="radio-green"
           type="radio"
           name={name}
           onChange={() =>
@@ -137,7 +137,7 @@ function TFStatement(props: any) {
       </td>
       <td className="p-3">
         <input
-          className="relative h-5 w-5 cursor-pointer appearance-none focus:ring-0 rounded-full border  text-red-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-red-700 checked:before:bg-red-500 hover:before:opacity-10"
+          className="radio-red"
           type="radio"
           name={name}
           onChange={() =>
@@ -172,7 +172,7 @@ function TFJustify(props: any) {
     <div>
       <p className={fontsize}>{state[props.id].phrase}</p>
       <input
-        className={hidden + " text-black min-w-[40rem] max-h-8"}
+        className={hidden + " basic-input-text"}
         type="text"
         name={"justification" + props.id}
         placeholder="Justifique a sua resposta"
@@ -273,7 +273,7 @@ function TFEdit(props: any) {
           </p>
           <textarea
             id="message"
-            className="block p-2.5 w-3/4  text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="header-textarea"
             placeholder=""
             value={state.header}
             onChange={(e) =>
@@ -308,12 +308,33 @@ function TFEdit(props: any) {
         </table>
         <input
           type="button"
-          className=""
+          className="edit-btn"
           value="Add"
           onClick={() => {
             dispatch({ type: EditActionKind.ADDSTATEMENT, payload: {} });
           }}
         ></input>
+        <div className="mt-5 flex items-center pl-4 border border-gray-200 rounded dark:border-gray-700">
+          <input
+            id="bordered-checkbox"
+            type="checkbox"
+            checked={state.justify}
+            onChange={(e) => {
+              dispatch({
+                type: EditActionKind.JUSTIFYFALSE,
+                payload: { flag: e.target.checked },
+              });
+            }}
+            name="bordered-checkbox"
+            className="basic-checkbox"
+          />
+          <label
+            htmlFor="bordered-checkbox"
+            className="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            Pedir a justificação de afirmações falsas?
+          </label>
+        </div>
       </form>
     </>
   );
@@ -327,7 +348,7 @@ function TFStatementEdit(props: any) {
       <tr>
         <td className="p-3">
           <input
-            className="relative h-5 w-5 cursor-pointer appearance-none rounded-full border text-green-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-green-500 checked:before:bg-green-500 hover:before:opacity-10"
+            className="radio-green"
             type="radio"
             name={name}
             onChange={() =>
@@ -340,7 +361,7 @@ function TFStatementEdit(props: any) {
         </td>
         <td className="p-3">
           <input
-            className="relative h-5 w-5 cursor-pointer appearance-none rounded-full border  text-red-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-red-700 checked:before:bg-red-500 hover:before:opacity-10"
+            className="radio-red"
             type="radio"
             name={name}
             onChange={() =>
@@ -354,7 +375,7 @@ function TFStatementEdit(props: any) {
         <td>
           <input
             type="text"
-            className="block p-2.5  text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="basic-input-text"
             onChange={(e) =>
               dispatch({
                 type: EditActionKind.CHANGESTATEMENT,
@@ -366,6 +387,7 @@ function TFStatementEdit(props: any) {
         </td>
         <td>
           <input
+            className="edit-btn"
             type="button"
             onClick={() =>
               dispatch({
