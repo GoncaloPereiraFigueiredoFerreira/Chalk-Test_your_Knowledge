@@ -15,6 +15,7 @@ import {
 } from "../SVGImages/SVGImages";
 import "./Exercise.css";
 import { MCExercise } from "./MCExercise";
+import { OAExercise } from "./OAExercise";
 import { TFExercise } from "./TFExercise";
 
 type ExerciseProps = {
@@ -207,7 +208,7 @@ export function Exercise({
           <MCExercise
             enunciado={enunciado}
             problema={problema}
-            contexto="edit"
+            contexto="solve"
           ></MCExercise>
         </div>
       </div>

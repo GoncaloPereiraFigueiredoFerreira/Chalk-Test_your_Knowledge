@@ -1,13 +1,12 @@
 import { useReducer, createContext, useContext } from "react";
 
-type TFExerciseProps = {
+type ExerciseProps = {
   enunciado: any;
   problema?: any;
   contexto: string;
-  cotacao?: number;
 };
 
-export function TFExercise(props: TFExerciseProps) {
+export function TFExercise(props: ExerciseProps) {
   let exerciseDisplay = <></>;
 
   switch (props.contexto) {
@@ -62,9 +61,12 @@ type TFSolve = {
   justification: string;
 };
 
-type SolveState = TFSolve[];
+type TFSolveState = TFSolve[];
 
-function SolveReducer(state: SolveState, action: TFSolveAction): SolveState {
+function SolveReducer(
+  state: TFSolveState,
+  action: TFSolveAction
+): TFSolveState {
   switch (action.type) {
     case TFSolveActionKind.CHOOSE:
       let chooseState = [...state];
@@ -80,13 +82,13 @@ function SolveReducer(state: SolveState, action: TFSolveAction): SolveState {
   }
 }
 
-const StateContext = createContext<{ state: SolveState; dispatch: any }>({
+const StateContext = createContext<{ state: TFSolveState; dispatch: any }>({
   state: [],
   dispatch: undefined,
 });
 
 function TFSolve(props: any) {
-  let initState: SolveState = [];
+  let initState: TFSolveState = [];
   props.problem.statements.map((text: any) =>
     initState.push({ phrase: text, tfvalue: "", justification: "" })
   );

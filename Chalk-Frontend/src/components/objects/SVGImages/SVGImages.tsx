@@ -660,7 +660,73 @@ export function MoonIcon({ style, size }: IconProps) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-      </svg>{" "}
+      </svg>
+    </>
+  );
+}
+
+export function DownloadIcon({ style, size }: IconProps) {
+  return (
+    <>
+      <svg
+        className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-4"}`}
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
+        <path d="M18 12h-2.55l-2.975 2.975a3.5 3.5 0 0 1-4.95 0L4.55 12H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Zm-3 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+      </svg>
+    </>
+  );
+}
+
+export function FileUploadIcon({ style, size }: IconProps) {
+  return (
+    <>
+      <svg
+        className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-4"}`}
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 12 20"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6"
+        />
+      </svg>
+    </>
+  );
+}
+
+export function ListIcon({ style, size }: IconProps) {
+  return (
+    <>
+      <svg
+        className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-4"}`}
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 21 18"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9.5 3h9.563M9.5 9h9.563M9.5 15h9.563M1.5 13a2 2 0 1 1 3.321 1.5L1.5 17h5m-5-15 2-1v6m-2 0h4"
+        />
+      </svg>
     </>
   );
 }
