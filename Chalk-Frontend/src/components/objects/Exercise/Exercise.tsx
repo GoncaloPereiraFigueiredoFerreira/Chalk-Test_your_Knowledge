@@ -14,6 +14,7 @@ import {
   WorldSearchIcon,
 } from "../SVGImages/SVGImages";
 import "./Exercise.css";
+import { MCExercise } from "./MCExercise";
 import { TFExercise } from "./TFExercise";
 
 type ExerciseProps = {
@@ -203,11 +204,11 @@ export function Exercise({
           <div className="bg-blue-600 tag-exercise">4º ano</div>
         </div>
         <div className="flex-col w-full min-h-[24rem] border rounded-lg border-gray-300 dark:border-gray-500">
-          <TFExercise
+          <MCExercise
             enunciado={enunciado}
             problema={problema}
-            contexto="solve"
-          ></TFExercise>
+            contexto="edit"
+          ></MCExercise>
         </div>
       </div>
     </div>

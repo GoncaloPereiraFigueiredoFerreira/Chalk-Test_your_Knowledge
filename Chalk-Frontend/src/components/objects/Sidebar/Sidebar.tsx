@@ -29,11 +29,13 @@ export function Sidebar() {
   const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
   const [group, setGroup] = useState("0");
   const [showGroup, setShowGroup] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("dark-mode") === "true"
+  );
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("color-theme", darkMode ? "true" : "false");
+    localStorage.setItem("dark-mode", darkMode ? "true" : "false");
   }, [darkMode]);
 
   const toggleDarkMode = () => {

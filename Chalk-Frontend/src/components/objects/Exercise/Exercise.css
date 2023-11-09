@@ -35,6 +35,10 @@
     @apply relative h-5 w-5 cursor-pointer appearance-none rounded-full focus:ring-0 border text-red-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full  before:opacity-0 before:transition-opacity checked:border-red-700 checked:before:bg-red-500 hover:before:opacity-10 !important;
   }
 
+  .radio-blue {
+    @apply relative h-5 w-5 cursor-pointer appearance-none rounded-full focus:ring-0 border text-blue-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full  before:opacity-0 before:transition-opacity checked:border-blue-700 checked:before:bg-blue-500 hover:before:opacity-10 !important;
+  }
+
   .edit-btn {
     @apply text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 !important;
   }

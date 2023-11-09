@@ -45,33 +45,33 @@ export function TFExercise(props: TFExerciseProps) {
   );
 }
 
-enum SolveActionKind {
+enum TFSolveActionKind {
   CHOOSE = "CHOOSE",
   JUSTIFY = "JUSTIFY",
 }
 
-type SolveAction = {
-  type: SolveActionKind;
+type TFSolveAction = {
+  type: TFSolveActionKind;
   index: number;
   value: string;
 };
 
-type Solve = {
+type TFSolve = {
   phrase: string;
   tfvalue: string;
   justification: string;
 };
 
-type SolveState = Solve[];
+type SolveState = TFSolve[];
 
-function SolveReducer(state: SolveState, action: SolveAction): SolveState {
+function SolveReducer(state: SolveState, action: TFSolveAction): SolveState {
   switch (action.type) {
-    case SolveActionKind.CHOOSE:
+    case TFSolveActionKind.CHOOSE:
       let chooseState = [...state];
       chooseState[action.index].tfvalue = action.value;
       return chooseState;
 
-    case SolveActionKind.JUSTIFY:
+    case TFSolveActionKind.JUSTIFY:
       let justifyState = [...state];
       justifyState[action.index].justification = action.value;
       return justifyState;
@@ -106,7 +106,7 @@ function TFSolve(props: any) {
         </thead>
         <tbody>
           <StateContext.Provider value={{ state, dispatch }}>
-            {state.map((_solve: Solve, index: number) => {
+            {state.map((_solve: TFSolve, index: number) => {
               return <TFStatement key={index} id={index} justify={true} />;
             })}
           </StateContext.Provider>
@@ -128,7 +128,7 @@ function TFStatement(props: any) {
           name={name}
           onChange={() =>
             dispatch({
-              type: SolveActionKind.CHOOSE,
+              type: TFSolveActionKind.CHOOSE,
               index: props.id,
               value: "true",
             })
@@ -142,7 +142,7 @@ function TFStatement(props: any) {
           name={name}
           onChange={() =>
             dispatch({
-              type: SolveActionKind.CHOOSE,
+              type: TFSolveActionKind.CHOOSE,
               index: props.id,
               value: "false",
             })
@@ -179,7 +179,7 @@ function TFJustify(props: any) {
         value={state[props.id].justification}
         onChange={(e) =>
           dispatch({
-            type: SolveActionKind.JUSTIFY,
+            type: TFSolveActionKind.JUSTIFY,
             index: props.id,
             value: e.target.value,
           })
@@ -189,7 +189,7 @@ function TFJustify(props: any) {
   );
 }
 
-enum EditActionKind {
+enum TFEditActionKind {
   JUSTIFYFALSE = "JUSTIFYFALSE",
   ADDSTATEMENT = "ADDSTATEMENT",
   CORRECTTF = "CORRECTTF",
@@ -198,54 +198,56 @@ enum EditActionKind {
   REMOVESTATE = "REMOVESTATE",
 }
 
-type EditState = {
+type TFEditState = {
   justify: boolean;
   header: string;
   statements: { phrase: string; tfvalue: string }[];
 };
 
-type EditAction = {
-  type: EditActionKind;
+type TFEditAction = {
+  type: TFEditActionKind;
   payload: { id?: number; flag?: boolean; value?: string };
 };
 
-const EditStateContext = createContext<{ state: EditState; dispatch: any }>({
-  state: { justify: false, header: "", statements: [] },
-  dispatch: undefined,
-});
+const TFEditStateContext = createContext<{ state: TFEditState; dispatch: any }>(
+  {
+    state: { justify: false, header: "", statements: [] },
+    dispatch: undefined,
+  }
+);
 
-function EditReducer(state: EditState, action: EditAction) {
+function TFEditReducer(state: TFEditState, action: TFEditAction) {
   switch (action.type) {
-    case EditActionKind.JUSTIFYFALSE:
+    case TFEditActionKind.JUSTIFYFALSE:
       let justifyState = { ...state };
       justifyState.justify = action.payload.flag ?? false;
       return justifyState;
 
-    case EditActionKind.ADDSTATEMENT:
+    case TFEditActionKind.ADDSTATEMENT:
       let temp1 = [...state.statements];
       temp1.push({ phrase: "", tfvalue: "" });
       let addState = { ...state, statements: temp1 };
       return addState;
 
-    case EditActionKind.CORRECTTF:
+    case TFEditActionKind.CORRECTTF:
       let temp2 = [...state.statements];
       temp2[action.payload.id!].tfvalue = action.payload.value ?? "";
       let correctstate = { ...state, statments: temp2 };
 
       return correctstate;
 
-    case EditActionKind.CHANGEHEADER:
+    case TFEditActionKind.CHANGEHEADER:
       let headerState = { ...state };
       headerState.header = action.payload.value ?? "";
       return headerState;
 
-    case EditActionKind.CHANGESTATEMENT:
+    case TFEditActionKind.CHANGESTATEMENT:
       let temp3 = [...state.statements];
       temp3[action.payload.id!].phrase = action.payload.value ?? "";
-      let statementState = { ...state, statement: temp3 };
+      let statementState = { ...state, statements: temp3 };
       return statementState;
 
-    case EditActionKind.REMOVESTATE:
+    case TFEditActionKind.REMOVESTATE:
       let temp4 = [...state.statements];
       temp4.splice(action.payload.id!, 1);
       let removeState = { ...state, statements: temp4 };
@@ -257,12 +259,12 @@ function EditReducer(state: EditState, action: EditAction) {
 }
 
 function TFEdit(props: any) {
-  let initState: EditState = { justify: false, header: "", statements: [] };
+  let initState: TFEditState = { justify: false, header: "", statements: [] };
   initState.header = props.enunciado.text;
   props.problem.statements.map((text: any) =>
     initState.statements.push({ phrase: text, tfvalue: "" })
   );
-  const [state, dispatch] = useReducer(EditReducer, initState);
+  const [state, dispatch] = useReducer(TFEditReducer, initState);
 
   return (
     <>
@@ -278,7 +280,7 @@ function TFEdit(props: any) {
             value={state.header}
             onChange={(e) =>
               dispatch({
-                type: EditActionKind.CHANGEHEADER,
+                type: TFEditActionKind.CHANGEHEADER,
                 payload: { value: e.target.value },
               })
             }
@@ -297,13 +299,13 @@ function TFEdit(props: any) {
             </tr>
           </thead>
           <tbody>
-            <EditStateContext.Provider value={{ state, dispatch }}>
+            <TFEditStateContext.Provider value={{ state, dispatch }}>
               {state.statements.map((_item, counter) => {
                 return (
                   <TFStatementEdit id={counter} key={counter}></TFStatementEdit>
                 );
               })}
-            </EditStateContext.Provider>
+            </TFEditStateContext.Provider>
           </tbody>
         </table>
         <input
@@ -311,7 +313,7 @@ function TFEdit(props: any) {
           className="edit-btn"
           value="Add"
           onClick={() => {
-            dispatch({ type: EditActionKind.ADDSTATEMENT, payload: {} });
+            dispatch({ type: TFEditActionKind.ADDSTATEMENT, payload: {} });
           }}
         ></input>
         <div className="mt-5 flex items-center pl-4 border border-gray-200 rounded dark:border-gray-700">
@@ -321,7 +323,7 @@ function TFEdit(props: any) {
             checked={state.justify}
             onChange={(e) => {
               dispatch({
-                type: EditActionKind.JUSTIFYFALSE,
+                type: TFEditActionKind.JUSTIFYFALSE,
                 payload: { flag: e.target.checked },
               });
             }}
@@ -342,7 +344,7 @@ function TFEdit(props: any) {
 
 function TFStatementEdit(props: any) {
   let name = "radio-button-" + props.id;
-  const { state, dispatch } = useContext(EditStateContext);
+  const { state, dispatch } = useContext(TFEditStateContext);
   return (
     <>
       <tr>
@@ -353,7 +355,7 @@ function TFStatementEdit(props: any) {
             name={name}
             onChange={() =>
               dispatch({
-                type: EditActionKind.CORRECTTF,
+                type: TFEditActionKind.CORRECTTF,
                 payload: { id: props.id, value: "true" },
               })
             }
@@ -366,7 +368,7 @@ function TFStatementEdit(props: any) {
             name={name}
             onChange={() =>
               dispatch({
-                type: EditActionKind.CORRECTTF,
+                type: TFEditActionKind.CORRECTTF,
                 payload: { id: props.id, value: "false" },
               })
             }
@@ -378,7 +380,7 @@ function TFStatementEdit(props: any) {
             className="basic-input-text"
             onChange={(e) =>
               dispatch({
-                type: EditActionKind.CHANGESTATEMENT,
+                type: TFEditActionKind.CHANGESTATEMENT,
                 payload: { id: props.id, value: e.target.value },
               })
             }
@@ -391,7 +393,7 @@ function TFStatementEdit(props: any) {
             type="button"
             onClick={() =>
               dispatch({
-                type: EditActionKind.REMOVESTATE,
+                type: TFEditActionKind.REMOVESTATE,
                 payload: { id: props.id },
               })
             }
