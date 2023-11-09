@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DownloadIcon, FileUploadIcon, ListIcon } from "../SVGImages/SVGImages";
+import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
 
 //Open Answer Exercise
 export function OAExercise(props: any) {
@@ -40,7 +41,7 @@ function OASolve(props: any) {
 
   return (
     <>
-      <p className="mb-4">{props.enunciado.text}</p>
+      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
 
       <form>
         <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
@@ -94,18 +95,10 @@ function OAEdit(props: any) {
   const [state, setState] = useState(props.enunciado.text);
   return (
     <>
-      <div className="mb-9">
-        <p className="block mb-2 ml-1 text-sm text-gray-900 dark:text-white">
-          Enunciado:
-        </p>
-        <textarea
-          id="message"
-          className="header-textarea"
-          placeholder=""
-          value={state}
-          onChange={(e) => setState(e.target.value)}
-        ></textarea>
-      </div>
+      <ExerciseHeaderEdit
+        header={{ ...props.enunciado, text: state }}
+        editFunc={setState}
+      ></ExerciseHeaderEdit>
     </>
   );
 }

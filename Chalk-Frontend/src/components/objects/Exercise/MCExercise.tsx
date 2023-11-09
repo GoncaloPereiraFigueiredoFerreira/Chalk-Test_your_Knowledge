@@ -1,4 +1,5 @@
 import { useReducer, createContext, useContext, useState } from "react";
+import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
 
 export function MCExercise(props: any) {
   let exerciseDisplay = <></>;
@@ -42,7 +43,7 @@ function MCSolve(props: any) {
 
   return (
     <>
-      <p className="mb-4">{props.enunciado.text}</p>
+      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
       <ul>
         {props.problem.statements.map((text: string, id: number) => {
           return (
@@ -149,23 +150,15 @@ function MCEdit(props: any) {
   return (
     <>
       <form>
-        <div className="mb-9">
-          <p className="block mb-2 ml-1 text-sm text-gray-900 dark:text-white">
-            Enunciado:
-          </p>
-          <textarea
-            id="message"
-            className="header-textarea"
-            placeholder=""
-            value={state.header}
-            onChange={(e) =>
-              dispatch({
-                type: MCEditActionKind.CHANGEHEADER,
-                payload: { value: e.target.value },
-              })
-            }
-          ></textarea>
-        </div>
+        <ExerciseHeaderEdit
+          header={{ ...props.enunciado, text: state.header }}
+          editFunc={(e: any) => {
+            dispatch({
+              type: MCEditActionKind.CHANGEHEADER,
+              payload: { value: e },
+            });
+          }}
+        ></ExerciseHeaderEdit>
 
         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
           Adicione as afirmações e escolha a opção correta.

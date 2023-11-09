@@ -1,4 +1,5 @@
 import { useReducer, createContext, useContext } from "react";
+import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
 
 type ExerciseProps = {
   enunciado: any;
@@ -97,7 +98,7 @@ function TFSolve(props: any) {
 
   return (
     <>
-      <p>{props.enunciado.text}</p>
+      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
       <table className="table-auto mt-4">
         <thead>
           <tr>
@@ -271,23 +272,15 @@ function TFEdit(props: any) {
   return (
     <>
       <form>
-        <div className="mb-9">
-          <p className="block mb-2 ml-1 text-sm text-gray-900 dark:text-white">
-            Enunciado:
-          </p>
-          <textarea
-            id="message"
-            className="header-textarea"
-            placeholder=""
-            value={state.header}
-            onChange={(e) =>
-              dispatch({
-                type: TFEditActionKind.CHANGEHEADER,
-                payload: { value: e.target.value },
-              })
-            }
-          ></textarea>
-        </div>
+        <ExerciseHeaderEdit
+          header={{ ...props.enunciado, text: state.header }}
+          editFunc={(e: any) => {
+            dispatch({
+              type: TFEditActionKind.CHANGEHEADER,
+              payload: { value: e },
+            });
+          }}
+        ></ExerciseHeaderEdit>
 
         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
           Adicione as afirmações e indique se são verdadeiras ou falsas
