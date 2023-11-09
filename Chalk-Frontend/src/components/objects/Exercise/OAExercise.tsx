@@ -37,7 +37,7 @@ export function OAExercise(props: any) {
 }
 
 function OASolve(props: any) {
-  const [state, setState] = useState("");
+  const [_state, setState] = useState("");
 
   return (
     <>
