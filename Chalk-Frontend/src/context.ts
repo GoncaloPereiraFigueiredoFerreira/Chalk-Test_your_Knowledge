@@ -1,8 +1,10 @@
 import { useContext, createContext } from "react";
 
-import { User } from "./UserInterface";
+import { UserAction, UserState } from "./UserInterface";
 
-export const UserContext = createContext<User | undefined>(undefined);
+export const UserContext = createContext<
+  { userState: UserState; dispatch: React.Dispatch<UserAction> } | undefined
+>(undefined);
 
 export function useUserContext() {
   const user = useContext(UserContext);

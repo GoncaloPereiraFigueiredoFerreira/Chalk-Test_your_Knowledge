@@ -21,15 +21,15 @@ import { TFExercise } from "./TFExercise";
 import { useEffect, useState } from "react";
 
 type ExerciseProps = {
-  name: String;
-  visibility: String; // privado, não listado, curso, institucional ou público
-  type: String; // escolha múltipla, resposta aberta, verdadeiro e falso, preenchimento de espaços e código
-  author: String;
+  name: string;
+  visibility: string;
+  type: string;
+  author: string;
   enunciado: object;
   problema: object;
-  exerciseKey: number;
-  selectedExercise: number;
-  setSelectedExercise: (value: number) => void;
+  exerciseKey: string;
+  selectedExercise: string;
+  setSelectedExercise: (value: string) => void;
 };
 
 export function Exercise({
@@ -179,7 +179,7 @@ export function Exercise({
             className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
             onClick={() =>
               exerciseKey === selectedExercise
-                ? setSelectedExercise(-1)
+                ? setSelectedExercise("")
                 : setSelectedExercise(exerciseKey)
             }
           >
@@ -203,7 +203,7 @@ export function Exercise({
             } pl-4 w-full h-full flex justify-end items-center gap-4 z-10 duration-150 border-r-gray-300 dark:border-r-gray-500 bg-gray-200 dark:bg-gray-600 cursor-default`}
             onClick={() =>
               exerciseKey === selectedExercise
-                ? setSelectedExercise(-1)
+                ? setSelectedExercise("")
                 : setSelectedExercise(exerciseKey)
             }
           >

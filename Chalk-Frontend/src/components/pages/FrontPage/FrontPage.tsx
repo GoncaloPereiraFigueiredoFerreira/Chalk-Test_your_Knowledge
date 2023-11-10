@@ -1,7 +1,7 @@
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
 import { Exercise } from "../../objects/Exercise/Exercise";
 import "./FrontPage.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PopUp } from "../../interactiveElements/PopUp";
 import {
   CheckboxIcon,
@@ -11,72 +11,81 @@ import {
   TextIcon,
 } from "../../objects/SVGImages/SVGImages";
 import { useUserContext } from "../../../context";
+import { UserActionKind } from "../../../UserInterface";
 
-const userExercises = {
-  exercicios: [
-    {
-      name: "Quantas canetas",
-      visibility: "private",
-      type: "true-or-false",
-      author: "Dudu",
-      enunciado: {
-        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-        img: {
-          url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
-          pos: "BOT",
-        },
-      },
-      problema: {
-        justify: false,
-        statements: [
-          "Existem 9 canetas roxas ou vermelhas",
-          "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-          "Existem 8 canetas pretas",
-          "Existem mais canetas castanhas que amarelas",
-        ],
+const userExercises = [
+  {
+    id: "1",
+    name: "Quantas canetas",
+    visibility: "private",
+    type: "true-or-false",
+    author: "Dudu",
+    enunciado: {
+      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+      img: {
+        url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
+        pos: "BOT",
       },
     },
-    {
-      name: "Quantas canetas",
-      visibility: "private",
-      type: "multiple-choice",
-      author: "Dudu",
-      enunciado: {
-        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      },
-      problema: {
-        statements: [
-          "Existem 9 canetas roxas ou vermelhas",
-          "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-          "Existem 8 canetas pretas",
-          "Existem mais canetas castanhas que amarelas",
-        ],
+    problema: {
+      justify: false,
+      statements: [
+        "Existem 9 canetas roxas ou vermelhas",
+        "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+        "Existem 8 canetas pretas",
+        "Existem mais canetas castanhas que amarelas",
+      ],
+    },
+  },
+  {
+    id: "2",
+    name: "Quantas canetas",
+    visibility: "private",
+    type: "multiple-choice",
+    author: "Dudu",
+    enunciado: {
+      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+    },
+    problema: {
+      statements: [
+        "Existem 9 canetas roxas ou vermelhas",
+        "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+        "Existem 8 canetas pretas",
+        "Existem mais canetas castanhas que amarelas",
+      ],
+    },
+  },
+  {
+    id: "3",
+    name: "Quantas canetas",
+    visibility: "private",
+    type: "open-answer",
+    author: "Dudu",
+    enunciado: {
+      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+      img: {
+        url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
+        pos: "BOT",
       },
     },
-    {
-      name: "Quantas canetas",
-      visibility: "private",
-      type: "open-answer",
-      author: "Dudu",
-      enunciado: {
-        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-        img: {
-          url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
-          pos: "BOT",
-        },
-      },
-      problema: {},
-    },
-  ],
-};
+    problema: {},
+  },
+];
 
 export function FrontPage() {
-  const [selectedExercise, setSelectedExercise] = useState(-1);
+  const [selectedExercise, setSelectedExercise] = useState("");
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
   const [newExercisetype, setNewExercisetype] = useState("multiple-choice");
-  const user = useUserContext();
+  const { userState, dispatch } = useUserContext();
 
-  const [listExercises, setListExercises] = useState(userExercises.exercicios);
+  useEffect(() => {
+    dispatch({
+      type: UserActionKind.ADD_EXERCISES,
+      payload: {
+        exercises: userExercises,
+      },
+    });
+  }, []);
 
   function createNewExercise() {
     // colocar aqui as chamadas para criação dos exercicios
@@ -107,15 +116,16 @@ export function FrontPage() {
             Criar exercício
           </button>
         </div>
-        {listExercises.map((exercise, index) => (
+        {Object.entries(userState.listExercises).map(([key, exercise]) => (
           <Exercise
+            key={key}
             name={exercise.name}
             visibility={exercise.visibility}
             type={exercise.type} //multiple-choice open-answer true-or-false fill-in-the-blank code
             author={exercise.author}
             enunciado={exercise.enunciado}
             problema={exercise.problema}
-            exerciseKey={index}
+            exerciseKey={key}
             selectedExercise={selectedExercise}
             setSelectedExercise={(value) => setSelectedExercise(value)}
           ></Exercise>
