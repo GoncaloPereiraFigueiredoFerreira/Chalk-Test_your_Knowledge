@@ -30,6 +30,11 @@ import {
   TextIcon,
   CodeIcon,
   InputIcon,
+  SunIcon,
+  MoonIcon,
+  DownloadIcon,
+  FileUploadIcon,
+  ListIcon,
 } from "../SVGImages/SVGImages";
 
 export function Catalog() {
@@ -160,6 +165,26 @@ export function Catalog() {
           <div className="flex flex-row gap-5">
             <label>InputIcon</label>
             <InputIcon style="gray-icon" />
+          </div>
+          <div className="flex flex-row gap-5">
+            <label>SunIcon</label>
+            <SunIcon style="gray-icon" />
+          </div>
+          <div className="flex flex-row gap-5">
+            <label>MoonIcon</label>
+            <MoonIcon style="gray-icon" />
+          </div>
+          <div className="flex flex-row gap-5">
+            <label>DownloadIcon</label>
+            <DownloadIcon style="gray-icon" />
+          </div>
+          <div className="flex flex-row gap-5">
+            <label>FileUploadIcon</label>
+            <FileUploadIcon style="gray-icon" />
+          </div>
+          <div className="flex flex-row gap-5">
+            <label>ListIcon</label>
+            <ListIcon style="gray-icon" />
           </div>
         </div>
       </div>

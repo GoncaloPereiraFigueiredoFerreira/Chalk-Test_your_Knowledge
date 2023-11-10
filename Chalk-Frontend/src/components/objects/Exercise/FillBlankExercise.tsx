@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 type FillBlankExerciseProps = {
   enunciado: any;
   problema?: any;
@@ -10,14 +12,14 @@ export function FillBlankExercise(props: FillBlankExerciseProps) {
 
   switch (props.contexto) {
     case "solve":
-      exerciseDisplay = <></>;
+      exerciseDisplay = <FillBlankSolve></FillBlankSolve>;
       break;
 
     case "edit":
       exerciseDisplay = <></>;
       break;
 
-    case "previz":
+    case "preview":
       exerciseDisplay = <></>;
       break;
 
@@ -31,10 +33,30 @@ export function FillBlankExercise(props: FillBlankExerciseProps) {
   }
   return (
     <>
-      <div className="m-5 text-xl">
-        <p className="text-4xl strong mb-8">Verdadeiro ou Falso</p>
-        {exerciseDisplay}
-      </div>
+      <div className="m-5 text-xl">{exerciseDisplay}</div>
+    </>
+  );
+}
+
+function FillBlankSolve() {
+  const [rawText, setRawText] = useState("");
+  const [words, setWords] = useState([]);
+
+  useEffect(() => {
+    let wordsSplit = [...words];
+
+    //(?:(\w+)|(\d+)|([^\w\d]))
+  }, [rawText]);
+
+  return (
+    <>
+      <textarea
+        value={rawText}
+        onChange={(e) => setRawText(e.target.value)}
+        className="flex w-full resize-none bg-gray-600 rounded-lg"
+        rows={10}
+      ></textarea>
+      <div></div>
     </>
   );
 }

@@ -10,11 +10,73 @@ import {
   InputIcon,
   TextIcon,
 } from "../../objects/SVGImages/SVGImages";
+import { useUserContext } from "../../../context";
+
+const userExercises = {
+  exercicios: [
+    {
+      name: "Quantas canetas",
+      visibility: "private",
+      type: "true-or-false",
+      author: "Dudu",
+      enunciado: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+        img: {
+          url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
+          pos: "BOT",
+        },
+      },
+      problema: {
+        justify: false,
+        statements: [
+          "Existem 9 canetas roxas ou vermelhas",
+          "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          "Existem 8 canetas pretas",
+          "Existem mais canetas castanhas que amarelas",
+        ],
+      },
+    },
+    {
+      name: "Quantas canetas",
+      visibility: "private",
+      type: "multiple-choice",
+      author: "Dudu",
+      enunciado: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+      },
+      problema: {
+        statements: [
+          "Existem 9 canetas roxas ou vermelhas",
+          "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          "Existem 8 canetas pretas",
+          "Existem mais canetas castanhas que amarelas",
+        ],
+      },
+    },
+    {
+      name: "Quantas canetas",
+      visibility: "private",
+      type: "open-answer",
+      author: "Dudu",
+      enunciado: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+        img: {
+          url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
+          pos: "BOT",
+        },
+      },
+      problema: {},
+    },
+  ],
+};
 
 export function FrontPage() {
   const [selectedExercise, setSelectedExercise] = useState(-1);
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
   const [newExercisetype, setNewExercisetype] = useState("multiple-choice");
+  const user = useUserContext();
+
+  const [listExercises, setListExercises] = useState(userExercises.exercicios);
 
   function createNewExercise() {
     // colocar aqui as chamadas para criação dos exercicios
@@ -33,10 +95,10 @@ export function FrontPage() {
   }
 
   return (
-    <div className="flex flex-col w-full dark:bg-gray-700 bg-white py-8 gap-8">
+    <div className="flex flex-col w-full min-h-max h-screen dark:bg-gray-700 bg-white py-8 gap-8">
       <Searchbar></Searchbar>
-      <div className="flex-col flex w-full h-screen dark:bg-gray-700 px-16">
-        <div className="flex w-full justify-between mb-4 px-4 pb-2.5 border-b border-b-gray-300 text-gray-600 dark:border-b-gray-500 dark:text-white">
+      <div className="flex-col flex w-full min-h-max gap-4 dark:bg-gray-700 px-16 pb-8">
+        <div className="flex w-full justify-between px-4 pb-2.5 border-b border-b-gray-300 text-gray-600 dark:border-b-gray-500 dark:text-white">
           <label className="flex text-4xl">Exercícios</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-gray-200 hover:bg-slate-300 dark:hover:bg-gray-800 dark:bg-gray-600"
@@ -45,31 +107,19 @@ export function FrontPage() {
             Criar exercício
           </button>
         </div>
-        <Exercise
-          name={"Quantas canetas"}
-          visibility={"private"}
-          type={"true-or-false"}
-          author={"Dudu"}
-          enunciado={{
-            text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-            img: {
-              url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
-              pos: "BOT",
-            },
-          }}
-          problema={{
-            justify: false,
-            statements: [
-              "Existem 9 canetas roxas ou vermelhas",
-              "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-              "Existem 8 canetas pretas",
-              "Existem mais canetas castanhas que amarelas",
-            ],
-          }}
-          exerciseKey={1}
-          selectedExercise={selectedExercise}
-          setSelectedExercise={(value) => setSelectedExercise(value)}
-        ></Exercise>
+        {listExercises.map((exercise, index) => (
+          <Exercise
+            name={exercise.name}
+            visibility={exercise.visibility}
+            type={exercise.type} //multiple-choice open-answer true-or-false fill-in-the-blank code
+            author={exercise.author}
+            enunciado={exercise.enunciado}
+            problema={exercise.problema}
+            exerciseKey={index}
+            selectedExercise={selectedExercise}
+            setSelectedExercise={(value) => setSelectedExercise(value)}
+          ></Exercise>
+        ))}
       </div>
       <PopUp
         show={newExercisePopUp}

@@ -16,7 +16,7 @@ import {
   SunIcon,
 } from "../SVGImages/SVGImages.tsx";
 import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const groups: { [key: string]: string } = {
   "1": "Professores da escola AFS Gualtar",
@@ -24,9 +24,19 @@ const groups: { [key: string]: string } = {
   "3": "Turma F",
 };
 
-export function Sidebar() {
-  // const [selected,setSelected] = useState(0)
-  const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
+interface SidebarProps {
+  isOpen: boolean;
+  toggle: (value: boolean) => void;
+  selected: number;
+  setSelected: (value: number) => void;
+}
+
+export function Sidebar({
+  isOpen,
+  toggle,
+  selected,
+  setSelected,
+}: SidebarProps) {
   const [group, setGroup] = useState("0");
   const [showGroup, setShowGroup] = useState(false);
   const [darkMode, setDarkMode] = useState(
@@ -49,179 +59,158 @@ export function Sidebar() {
       return (
         <>
           <GroupIcon style={"group-gray-icon"} />
-          <span
-            className={`sidebar-dropdown-item ${sidebarIsOpen ? "" : "hidden"}`}
-          >
+          <span className={`sidebar-dropdown-item ${isOpen ? "" : "hidden"}`}>
             Grupos
           </span>
-          {sidebarIsOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
+          {isOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
         </>
       );
     } else if (num in groups) {
       return (
         <>
           <GraduateIcon style={"group-gray-icon"} />
-          <span
-            className={`sidebar-dropdown-item ${sidebarIsOpen ? "" : "hidden"}`}
-          >
+          <span className={`sidebar-dropdown-item ${isOpen ? "" : "hidden"}`}>
             {groups[num]}
           </span>
-          {sidebarIsOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
+          {isOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
         </>
       );
     }
   }
 
   return (
-    <div className="flex flex-row h-auto dark:bg-gray-800 bg-gray-200">
-      <aside
-        className={`sidebar-background ${sidebarIsOpen ? "" : "w-max"}`}
-        aria-label="Sidebar"
-      >
-        <div className="flex flex-row gap-3">
+    <aside
+      className={`sidebar-background ${isOpen ? "" : "w-max"}`}
+      aria-label="Sidebar"
+    >
+      <div className="flex flex-row gap-3">
+        <button
+          type="button"
+          className="sidebar-item w-auto"
+          onClick={() => {
+            toggle(!isOpen);
+            setShowGroup(false);
+          }}
+        >
+          <SidebarIcon style={"group-gray-icon"} />
+        </button>
+        <div className={`flex mr-4 ${isOpen ? "" : "hidden"}`}>
+          <img
+            src="https://flowbite.s3.amazonaws.com/logo.svg"
+            className="mr-3 h-8"
+            alt="FlowBite Logo"
+          />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+            Flowbite
+          </span>
+        </div>
+      </div>
+      <ul className="sidebar-divisions border-t-0">
+        <li>
           <button
             type="button"
-            className="sidebar-item w-auto"
             onClick={() => {
-              setSidebarIsOpen(!sidebarIsOpen);
-              setShowGroup(false);
+              toggle(true);
+              setShowGroup(!showGroup);
             }}
+            className="sidebar-item group"
           >
-            <SidebarIcon style={"group-gray-icon"} />
+            {getGroup(group)}
           </button>
-          <div className={`flex mr-4 ${sidebarIsOpen ? "" : "hidden"}`}>
-            <img
-              src="https://flowbite.s3.amazonaws.com/logo.svg"
-              className="mr-3 h-8"
-              alt="FlowBite Logo"
-            />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              Flowbite
-            </span>
-          </div>
-        </div>
-        <ul className="sidebar-divisions border-t-0">
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setSidebarIsOpen(true);
-                setShowGroup(!showGroup);
-              }}
-              className="sidebar-item group"
-            >
-              {getGroup(group)}
-            </button>
-            <ul className={`${showGroup ? "" : "hidden"} sidebar-dropdown`}>
-              <li>
+          <ul className={`${showGroup ? "" : "hidden"} sidebar-dropdown`}>
+            <li>
+              <button
+                onClick={() => setGroup("0")}
+                className="sidebar-item group"
+              >
+                <GraduateIcon style={"group-gray-icon"} />
+                <span className={isOpen ? "" : "hidden"}>Geral</span>
+              </button>
+            </li>
+            {Object.entries(groups).map(([key, item]) => (
+              <li key={key}>
                 <button
-                  onClick={() => setGroup("0")}
+                  onClick={() => setGroup(key)}
                   className="sidebar-item group"
                 >
                   <GraduateIcon style={"group-gray-icon"} />
-                  <span className={sidebarIsOpen ? "" : "hidden"}>Geral</span>
+                  <span className={isOpen ? "" : "hidden"}>{item}</span>
                 </button>
               </li>
-              {Object.entries(groups).map(([key, item]) => (
-                <li key={key}>
-                  <button
-                    onClick={() => setGroup(key)}
-                    className="sidebar-item group"
-                  >
-                    <GraduateIcon style={"group-gray-icon"} />
-                    <span className={sidebarIsOpen ? "" : "hidden"}>
-                      {item}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </li>
-        </ul>
+            ))}
+          </ul>
+        </li>
+      </ul>
 
-        <ul className="sidebar-divisions">
-          <li>
-            <Link to={"/user/test"}>
-              <button className="sidebar-item group">
-                <CheckListIcon style={"group-gray-icon"} />
-                <span className={sidebarIsOpen ? "" : "hidden"}>
-                  Avaliações
+      <ul className="sidebar-divisions">
+        <li>
+          <Link to={"/user/test"}>
+            <button className="sidebar-item group">
+              <CheckListIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>Avaliações</span>
+            </button>
+          </Link>
+        </li>
+        <li>
+          <Link to={"/user"}>
+            <button className="sidebar-item group">
+              <PenIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>Exercicos</span>
+            </button>
+          </Link>
+        </li>
+        <li>
+          <button className="sidebar-item group">
+            <FoldersIcon style={"group-gray-icon"} />
+            <span className={isOpen ? "" : "hidden"}>Rubricas</span>
+          </button>
+        </li>
+      </ul>
+      <ul className="sidebar-divisions">
+        <li>
+          <button className="sidebar-item group">
+            <HelpIcon style={"group-gray-icon"} />
+            <span className={isOpen ? "" : "hidden"}>Ajuda</span>
+          </button>
+        </li>
+        <li>
+          <button className="sidebar-item group">
+            <TeacherIcon style={"group-gray-icon"} />
+            <span className={isOpen ? "" : "hidden"}>Tutoriais</span>
+          </button>
+        </li>
+        <li>
+          <button className="sidebar-item group">
+            <MessageBoxIcon style={"group-gray-icon"} />
+            <span className={isOpen ? "" : "hidden"}>Sugestões</span>
+          </button>
+        </li>
+        <li>
+          <button className="sidebar-item group" onClick={toggleDarkMode}>
+            {darkMode ? (
+              <>
+                <SunIcon style={"group-gray-icon"}></SunIcon>
+                <span className={isOpen ? "" : "hidden"}>
+                  Light Mode Toogle
                 </span>
-              </button>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/user"}>
-              <button className="sidebar-item group">
-                <PenIcon style={"group-gray-icon"} />
-                <span className={sidebarIsOpen ? "" : "hidden"}>Exercicos</span>
-              </button>
-            </Link>
-          </li>
-          <li>
+              </>
+            ) : (
+              <>
+                <MoonIcon style={"group-gray-icon"}></MoonIcon>{" "}
+                <span className={isOpen ? "" : "hidden"}>Dark Mode Toogle</span>
+              </>
+            )}
+          </button>
+        </li>
+        <li>
+          <Link to={"/user/catalog"}>
             <button className="sidebar-item group">
-              <FoldersIcon style={"group-gray-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Rubricas</span>
+              <SettingsIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>Definições</span>
             </button>
-          </li>
-        </ul>
-        <ul className="sidebar-divisions">
-          <li>
-            <button className="sidebar-item group">
-              <HelpIcon style={"group-gray-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Ajuda</span>
-            </button>
-          </li>
-          <li>
-            <button className="sidebar-item group">
-              <TeacherIcon style={"group-gray-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Tutoriais</span>
-            </button>
-          </li>
-          <li>
-            <button className="sidebar-item group">
-              <MessageBoxIcon style={"group-gray-icon"} />
-              <span className={sidebarIsOpen ? "" : "hidden"}>Sugestões</span>
-            </button>
-          </li>
-          <li>
-            <button className="sidebar-item group" onClick={toggleDarkMode}>
-              {darkMode ? (
-                <>
-                  <SunIcon style={"group-gray-icon"}></SunIcon>
-                  <span className={sidebarIsOpen ? "" : "hidden"}>
-                    Light Mode Toogle
-                  </span>
-                </>
-              ) : (
-                <>
-                  <MoonIcon style={"group-gray-icon"}></MoonIcon>{" "}
-                  <span className={sidebarIsOpen ? "" : "hidden"}>
-                    Dark Mode Toogle
-                  </span>
-                </>
-              )}
-            </button>
-          </li>
-          <li>
-            <Link to={"/user/catalog"}>
-              <button className="sidebar-item group">
-                <SettingsIcon style={"group-gray-icon"} />
-                <span className={sidebarIsOpen ? "" : "hidden"}>
-                  Definições
-                </span>
-              </button>
-            </Link>
-          </li>
-        </ul>
-      </aside>
-      <div
-        className={`w-full z-10 transition-all ${
-          sidebarIsOpen ? "ml-64" : "ml-16"
-        }`}
-      >
-        <Outlet />
-      </div>
-    </div>
+          </Link>
+        </li>
+      </ul>
+    </aside>
   );
 }
