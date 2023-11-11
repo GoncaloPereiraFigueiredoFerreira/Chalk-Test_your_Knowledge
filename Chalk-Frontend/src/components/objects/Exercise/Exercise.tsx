@@ -171,7 +171,7 @@ export function Exercise({
     <div
       className={`${
         exerciseKey === selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } transition-all overflow-hidden duration-300 rounded-lg bg-gray-200 dark:text-white dark:bg-gray-600`}
+      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-gray-200 dark:text-white dark:bg-gray-600`}
     >
       <div className="flex flex-col w-full h-full px-5 py-2.5">
         <div className="flex w-full items-center text-sm font-normal transition-all mb-4 group">
@@ -200,7 +200,7 @@ export function Exercise({
               exerciseKey === selectedExercise
                 ? "mr-[204px] pr-4 border-r"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r"
-            } pl-4 w-full h-full flex justify-end items-center gap-4 z-10 duration-150 border-r-gray-300 dark:border-r-gray-500 bg-gray-200 dark:bg-gray-600 cursor-default`}
+            } pl-4 w-full h-full flex justify-end items-center gap-4 z-10 duration-100 transition-[margin] border-r-gray-300 dark:border-r-gray-500 bg-gray-200 dark:bg-gray-600 cursor-default`}
             onClick={() =>
               exerciseKey === selectedExercise
                 ? setSelectedExercise("")
