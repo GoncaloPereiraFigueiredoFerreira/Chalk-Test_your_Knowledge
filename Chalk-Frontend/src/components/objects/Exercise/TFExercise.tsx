@@ -110,7 +110,15 @@ function TFSolve(props: any) {
         <tbody>
           <StateContext.Provider value={{ state, dispatch }}>
             {state.map((_solve: TFSolve, index: number) => {
-              return <TFStatement key={index} id={index} justify={true} />;
+              return (
+                <TFStatement
+                  key={index}
+                  id={index}
+                  justify={true}
+                  state={state}
+                  dispatch={dispatch}
+                />
+              );
             })}
           </StateContext.Provider>
         </tbody>
@@ -121,7 +129,6 @@ function TFSolve(props: any) {
 
 function TFStatement(props: any) {
   let name = "radio-button-" + props.id;
-  const { state, dispatch } = useContext(StateContext);
   return (
     <tr>
       <td className="p-3">
@@ -130,7 +137,7 @@ function TFStatement(props: any) {
           type="radio"
           name={name}
           onChange={() =>
-            dispatch({
+            props.dispatch({
               type: TFSolveActionKind.CHOOSE,
               index: props.id,
               value: "true",
@@ -144,7 +151,7 @@ function TFStatement(props: any) {
           type="radio"
           name={name}
           onChange={() =>
-            dispatch({
+            props.dispatch({
               type: TFSolveActionKind.CHOOSE,
               index: props.id,
               value: "false",
@@ -156,7 +163,7 @@ function TFStatement(props: any) {
         {props.justify ? (
           <TFJustify key={props.id} id={props.id}></TFJustify>
         ) : (
-          <p>{state[props.id].phrase}</p>
+          <p>{props.state[props.id].phrase}</p>
         )}
       </td>
     </tr>

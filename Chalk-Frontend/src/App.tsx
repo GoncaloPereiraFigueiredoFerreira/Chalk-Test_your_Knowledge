@@ -7,6 +7,7 @@ import { TestPage } from "./components/pages/TestPage/TestPage.js";
 //import { EditExercisePage } from "./components/pages/EditExercisePage/EditExercisePage.js";
 import { Catalog } from "./components/objects/SVGImages/catalog.js";
 import { UserInterface } from "./UserInterface.js";
+import "./App.css";
 
 function App() {
   return (

@@ -11,9 +11,7 @@
     overflow-y-auto
     py-5
     w-64
-    px-3
-    bg-gray-200
-    dark:bg-gray-800;
+    px-3;
   }
 
   .sidebar-content {
@@ -24,9 +22,7 @@
     @apply pt-5
     mt-5
     space-y-2
-    border-t
-    border-gray-300
-    dark:border-gray-700;
+    border-t;
   }
   .sidebar-item {
     @apply flex
@@ -36,14 +32,9 @@
     text-left
     gap-3
     font-normal
-    text-black
     rounded-lg
     transition
-    duration-75
-    hover:bg-gray-100
-    dark:hover:bg-gray-700
-    dark:text-white
-    dark:bg-gray-800;
+    duration-75;
   }
 
   .sidebar-dropdown {

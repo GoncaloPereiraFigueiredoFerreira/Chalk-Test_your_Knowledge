@@ -80,13 +80,13 @@ export function Sidebar({
 
   return (
     <aside
-      className={`sidebar-background ${isOpen ? "" : "w-max"}`}
+      className={`sidebar-background bg-1-3 ${isOpen ? "" : "w-max"}`}
       aria-label="Sidebar"
     >
       <div className="flex flex-row gap-3">
         <button
           type="button"
-          className="sidebar-item w-auto"
+          className="sidebar-item bg-btn-1 w-auto"
           onClick={() => {
             toggle(!isOpen);
             setShowGroup(false);
@@ -113,7 +113,7 @@ export function Sidebar({
               toggle(true);
               setShowGroup(!showGroup);
             }}
-            className="sidebar-item group"
+            className="sidebar-item bg-btn-1 group"
           >
             {getGroup(group)}
           </button>
@@ -121,7 +121,7 @@ export function Sidebar({
             <li>
               <button
                 onClick={() => setGroup("0")}
-                className="sidebar-item group"
+                className="sidebar-item bg-btn-1 group"
               >
                 <GraduateIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>Geral</span>
@@ -131,7 +131,7 @@ export function Sidebar({
               <li key={key}>
                 <button
                   onClick={() => setGroup(key)}
-                  className="sidebar-item group"
+                  className="sidebar-item bg-btn-1 group"
                 >
                   <GraduateIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>{item}</span>
@@ -142,10 +142,10 @@ export function Sidebar({
         </li>
       </ul>
 
-      <ul className="sidebar-divisions">
+      <ul className="sidebar-divisions border-gray-3">
         <li>
           <Link to={"/user/test"}>
-            <button className="sidebar-item group">
+            <button className="sidebar-item bg-btn-1 group">
               <CheckListIcon style={"group-gray-icon"} />
               <span className={isOpen ? "" : "hidden"}>Avaliações</span>
             </button>
@@ -153,40 +153,43 @@ export function Sidebar({
         </li>
         <li>
           <Link to={"/user"}>
-            <button className="sidebar-item group">
+            <button className="sidebar-item bg-btn-1 group">
               <PenIcon style={"group-gray-icon"} />
               <span className={isOpen ? "" : "hidden"}>Exercicos</span>
             </button>
           </Link>
         </li>
         <li>
-          <button className="sidebar-item group">
+          <button className="sidebar-item bg-btn-1 group">
             <FoldersIcon style={"group-gray-icon"} />
             <span className={isOpen ? "" : "hidden"}>Rubricas</span>
           </button>
         </li>
       </ul>
-      <ul className="sidebar-divisions">
+      <ul className="sidebar-divisions border-gray-3">
         <li>
-          <button className="sidebar-item group">
+          <button className="sidebar-item bg-btn-1 group">
             <HelpIcon style={"group-gray-icon"} />
             <span className={isOpen ? "" : "hidden"}>Ajuda</span>
           </button>
         </li>
         <li>
-          <button className="sidebar-item group">
+          <button className="sidebar-item bg-btn-1 group">
             <TeacherIcon style={"group-gray-icon"} />
             <span className={isOpen ? "" : "hidden"}>Tutoriais</span>
           </button>
         </li>
         <li>
-          <button className="sidebar-item group">
+          <button className="sidebar-item bg-btn-1 group">
             <MessageBoxIcon style={"group-gray-icon"} />
             <span className={isOpen ? "" : "hidden"}>Sugestões</span>
           </button>
         </li>
         <li>
-          <button className="sidebar-item group" onClick={toggleDarkMode}>
+          <button
+            className="sidebar-item bg-btn-1 group"
+            onClick={toggleDarkMode}
+          >
             {darkMode ? (
               <>
                 <SunIcon style={"group-gray-icon"}></SunIcon>
@@ -204,7 +207,7 @@ export function Sidebar({
         </li>
         <li>
           <Link to={"/user/catalog"}>
-            <button className="sidebar-item group">
+            <button className="sidebar-item bg-btn-1 group">
               <SettingsIcon style={"group-gray-icon"} />
               <span className={isOpen ? "" : "hidden"}>Definições</span>
             </button>

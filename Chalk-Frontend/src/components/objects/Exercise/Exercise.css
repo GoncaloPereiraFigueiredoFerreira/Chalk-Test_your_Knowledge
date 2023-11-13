@@ -13,8 +13,7 @@
     @apply flex
     gap-2
     items-center
-    justify-end
-    text-gray-400;
+    justify-end;
   }
 
   .tag-exercise {

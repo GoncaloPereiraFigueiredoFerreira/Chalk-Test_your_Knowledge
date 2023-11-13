@@ -31,7 +31,7 @@
   }
 
   .group-gray-icon {
-    @apply text-gray-400
+    @apply text-gray-500
     transition-all
     group-hover:text-black
     hover:text-black
@@ -41,7 +41,7 @@
   }
 
   .gray-icon {
-    @apply text-gray-400
+    @apply text-gray-500
     transition-all
     hover:text-black
     dark:text-gray-400
@@ -51,6 +51,12 @@
   .black-icon {
     @apply text-black
     dark:text-white;
+  }
+
+  .dark-gray-icon {
+    @apply text-gray-600
+    dark:text-white
+    hover:text-gray-700;
   }
 
   .inherit-icon {

@@ -11,7 +11,7 @@ export interface Exercise {
   type: string;
   author: string;
   enunciado: any;
-  problema: any;
+  problema?: any;
 }
 
 // UserState definition
@@ -91,7 +91,7 @@ export function UserInterface({ userData }: UserInterfaceProps) {
   const [userState, dispatch] = useReducer(UserStateReducer, userData);
 
   return (
-    <div className="flex flex-row h-96 dark:bg-gray-800 bg-gray-200">
+    <div className="flex flex-row h-full">
       <Sidebar
         isOpen={isOpen}
         toggle={toggle}
@@ -99,12 +99,15 @@ export function UserInterface({ userData }: UserInterfaceProps) {
         setSelected={setSelected}
       ></Sidebar>
       <div
-        className={`w-full z-10 transition-all ${isOpen ? "ml-64" : "ml-16"}`}
+        className={`w-full z-10 h-full transition-all ${
+          isOpen ? "ml-64" : "ml-16"
+        }`}
       >
         <UserContext.Provider value={{ userState, dispatch }}>
           <Outlet />
         </UserContext.Provider>
       </div>
+      <div className="fixed top-0 left-0 h-screen w-screen bg-1-1 -z-10"></div>
     </div>
   );
 }

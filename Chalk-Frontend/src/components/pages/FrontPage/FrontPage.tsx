@@ -104,13 +104,13 @@ export function FrontPage() {
   }
 
   return (
-    <div className="flex flex-col w-full min-h-max h-screen dark:bg-gray-700 bg-white py-8 gap-8">
+    <div className="flex flex-col w-full min-h-max h-screen bg-2-1 py-8 gap-8">
       <Searchbar></Searchbar>
-      <div className="flex-col flex w-full min-h-max gap-4 dark:bg-gray-700 px-16 pb-8">
-        <div className="flex w-full justify-between px-4 pb-2.5 border-b border-b-gray-300 text-gray-600 dark:border-b-gray-500 dark:text-white">
-          <label className="flex text-4xl">Exercícios</label>
+      <div className="flex-col flex w-full gap-4 px-16 pb-8 bg-2-1">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
+          <label className="flex text-title-1">Exercícios</label>
           <button
-            className="transition-all duration-100 py-2 px-4 rounded-lg bg-gray-200 hover:bg-slate-300 dark:hover:bg-gray-800 dark:bg-gray-600"
+            className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
             onClick={() => setNewExercisePopUp(true)}
           >
             Criar exercício
@@ -136,7 +136,7 @@ export function FrontPage() {
         closePopUp={() => setNewExercisePopUp(false)}
         children={
           <>
-            <label className="flex w-full justify-between mb-4 px-4 pb-2.5 border-b border-b-gray-300 text-gray-600 dark:border-b-gray-500 dark:text-white text-4xl">
+            <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-title-1 border-b-2 border-gray-1">
               Criar novo exercício
             </label>
             <div className="grid grid-cols-2">
@@ -144,9 +144,9 @@ export function FrontPage() {
                 onClick={() => setNewExercisetype("multiple-choice")}
                 className={`${
                   "multiple-choice" != newExercisetype
-                    ? "btn-normal-frontpage text-gray-500"
-                    : "btn-selected-frontpage text-white"
-                } btn-frontpage text-lg dark:text-white group`}
+                    ? "bg-btn-4-1"
+                    : "btn-selected"
+                } btn-frontpage text-lg group`}
               >
                 <CheckedListIcon style="inherit-icon" size="size-12" />
                 Escolha múltipla
@@ -155,9 +155,9 @@ export function FrontPage() {
                 onClick={() => setNewExercisetype("open-answer")}
                 className={`${
                   "open-answer" != newExercisetype
-                    ? "btn-normal-frontpage text-gray-500"
-                    : "btn-selected-frontpage text-white"
-                } btn-frontpage text-lg dark:text-white group`}
+                    ? "bg-btn-4-1"
+                    : "btn-selected"
+                } btn-frontpage text-lg group`}
               >
                 <TextIcon style="inherit-icon" size="size-12" />
                 Resposta aberta
@@ -166,9 +166,9 @@ export function FrontPage() {
                 onClick={() => setNewExercisetype("true-or-false")}
                 className={`${
                   "true-or-false" != newExercisetype
-                    ? "btn-normal-frontpage text-gray-500"
-                    : "btn-selected-frontpage text-white"
-                } btn-frontpage text-lg dark:text-white group`}
+                    ? "bg-btn-4-1"
+                    : "btn-selected"
+                } btn-frontpage text-lg group`}
               >
                 <CheckboxIcon style="inherit-icon" size="size-12" />
                 Verdadeiro ou falso
@@ -177,9 +177,9 @@ export function FrontPage() {
                 onClick={() => setNewExercisetype("fill-in-the-blank")}
                 className={`${
                   "fill-in-the-blank" != newExercisetype
-                    ? "btn-normal-frontpage text-gray-500"
-                    : "btn-selected-frontpage text-white"
-                } btn-frontpage text-lg dark:text-white group`}
+                    ? "bg-btn-4-1"
+                    : "btn-selected"
+                } btn-frontpage text-lg group`}
               >
                 <InputIcon style="inherit-icon" size="size-12" />
                 Preenchimento de espaços
@@ -187,10 +187,8 @@ export function FrontPage() {
               <button
                 onClick={() => setNewExercisetype("code")}
                 className={`${
-                  "code" != newExercisetype
-                    ? "btn-normal-frontpage text-gray-500"
-                    : "btn-selected-frontpage text-white"
-                } btn-frontpage text-lg dark:text-white group`}
+                  "code" != newExercisetype ? "bg-btn-4-1" : "btn-selected"
+                } btn-frontpage text-lg group`}
               >
                 <CodeIcon style="inherit-icon" size="size-12" />
                 Código
@@ -199,9 +197,9 @@ export function FrontPage() {
             <div className="flex justify-end">
               <button
                 onClick={() => createNewExercise()}
-                className="btn-selected-frontpage btn-frontpage group"
+                className="btn-selected btn-frontpage group"
               >
-                <label className="text-lg text-white">Seguinte</label>
+                <label className="text-lg">Seguinte</label>
               </button>
             </div>
           </>
