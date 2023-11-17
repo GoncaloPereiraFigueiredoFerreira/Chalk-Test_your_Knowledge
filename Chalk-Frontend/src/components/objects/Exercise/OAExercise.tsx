@@ -2,19 +2,28 @@ import { useState } from "react";
 import { DownloadIcon, FileUploadIcon, ListIcon } from "../SVGImages/SVGImages";
 import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
 
-//Open Answer Exercise
-export function OAExercise(props: any) {
+interface ExerciseProps {
+  enunciado: any;
+  problem?: any;
+  name: string;
+  position: string;
+  contexto: string;
+  justify?: string;
+}
+
+export function OAExercise({
+  enunciado,
+  name,
+  position,
+  contexto,
+}: ExerciseProps) {
   let exerciseDisplay = <></>;
-  switch (props.contexto) {
+  switch (contexto) {
     case "solve":
-      exerciseDisplay = <OASolve enunciado={props.enunciado}></OASolve>;
+      exerciseDisplay = <OASolve enunciado={enunciado}></OASolve>;
       break;
 
-    case "edit":
-      exerciseDisplay = <OAEdit enunciado={props.enunciado}></OAEdit>;
-      break;
-
-    case "previz":
+    case "preview":
       exerciseDisplay = <></>;
       break;
 
@@ -27,12 +36,10 @@ export function OAExercise(props: any) {
       break;
   }
   return (
-    <>
-      <div className="m-5 text-xl">
-        <p className="text-4xl strong mb-8">Resposta Aberta</p>
-        {exerciseDisplay}
-      </div>
-    </>
+    <div className="">
+      <div className="m-5 text-title-2">{position + ") " + name}</div>
+      <div className="m-5 text-lg">{exerciseDisplay}</div>
+    </div>
   );
 }
 
@@ -44,13 +51,13 @@ function OASolve(props: any) {
       <ExerciseHeader header={props.enunciado}></ExerciseHeader>
 
       <form>
-        <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-          <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
-            <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600">
+        <div className="w-full mb-4 border-2 rounded-lg ex-1">
+          <div className="flex items-center justify-between px-3 py-2 border-b-2 rounded-t-lg ex-2">
+            <div className="flex flex-wrap items-center sm:divide-x-2 ex-division">
               <div className="flex items-center space-x-1 sm:pr-4">
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="p-2 rounded light-mode-gray-icon"
                 >
                   <FileUploadIcon></FileUploadIcon>
                   <span className="sr-only">Attach file</span>
@@ -59,7 +66,7 @@ function OASolve(props: any) {
               <div className="flex flex-wrap items-center space-x-1 sm:pl-4">
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="p-2 rounded cursor-pointer light-mode-gray-icon"
                 >
                   <ListIcon></ListIcon>
                   <span className="sr-only">Add list</span>
@@ -67,7 +74,7 @@ function OASolve(props: any) {
 
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="p-2 rounded cursor-pointer light-mode-gray-icon"
                 >
                   <DownloadIcon></DownloadIcon>
                   <span className="sr-only">Download</span>
@@ -75,11 +82,11 @@ function OASolve(props: any) {
               </div>
             </div>
           </div>
-          <div className="px-4 py-2 bg-white rounded-b-lg dark:bg-gray-800">
+          <div className="px-4 py-2 rounded-b-lg">
             <textarea
               id="editor"
               rows={8}
-              className="block w-full px-0 text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+              className="block w-full px-0 border-0 focus:ring-0"
               placeholder="Write your answer..."
               onChange={(e) => setState(e.target.value)}
               required
@@ -91,7 +98,7 @@ function OASolve(props: any) {
   );
 }
 
-function OAEdit(props: any) {
+export function OAEdit(props: any) {
   const [state, setState] = useState(props.enunciado.text);
   return (
     <>

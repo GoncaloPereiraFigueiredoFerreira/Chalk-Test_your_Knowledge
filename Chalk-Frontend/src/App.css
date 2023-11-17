@@ -7,7 +7,7 @@
 
   /* userInterface -> gap between frontpage and sidebar */
   .bg-1-1 {
-    @apply bg-gray-100
+    @apply bg-gray-300
     dark:bg-gray-800;
   }
 
@@ -38,6 +38,29 @@
     @apply bg-gray-300
     dark:bg-gray-600
     dark:text-white;
+  }
+
+  /* ---------------------- */
+  /*       EXERCISE BG      */
+  /* ---------------------- */
+
+  /* exercise -> bg-white & border ignored */
+  .ex-1 {
+    @apply text-black
+    bg-white
+    border-gray-300;
+  }
+
+  /* OA -> bg-toolbar */
+  .ex-2 {
+    @apply text-black
+    bg-gray-200
+    border-gray-300;
+  }
+
+  /* OA -> bg-toolbar */
+  .ex-division {
+    @apply divide-gray-300;
   }
 
   /* ---------------------- */
@@ -117,6 +140,16 @@
     text-gray-600
     dark:text-white;
   }
+
+  /* Exercise name */
+  .text-title-2 {
+    @apply text-4xl
+    text-black;
+  }
+
+  /* ---------------------- */
+  /*         BORDER         */
+  /* ---------------------- */
 
   /* PopUp -> separation lines */
   /* Execise -> separation lines */

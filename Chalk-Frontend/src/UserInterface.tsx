@@ -11,7 +11,7 @@ export interface Exercise {
   type: string;
   author: string;
   enunciado: any;
-  problema?: any;
+  problem?: any;
 }
 
 // UserState definition

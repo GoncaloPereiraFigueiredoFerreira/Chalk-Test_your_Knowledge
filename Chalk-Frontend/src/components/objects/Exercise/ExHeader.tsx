@@ -1,50 +1,57 @@
 import { useState } from "react";
 
-enum ImgPos {
+export enum ImgPos {
   TOP = "TOP",
   BOT = "BOT",
+  LEFT = "LEFT",
+  RIGHT = "RIGHT",
 }
 
-type ExerciseHeader = {
+export interface ExerciseHeader {
   text: string;
   img?: { pos: ImgPos; url: string };
-};
+}
 
-type HeaderProps = { header: ExerciseHeader };
-
-type EditHeaderProps = { header: ExerciseHeader; editFunc: Function };
+interface HeaderProps {
+  header: ExerciseHeader;
+}
 
 export function ExerciseHeader({ header }: HeaderProps) {
-  let component = <p>{header.text}</p>;
-  if ("img" in header) {
-    let imgComponent = (
-      <div className="flex justify-center m-4 object-fit h-80">
-        <img src={header.img!.url}></img>
+  if (header.img) {
+    const imgComponent = (
+      <div className="flex w-full justify-center m-4">
+        <img className="max-h-52" src={header.img.url}></img>
       </div>
     );
-    switch (header.img!.pos) {
+
+    var style;
+
+    switch (header.img.pos) {
+      case ImgPos.BOT:
       case ImgPos.TOP: {
-        component = (
-          <>
-            {imgComponent}
-            {component}
-          </>
-        );
+        style = "flex flex-col justify-center ";
         break;
       }
-      case ImgPos.BOT: {
-        console.log("helo=");
-        component = (
-          <>
-            {component}
-            {imgComponent}
-          </>
-        );
+      default: {
+        style = "grid grid-cols-2 items-center";
         break;
       }
     }
+    return (
+      <div className={"mx-12 mb-6 " + style}>
+        {ImgPos.LEFT === header.img.pos ? imgComponent : null}
+        {header.text}
+        {ImgPos.LEFT === header.img.pos ? null : imgComponent}
+      </div>
+    );
+  } else {
+    return <div className={"mx-12 mb-6 " + style}>{header.text}</div>;
   }
-  return <div className="flex-col mb-6">{component}</div>;
+}
+
+interface EditHeaderProps {
+  header: ExerciseHeader;
+  editFunc: Function;
 }
 
 // The edit func needs to be able to add/alter the image

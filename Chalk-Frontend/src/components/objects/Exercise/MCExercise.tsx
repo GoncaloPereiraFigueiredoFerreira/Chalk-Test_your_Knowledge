@@ -1,22 +1,31 @@
 import { useReducer, createContext, useContext, useState } from "react";
 import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
 
-export function MCExercise(props: any) {
+interface ExerciseProps {
+  enunciado: any;
+  problem?: any;
+  name: string;
+  position: string;
+  contexto: string;
+  justify?: string;
+}
+
+export function MCExercise({
+  enunciado,
+  problem,
+  name,
+  position,
+  contexto,
+}: ExerciseProps) {
   let exerciseDisplay = <></>;
-  switch (props.contexto) {
+  switch (contexto) {
     case "solve":
       exerciseDisplay = (
-        <MCSolve problem={props.problema} enunciado={props.enunciado}></MCSolve>
+        <MCSolve problem={problem} enunciado={enunciado}></MCSolve>
       );
       break;
 
-    case "edit":
-      exerciseDisplay = (
-        <MCEdit problem={props.problema} enunciado={props.enunciado}></MCEdit>
-      );
-      break;
-
-    case "previz":
+    case "preview":
       exerciseDisplay = <></>;
       break;
 
@@ -30,10 +39,8 @@ export function MCExercise(props: any) {
   }
   return (
     <>
-      <div className="m-5 text-xl">
-        <p className="text-4xl strong mb-8">Escolha Múltipla</p>
-        {exerciseDisplay}
-      </div>
+      <div className="m-5 text-title-2">{position + ") " + name}</div>
+      <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );
 }
@@ -47,32 +54,22 @@ function MCSolve(props: any) {
       <ul>
         {props.problem.statements.map((text: string, id: number) => {
           return (
-            <MCStatement
-              key={id}
-              text={text}
-              id={id}
-              choose={setState}
-            ></MCStatement>
+            <label
+              htmlFor={"mc" + id}
+              className="flex px-4 py-2 gap-2 items-center hover:bg-gray-300"
+            >
+              <input
+                id={"mc" + id}
+                name="mc"
+                type="radio"
+                className="radio-blue mr-3"
+                onClick={() => setState(text)}
+              ></input>
+              {text}
+            </label>
           );
         })}
       </ul>
-    </>
-  );
-}
-
-function MCStatement(props: any) {
-  return (
-    <>
-      <li className="flex mb-4">
-        <input
-          id={"mc" + props.id}
-          name="mc"
-          type="radio"
-          className="radio-blue mr-3"
-          onClick={() => props.choose(props.text)}
-        ></input>
-        <label htmlFor={"mc" + props.id}>{props.text}</label>
-      </li>
     </>
   );
 }
@@ -141,7 +138,7 @@ function EditReducer(state: MCEditState, action: MCEditAction): MCEditState {
   }
 }
 
-function MCEdit(props: any) {
+export function MCEdit(props: any) {
   let initState: MCEditState = { header: "", statements: [], correct: "" };
   initState.header = props.enunciado.text;
   props.problem.statements.map((text: any) => initState.statements.push(text));

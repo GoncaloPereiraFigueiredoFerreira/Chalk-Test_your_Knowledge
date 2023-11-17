@@ -53,8 +53,6 @@ export function Sidebar({
   };
 
   function getGroup(num: string) {
-    console.log(groups[num]);
-
     if (num === "0" || showGroup) {
       return (
         <>

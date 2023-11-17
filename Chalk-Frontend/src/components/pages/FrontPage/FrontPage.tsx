@@ -12,6 +12,7 @@ import {
 } from "../../objects/SVGImages/SVGImages";
 import { useUserContext } from "../../../context";
 import { UserActionKind } from "../../../UserInterface";
+import { ImgPos } from "../../objects/Exercise/ExHeader";
 
 const userExercises = [
   {
@@ -27,7 +28,7 @@ const userExercises = [
         pos: "BOT",
       },
     },
-    problema: {
+    problem: {
       justify: false,
       statements: [
         "Existem 9 canetas roxas ou vermelhas",
@@ -46,7 +47,7 @@ const userExercises = [
     enunciado: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
     },
-    problema: {
+    problem: {
       statements: [
         "Existem 9 canetas roxas ou vermelhas",
         "Existem tantas canetas pretas ou roxas, quanto vermelhas",
@@ -64,11 +65,11 @@ const userExercises = [
     enunciado: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
-        url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
-        pos: "BOT",
+        url: "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
+        pos: ImgPos.RIGHT,
       },
     },
-    problema: {},
+    problem: {},
   },
 ];
 
@@ -119,12 +120,13 @@ export function FrontPage() {
         {Object.entries(userState.listExercises).map(([key, exercise]) => (
           <Exercise
             key={key}
+            position={key}
             name={exercise.name}
             visibility={exercise.visibility}
             type={exercise.type} //multiple-choice open-answer true-or-false fill-in-the-blank code
             author={exercise.author}
             enunciado={exercise.enunciado}
-            problema={exercise.problema}
+            problem={exercise.problem}
             exerciseKey={key}
             selectedExercise={selectedExercise}
             setSelectedExercise={(value) => setSelectedExercise(value)}

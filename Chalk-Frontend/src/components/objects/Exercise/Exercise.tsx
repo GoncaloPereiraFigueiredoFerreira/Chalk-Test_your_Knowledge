@@ -1,7 +1,7 @@
 import {
   CheckboxIcon,
   CheckedListIcon,
-  CodeIcon,
+  // CodeIcon,
   EyeSlashIcon,
   GarbageIcon,
   GraduateIcon,
@@ -20,24 +20,26 @@ import { OAExercise } from "./OAExercise";
 import { TFExercise } from "./TFExercise";
 import { useEffect, useState } from "react";
 
-type ExerciseProps = {
+interface ExerciseProps {
+  position: string;
   name: string;
   visibility: string;
   type: string;
   author: string;
   enunciado: any;
-  problema: any;
+  problem: any;
   exerciseKey: string;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
-};
+}
 
 export function Exercise({
+  position,
   name,
   visibility,
   type,
   enunciado,
-  problema,
+  problem,
   exerciseKey,
   selectedExercise,
   setSelectedExercise,
@@ -57,8 +59,10 @@ export function Exercise({
         setPreview(
           <MCExercise
             enunciado={enunciado}
-            problema={problema}
+            problem={problem}
             contexto="solve"
+            name={name}
+            position={position}
           ></MCExercise>
         );
         break;
@@ -72,8 +76,9 @@ export function Exercise({
         setPreview(
           <OAExercise
             enunciado={enunciado}
-            problema={problema}
             contexto="solve"
+            name={name}
+            position={position}
           ></OAExercise>
         );
         break;
@@ -87,8 +92,11 @@ export function Exercise({
         setPreview(
           <TFExercise
             enunciado={enunciado}
-            problema={problema}
+            problem={problem}
             contexto="solve"
+            name={name}
+            position={position}
+            justify="false-only" // none, false-only or all
           ></TFExercise>
         );
         break;
@@ -102,26 +110,28 @@ export function Exercise({
         setPreview(
           <FillBlankExercise
             enunciado={enunciado}
-            problema={problema}
+            problem={problem}
             contexto="solve"
+            // name={name}
           ></FillBlankExercise>
         );
         break;
-      case "code":
-        setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
-            <CodeIcon size="size-4" />
-            Código
-          </label>
-        );
-        setPreview(
-          <TFExercise
-            enunciado={enunciado}
-            problema={problema}
-            contexto="solve"
-          ></TFExercise>
-        );
-        break;
+      // case "code":
+      //   setTypeLabel(
+      //     <label className="caracteristics-exercise gray-icon">
+      //       <CodeIcon size="size-4" />
+      //       Código
+      //     </label>
+      //   );
+      //   setPreview(
+      //     <TFExercise
+      //       enunciado={enunciado}
+      //       problem={problem}
+      //       contexto="solve"
+      //       name={name}
+      //     ></TFExercise>
+      //   );
+      //   break;
     }
   }, [type]);
 
@@ -250,7 +260,7 @@ export function Exercise({
         <div
           className={`${
             exerciseKey != selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 min-h-[24rem] border rounded-lg border-gray-1 bg-white text-black`}
+          } flex flex-col mx-4 mb-4 min-h-[24rem] border rounded-lg ex-1 border-gray-1`}
         >
           {preview}
         </div>

@@ -22,31 +22,172 @@
     py-0.5
     rounded-lg;
   }
+
+  .grid-layout-exercise {
+    display: grid;
+    grid-template-columns: min-content min-content auto;
+  }
+
   .header-textarea {
-    @apply block p-4 pb-5 w-3/4 h-28 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+    @apply block
+    p-4
+    pb-5
+    w-3/4
+    h-28
+    text-gray-900
+    bg-gray-50
+    rounded-lg
+    border
+    border-gray-300
+    focus:ring-blue-500
+    focus:border-blue-500
+    dark:bg-gray-700
+    dark:border-gray-600
+    dark:placeholder-gray-400
+    dark:text-white
+    dark:focus:ring-blue-500
+    dark:focus:border-blue-500;
   }
 
   .radio-green {
-    @apply relative h-5 w-5 cursor-pointer appearance-none rounded-full focus:ring-0 border text-green-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-green-500 checked:before:bg-green-500 hover:before:opacity-10 !important;
+    @apply relative
+    h-5
+    w-5
+    cursor-pointer
+    appearance-none
+    rounded-full
+    focus:ring-0
+    border
+    text-green-500
+    transition-all
+    before:absolute
+    before:top-2/4
+    before:left-2/4
+    before:block
+    before:h-12
+    before:w-12
+    before:-translate-y-2/4
+    before:-translate-x-2/4
+    before:rounded-full
+    before:opacity-0
+    before:transition-opacity
+    checked:border-green-500
+    checked:before:bg-green-500
+    hover:before:opacity-10
+    !important;
   }
 
   .radio-red {
-    @apply relative h-5 w-5 cursor-pointer appearance-none rounded-full focus:ring-0 border text-red-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full  before:opacity-0 before:transition-opacity checked:border-red-700 checked:before:bg-red-500 hover:before:opacity-10 !important;
+    @apply relative
+    h-5
+    w-5
+    cursor-pointer
+    appearance-none
+    rounded-full
+    focus:ring-0
+    border
+    text-red-500
+    transition-all
+    before:absolute
+    before:top-2/4
+    before:left-2/4
+    before:block
+    before:h-12
+    before:w-12
+    before:-translate-y-2/4
+    before:-translate-x-2/4
+    before:rounded-full
+    
+    before:opacity-0
+    before:transition-opacity
+    checked:border-red-700
+    checked:before:bg-red-500
+    hover:before:opacity-10
+    !important;
   }
 
   .radio-blue {
-    @apply relative h-5 w-5 cursor-pointer appearance-none rounded-full focus:ring-0 border text-blue-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full  before:opacity-0 before:transition-opacity checked:border-blue-700 checked:before:bg-blue-500 hover:before:opacity-10 !important;
+    @apply relative
+    h-5
+    w-5
+    cursor-pointer
+    appearance-none
+    rounded-full
+    focus:ring-0
+    border
+    text-blue-500
+    active:border-blue-700
+    transition-all
+    
+    before:absolute
+    before:block
+    before:h-12
+    before:w-12
+    before:top-2/4
+    before:left-2/4
+    before:-translate-y-2/4
+    before:-translate-x-2/4
+    before:rounded-full
+    before:opacity-0
+    before:transition-opacity
+    before:checked:bg-blue-500
+    before:group-hover:opacity-20
+    !important;
   }
 
   .edit-btn {
-    @apply text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 !important;
+    @apply text-gray-900
+    bg-white
+    border
+    border-gray-300
+    focus:outline-none
+    hover:bg-gray-100
+    focus:ring-4
+    focus:ring-gray-200
+    font-medium
+    rounded-full
+    text-sm
+    px-5
+    py-2.5
+    mr-2
+    mb-2
+    dark:bg-gray-800
+    dark:text-white
+    dark:border-gray-600
+    dark:hover:bg-gray-700
+    dark:hover:border-gray-600
+    dark:focus:ring-gray-700
+    !important;
   }
 
   .basic-checkbox {
-    @apply w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600  !important;
+    @apply w-4
+    h-4
+    text-blue-600
+    bg-gray-100
+    border-gray-300
+    rounded
+    focus:ring-blue-500
+    dark:focus:ring-blue-600
+    dark:ring-offset-gray-800
+    focus:ring-2
+    dark:bg-gray-700
+    dark:border-gray-600
+    
+    !important;
   }
+
   .basic-input-text {
-    @apply p-3 w-96 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500  !important;
+    @apply p-3
+    w-full
+    resize-none
+    text-black
+    bg-white
+    rounded-lg
+    border-2
+    border-gray-300
+    focus:ring-0
+    focus:border-gray-300;
   }
 }
 @tailwind utilities;

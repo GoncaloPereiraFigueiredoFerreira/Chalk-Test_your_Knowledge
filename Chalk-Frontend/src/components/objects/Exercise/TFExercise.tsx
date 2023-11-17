@@ -1,29 +1,60 @@
-import { useReducer, createContext, useContext } from "react";
+import { useReducer } from "react";
 import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
 
-type ExerciseProps = {
-  enunciado: any;
-  problema?: any;
-  contexto: string;
-};
+interface TFStatement {
+  phrase: string;
+  tfvalue: string;
+  justification: string;
+}
 
-export function TFExercise(props: ExerciseProps) {
+type TFState = TFStatement[];
+
+// Type of actions allowed on the state
+enum TFActionKind {
+  CHOOSE = "CHOOSE",
+  JUSTIFY = "JUSTIFY",
+}
+
+// TFAction Definition
+interface TFAction {
+  type: TFActionKind;
+  index: number;
+  value: string;
+}
+
+interface ExerciseProps {
+  enunciado: any;
+  problem?: any;
+  name: string;
+  position: string;
+  contexto: string;
+  justify?: string;
+}
+
+export function TFExercise({
+  enunciado,
+  problem,
+  name,
+  position,
+  contexto,
+  justify,
+}: ExerciseProps) {
   let exerciseDisplay = <></>;
 
-  switch (props.contexto) {
+  switch (contexto) {
     case "solve":
-      exerciseDisplay = (
-        <TFSolve problem={props.problema} enunciado={props.enunciado}></TFSolve>
+      exerciseDisplay = justify ? (
+        <TFSolve
+          problem={problem}
+          enunciado={enunciado}
+          justify={justify}
+        ></TFSolve>
+      ) : (
+        <></>
       );
       break;
 
-    case "edit":
-      exerciseDisplay = (
-        <TFEdit problem={props.problema} enunciado={props.enunciado}></TFEdit>
-      );
-      break;
-
-    case "previz":
+    case "preview":
       exerciseDisplay = <></>;
       break;
 
@@ -37,59 +68,31 @@ export function TFExercise(props: ExerciseProps) {
   }
   return (
     <>
-      <div className="m-5 text-xl">
-        <p className="text-4xl strong mb-8">Verdadeiro ou Falso</p>
-        {exerciseDisplay}
-      </div>
+      <div className="m-5 text-title-2">{position + ") " + name}</div>
+      <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );
 }
 
-enum TFSolveActionKind {
-  CHOOSE = "CHOOSE",
-  JUSTIFY = "JUSTIFY",
-}
-
-type TFSolveAction = {
-  type: TFSolveActionKind;
-  index: number;
-  value: string;
-};
-
-type TFSolve = {
-  phrase: string;
-  tfvalue: string;
-  justification: string;
-};
-
-type TFSolveState = TFSolve[];
-
-function SolveReducer(
-  state: TFSolveState,
-  action: TFSolveAction
-): TFSolveState {
+function SolveReducer(state: TFState, action: TFAction): TFState {
   switch (action.type) {
-    case TFSolveActionKind.CHOOSE:
+    case TFActionKind.CHOOSE:
       let chooseState = [...state];
       chooseState[action.index].tfvalue = action.value;
       return chooseState;
 
-    case TFSolveActionKind.JUSTIFY:
+    case TFActionKind.JUSTIFY:
       let justifyState = [...state];
       justifyState[action.index].justification = action.value;
       return justifyState;
+
     default:
       throw new Error();
   }
 }
 
-const StateContext = createContext<{ state: TFSolveState; dispatch: any }>({
-  state: [],
-  dispatch: undefined,
-});
-
 function TFSolve(props: any) {
-  let initState: TFSolveState = [];
+  let initState: TFState = [];
   props.problem.statements.map((text: any) =>
     initState.push({ phrase: text, tfvalue: "", justification: "" })
   );
@@ -99,30 +102,22 @@ function TFSolve(props: any) {
   return (
     <>
       <ExerciseHeader header={props.enunciado}></ExerciseHeader>
-      <table className="table-auto mt-4">
-        <thead>
-          <tr>
-            <th className="p-3">V</th>
-            <th className="p-3">F</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <StateContext.Provider value={{ state, dispatch }}>
-            {state.map((_solve: TFSolve, index: number) => {
-              return (
-                <TFStatement
-                  key={index}
-                  id={index}
-                  justify={true}
-                  state={state}
-                  dispatch={dispatch}
-                />
-              );
-            })}
-          </StateContext.Provider>
-        </tbody>
-      </table>
+      <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
+        <div className="flex text-xl font-bold px-4">V</div>
+        <div className="flex text-xl font-bold px-4">F</div>
+        <div></div>
+        {state.map((_solve: TFStatement, index: number) => {
+          return (
+            <TFStatement
+              key={index}
+              id={index}
+              justify={props.justify}
+              state={state}
+              dispatch={dispatch}
+            />
+          );
+        })}
+      </div>
     </>
   );
 }
@@ -130,71 +125,83 @@ function TFSolve(props: any) {
 function TFStatement(props: any) {
   let name = "radio-button-" + props.id;
   return (
-    <tr>
-      <td className="p-3">
+    <>
+      <div className="flex items-start justify-center">
         <input
           className="radio-green"
           type="radio"
           name={name}
-          onChange={() =>
+          onClick={() =>
             props.dispatch({
-              type: TFSolveActionKind.CHOOSE,
+              type: TFActionKind.CHOOSE,
               index: props.id,
               value: "true",
             })
           }
         ></input>
-      </td>
-      <td className="p-3">
+      </div>
+      <div className="flex items-start justify-center">
         <input
           className="radio-red"
           type="radio"
           name={name}
-          onChange={() =>
+          onClick={() =>
             props.dispatch({
-              type: TFSolveActionKind.CHOOSE,
+              type: TFActionKind.CHOOSE,
               index: props.id,
               value: "false",
             })
           }
         ></input>
-      </td>
-      <td>
-        {props.justify ? (
-          <TFJustify key={props.id} id={props.id}></TFJustify>
-        ) : (
-          <p>{props.state[props.id].phrase}</p>
-        )}
-      </td>
-    </tr>
+      </div>
+      <div className="">
+        <p>{props.state[props.id].phrase}</p>
+      </div>
+      <TFJustify
+        id={props.id}
+        state={props.state}
+        dispatch={props.dispatch}
+        justify={props.justify}
+      ></TFJustify>
+    </>
   );
 }
 
 function TFJustify(props: any) {
-  let hidden = "hidden";
-  let fontsize = "";
-  const { state, dispatch } = useContext(StateContext);
-  if (state[props.id].tfvalue === "false") {
-    hidden = "";
-    fontsize = "text-xs";
-  }
-  return (
-    <div>
-      <p className={fontsize}>{state[props.id].phrase}</p>
-      <input
-        className={hidden + " basic-input-text"}
-        type="text"
-        name={"justification" + props.id}
-        placeholder="Justifique a sua resposta"
-        value={state[props.id].justification}
-        onChange={(e) =>
-          dispatch({
-            type: TFSolveActionKind.JUSTIFY,
-            index: props.id,
-            value: e.target.value,
-          })
-        }
-      ></input>
+  return props.justify === "none" ? (
+    <div className="col-span-3"></div>
+  ) : (
+    <div
+      className={`${
+        props.justify === "all" ||
+        (props.justify === "false-only" &&
+          props.state[props.id].tfvalue === "false")
+          ? "h-28"
+          : "h-0"
+      } col-span-3 transition-[height] duration-75`}
+    >
+      <div className="h-full px-7 overflow-hidden">
+        <textarea
+          className={`${
+            props.justify === "all" ||
+            (props.justify === "false-only" &&
+              props.state[props.id].tfvalue === "false")
+              ? ""
+              : "hidden"
+          } basic-input-text`}
+          name={"justification" + props.id}
+          rows={3}
+          placeholder="Justifique a sua resposta"
+          value={props.state[props.id].justification}
+          onChange={(e) =>
+            props.dispatch({
+              type: TFActionKind.JUSTIFY,
+              index: props.id,
+              value: e.target.value,
+            })
+          }
+        ></textarea>
+      </div>
     </div>
   );
 }
@@ -218,13 +225,6 @@ type TFEditAction = {
   type: TFEditActionKind;
   payload: { id?: number; flag?: boolean; value?: string };
 };
-
-const TFEditStateContext = createContext<{ state: TFEditState; dispatch: any }>(
-  {
-    state: { justify: false, header: "", statements: [] },
-    dispatch: undefined,
-  }
-);
 
 function TFEditReducer(state: TFEditState, action: TFEditAction) {
   switch (action.type) {
@@ -268,10 +268,10 @@ function TFEditReducer(state: TFEditState, action: TFEditAction) {
   }
 }
 
-function TFEdit(props: any) {
+export function TFEdit({ enunciado, problem }: ExerciseProps) {
   let initState: TFEditState = { justify: false, header: "", statements: [] };
-  initState.header = props.enunciado.text;
-  props.problem.statements.map((text: any) =>
+  initState.header = enunciado.text;
+  problem.statements.map((text: any) =>
     initState.statements.push({ phrase: text, tfvalue: "" })
   );
   const [state, dispatch] = useReducer(TFEditReducer, initState);
@@ -280,7 +280,7 @@ function TFEdit(props: any) {
     <>
       <form>
         <ExerciseHeaderEdit
-          header={{ ...props.enunciado, text: state.header }}
+          header={{ ...enunciado, text: state.header }}
           editFunc={(e: any) => {
             dispatch({
               type: TFEditActionKind.CHANGEHEADER,
@@ -301,13 +301,16 @@ function TFEdit(props: any) {
             </tr>
           </thead>
           <tbody>
-            <TFEditStateContext.Provider value={{ state, dispatch }}>
-              {state.statements.map((_item, counter) => {
-                return (
-                  <TFStatementEdit id={counter} key={counter}></TFStatementEdit>
-                );
-              })}
-            </TFEditStateContext.Provider>
+            {state.statements.map((_item, counter) => {
+              return (
+                <TFStatementEdit
+                  id={counter}
+                  key={counter}
+                  state={state}
+                  dispatch={dispatch}
+                ></TFStatementEdit>
+              );
+            })}
           </tbody>
         </table>
         <input
@@ -346,7 +349,6 @@ function TFEdit(props: any) {
 
 function TFStatementEdit(props: any) {
   let name = "radio-button-" + props.id;
-  const { state, dispatch } = useContext(TFEditStateContext);
   return (
     <>
       <tr>
@@ -356,7 +358,7 @@ function TFStatementEdit(props: any) {
             type="radio"
             name={name}
             onChange={() =>
-              dispatch({
+              props.dispatch({
                 type: TFEditActionKind.CORRECTTF,
                 payload: { id: props.id, value: "true" },
               })
@@ -369,7 +371,7 @@ function TFStatementEdit(props: any) {
             type="radio"
             name={name}
             onChange={() =>
-              dispatch({
+              props.dispatch({
                 type: TFEditActionKind.CORRECTTF,
                 payload: { id: props.id, value: "false" },
               })
@@ -381,12 +383,12 @@ function TFStatementEdit(props: any) {
             type="text"
             className="basic-input-text"
             onChange={(e) =>
-              dispatch({
+              props.dispatch({
                 type: TFEditActionKind.CHANGESTATEMENT,
                 payload: { id: props.id, value: e.target.value },
               })
             }
-            value={state.statements[props.id].phrase}
+            value={props.state.statements[props.id].phrase}
           ></input>
         </td>
         <td>
@@ -394,7 +396,7 @@ function TFStatementEdit(props: any) {
             className="edit-btn"
             type="button"
             onClick={() =>
-              dispatch({
+              props.dispatch({
                 type: TFEditActionKind.REMOVESTATE,
                 payload: { id: props.id },
               })
