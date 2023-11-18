@@ -1,16 +1,14 @@
-export function MainLogo(props: any) {
+export function MainLogo({}) {
   return (
     <>
-      <div className="flex items-center flex-grow select-none">
+      <div className="flex justify-center flex-grow">
         <svg
-          className="dark:invert"
           version="1.1"
-          id="oi"
+          id="Layer_1"
           xmlns="http://www.w3.org/2000/svg"
           x="0px"
           y="0px"
-          width={props.size === "big" ? "224" : "56"}
-          height={props.size === "big" ? "140" : "37"}
+          width="40%"
           viewBox="0 0 560 352"
           enableBackground="new 0 0 560 352"
         >
@@ -146,21 +144,9 @@ M129.038757,227.170013
 z"
           />
         </svg>
-        <div className="flex flex-col">
-          <p
-            className={`font-pacifico  dark:text-white  ${
-              props.size === "big" ? "text-9xl" : "text-xl"
-            }`}
-          >
-            Chalk
-          </p>
-          <p
-            className={`font-jetbrains dark:text-white   ${
-              props.size === "big"
-                ? "lg:text-5xl ml-5 text-3xl"
-                : "text-[0.5rem] ml-1"
-            }`}
-          >
+        <div className="flex flex-col mt-6">
+          <p className="font-pacifico text-9xl">Chalk</p>
+          <p className="font-jetbrains text-5xl ml-4 mt-3">
             Test Your Knowledge
           </p>
         </div>
