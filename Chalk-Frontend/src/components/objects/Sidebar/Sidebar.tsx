@@ -17,6 +17,7 @@ import {
 } from "../SVGImages/SVGImages.tsx";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { MainLogo } from "../../MainLogo.tsx";
 
 const groups: { [key: string]: string } = {
   "1": "Professores da escola AFS Gualtar",
@@ -92,15 +93,8 @@ export function Sidebar({
         >
           <SidebarIcon style={"group-gray-icon"} />
         </button>
-        <div className={`flex mr-4 ${isOpen ? "" : "hidden"}`}>
-          <img
-            src="https://flowbite.s3.amazonaws.com/logo.svg"
-            className="mr-3 h-8"
-            alt="FlowBite Logo"
-          />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            Flowbite
-          </span>
+        <div className={` ${isOpen ? "" : "hidden"}`}>
+          <MainLogo></MainLogo>
         </div>
       </div>
       <ul className="sidebar-divisions border-t-0">
