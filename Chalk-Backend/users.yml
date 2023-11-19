@@ -134,84 +134,69 @@ components:
           type: string
         photoPath:
           type: string
+          
     SpecialistWithoutId:
       description: "Specialist's Schema. The user id is not required."
-      type: object
-      required:
-        - name
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        photoPath:
-          type: string
+      allOf:
+        - $ref: "#/components/schemas/User"
+      example:
+        name: "Alexandre Martins"
+        photoPath: "https://i.imgur.com/FRwhrhG.jpg"
+        
+        
     Specialist:
       description: "Specialist's Schema"
-      type: object
       required:
         - id
-        - name
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        photoPath:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/SpecialistWithoutId'
+      example:
+        id: "id_Alex"
+        name: "Alexandre Martins"
+        photoPath: "https://i.imgur.com/FRwhrhG.jpg"
+          
     StudentWithoutId:
       description: "Student's Schema. The user id is not required."
-      type: object
-      required:
-        - name
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        photoPath:
-          type: string
+      allOf:
+        - $ref: "#/components/schemas/User"
+      example:
+        name: "Luís Silva"
+        photoPath: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Osama_bin_Laden%2C_portr%C3%A6t.jpg"
+
     Student:
       description: "Student's Schema"
-      type: object
       required:
         - id
-        - name
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        photoPath:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/StudentWithoutId'
+      example:
+        id: "id_Luis"
+        name: "Luĩs Silva"
+        photoPath: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Osama_bin_Laden%2C_portr%C3%A6t.jpg"
+          
     InstitutionManagerWithoutId:
       description: "Institution Manager's Schema. The user id is not required."
-      type: object
       required:
-        - name
         - institutionId
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        photoPath:
-          type: string
-        institutionId:
-          type: string
+      allOf:
+        - $ref: "#/components/schemas/User"
+        - type: object
+          properties:
+            institutionId:
+              type: string
+      example:
+        name: "Rui Braga"
+        photoPath: "https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng"
+        institutionId: "institution1"
+          
     InstitutionManager:
       description: "Institution Manager's Schema"
-      type: object
       required:
         - id
-        - name
-        - institutionId
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        photoPath:
-          type: string
-        institutionId:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/InstitutionManagerWithoutId'
+      example:
+        id: "id_Ray"
+        name: "Rui Braga"
+        photoPath: "https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng"
+        institutionId: "institution1"
