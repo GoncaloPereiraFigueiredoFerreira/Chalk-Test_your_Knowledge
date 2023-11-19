@@ -1,0 +1,217 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+
+paths:
+  /user:
+    post:
+      summary: Create user
+      description: This method is used to create an user regardless of its type.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user
+              properties:
+                user:
+                  oneOf:
+                    - $ref: '#/components/schemas/Student'
+                    - $ref: '#/components/schemas/Specialist'
+                    - $ref: '#/components/schemas/InstitutionManager'
+      responses:
+        "200":
+          description: OK
+
+    get:
+      parameters:
+        - name: institution
+          in: query
+          schema:
+            type: string
+          description: >
+            Find users from this institution.
+        - name: course
+          in: query
+          schema:
+            type: string
+          description: >
+              Find users from this course (institution is required).
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/Student'
+                    - $ref: '#/components/schemas/Specialist'
+                    - $ref: '#/components/schemas/InstitutionManager'
+        '400':
+          description: Either 'institution' or 'course'+'institution' are required.
+
+
+  /user/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        description: User identifier
+        required: true
+        schema:
+          type: string
+          example: "user1"
+    get:
+      summary: Get user by user id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Student'
+                  - $ref: '#/components/schemas/Specialist'
+                  - $ref: '#/components/schemas/InstitutionManager'
+        '400':
+          description: Invalid user id supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: Update an existent user in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exercise:
+                  oneOf:
+                    - $ref: '#/components/schemas/Student'
+                    - $ref: '#/components/schemas/Specialist'
+                    - $ref: '#/components/schemas/InstitutionManager'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid user id supplied
+        '404':
+          description: User not found
+
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+
+components:
+  schemas:
+    User:
+      description: "Basic properties of an user."
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+    SpecialistWithoutId:
+      description: "Specialist's Schema. The user id is not required."
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+    Specialist:
+      description: "Specialist's Schema"
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+    StudentWithoutId:
+      description: "Student's Schema. The user id is not required."
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+    Student:
+      description: "Student's Schema"
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+    InstitutionManagerWithoutId:
+      description: "Institution Manager's Schema. The user id is not required."
+      type: object
+      required:
+        - name
+        - institutionId
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+        institutionId:
+          type: string
+    InstitutionManager:
+      description: "Institution Manager's Schema"
+      type: object
+      required:
+        - id
+        - name
+        - institutionId
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photoPath:
+          type: string
+        institutionId:
+          type: string

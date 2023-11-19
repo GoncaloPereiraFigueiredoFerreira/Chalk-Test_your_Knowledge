@@ -1,0 +1,146 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+
+paths:
+  /course:
+    post:
+      summary: Create course
+      description: This method is used to create an course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course
+              properties:
+                course:
+                  $ref: '#/components/schemas/CourseWithoutId'
+      responses:
+        "200":
+          description: OK
+
+    get:
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: string
+          description: >
+            Find the courses this student belongs to.
+        - name: specialistId
+          in: query
+          schema:
+            type: string
+          description: >
+            Find the courses this specialist belongs to.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseWithoutId'
+        '400':
+          description: Either 'studentId' or 'specialistId' are required.
+
+  /course/{courseId}:
+    parameters:
+      - name: courseId
+        in: path
+        description: Course identifier
+        required: true
+        schema:
+          type: string
+          example: "course1"
+    get:
+      summary: Get course by course id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseWithoutId'
+        '400':
+          description: Invalid course id supplied
+        '404':
+          description: Course not found
+    put:
+      tags:
+        - course
+      summary: Update course
+      description: Update an existent course in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course
+              properties:
+                course:
+                  $ref: '#/components/schemas/CourseWithoutId'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid course id supplied
+        '404':
+          description: Course not found
+
+    delete:
+      tags:
+        - course
+      summary: Delete course
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid coursename supplied
+        '404':
+          description: Course not found
+
+components:
+  schemas:
+    Course:
+      description: "Basic properties of a course."
+      type: object
+      required:
+        - id
+        - name
+        - institutionId
+        - description
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        institutionId:
+          type: string
+        description:
+          type: string
+    CourseWithoutId:
+      description: "Course's Schema. Course Id is not required"
+      type: object
+      required:
+        - name
+        - institutionId
+        - description
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        institutionId:
+          type: string
+        description:
+          type: string

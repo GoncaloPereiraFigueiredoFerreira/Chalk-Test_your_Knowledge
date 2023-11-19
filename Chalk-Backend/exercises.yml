@@ -1,0 +1,535 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+
+components:
+  schemas:
+    Visibility:
+      type: string
+      enum:
+        - "public"
+        - "not_listed"
+        - "private"
+        - "course"
+        - "institution"
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+      example:
+        name: "Álgebra"
+        path: "/Matemática/"
+
+    #### Exercise schemas ####
+
+    Exercise:
+      description: "Basic properties of an exercise."
+      required:
+        - title
+        - type
+        - institutionId
+        - courseId
+        - specialistId
+        - statement
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        cotation:
+          type: number
+          format: float
+        institutionId:
+          type: string
+        courseId:
+          type: string
+        specialistId:
+          type: string
+        statement:
+          type: object
+          required:
+            - text
+            - imagePath
+          properties:
+            text:
+              type: string
+            imagePath:
+              type: string
+              example: "http://somewhere.com/canetasVerdes.jpg"
+    MultipleChoiceExerciseWithoutId:
+      description: "Multiple Choice or True/False exercise schema. The exercise id is not required."
+      required:
+        - mctype
+        - items
+      allOf:
+        - $ref: "#/components/schemas/Exercise"
+        - type: object
+          properties:
+            type:
+              enum:
+                - "MC"
+            mctype:
+              type: integer
+              description: |
+                Defines the type of multiple choice exercise.
+                Should follow the format "XX".
+                Options:
+                  1X -> multiple choice /
+                  2X -> true or false / 
+                  X0 means 'no justification' / 
+                  X1 means 'justify all items' / 
+                  X2 means 'justify false/unmarked items' / 
+                  X3 means 'justify true/marked items'"
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  type:
+                    type: string
+                    example: string
+                  text:
+                    type: string
+      example:
+        title: "Quantas canetas?"
+        type: "MC"
+        mctype: 10
+        cotation: 1.6
+        statement:
+          text: "Quantas canetas verdes estão presentes na figura?"
+          imagePath: "http://somewhere.com/canetasVerdes.jpg"
+        specialistId: "specialist1"
+        courseId: "course1"
+        institutionId: "institution1"
+        items: [
+          {"id": 0, "type": "string", "text": "1"},
+          {"id": 1, "type": "string", "text": "2"},
+          {"id": 2, "type": "string", "text": "3"},
+          {"id": 3, "type": "string", "text": "4"}
+        ]
+    MultipleChoiceExercise:
+      description: "Multiple Choice or True/False exercise schema."
+      required:
+        - id
+      allOf:
+        - $ref: '#/components/schemas/MultipleChoiceExerciseWithoutId'
+      example:
+        id: "exercise1"
+        title: "Quantas canetas?"
+        type: "MC"
+        mctype: 10
+        cotation: 1.6
+        statement:
+          text: "Quantas canetas verdes estão presentes na figura?"
+          imagePath: "http://somewhere.com/canetasVerdes.jpg"
+        specialistId: "specialist1"
+        courseId: "course1"
+        institutionId: "institution1"
+        items: [
+          {"id": 0, "type": "string", "text": "1"},
+          {"id": 1, "type": "string", "text": "2"},
+          {"id": 2, "type": "string", "text": "3"},
+          {"id": 3, "type": "string", "text": "4"}
+        ]
+    OpenAnswerExerciseWithoutId:
+      description: "Schema of an open answer exercise. The exercise id is not required."
+      allOf:
+        - $ref: '#/components/schemas/Exercise'
+        - type: object
+          properties:
+            type:
+              enum:
+                - "OA"
+      example:
+        title: "Exemplo resposta aberta"
+        type: "OA"
+        cotation: 100.0
+        statement:
+          text: "Qual é o sentido da vida?"
+          imagePath: "https://cdn.flash.pt/images/2019-10/img_828x523$2019_10_15_13_49_46_227057_im_637409554131662405.png"
+        specialistId: "specialist2"
+        courseId: "course2"
+        institutionId: "institution2"
+    OpenAnswerExercise:
+      description: "Schema of an open answer exercise."
+      required:
+        - id
+      allOf:
+        - $ref: '#/components/schemas/Exercise'
+      example:
+        id: "exercise2"
+        title: "Exemplo resposta aberta"
+        type: "OA"
+        cotation: 100.0
+        statement:
+          text: "Qual é o sentido da vida?"
+          imagePath: "https://cdn.flash.pt/images/2019-10/img_828x523$2019_10_15_13_49_46_227057_im_637409554131662405.png"
+        specialistId: "specialist2"
+        courseId: "course2"
+        institutionId: "institution2"
+    FillTheBlanksExerciseWithoutId:
+      description: "Fill the blanks exercise schema. The exercise id is not required."
+      allOf: 
+        - $ref: '#/components/schemas/Exercise'
+        - type: object
+          properties:
+            type:
+              enum: 
+                - "FTB"
+            textSegments:
+              type: array
+              items:
+                type: string
+            options:
+              type: array
+              items:
+                type: array
+                items:
+                  type: string
+      example:
+        title: "Exemplo preencher espaços"
+        type: "FTB"
+        cotation: 20.0
+        statement: null
+        specialistId: "specialist3"
+        courseId: "course3"
+        institutionId: "institution3"
+        textSegments: [
+            "O país que faz fronteira com Portugal é ",
+            "."
+          ]
+        options: [
+            [
+              "Espanha",
+              "França"
+            ]
+          ]
+    FillTheBlanksExercise:
+      allOf:
+        - $ref: '#/components/schemas/FillTheBlanksExerciseWithoutId'
+      description: "Fill the blanks exercise schema."
+      required:
+        - id
+      example:
+        id: "exercise3"
+        title: "Exemplo preencher espaços"
+        type: "FTB"
+        cotation: 20.0
+        statement: null
+        specialistId: "specialist3"
+        courseId: "course3"
+        institutionId: "institution3"
+        textSegments: [
+            "O país que faz fronteira com Portugal é ",
+            "."
+          ]
+        options: [
+            [
+              "Espanha",
+              "França"
+            ]
+          ]
+    
+    # Exercise Solution schemas
+    Solution:
+      type: object
+      description: "Basic properties of an exercise solution."
+      required:
+        - type
+      properties:
+        type:
+          type: string
+    MultipleChoiceSolution:
+      description: "Schema of multiple choice exercise solution."
+      required:
+        - items
+      allOf:
+        - $ref: '#/components/schemas/Solution'
+        - type: object
+          properties:
+            type:
+              enum:
+                - MC
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  value:
+                    type: boolean
+      example:
+        type: "MC"
+        items: [
+            { "id": 0, "value" : true },
+            { "id": 1, "value" : false },
+            { "id": 2, "value" : true },
+            { "id": 3, "value" : true }
+        ]
+    OpenAnswerSolution:
+      description: "Schema of open answer exercise solution."
+      required:
+        - text
+      allOf:
+        - $ref: '#/components/schemas/Solution'
+        - type: object
+          properties:
+            type:
+              enum:
+                - "OA"
+            text:
+              type: string
+      example: 
+        type: "OA"
+        text: "É o Toy"
+    FillTheBlanksSolution:
+      description: "Schema of fill the blanks exercise solution."
+      required:
+        - fillings
+      allOf:
+        - $ref: '#/components/schemas/Solution'
+        - type: object
+          properties:
+            type:
+              enum:
+                - "FTB"
+            text:
+              type: string
+      example:
+        type: "FTB"
+        fillings: ["Espanha"]
+
+    # Exercise Rubric schemas
+
+    Rubric:
+      type: object
+      description: "Basic properties of a rubric"
+      required:
+        - type
+      properties:
+        type:
+          type: string
+    MultipleChoiceRubric:
+      required:
+        - choiceCotation
+        - penalty
+      allOf:
+        - $ref: '#/components/schemas/Rubric'
+        - type: object
+          properties:
+            type:
+              enum:
+                - "MC"
+            choiceCotation:
+              type: number
+              format: float
+            penalty:
+              type: number
+              format: float
+      example: {
+        "type" : "MC",
+        "choiceCotation": 0.4,
+        "penalty": 0
+      }
+    OpenAnswerRubric:
+      required:
+        - criteria
+      allOf:
+        - $ref: '#/components/schemas/Rubric'
+        - type: object
+          properties:
+            type:
+              enum:
+                - "OA"
+            criteria:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  standards:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        cotation:
+                          type: number
+                          format: float
+      example: {
+        "type": "OA",
+        "criteria":[
+            {
+                "title":"",
+                "standards":[
+                {
+                    "title":"",
+                    "description":"",
+                    "cotation":30.0
+                },
+                {
+                    "title":"",
+                    "description":"",
+                    "cotation":50.0
+                }
+                ]
+            },
+            {
+                "title":"",
+                "standards":[
+                {
+                    "title":"",
+                    "description":"",
+                    "cotation":20.0
+                }
+                ]
+            }
+        ]
+      }
+    FillTheBlanksRubric:
+      required:
+        - choiceCotation
+        - penalty
+      allOf:
+        - $ref: '#/components/schemas/Rubric'
+        - type: object
+          properties:
+            type:
+              enum:
+                - "FTB"
+            fillingCotation:
+              type: number
+              format: float
+            penalty:
+              type: number
+              format: float
+      example: {
+        "type" : "FTB",
+        "fillingCotation": 20.0,
+        "penalty": 0
+      }
+
+            
+
+paths:
+  /exercise:
+    post:
+      summary: Create an exercise
+      description: This method is used to create an exercise regardless of its type.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "If a rubric and a solution are provided, their type must match the type of the exercise."
+              required:
+                - visibility
+                - exercise
+                - tagId
+              properties:
+                exercise:
+                  oneOf:
+                    - $ref: '#/components/schemas/MultipleChoiceExerciseWithoutId'
+                    - $ref: '#/components/schemas/OpenAnswerExerciseWithoutId'
+                    - $ref: '#/components/schemas/FillTheBlanksExerciseWithoutId'
+                solution:
+                  oneOf:
+                    - $ref: '#/components/schemas/MultipleChoiceSolution'
+                    - $ref: '#/components/schemas/OpenAnswerSolution'
+                    - $ref: '#/components/schemas/FillTheBlanksSolution'
+                rubric:
+                  oneOf:
+                    - $ref: '#/components/schemas/MultipleChoiceRubric'
+                    - $ref: '#/components/schemas/OpenAnswerRubric'
+                    - $ref: '#/components/schemas/FillTheBlanksRubric'
+                visibility:
+                  allOf:
+                    - $ref: '#/components/schemas/Visibility'
+                tagsIds:
+                  type: array
+                  items:
+                    type: string
+                    example: "12345"
+      responses:
+        "200":
+          description: OK
+  /exercise/{exerciseId}:
+    parameters:
+      - name: exerciseId
+        in: path
+        description: Exercise identifier
+        required: true
+        schema:
+          type: string
+          example: "exercise1"
+
+    delete:
+      summary: Delete exercise by its id.
+      responses:
+        "200":
+          description: "OK"
+
+    put:
+      summary: Update an exercise
+      description: This method is used to update an existing exercise.
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "If a rubric and a solution are provided, their type must match the type of the exercise. The given properties will be updated. The hidden properties will not be modified. If a property is null, then it is considered that it should be deleted."
+              properties:
+                exercise:
+                  oneOf:
+                    - $ref: '#/components/schemas/MultipleChoiceExerciseWithoutId'
+                    - $ref: '#/components/schemas/OpenAnswerExerciseWithoutId'
+                    - $ref: '#/components/schemas/FillTheBlanksExerciseWithoutId'
+                solution:
+                  oneOf:
+                    - $ref: '#/components/schemas/MultipleChoiceSolution'
+                    - $ref: '#/components/schemas/OpenAnswerSolution'
+                    - $ref: '#/components/schemas/FillTheBlanksSolution'
+                rubric:
+                  oneOf:
+                    - $ref: '#/components/schemas/MultipleChoiceRubric'
+                    - $ref: '#/components/schemas/OpenAnswerRubric'
+                    - $ref: '#/components/schemas/FillTheBlanksRubric'
+                visibility:
+                  allOf:
+                    - $ref: '#/components/schemas/Visibility'
+                tagsIds:
+                  type: array
+                  items:
+                    type: string
+                    example: "12345"
+
+      responses:
+        "200":
+          description: "OK"
