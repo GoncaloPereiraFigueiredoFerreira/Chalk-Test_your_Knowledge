@@ -1,7 +1,7 @@
 import {
   CheckboxIcon,
   CheckedListIcon,
-  // CodeIcon,
+  CodeIcon,
   EyeSlashIcon,
   GarbageIcon,
   GraduateIcon,
@@ -13,34 +13,27 @@ import {
   TextIcon,
   WorldSearchIcon,
 } from "../SVGImages/SVGImages";
-import "./Exercise.css";
-import { FillBlankExercise } from "./FillBlankExercise";
-import { MCExercise } from "./MCExercise";
-import { OAExercise } from "./OAExercise";
-import { TFExercise } from "./TFExercise";
+// import { FillBlankExercise } from "./FillBlank/FillBlankExercise";
+// import { CodeExercise } from "./Code/CodeExercise";
+import { MCExercise } from "./MC/MCExercise";
+import { OAExercise } from "./OA/OAExercise";
+import { TFExercise } from "./TF/TFExercise";
 import { useEffect, useState } from "react";
+import { Exercise } from "../../../UserInterface";
+import "./ShowExercise.css";
 
 interface ExerciseProps {
   position: string;
-  name: string;
-  visibility: string;
-  type: string;
-  author: string;
-  enunciado: any;
-  problem: any;
-  exerciseKey: string;
+  exercise: Exercise;
+  setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
 }
 
-export function Exercise({
+export function ShowExercise({
   position,
-  name,
-  visibility,
-  type,
-  enunciado,
-  problem,
-  exerciseKey,
+  exercise,
+  setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
 }: ExerciseProps) {
@@ -48,7 +41,7 @@ export function Exercise({
   const [preview, setPreview] = useState(<></>);
 
   useEffect(() => {
-    switch (type) {
+    switch (exercise.type) {
       case "multiple-choice":
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
@@ -58,10 +51,10 @@ export function Exercise({
         );
         setPreview(
           <MCExercise
-            enunciado={enunciado}
-            problem={problem}
+            enunciado={exercise.enunciado}
+            problem={exercise.problem}
             contexto="solve"
-            name={name}
+            name={exercise.name}
             position={position}
           ></MCExercise>
         );
@@ -75,9 +68,9 @@ export function Exercise({
         );
         setPreview(
           <OAExercise
-            enunciado={enunciado}
+            enunciado={exercise.enunciado}
             contexto="solve"
-            name={name}
+            name={exercise.name}
             position={position}
           ></OAExercise>
         );
@@ -91,10 +84,10 @@ export function Exercise({
         );
         setPreview(
           <TFExercise
-            enunciado={enunciado}
-            problem={problem}
+            enunciado={exercise.enunciado}
+            problem={exercise.problem}
             contexto="solve"
-            name={name}
+            name={exercise.name}
             position={position}
             justify="false-only" // none, false-only or all
           ></TFExercise>
@@ -108,35 +101,37 @@ export function Exercise({
           </label>
         );
         setPreview(
-          <FillBlankExercise
-            enunciado={enunciado}
-            problem={problem}
-            contexto="solve"
-            // name={name}
-          ></FillBlankExercise>
+          <></>
+          // <FillBlankExercise
+          //   enunciado={exercise.enunciado}
+          //   problem={exercise.problem}
+          //   contexto="solve"
+          //   name={name}
+          // ></FillBlankExercise>
         );
         break;
-      // case "code":
-      //   setTypeLabel(
-      //     <label className="caracteristics-exercise gray-icon">
-      //       <CodeIcon size="size-4" />
-      //       Código
-      //     </label>
-      //   );
-      //   setPreview(
-      //     <TFExercise
-      //       enunciado={enunciado}
-      //       problem={problem}
-      //       contexto="solve"
-      //       name={name}
-      //     ></TFExercise>
-      //   );
-      //   break;
+      case "code":
+        setTypeLabel(
+          <label className="caracteristics-exercise gray-icon">
+            <CodeIcon size="size-4" />
+            Código
+          </label>
+        );
+        setPreview(
+          <></>
+          // <CodeExercise
+          //   enunciado={enunciado}
+          //   problem={problem}
+          //   contexto="solve"
+          //   name={name}
+          // ></CodeExercise>
+        );
+        break;
     }
-  }, [type]);
+  }, [exercise]);
 
   function getVisibility() {
-    switch (visibility) {
+    switch (exercise.visibility) {
       case "private":
         return (
           <label className="caracteristics-exercise gray-icon">
@@ -180,23 +175,25 @@ export function Exercise({
   return (
     <div
       className={`${
-        exerciseKey === selectedExercise ? "max-h-full" : "max-h-[78px]"
+        exercise.id === selectedExercise ? "max-h-full" : "max-h-[78px]"
       } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2`}
     >
-      <div className="flex flex-col w-full h-full px-5 py-2.5">
-        <div className="flex w-full items-center text-sm font-normal transition-all mb-4 group">
+      <div className="flex flex-col h-full px-5 py-2.5">
+        <div className="flex items-center text-sm font-normal transition-all mb-4 group">
           <button
             className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
             onClick={() =>
-              exerciseKey === selectedExercise
+              exercise.id === selectedExercise
                 ? setSelectedExercise("")
-                : setSelectedExercise(exerciseKey)
+                : setSelectedExercise(exercise.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl">{name}</label>
+            <label className="flex min-w-max font-medium text-xl">
+              {exercise.name}
+            </label>
             <div
               className={`${
-                exerciseKey === selectedExercise ? "hidden" : "flex"
+                exercise.id === selectedExercise ? "hidden" : "flex"
               } ml-1 gap-2`}
             >
               <div className="bg-yellow-600 tag-exercise">Matemática</div>
@@ -207,14 +204,14 @@ export function Exercise({
           </button>
           <button
             className={`${
-              exerciseKey === selectedExercise
+              exercise.id === selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
             onClick={() =>
-              exerciseKey === selectedExercise
+              exercise.id === selectedExercise
                 ? setSelectedExercise("")
-                : setSelectedExercise(exerciseKey)
+                : setSelectedExercise(exercise.id)
             }
           >
             <div className="flex flex-col justify-center">
@@ -222,10 +219,13 @@ export function Exercise({
               {typeLabel}
             </div>
           </button>
-          <div className="flex absolute right-[86px] items-center gap-4 z-0">
+          <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
             <button
               className="btn-options-exercise gray-icon"
-              onClick={() => setSelectedExercise(exerciseKey)}
+              onClick={() => {
+                setSelectedExercise(exercise.id);
+                setEditMenuIsOpen(true);
+              }}
             >
               <PenIcon size="size-5" />
               Editar
@@ -242,7 +242,7 @@ export function Exercise({
         </div>
         <div
           className={`${
-            exerciseKey != selectedExercise ? "hidden" : "flex"
+            exercise.id != selectedExercise ? "hidden" : "flex"
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
         >
           <div className="bg-yellow-600 tag-exercise">Matemática</div>
@@ -259,8 +259,8 @@ export function Exercise({
         </div>
         <div
           className={`${
-            exerciseKey != selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 min-h-[24rem] border rounded-lg ex-1 border-gray-1`}
+            exercise.id != selectedExercise ? "scale-y-0" : ""
+          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1`}
         >
           {preview}
         </div>

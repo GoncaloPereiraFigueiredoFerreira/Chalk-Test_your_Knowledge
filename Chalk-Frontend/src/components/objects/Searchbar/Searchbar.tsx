@@ -10,7 +10,7 @@ export function Searchbar() {
   const [searchText, setSearchText] = useState("");
   return (
     <>
-      <form className="flex w-full justify-center">
+      <form className="flex w-full justify-center py-8">
         <div className="flex w-full max-w-xl">
           <Dropdown
             options={options}

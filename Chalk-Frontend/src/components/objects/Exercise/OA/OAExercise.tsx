@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { DownloadIcon, FileUploadIcon, ListIcon } from "../SVGImages/SVGImages";
-import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
+import {
+  DownloadIcon,
+  FileUploadIcon,
+  ListIcon,
+} from "../../SVGImages/SVGImages";
+import { ExerciseHeader, ExerciseHeaderEdit } from "../ExHeader";
 
 interface ExerciseProps {
   enunciado: any;

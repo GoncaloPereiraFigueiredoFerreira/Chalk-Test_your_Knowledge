@@ -1,5 +1,5 @@
 import { useReducer, createContext, useContext, useState } from "react";
-import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
+import { ExerciseHeader, ExerciseHeaderEdit } from "../ExHeader";
 
 interface ExerciseProps {
   enunciado: any;

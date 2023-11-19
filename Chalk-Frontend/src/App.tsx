@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Login } from "./components/pages/Login/Login.js";
-import { Register } from "./components/pages/Register/Register.js";
-import { HomePage } from "./components/pages/HomePage/HomePage.js";
-import { FrontPage } from "./components/pages/FrontPage/FrontPage.js";
-import { TestPage } from "./components/pages/TestPage/TestPage.js";
-//import { EditExercisePage } from "./components/pages/EditExercisePage/EditExercisePage.js";
-import { Catalog } from "./components/objects/SVGImages/catalog.js";
-import { UserInterface } from "./UserInterface.js";
+import { Login } from "./components/pages/Login/Login";
+import { Register } from "./components/pages/Register/Register";
+import { HomePage } from "./components/pages/HomePage/HomePage";
+import { FrontPage } from "./components/pages/FrontPage/FrontPage";
+import { TestPage } from "./components/pages/TestPage/TestPage";
+//import { EditExercisePage } from "./components/pages/EditExercisePage/EditExercisePage";
+import { Catalog } from "./components/objects/SVGImages/catalog";
+import { UserInterface } from "./UserInterface";
 import "./App.css";
 
 function App() {
@@ -20,7 +20,12 @@ function App() {
           path="/user"
           element={
             <UserInterface
-              userData={{ id: 1, listExercises: {}, selectedExercise: "" }}
+              userData={{
+                id: 1,
+                listExercises: {},
+                selectedExercise: "",
+                selectedGroup: "all",
+              }}
             />
           }
         >

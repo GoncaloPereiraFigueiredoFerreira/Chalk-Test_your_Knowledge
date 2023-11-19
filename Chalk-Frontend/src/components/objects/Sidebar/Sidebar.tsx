@@ -18,31 +18,23 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MainLogo } from "../../MainLogo.tsx";
+import { UserActionKind } from "../../../UserInterface.tsx";
+import { useUserContext } from "../../../context.ts";
 
-const groups: { [key: string]: string } = {
-  "1": "Professores da escola AFS Gualtar",
-  "2": "Turma A",
-  "3": "Turma F",
-};
+const groups = ["Professores da escola AFS Gualtar", "Turma A", "Turma F"];
 
 interface SidebarProps {
   isOpen: boolean;
   toggle: (value: boolean) => void;
-  selected: number;
-  setSelected: (value: number) => void;
 }
 
-export function Sidebar({
-  isOpen,
-  toggle,
-  selected,
-  setSelected,
-}: SidebarProps) {
-  const [group, setGroup] = useState("0");
+export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [showGroup, setShowGroup] = useState(false);
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("dark-mode") === "true"
   );
+
+  const { userState, dispatch } = useUserContext();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -53,8 +45,8 @@ export function Sidebar({
     setDarkMode((prevMode) => !prevMode);
   };
 
-  function getGroup(num: string) {
-    if (num === "0" || showGroup) {
+  function getGroup() {
+    if (userState.selectedGroup === "all" || showGroup) {
       return (
         <>
           <GroupIcon style={"group-gray-icon"} />
@@ -64,12 +56,12 @@ export function Sidebar({
           {isOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
         </>
       );
-    } else if (num in groups) {
+    } else {
       return (
         <>
           <GraduateIcon style={"group-gray-icon"} />
           <span className={`sidebar-dropdown-item ${isOpen ? "" : "hidden"}`}>
-            {groups[num]}
+            {userState.selectedGroup}
           </span>
           {isOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
         </>
@@ -107,23 +99,45 @@ export function Sidebar({
             }}
             className="sidebar-item bg-btn-1 group"
           >
-            {getGroup(group)}
+            {getGroup()}
           </button>
           <ul className={`${showGroup ? "" : "hidden"} sidebar-dropdown`}>
             <li>
               <button
-                onClick={() => setGroup("0")}
-                className="sidebar-item bg-btn-1 group"
+                onClick={() =>
+                  dispatch({
+                    type: UserActionKind.SET_SELECTED_GROUP,
+                    payload: {
+                      selectedGroup: "all",
+                    },
+                  })
+                }
+                className={`sidebar-item ${
+                  "all" === userState.selectedGroup
+                    ? "bg-btn-1-selected"
+                    : "bg-btn-1"
+                } group`}
               >
-                <GraduateIcon style={"group-gray-icon"} />
+                <GroupIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>Geral</span>
               </button>
             </li>
-            {Object.entries(groups).map(([key, item]) => (
-              <li key={key}>
+            {groups.map((item, index) => (
+              <li key={index}>
                 <button
-                  onClick={() => setGroup(key)}
-                  className="sidebar-item bg-btn-1 group"
+                  onClick={() =>
+                    dispatch({
+                      type: UserActionKind.SET_SELECTED_GROUP,
+                      payload: {
+                        selectedGroup: item,
+                      },
+                    })
+                  }
+                  className={`sidebar-item ${
+                    item === userState.selectedGroup
+                      ? "bg-btn-1-selected"
+                      : "bg-btn-1"
+                  } group`}
                 >
                   <GraduateIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>{item}</span>

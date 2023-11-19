@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer components {
-  .btn-frontpage {
+  .btn-ListExercises {
     @apply flex
       items-center
       justify-start

@@ -80,6 +80,14 @@
     hover:dark:bg-gray-700;
   }
 
+  /* sidebar-item -> selected button */
+  .bg-btn-1-selected {
+    @apply text-black
+    dark:text-white
+    bg-white
+    dark:bg-gray-700;
+  }
+
   /* dropdown -> button */
   .bg-btn-2-hover {
     @apply text-black
