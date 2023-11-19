@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow: hidden;
+}
+
 @layer components {
   /* >>> dark: bg-gray-800 <<< */
 
@@ -112,7 +116,7 @@
     dark:hover:bg-gray-500;
   }
 
-  /* createNewExercise PopUp -> button */
+  /* createNewExercise -> PopUp button */
   .bg-btn-4-1 {
     @apply bg-gray-300
       hover:bg-slate-400
@@ -127,13 +131,13 @@
   .bg-btn-4-2 {
     @apply bg-gray-300
       hover:bg-slate-400
-      dark:bg-gray-500
-      dark:hover:bg-gray-700
+      dark:bg-gray-600
+      dark:hover:bg-gray-500
       text-black
       dark:text-white;
   }
 
-  /* createNewExercise PopUp -> button-selected */
+  /* createNewExercise -> PopUp button-selected */
   .btn-selected {
     @apply bg-blue-600
       hover:bg-blue-700

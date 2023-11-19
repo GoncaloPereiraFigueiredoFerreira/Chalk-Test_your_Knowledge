@@ -6,13 +6,18 @@ export function FrontPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(true);
   return (
     <div className="flex flex-row">
-      <div className="flex flex-col w-full min-h-screen bg-2-1 overflow-auto">
+      <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
         <Searchbar></Searchbar>
         <ListExercises
           setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
         ></ListExercises>
       </div>
-      {/* <div className="w-full bg-amber-600">c xc </div> */}
+      <div className="flex flex-col w-full h-screen overflow-auto bg-amber-600">
+        <div className="p-20 m-20 h-full bg-green-700">
+          {" "}
+          asda s adasd asd sad assd
+        </div>
+      </div>
     </div>
   );
 }
