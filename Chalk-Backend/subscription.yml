@@ -1,0 +1,131 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+  
+
+components:
+  schemas:
+    Subscription:
+      description: "Subscription's schema."
+      type: object
+      required:
+        - name
+      properties:
+        plan:
+          $ref: "#/components/schemas/SubscriptionPlan"
+        nextPayment:
+          type: string
+          format: DateTime
+        payment:
+          $ref: "#/components/schemas/Payment"
+      example:
+        plan:
+          name: "IDK yet"
+          targetAudience: ["audience1"]
+          perks: ["perk1"]
+          priceMonth: 100000.5
+        nextPayment: "11-09-2024"
+        payment:
+          creditCard:
+            name: "GONÇALO COUTO DOS SANTOS"
+            number: "5555555555554444"
+            cvv: "666"
+            expirationDate: "11-09-2050"
+      
+    Payment:
+      description: "Payment's schema."
+      type: object
+      properties:
+        oneOf:
+          $ref: "#/components/schemas/CreditCard"
+      example:
+        creditCard:
+          name: "GONÇALO COUTO DOS SANTOS"
+          number: "5555555555554444"
+          cvv: "666"
+          expirationDate: "11-09-2050"
+          
+    CreditCard:
+      description: "Credit card's schema."
+      type: object
+      properties:
+        name: 
+          type: string
+        number: 
+          type: string
+        cvv: 
+          type: string
+        expirationDate:
+          type: string
+          format: Date
+      example:
+        name: "GONÇALO COUTO DOS SANTOS"
+        number: "5555555555554444"
+        cvv: "666"
+        expirationDate: "11-09-2050"
+        
+    SubscriptionPlan:
+      description: "Subscription Plan's schema."
+      type: object
+      required:
+        - priceMonth
+      properties:
+        name:
+          type: string
+        targetAudience:
+          type: array
+          items:
+            type: object
+        perks:
+          type: array
+          items:
+            type: object
+        priceMonth:
+          type: number
+          format: float
+      example:
+        name: "IDK yet"
+        targetAudience: ["audience1"]
+        perks: ["perk1"]
+        priceMonth: 100000.5
+
+    Institution:
+      description: "Institution's schema."
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        logoPath: 
+          type: string
+        subscription:
+          $ref: "#/components/schemas/InstitutionSubscription"
+      example:
+        name: "Escola de Engenharia - Universidade do Minho"
+        description: "a escola onde estão os boys"
+        logoPath: "https://upload.wikimedia.org/wikipedia/commons/9/93/EEUMLOGO.png"
+  
+    InstitutionSubscription:
+      description: "Institution subscription's schema."
+      type: object
+      properties:
+        studentsSub:
+          $ref: "#/components/schemas/Subscription"
+        specialistsSub:
+          $ref: "#/components/schemas/Subscription"
+        
+
+        
+paths:
+  /placeholder:
+    post:
+      summary: Placeholder
+      responses:
+        "420":
+          description: ""
