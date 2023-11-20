@@ -24,7 +24,7 @@ components:
           format: DateTime
         submissionTime:
           type: string
-          format: DateTime3
+          format: DateTime
         test:
           $ref: "#/components/schemas/Test"
         groups:
