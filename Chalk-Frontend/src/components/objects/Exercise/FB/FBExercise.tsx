@@ -1,6 +1,10 @@
 import { createContext, useContext, useReducer, useState } from "react";
-import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
-import { DownloadIcon, FileUploadIcon, ListIcon } from "../SVGImages/SVGImages";
+import { ExerciseHeader } from "../ExHeader";
+import {
+  DownloadIcon,
+  FileUploadIcon,
+  ListIcon,
+} from "../../SVGImages/SVGImages";
 
 export function FBExercise(props: any) {
   let exerciseDisplay = <></>;
@@ -245,7 +249,7 @@ function FBEdit(props: any) {
   const [state, dispatch] = useReducer(FBEditReducer, initState);
   return (
     <>
-      <ExerciseHeaderEdit
+      {/* <ExerciseHeaderEdit
         header={{
           text: "",
         }}
@@ -255,7 +259,7 @@ function FBEdit(props: any) {
             payload: { value: t },
           });
         }}
-      ></ExerciseHeaderEdit>
+      ></ExerciseHeaderEdit> */}
       <FBEditStateContext.Provider value={{ state, dispatch }}>
         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
           Escreva o texto a ser substituído

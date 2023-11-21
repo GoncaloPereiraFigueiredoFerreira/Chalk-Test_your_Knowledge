@@ -4,7 +4,7 @@ import {
   FileUploadIcon,
   ListIcon,
 } from "../../SVGImages/SVGImages";
-import { ExerciseHeader, ExerciseHeaderEdit } from "../ExHeader";
+import { ExerciseHeader } from "../ExHeader";
 
 interface ExerciseProps {
   enunciado: any;
@@ -106,10 +106,10 @@ export function OAEdit(props: any) {
   const [state, setState] = useState(props.enunciado.text);
   return (
     <>
-      <ExerciseHeaderEdit
+      {/* <ExerciseHeaderEdit
         header={{ ...props.enunciado, text: state }}
         editFunc={setState}
-      ></ExerciseHeaderEdit>
+      ></ExerciseHeaderEdit> */}
     </>
   );
 }

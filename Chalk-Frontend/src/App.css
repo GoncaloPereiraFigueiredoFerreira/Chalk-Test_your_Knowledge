@@ -10,6 +10,18 @@ html {
 }
 
 @layer components {
+  div::-webkit-scrollbar {
+    @apply w-2
+    bg-gray-300
+    dark:bg-gray-600;
+  }
+
+  div::-webkit-scrollbar-thumb {
+    @apply bg-gray-400
+    dark:bg-gray-500 
+    rounded;
+  }
+
   /* >>> dark: bg-gray-800 <<< */
 
   /* userInterface -> gap between frontpage and sidebar */
@@ -182,7 +194,9 @@ html {
   /* frontpage -> separation lines */
   .border-gray-2-2 {
     @apply border-gray-400
-    dark:border-gray-600;
+    dark:border-gray-600
+    divide-gray-400
+    dark:divide-gray-600;
   }
 
   /* sidebar -> separation lines */
@@ -206,5 +220,13 @@ html {
     dark:border-gray-600
     focus:border-gray-300
     focus:dark:border-gray-600;
+  }
+
+  .bg-input-2 {
+    @apply border-gray-300
+    focus:ring-0
+    dark:bg-gray-700
+    dark:border-gray-600
+    dark:focus:border-gray-600;
   }
 }

@@ -1,5 +1,5 @@
 import { useReducer, createContext, useContext, useState } from "react";
-import { ExerciseHeader, ExerciseHeaderEdit } from "../ExHeader";
+import { ExerciseHeader } from "../ExHeader";
 
 interface ExerciseProps {
   enunciado: any;
@@ -147,7 +147,7 @@ export function MCEdit(props: any) {
   return (
     <>
       <form>
-        <ExerciseHeaderEdit
+        {/* <ExerciseHeaderEdit
           header={{ ...props.enunciado, text: state.header }}
           editFunc={(e: any) => {
             dispatch({
@@ -155,7 +155,7 @@ export function MCEdit(props: any) {
               payload: { value: e },
             });
           }}
-        ></ExerciseHeaderEdit>
+        ></ExerciseHeaderEdit> */}
 
         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
           Adicione as afirmações e escolha a opção correta.
