@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { useUserContext } from "../../../context";
+import { useUserContext } from "../../../context";
 import { ImgPos } from "../Exercise/ExHeader";
 import "./EditExercise.css";
 import { EditHeader } from "./EditHeader";
@@ -12,7 +12,7 @@ export function EditExercise({ setEditMenuIsOpen }: EditExerciseProps) {
   const [img, setImg] = useState("");
   const [addImg, setAddImg] = useState(false);
   const [postionImg, setPostionImg] = useState(ImgPos.RIGHT);
-  // const { userState, dispatch } = useUserContext();
+  const { userState, dispatch } = useUserContext();
 
   return (
     <>

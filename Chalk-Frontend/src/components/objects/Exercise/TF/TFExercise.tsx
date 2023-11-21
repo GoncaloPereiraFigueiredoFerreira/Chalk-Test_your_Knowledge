@@ -124,6 +124,8 @@ function TFSolve(props: any) {
 
 function TFStatement(props: any) {
   let name = "radio-button-" + props.id;
+  console.log(props);
+  props;
   return (
     <>
       <div className="flex items-start justify-center">
@@ -131,13 +133,20 @@ function TFStatement(props: any) {
           className="radio-green"
           type="radio"
           name={name}
-          onClick={() =>
-            props.dispatch({
-              type: TFActionKind.CHOOSE,
-              index: props.id,
-              value: "true",
-            })
-          }
+          onClick={() => {
+            props.state[props.id].tfvalue === "true"
+              ? props.dispatch({
+                  type: TFActionKind.CHOOSE,
+                  index: props.id,
+                  value: "",
+                })
+              : props.dispatch({
+                  type: TFActionKind.CHOOSE,
+                  index: props.id,
+                  value: "true",
+                });
+          }}
+          checked={props.state[props.id].tfvalue === "true"}
         ></input>
       </div>
       <div className="flex items-start justify-center">
@@ -145,13 +154,20 @@ function TFStatement(props: any) {
           className="radio-red"
           type="radio"
           name={name}
-          onClick={() =>
-            props.dispatch({
-              type: TFActionKind.CHOOSE,
-              index: props.id,
-              value: "false",
-            })
-          }
+          onClick={() => {
+            props.state[props.id].tfvalue === "false"
+              ? props.dispatch({
+                  type: TFActionKind.CHOOSE,
+                  index: props.id,
+                  value: "",
+                })
+              : props.dispatch({
+                  type: TFActionKind.CHOOSE,
+                  index: props.id,
+                  value: "false",
+                });
+          }}
+          checked={props.state[props.id].tfvalue === "false"}
         ></input>
       </div>
       <div className="">
