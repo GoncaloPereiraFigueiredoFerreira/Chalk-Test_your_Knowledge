@@ -84,12 +84,13 @@ export function ShowExercise({
         );
         setPreview(
           <TFExercise
+            id={exercise.id}
             enunciado={exercise.enunciado}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
             position={position}
-            justify="false-only" // none, false-only or all
+            justify={exercise.problem!.justify!} // none, false-only or all
           ></TFExercise>
         );
         break;
@@ -223,8 +224,8 @@ export function ShowExercise({
             <button
               className="btn-options-exercise gray-icon"
               onClick={() => {
-                setSelectedExercise(exercise.id);
                 setEditMenuIsOpen(true);
+                setSelectedExercise(exercise.id);
               }}
             >
               <PenIcon size="size-5" />

@@ -3,7 +3,7 @@ import "./ListExercises.css";
 import { useEffect, useState } from "react";
 import { PopUp } from "../../interactiveElements/PopUp";
 import { useUserContext } from "../../../context";
-import { UserActionKind } from "../../../UserInterface";
+import { Exercise, UserActionKind } from "../../../UserInterface";
 import { ImgPos } from "../Exercise/ExHeader";
 import { ListExercisesPopUp } from "./ListExercisesPopUp";
 
@@ -32,11 +32,11 @@ const userExercises = [
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
-        pos: "BOT",
+        pos: ImgPos.RIGHT,
       },
     },
     problem: {
-      justify: false,
+      justify: "false-only",
       statements: [
         "Existem 9 canetas roxas ou vermelhas",
         "Existem tantas canetas pretas ou roxas, quanto vermelhas",
@@ -55,11 +55,11 @@ const userExercises = [
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
-        pos: "BOT",
+        pos: ImgPos.BOT,
       },
     },
     problem: {
-      justify: false,
+      justify: "all",
       statements: [
         "Existem 9 canetas roxas ou vermelhas",
         "Existem tantas canetas pretas ou roxas, quanto vermelhas",
@@ -96,18 +96,42 @@ const userExercises = [
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-        pos: ImgPos.RIGHT,
+        pos: ImgPos.LEFT,
       },
+    },
+  },
+  {
+    id: "6",
+    name: "Quantas canetas",
+    visibility: "private",
+    type: "true-or-false",
+    author: "Dudu",
+    enunciado: {
+      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+      img: {
+        url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
+        pos: ImgPos.TOP,
+      },
+    },
+    problem: {
+      justify: "none",
+      statements: [
+        "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+        "Existem 9 canetas roxas ou vermelhas",
+      ],
     },
   },
 ];
 
 interface ListExercisesProps {
+  editMenuIsOpen: boolean;
   setEditMenuIsOpen: (value: boolean) => void;
 }
 
-export function ListExercises({ setEditMenuIsOpen }: ListExercisesProps) {
-  const [selectedExercise, setSelectedExercise] = useState("");
+export function ListExercises({
+  editMenuIsOpen,
+  setEditMenuIsOpen,
+}: ListExercisesProps) {
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
   const { userState, dispatch } = useUserContext();
 
@@ -121,9 +145,25 @@ export function ListExercises({ setEditMenuIsOpen }: ListExercisesProps) {
   }, []);
 
   function createNewExercise(newExercisetype: string) {
+    let newExercise: Exercise;
+
     // colocar aqui as chamadas para criação dos exercicios
     switch (newExercisetype) {
       case "multiple-choice":
+        newExercise = {
+          id: "",
+          name: "Novo exercício",
+          visibility: "public",
+          type: "multiple-choice",
+          author: "utilizador atual", //userState.username,
+          enunciado: {
+            text: "",
+          },
+          problem: {
+            justify: "none",
+            statements: [""],
+          },
+        };
         break;
       case "open-answer":
         break;
@@ -154,8 +194,17 @@ export function ListExercises({ setEditMenuIsOpen }: ListExercisesProps) {
             position={key}
             exercise={exercise}
             setEditMenuIsOpen={setEditMenuIsOpen}
-            selectedExercise={selectedExercise}
-            setSelectedExercise={(value) => setSelectedExercise(value)}
+            selectedExercise={userState.selectedExercise}
+            setSelectedExercise={(value) => {
+              editMenuIsOpen
+                ? {}
+                : dispatch({
+                    type: UserActionKind.SET_SELECTED_EXERCISE,
+                    payload: {
+                      selectedExercise: value,
+                    },
+                  });
+            }}
           ></ShowExercise>
         ))}
       </div>

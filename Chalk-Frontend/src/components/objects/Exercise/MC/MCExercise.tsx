@@ -55,6 +55,7 @@ function MCSolve(props: any) {
         {props.problem.statements.map((text: string, id: number) => {
           return (
             <label
+              key={id}
               htmlFor={"mc" + id}
               className="flex px-4 py-2 gap-2 items-center hover:bg-gray-300"
             >

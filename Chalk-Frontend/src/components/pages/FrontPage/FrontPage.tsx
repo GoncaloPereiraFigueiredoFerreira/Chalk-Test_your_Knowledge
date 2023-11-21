@@ -10,6 +10,7 @@ export function FrontPage() {
       <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
         <Searchbar></Searchbar>
         <ListExercises
+          editMenuIsOpen={editMenuIsOpen}
           setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
         ></ListExercises>
       </div>

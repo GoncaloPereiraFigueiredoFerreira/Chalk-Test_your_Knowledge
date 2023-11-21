@@ -23,21 +23,23 @@ interface TFAction {
 }
 
 interface TFExerciseProps {
-  enunciado: any;
-  problem?: any;
+  id: string;
   name: string;
   position: string;
   contexto: string;
   justify?: string;
+  enunciado: any;
+  problem?: any;
 }
 
 export function TFExercise({
-  enunciado,
-  problem,
+  id,
   name,
   position,
   contexto,
   justify,
+  enunciado,
+  problem,
 }: TFExerciseProps) {
   let exerciseDisplay = <></>;
 
@@ -45,6 +47,8 @@ export function TFExercise({
     case "solve":
       exerciseDisplay = justify ? (
         <TFSolve
+          id={id}
+          position={position}
           problem={problem}
           enunciado={enunciado}
           justify={justify}
@@ -111,6 +115,7 @@ function TFSolve(props: any) {
             <TFStatement
               key={index}
               id={index}
+              name={`radio-button-${index}-${props.id}-${props.position}`}
               justify={props.justify}
               state={state}
               dispatch={dispatch}
@@ -123,17 +128,18 @@ function TFSolve(props: any) {
 }
 
 function TFStatement(props: any) {
-  let name = "radio-button-" + props.id;
-  console.log(props);
-  props;
+  console.log(props.id);
+  console.log(props.state);
+  console.log(props.state[props.id]);
+
   return (
     <>
       <div className="flex items-start justify-center">
         <input
           className="radio-green"
           type="radio"
-          name={name}
-          onClick={() => {
+          name={props.name}
+          onChange={() => {
             props.state[props.id].tfvalue === "true"
               ? props.dispatch({
                   type: TFActionKind.CHOOSE,
@@ -153,8 +159,8 @@ function TFStatement(props: any) {
         <input
           className="radio-red"
           type="radio"
-          name={name}
-          onClick={() => {
+          name={props.name}
+          onChange={() => {
             props.state[props.id].tfvalue === "false"
               ? props.dispatch({
                   type: TFActionKind.CHOOSE,

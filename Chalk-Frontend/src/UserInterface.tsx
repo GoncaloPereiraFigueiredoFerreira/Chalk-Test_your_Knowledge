@@ -17,7 +17,10 @@ export interface Exercise {
       pos: string;
     };
   };
-  problem?: any;
+  problem?: {
+    justify?: string;
+    statements: string[];
+  };
 }
 
 // UserState definition
@@ -73,17 +76,23 @@ function UserStateReducer(userState: UserState, userAction: UserAction) {
             };
           } else throw new Error("Exercise does not exist");
         } else
-          throw new Error("No data provided in userAction.payload.exercises");
+          throw new Error(
+            "No data provided in userAction.payload.selectedExercise"
+          );
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.SET_SELECTED_EXERCISE:
       if (userAction.payload)
         if (userAction.payload.selectedExercise) {
           let exerciseID = userAction.payload.selectedExercise;
-          if (!Object.keys(userState.listExercises).includes(exerciseID))
+          if (userState.listExercises[exerciseID])
             return { ...userState, selectedExercise: exerciseID };
           else throw new Error("Exercise does not exist");
+        } else if (userAction.payload.selectedExercise === "") {
+          return { ...userState, selectedExercise: "" };
         } else
-          throw new Error("No data provided in userAction.payload.exercises");
+          throw new Error(
+            "No data provided in userAction.payload.selectedExercise"
+          );
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.SET_SELECTED_GROUP:
       if (userAction.payload)
@@ -93,7 +102,9 @@ function UserStateReducer(userState: UserState, userAction: UserAction) {
             selectedGroup: userAction.payload.selectedGroup,
           };
         } else
-          throw new Error("No data provided in userAction.payload.exercises");
+          throw new Error(
+            "No data provided in userAction.payload.selectedGroup"
+          );
       else throw new Error("No data provided in userAction.payload");
     default:
       throw new Error("Unknown action");

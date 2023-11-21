@@ -14,6 +14,8 @@ export function EditExercise({ setEditMenuIsOpen }: EditExerciseProps) {
   const [postionImg, setPostionImg] = useState(ImgPos.RIGHT);
   const { userState, dispatch } = useUserContext();
 
+  console.log(userState.listExercises[userState.selectedExercise]);
+
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max mt-8 px-16 pb-8 bg-2-1">

@@ -42,7 +42,7 @@ export function EditHeader({
             id="putImg"
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
-            onClick={() => {
+            onChange={() => {
               setAddImg(!addImg);
             }}
             checked={addImg}
