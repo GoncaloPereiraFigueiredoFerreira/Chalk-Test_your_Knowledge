@@ -18,6 +18,7 @@ paths:
               type: object
               required:
                 - user
+              additionalProperties: false
               properties:
                 user:
                   oneOf:
@@ -33,13 +34,13 @@ paths:
         - name: institution
           in: query
           schema:
-            type: string
+            $ref: "#/components/schemas/StringInput"
           description: >
             Find users from this institution.
         - name: course
           in: query
           schema:
-            type: string
+            $ref: "#/components/schemas/StringInput"
           description: >
               Find users from this course (institution is required).
       responses:
@@ -65,7 +66,7 @@ paths:
         description: User identifier
         required: true
         schema:
-          type: string
+          $ref: "#/components/schemas/StringInput"
           example: "user1"
     get:
       summary: Get user by user id
@@ -109,8 +110,6 @@ paths:
           description: User not found
 
     delete:
-      tags:
-        - user
       summary: Delete user
       responses:
         '200':
@@ -119,6 +118,99 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+
+  /user/student:
+    get:
+      parameters:
+        - name: testResolutionId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find the student that is the owner of the resoluton.
+        - name: exerciseResolutionId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+              Find the student that is the owner of the resoluton.
+        - name: institutionId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find students from this institution.
+        - name: courseId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+              Find students from this course (institution is required).
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '400':
+          description: Either 'institutionId' or 'courseId'+'institutionId' or 'testResolutionId' or 'exerciseResolutionId' are required.
+
+  /user/specialist:
+    get:
+      parameters:
+        - name: testId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find the specialists that are the owners of the test.
+        - name: institutionId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find specialists from this institution.
+        - name: courseId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+              Find specialists from this course (institution is required).
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Specialist'
+        '400':
+          description: Either 'institutionId' or 'courseId'+'institutionId' or 'testId' are required.
+
+  /user/manager:
+    get:
+      parameters:
+        - name: institutionId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find specialists from this institution.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstitutionManager'
+        '400':
+          description: The 'institutionId' is required.
 
 components:
   schemas:
@@ -129,11 +221,11 @@ components:
         - name
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/StringInput"
         name:
-          type: string
+          $ref: "#/components/schemas/StringInput"
         photoPath:
-          type: string
+          $ref: "#/components/schemas/StringInput"
           
     SpecialistWithoutId:
       description: "Specialist's Schema. The user id is not required."
@@ -183,7 +275,7 @@ components:
         - type: object
           properties:
             institutionId:
-              type: string
+              $ref: "#/components/schemas/StringInput"
       example:
         name: "Rui Braga"
         photoPath: "https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng"
@@ -200,3 +292,10 @@ components:
         name: "Rui Braga"
         photoPath: "https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng"
         institutionId: "institution1"
+
+    StringInput:
+      description: "The structure of accepted strings"
+      type: string
+      pattern: ^[A-Za-z0-9]{3,10}$
+      maxLength: 500
+      minLength: 1
