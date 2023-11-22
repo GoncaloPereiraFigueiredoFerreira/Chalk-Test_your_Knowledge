@@ -26,6 +26,34 @@ paths:
           description: OK
         '401':
           description: Unauthorized operation
+    get:
+      summary: Get page of institutions.
+      parameters:
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Institution'
+        '400':
+          description: page and itemsPerPage are required
+        '401':
+          description: Unauthorized operation
 
   /institution/{institutionId}:
     parameters:

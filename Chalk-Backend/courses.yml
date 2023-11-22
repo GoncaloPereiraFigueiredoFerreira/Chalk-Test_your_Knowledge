@@ -47,6 +47,18 @@ paths:
             $ref: "#/components/schemas/StringInput"
           description: >
             Find the courses of this institution.
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
       responses:
         '200':
           description: successful operation
