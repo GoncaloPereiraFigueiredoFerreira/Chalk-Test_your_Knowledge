@@ -3,9 +3,10 @@ import "./ListExercises.css";
 import { useEffect, useState } from "react";
 import { PopUp } from "../../interactiveElements/PopUp";
 import { useUserContext } from "../../../context";
-import { UserActionKind } from "../../../UserInterface";
+import { Exercise, UserActionKind } from "../../../UserInterface";
 import { ImgPos } from "../Exercise/ExHeader";
 import { ListExercisesPopUp } from "./ListExercisesPopUp";
+import { Draggable } from "../../pages/FrontPage/Draggable";
 
 const userExercises = [
   {
@@ -120,6 +121,10 @@ export function ListExercises({ setEditMenuIsOpen }: ListExercisesProps) {
     });
   }, []);
 
+  function handleOnDrag(e: React.DragEvent, widgetType: string) {
+    e.dataTransfer.setData("widgetType", widgetType);
+  }
+
   function createNewExercise(newExercisetype: string) {
     // colocar aqui as chamadas para criação dos exercicios
     switch (newExercisetype) {
@@ -149,14 +154,18 @@ export function ListExercises({ setEditMenuIsOpen }: ListExercisesProps) {
           </button>
         </div>
         {Object.entries(userState.listExercises).map(([key, exercise]) => (
-          <ShowExercise
-            key={key}
-            position={key}
-            exercise={exercise}
-            setEditMenuIsOpen={setEditMenuIsOpen}
-            selectedExercise={selectedExercise}
-            setSelectedExercise={(value) => setSelectedExercise(value)}
-          ></ShowExercise>
+          //<div draggable onDragStart={(e) => handleOnDrag(e, exercise.id)}>
+          <Draggable id={exercise.id}>
+            <ShowExercise
+              key={key}
+              position={key}
+              exercise={exercise}
+              setEditMenuIsOpen={setEditMenuIsOpen}
+              selectedExercise={selectedExercise}
+              setSelectedExercise={(value) => setSelectedExercise(value)}
+            ></ShowExercise>
+          </Draggable>
+          //</div>
         ))}
       </div>
       <PopUp
