@@ -28,6 +28,8 @@ paths:
       responses:
         "200":
           description: OK
+        '401':
+          description: Unauthorized operation
 
     get:
       parameters:
@@ -57,6 +59,8 @@ paths:
                     - $ref: '#/components/schemas/InstitutionManager'
         '400':
           description: Either 'institution' or 'course'+'institution' are required.
+        '401':
+          description: Unauthorized operation
 
 
   /user/{userId}:
@@ -82,6 +86,8 @@ paths:
                   - $ref: '#/components/schemas/InstitutionManager'
         '400':
           description: Invalid user id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: User not found
     put:
@@ -106,6 +112,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid user id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: User not found
 
@@ -116,6 +124,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid username supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: User not found
 
@@ -157,6 +167,8 @@ paths:
                   $ref: '#/components/schemas/Student'
         '400':
           description: Either 'institutionId' or 'courseId'+'institutionId' or 'testResolutionId' or 'exerciseResolutionId' are required.
+        '401':
+          description: Unauthorized operation
 
   /user/specialist:
     get:
@@ -190,6 +202,8 @@ paths:
                   $ref: '#/components/schemas/Specialist'
         '400':
           description: Either 'institutionId' or 'courseId'+'institutionId' or 'testId' are required.
+        '401':
+          description: Unauthorized operation
 
   /user/manager:
     get:
@@ -211,6 +225,8 @@ paths:
                   $ref: '#/components/schemas/InstitutionManager'
         '400':
           description: The 'institutionId' is required.
+        '401':
+          description: Unauthorized operation
 
 components:
   schemas:

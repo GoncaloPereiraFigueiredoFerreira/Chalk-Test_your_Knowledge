@@ -25,6 +25,8 @@ paths:
       responses:
         "200":
           description: OK
+        '401':
+          description: Unauthorized operation
 
     get:
       description: Returns all the subscription plans.
@@ -50,6 +52,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SubscriptionPlan'
+        '401':
+          description: Unauthorized operation
 
   /subscription/{subscriptionPlanId}:
     parameters:
@@ -71,6 +75,8 @@ paths:
                 $ref: '#/components/schemas/SubscriptionPlan'
         '400':
           description: Invalid user id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: User not found
     put:
@@ -90,6 +96,8 @@ paths:
           description: Successful operation
         '400':
           description: Invalid subscription plan id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Subscription plan not found
 
@@ -100,6 +108,8 @@ paths:
           description: Successful operation
         '400':
           description: Invalid subscription plan identifier supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Subscription plan not found
         '405':
@@ -127,6 +137,8 @@ paths:
       responses:
         "200":
           description: OK
+        '401':
+          description: Unauthorized operation
 
 
   /subscription/institution/{institutionId}:
@@ -149,6 +161,8 @@ paths:
                 $ref: '#/components/schemas/Subscription'
         '400':
           description: Invalid institution id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Institution not found
     put:
@@ -171,6 +185,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid institution id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Institution not found
         '405':
@@ -183,6 +199,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid institution id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Institution not found
 
@@ -208,6 +226,8 @@ paths:
       responses:
         "200":
           description: OK
+        '401':
+          description: Unauthorized operation
 
 
   /subscription/specialist/{specialistId}:
@@ -230,6 +250,8 @@ paths:
                 $ref: '#/components/schemas/Subscription'
         '400':
           description: Invalid specialist id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Specialist not found
     put:
@@ -252,6 +274,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid specialist id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Specialist not found
         '405':
@@ -264,6 +288,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid specialist id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Specialist not found
 
@@ -289,6 +315,8 @@ paths:
       responses:
         "200":
           description: OK
+        '401':
+          description: Unauthorized operation
 
 
   /subscription/student/{studentId}:
@@ -311,6 +339,8 @@ paths:
                 $ref: '#/components/schemas/Subscription'
         '400':
           description: Invalid student id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Student not found
     put:
@@ -333,6 +363,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid student id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Student not found
         '405':
@@ -345,6 +377,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid student id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Student not found
 

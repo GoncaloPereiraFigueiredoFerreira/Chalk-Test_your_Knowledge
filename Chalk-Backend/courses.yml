@@ -24,6 +24,8 @@ paths:
       responses:
         "200":
           description: OK
+        '401':
+          description: Unauthorized operation
 
     get:
       parameters:
@@ -57,6 +59,8 @@ paths:
                   $ref: '#/components/schemas/Course'
         '400':
           description: Either 'studentId' or 'specialistId' or 'institution' are required.
+        '401':
+          description: Unauthorized operation
 
   /course/{courseId}:
     parameters:
@@ -77,6 +81,8 @@ paths:
                 $ref: '#/components/schemas/CourseWithoutId'
         '400':
           description: Invalid course id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Course not found
     put:
@@ -100,6 +106,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid course id supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Course not found
 
@@ -112,6 +120,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid coursename supplied
+        '401':
+          description: Unauthorized operation
         '404':
           description: Course not found
 
