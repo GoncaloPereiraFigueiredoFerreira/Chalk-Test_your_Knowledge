@@ -9,6 +9,9 @@ var User = require("../models/user");
 const bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
+const frontendAdress = process.env.FRONTEND;
+const localPort = process.env.PORT;
+
 // Get our authenticate module
 var authenticate = require("../auth_strat");
 
@@ -39,7 +42,7 @@ router.post("/register", (req, res, next) => {
         });
         res.cookie("chalkauthtoken", token);
         res.status(200);
-        res.redirect("http://localhost:5173/");
+        res.redirect(frontendAdress);
       }
     }
   );
@@ -66,7 +69,7 @@ router.post(
       ).then(() => {
         res.cookie("chalkauthtoken", token);
         res.status(200);
-        res.redirect("http://localhost:5173/");
+        res.redirect(frontendAdress);
       });
     } else res.json({ success: false, status: "Deactivated Account" });
   }
@@ -77,12 +80,11 @@ router.get("/google", (req, res, next) => {
   console.log(req.query.code);
   axios
     .post("https://oauth2.googleapis.com/token", {
-      client_id:
-        "665062865084-9ta4mjgrv95f7h5vi3cn7tbu9jmjah01.apps.googleusercontent.com",
-      client_secret: "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",
+      client_id: process.env.G_CLIENT_ID,
+      client_secret: process.env.G_CLIENT_SECRET,
       code: req.query.code,
       grant_type: "authorization_code",
-      redirect_uri: "http://localhost:3000/google",
+      redirect_uri: "http://localhost:" + localPort + "/google",
     })
     .then((gres) => {
       let token = gres.data.access_token;
@@ -115,7 +117,7 @@ router.get("/google", (req, res, next) => {
           });
           res.cookie("chalkauthtoken", token);
           res.status(200);
-          res.redirect("http://localhost:5173/");
+          res.redirect(frontendAdress);
         });
     });
 });
