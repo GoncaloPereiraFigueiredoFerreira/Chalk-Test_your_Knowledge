@@ -10,12 +10,14 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [errorState, setErrorState] = useState(false);
 
+  const AUTHSERVER = import.meta.env.VITE_AUTH;
+  const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
+
   // Should be removed, in favor of a .env
   const googleDetails = {
     scope: "https://www.googleapis.com/auth/userinfo.email",
-    client_id:
-      "665062865084-9ta4mjgrv95f7h5vi3cn7tbu9jmjah01.apps.googleusercontent.com",
-    redirect_uri: "http://localhost:3000/google",
+    client_id: GCLIENTID,
+    redirect_uri: AUTHSERVER + "google",
     response_type: "code",
   };
 

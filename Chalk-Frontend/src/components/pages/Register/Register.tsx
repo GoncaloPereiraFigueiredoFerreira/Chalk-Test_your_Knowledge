@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import { MainLogo } from "../../MainLogo";
 
 export function Register({}) {
@@ -9,23 +9,33 @@ export function Register({}) {
   const [cpass, setCPass] = useState("");
   const [error, setError] = useState(0);
 
+  const AUTHSERVER = import.meta.env.VITE_AUTH;
+  const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
+
   // Should be removed, in favor of a .env
   const googleDetails = {
     scope: "https://www.googleapis.com/auth/userinfo.email",
-    client_id:
-      "665062865084-9ta4mjgrv95f7h5vi3cn7tbu9jmjah01.apps.googleusercontent.com",
-    redirect_uri: "http://localhost:3000/google",
+    client_id: GCLIENTID,
+    redirect_uri: AUTHSERVER + "google",
     response_type: "code",
   };
 
-  const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (password === cpass) {
-      alert("Registered!");
-      return true;
-
-      // send register to auth and backend
+      fetch(AUTHSERVER + "register", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({ email: email, name: name, password: password }),
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+          redirect("/users");
+        });
     } else {
-      e.preventDefault();
       alert("Diferent password registered");
       return false;
     }
@@ -36,15 +46,11 @@ export function Register({}) {
       <div className="h-full">
         <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
           <div className="flex justify-center mb-12 grow-0 basis-auto md:mb-0 md:w-9/12 lg:w-6/12 xl:w-6/12">
-            <MainLogo></MainLogo>
+            <MainLogo size="big"></MainLogo>
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form
-              action="http://localhost:3000/register"
-              method="POST"
-              onSubmit={validateForm}
-            >
+            <form onSubmit={submitForm}>
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
                 <p className="mb-0 mr-4 text-2xl">Create an account with</p>
 
@@ -142,8 +148,8 @@ export function Register({}) {
                   type="text"
                   name="email"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
-                  placeholder="Email address"
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email address"
                   required
                 />
               </div>
@@ -186,7 +192,6 @@ export function Register({}) {
                 <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                   Already have an account?
                   <Link className="text-blue-600" to="/login">
-                    {" "}
                     Login
                   </Link>
                 </p>

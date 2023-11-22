@@ -4,6 +4,7 @@ var passport = require("passport");
 var axios = require("axios");
 // User model
 var User = require("../models/user");
+require("dotenv").config();
 
 // Parse Json
 const bodyParser = require("body-parser");
@@ -30,19 +31,26 @@ router.post("/register", (req, res, next) => {
     req.body.password,
     (err, user) => {
       if (err) {
-        console.log(err);
-        res.statusCode = 500;
+        res.status(500);
         res.setHeader("Content-Type", "application/json");
         res.json({ success: false, err: err });
+        res.end();
       } else {
         var token = authenticate.getToken({
           username: req.body.email,
           role: "user",
           name: req.body.name,
         });
-        res.cookie("chalkauthtoken", token);
-        res.status(200);
-        res.redirect(frontendAdress);
+        res
+          .status(200)
+          .setHeader("Content-Type", "application/json")
+          .cookie("chalkauthtoken", token)
+          .jsonp({
+            username: req.body.email,
+            role: "user",
+            name: req.body.name,
+          })
+          .end();
       }
     }
   );
