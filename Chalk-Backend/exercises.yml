@@ -5,6 +5,12 @@ info:
 servers:
   - url: https://localhost:8080/v1/
 
+tags:
+  - name: exercises
+    description: Everything related to exercises.
+  - name: tests
+    description: Everything related to tests.
+
 components:
   schemas:
     Visibility:
@@ -18,6 +24,8 @@ components:
     Tag:
       type: object
       properties:
+        id:
+          type: integer
         name:
           type: string
         path:
@@ -25,10 +33,18 @@ components:
       example:
         name: "Álgebra"
         path: "/Matemática/"
+    Comment: 
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            oneOf:
+              - type: string
 
     #### Exercise schemas ####
 
-    Exercise:
+    ExerciseBasicProperties:
       description: "Basic properties of an exercise."
       required:
         - title
@@ -71,7 +87,7 @@ components:
         - mctype
         - items
       allOf:
-        - $ref: "#/components/schemas/Exercise"
+        - $ref: "#/components/schemas/ExerciseBasicProperties"
         - type: object
           properties:
             type:
@@ -145,7 +161,7 @@ components:
     OpenAnswerExerciseWithoutId:
       description: "Schema of an open answer exercise. The exercise id is not required."
       allOf:
-        - $ref: '#/components/schemas/Exercise'
+        - $ref: '#/components/schemas/ExerciseBasicProperties'
         - type: object
           properties:
             type:
@@ -166,7 +182,7 @@ components:
       required:
         - id
       allOf:
-        - $ref: '#/components/schemas/Exercise'
+        - $ref: '#/components/schemas/OpenAnswerExerciseWithoutId'
       example:
         id: "exercise2"
         title: "Exemplo resposta aberta"
@@ -181,7 +197,7 @@ components:
     FillTheBlanksExerciseWithoutId:
       description: "Fill the blanks exercise schema. The exercise id is not required."
       allOf: 
-        - $ref: '#/components/schemas/Exercise'
+        - $ref: '#/components/schemas/ExerciseBasicProperties'
         - type: object
           properties:
             type:
@@ -240,22 +256,28 @@ components:
               "França"
             ]
           ]
-    
-    # Exercise Solution schemas
-    Solution:
+    ExerciseWithoutId:
       type: object
-      description: "Basic properties of an exercise solution."
-      required:
-        - type
-      properties:
-        type:
-          type: string
-    MultipleChoiceSolution:
-      description: "Schema of multiple choice exercise solution."
+      description: Exercise (without id) schema
+      oneOf:
+        - $ref: "#/components/schemas/MultipleChoiceExerciseWithoutId"
+        - $ref: "#/components/schemas/OpenAnswerExerciseWithoutId"
+        - $ref: "#/components/schemas/FillTheBlanksExerciseWithoutId"
+    Exercise:
+      type: object
+      description: Exercise (with id) schema
+      oneOf:
+        - $ref: "#/components/schemas/MultipleChoiceExercise"
+        - $ref: "#/components/schemas/OpenAnswerExercise"
+        - $ref: "#/components/schemas/FillTheBlanksExercise"
+
+    # Exercise Solution/Resolution schemas
+    MultipleChoiceData:
+      description: "Multiple choice resolution data."
       required:
         - items
       allOf:
-        - $ref: '#/components/schemas/Solution'
+        - $ref: '#/components/schemas/ExerciseSolution'
         - type: object
           properties:
             type:
@@ -278,12 +300,12 @@ components:
             { "id": 2, "value" : true },
             { "id": 3, "value" : true }
         ]
-    OpenAnswerSolution:
-      description: "Schema of open answer exercise solution."
+    OpenAnswerData:
+      description: "Open answer resolution data."
       required:
         - text
       allOf:
-        - $ref: '#/components/schemas/Solution'
+        - $ref: '#/components/schemas/ExerciseSolution'
         - type: object
           properties:
             type:
@@ -294,12 +316,12 @@ components:
       example: 
         type: "OA"
         text: "É o Toy"
-    FillTheBlanksSolution:
-      description: "Schema of fill the blanks exercise solution."
+    FillTheBlanksData:
+      description: "Fill the blanks resolution data."
       required:
         - fillings
       allOf:
-        - $ref: '#/components/schemas/Solution'
+        - $ref: '#/components/schemas/ExerciseSolution'
         - type: object
           properties:
             type:
@@ -310,10 +332,50 @@ components:
       example:
         type: "FTB"
         fillings: ["Espanha"]
+    ExerciseResolutionData:
+      type: object
+      description: "Exercise resolution data schema."
+      oneOf:
+        - $ref: "#/components/schemas/MultipleChoiceData" 
+        - $ref: "#/components/schemas/OpenAnswerData"
+        - $ref: "#/components/schemas/FillTheBlanksData" 
+    ExerciseSolution:
+      type: object
+      description: "Exercise solution schema."
+      required:
+        - type
+      properties:
+        id:
+          type: string
+        data:
+          $ref: "#/components/schemas/ExerciseResolutionData"
+    ExerciseResolution:
+      allOf:
+        - $ref: "#/components/schemas/ExerciseSolution"
+        - type: object
+          properties:
+            studentId:
+              type: string
+            exerciseId:
+              type: string
+            cotation:
+              type: number
+              format: float
+            submissionNr: 
+              type: integer
+            status:
+              type: string
+              enum:
+                - "not_revised"
+                - "revised"
+            comment:
+              $ref: "#/components/schemas/Comment"
+            data:
+              $ref: "#/components/schemas/ExerciseResolutionData"
 
     # Exercise Rubric schemas
 
-    Rubric:
+    RubricBasicProperties:
       type: object
       description: "Basic properties of a rubric"
       required:
@@ -326,7 +388,7 @@ components:
         - choiceCotation
         - penalty
       allOf:
-        - $ref: '#/components/schemas/Rubric'
+        - $ref: '#/components/schemas/RubricBasicProperties'
         - type: object
           properties:
             type:
@@ -347,7 +409,7 @@ components:
       required:
         - criteria
       allOf:
-        - $ref: '#/components/schemas/Rubric'
+        - $ref: '#/components/schemas/RubricBasicProperties'
         - type: object
           properties:
             type:
@@ -407,7 +469,7 @@ components:
         - choiceCotation
         - penalty
       allOf:
-        - $ref: '#/components/schemas/Rubric'
+        - $ref: '#/components/schemas/RubricBasicProperties'
         - type: object
           properties:
             type:
@@ -424,14 +486,315 @@ components:
         "fillingCotation": 20.0,
         "penalty": 0
       }
+    Rubric:
+      type: object
+      description: Rubric schema.
+      oneOf:
+        - $ref: "#/components/schemas/MultipleChoiceRubric"
+        - $ref: "#/components/schemas/OpenAnswerRubric"
+        - $ref: "#/components/schemas/FillTheBlanksRubric"
+    
+    # User Schemas
 
-            
+    UserBasicProperties:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        photoPath:
+          type: string
+        description:
+          type: string
+    Student:
+      allOf:
+        - $ref: '#/components/schemas/UserBasicProperties'
+    StudentSimplified:
+      type: object
+      description: Simplified version of the student schema.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    Specialist:
+      allOf:
+        - $ref: '#/components/schemas/UserBasicProperties'
+    InstitutionManager:
+      allOf:
+        - $ref: '#/components/schemas/UserBasicProperties'
+        - type: object
+          properties:
+            institutionId:
+              type: string
+
+    # Test / Test Resolution Schemas
+    TestBasicProperties:
+      description: "Schema of a test"
+      type: object
+      required: 
+        - specialistId  
+        - institutionId  
+        - title  
+        - globalInstructions  
+        - globalCotation
+        - conclusion  
+        - creationDate  
+        - publishDate  
+        - startDate  
+        - endDate  
+        - startTolerance  
+        - numberOfResubmissions
+        - groups
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        specialistId:
+          type: string
+        institutionId:
+          type: string
+        courseId:
+          type: string
+        title:
+          type: string
+        globalInstructions:
+          type: string
+        globalCotation:
+          type: number
+          format: float
+        conclusion:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        publishDate:
+          type: string
+          format: date-time
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestGroup"
+    BasicTest:
+      description: "Schema of a basic test."
+      allOf:
+        - type: object
+          properties:
+            type:
+              enum:
+                - "basic"
+        - $ref: "#/components/schemas/TestBasicProperties"
+    DeliverDateTest:
+      description: "Schema of a deliver date test"
+      allOf:
+        - type: object
+          properties:
+            deliverDate:
+              type: string
+              format: date-time
+            type:
+              enum:
+                - "deliver_date"
+        - $ref: "#/components/schemas/TestBasicProperties"
+    LiveTest:
+      description: "Schema of a live test"
+      allOf:
+        - type: object
+          properties:
+            type:
+              enum:
+                - "live"
+            startDate:
+              type: string
+              format: date-time
+            startTolerance:
+              type: string
+              format: time
+              example: "23:22:30.524"
+              description: "HH:mm:ss.SSS"
+            duration:
+              type: string
+              format: time
+              example: "23:22:30.524"
+              description: "HH:mm:ss.SSS"
+        - $ref: "#/components/schemas/TestBasicProperties"
+    Test:
+      description: "Schema of a test"
+      oneOf:
+        - $ref: "#/components/schemas/BasicTest"
+        - $ref: "#/components/schemas/DeliverDateTest"
+        - $ref: "#/components/schemas/LiveTest"
+    TestGroup:
+      description: "Test group's schema."
+      type: object
+      required:
+        - groupCotation
+        - exercises
+      properties:
+        groupInstructions:
+          type: string
+        groupCotation:
+          type: number
+          format: float
+        exercises:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/Exercise"
+              - type: object
+                description: "Used only for POST methods, when there is a need to copy existing exercises."
+                properties:
+                  originalExerciseId:
+                    type: string
+                    description: "Identifier of the exercise that is supposed to be copied."
+                    example: "exercise123"
+                  cotation:
+                    type: number
+                    format: float
+                    description: "Cotation associated to the copied exercise."              
+    TestResolution:
+      description: "Test resolution's schema."
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        studentId: 
+          type: string
+        testId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        submissionDate:
+          type: string
+          format: date-time
+        submissionNr:
+          type: integer
+        status:
+          type: string
+          enum:
+            - "ongoing"
+            - "not_revised"
+            - "revised"
+            - "revision_ongoing"
+            - "invalidated"
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestResolutionGroup"
+    TestResolutionGroup:
+      description: "Test resolution group's schema."
+      type: object
+      required:
+        - groupCotation
+      properties:
+        resolutions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestResolution"
+        groupCotation:
+          type: number
+          format: float
+#todo - ver como adicionar parte dos cookies, nomeadamente da seguranca
+#todo - verificar parte dos campos required. Tirar o required dos schemas e definir no schema de cada método.
 
 paths:
-  /exercise:
+  # Exercises related paths
+  #todo - generate exercise using AI. Oque é que recebe? Usa outros exercícios para tentar criar? Recebe texto? 
+  /exercises:
+    get: 
+      tags: [exercises]
+      summary: Retrieve exercises.
+      description: Retrieves exercises that match the given filters.
+      parameters:
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
+        - name: tags
+          description: Array of identifiers from the tags that will be used to filter the exercises.
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+            default: []
+          required: false
+        - name: matchAllTags
+          description: Value that defines if the exercise must have all the given tags to be retrieved. 
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: false
+        #- name: levels
+        #  description: | 
+        #    Number of levels that determine the depth of the search. -1 for "all levels". 
+        #    0 if only the exercises containing the given tags should be returned.
+        #  in: query
+        #  schema:
+        #    type: integer
+        #    default: 0
+        #  required: false
+        - name: visibilityType
+          description: | 
+            Describes the type of visibility that the exercises must have. 
+            This parameter must be paired with the parameter 'visibilityTarget' 
+            when the value is either 'institution' or 'course'.
+          in: query
+          schema:
+            type: string
+            default: public
+            enum:
+              - public
+              - institution
+              - course
+        - name: visibilityTarget
+          description: |
+            Identifier of the visibility target. For example, if visibilityType='institution', 
+            then this parameter is the identifier of the institution.
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: specialistId
+          in: query
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Exercise"
+        "401":
+          description: "Unauthorized operation. Example: When trying to access exercises from a specific course that the user does not belong to."
     post:
+      tags: [exercises]
       summary: Create an exercise
-      description: This method is used to create an exercise regardless of its type.
+      description: This method is used to create an exercise regardless of its type. Check the request body schema to understand how to create the different exercises.
       requestBody:
         required: true
         content:
@@ -442,26 +805,16 @@ paths:
               required:
                 - visibility
                 - exercise
-                - tagId
+                - tagsIds
               properties:
                 exercise:
-                  oneOf:
-                    - $ref: '#/components/schemas/MultipleChoiceExerciseWithoutId'
-                    - $ref: '#/components/schemas/OpenAnswerExerciseWithoutId'
-                    - $ref: '#/components/schemas/FillTheBlanksExerciseWithoutId'
+                  $ref: '#/components/schemas/ExerciseWithoutId'
                 solution:
-                  oneOf:
-                    - $ref: '#/components/schemas/MultipleChoiceSolution'
-                    - $ref: '#/components/schemas/OpenAnswerSolution'
-                    - $ref: '#/components/schemas/FillTheBlanksSolution'
+                  $ref: '#/components/schemas/ExerciseSolution'
                 rubric:
-                  oneOf:
-                    - $ref: '#/components/schemas/MultipleChoiceRubric'
-                    - $ref: '#/components/schemas/OpenAnswerRubric'
-                    - $ref: '#/components/schemas/FillTheBlanksRubric'
+                  $ref: '#/components/schemas/Rubric'
                 visibility:
-                  allOf:
-                    - $ref: '#/components/schemas/Visibility'
+                  $ref: '#/components/schemas/Visibility'
                 tagsIds:
                   type: array
                   items:
@@ -469,26 +822,15 @@ paths:
                     example: "12345"
       responses:
         "200":
-          description: OK
-  /exercise/{exerciseId}:
-    parameters:
-      - name: exerciseId
-        in: path
-        description: Exercise identifier
-        required: true
-        schema:
-          type: string
-          example: "exercise1"
-
+          description: Exercise created successfully.
+        "400":
+          description: Bad input.
+        "401":
+          description: Unauthorized operation.
+  /exercises/{exerciseId}:
     delete:
+      tags: [exercises]
       summary: Delete exercise by its id.
-      responses:
-        "200":
-          description: "OK"
-
-    put:
-      summary: Update an exercise
-      description: This method is used to update an existing exercise.
       parameters:
         - name: exerciseId
           in: path
@@ -497,7 +839,25 @@ paths:
           schema:
             type: string
             example: "exercise1"
-
+      responses:
+        "200":
+          description: "Exercise deleted successfully."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise not found." 
+    put:
+      tags: [exercises]
+      summary: Update an exercise
+      description: This method is used to update an existing exercise. Check the schema
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
       requestBody:
         required: true
         content:
@@ -507,29 +867,528 @@ paths:
               description: "If a rubric and a solution are provided, their type must match the type of the exercise. The given properties will be updated. The hidden properties will not be modified. If a property is null, then it is considered that it should be deleted."
               properties:
                 exercise:
-                  oneOf:
-                    - $ref: '#/components/schemas/MultipleChoiceExerciseWithoutId'
-                    - $ref: '#/components/schemas/OpenAnswerExerciseWithoutId'
-                    - $ref: '#/components/schemas/FillTheBlanksExerciseWithoutId'
+                  $ref: '#/components/schemas/ExerciseWithoutId'
                 solution:
-                  oneOf:
-                    - $ref: '#/components/schemas/MultipleChoiceSolution'
-                    - $ref: '#/components/schemas/OpenAnswerSolution'
-                    - $ref: '#/components/schemas/FillTheBlanksSolution'
+                  $ref: '#/components/schemas/ExerciseSolution'
                 rubric:
-                  oneOf:
-                    - $ref: '#/components/schemas/MultipleChoiceRubric'
-                    - $ref: '#/components/schemas/OpenAnswerRubric'
-                    - $ref: '#/components/schemas/FillTheBlanksRubric'
+                  $ref: '#/components/schemas/Rubric'
                 visibility:
-                  allOf:
-                    - $ref: '#/components/schemas/Visibility'
+                  $ref: '#/components/schemas/Visibility'
                 tagsIds:
                   type: array
                   items:
                     type: string
                     example: "12345"
-
       responses:
         "200":
-          description: "OK"
+          description: "Exercise updated successfully."
+        "400":
+          description: "Bad input."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise not found."
+  /exercises/{exerciseId}/duplicate:
+    post:
+      tags: [exercises]
+      summary: Duplicates the exercise using its identifier.
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+      responses:
+        "200":
+          description: "Successful duplication."
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise with the given id does not exist."
+  /exercises/{exerciseId}/resolutions:
+    get: 
+      tags: [exercises]
+      summary: Get all exercise resolutions.
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    student:
+                      $ref: '#/components/schemas/StudentSimplified'
+                    resolution:
+                      $ref: '#/components/schemas/ExerciseResolution'
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise not found."
+    post: 
+      tags: [exercises]
+      summary: Create an exercise resolution
+      parameters:
+        - name: exerciseId
+          schema:
+            type: integer
+          in: query
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExerciseResolution'
+        required: true
+      responses:
+        "200":
+          description: "Exercise resolution created successfully."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Could not find any exercise with the given id."
+  /exercises/{exerciseId}/resolutions/correction:
+    put:
+      tags: [exercises]
+      summary: "Issue the automatic correction of the exercise resolutions."
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+        - name: correctionType
+          in: query
+          description: | 
+            Type of correction. The correction can either be automatic or done by AI.
+            For a given exercise, it may support either, both, or none of the correction types.
+          schema:
+            type: string
+            enum:
+              - "auto"
+              - "ai"
+      responses:
+        "200":
+          description: "Success."
+        "400":
+          description: "The requested type of correction is not supported for the given exercise."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise not found."     
+  /exercises/resolutions/{resolutionId}:
+    get: 
+      tags: [exercises]
+      summary: Get exercise resolution using its id.
+      parameters:
+        - name: resolutionId
+          in: path
+          description: Exercise resolution identifier
+          required: true
+          schema:
+            type: string
+            example: "resolution1"
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseResolution'
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise resolution not found."
+  /exercises/resolutions/{resolutionId}/comment:
+    post:
+      tags: [exercises]
+      summary: Add comment to a resolution
+      parameters:
+        - name: resolutionId
+          in: path
+          description: Exercise resolution identifier
+          required: true
+          schema:
+            type: string
+            example: "resolution1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+        required: true
+      responses:
+        "200":
+          description: "Success."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise resolution not found."
+  /exercises/resolutions/{resolutionId}/manual-correction:
+    post:
+      tags: [exercises]
+      summary: "To set the cotation of an exercise resolution manually."
+      parameters:
+        - name: resolutionId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: cotation
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+      responses:
+        "200":
+          description: "Success."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Resolution not found."
+  /exercises/{exerciseId}/resolutions/count:
+    get:
+      tags:
+        - exercises
+      summary: Retrieves the number of students that submitted a resolution for a specific exercise.
+      description: Retrieves the number of students that submitted a resolution for a specific exercise. The otal submissions can be obtained by setting the 'total' query parameter to 'true'.
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+        - name: total
+          description: "'false' to count the number of students that made a submission. 'true' to count the total number of submissions."
+          schema:
+            type: boolean
+          in: query
+          required: false
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                type: integer
+        "404":
+          description: "Exercise not found."
+  /exercises/{exerciseId}/resolutions/{studentId}/count:
+    get:
+      tags:
+        - exercises
+      summary: Retrieves the number of (resolution) submissions a student has made for a specific exercise.
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+        - name: studentId
+          in: path
+          description: student identifier
+          required: true
+          schema:
+            type: string
+            example: "student1"
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                type: integer
+        "404":
+          description: "Exercise not found."
+  /exercises/{exerciseId}/resolutions/{studentId}/can-submit:
+    get:
+      tags:
+        - exercises
+      summary: Allows to check if the student can submit a resolution for the exercise.
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+        - name: studentId
+          in: path
+          description: student identifier
+          required: true
+          schema:
+            type: string
+            example: "student1"
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "404":
+          description: "Exercise not found."
+  /exercises/{exerciseId}/rubric:
+    get:
+      tags: [exercises]
+      summary: "Retrieve exercise rubric."
+      description: "Retrieve exercise rubric. 'null' is returned if a rubric does not exist."
+      parameters:
+        - name: exerciseId
+          in: path
+          description: Exercise identifier
+          required: true
+          schema:
+            type: string
+            example: "exercise1"
+      responses:
+        "200":
+          description: "Retrieval successful."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rubric'
+                nullable: true
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise does not exist."
+    post:
+      tags: [exercises]
+      summary: "Create a rubric for an exercise."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/MultipleChoiceRubric"
+                - $ref: "#/components/schemas/OpenAnswerRubric"
+                - $ref: "#/components/schemas/FillTheBlanksRubric"
+      responses:
+        "200":
+          description: "Rubric created successfully."
+        "401":
+          description: "Unauthorized operation." 
+        "404":
+          description: "Exercise does not exist." 
+  /exercises/rubrics/{rubricId}:
+    put:
+      tags: [exercises]
+      summary: "Update the rubric."
+      parameters:
+        - name: rubricId
+          in: path
+          description: rubric identifier
+          required: true
+          schema:
+            type: string
+            example: "rubric1"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rubric'
+      responses:
+        "200":
+          description: "Rubric created successfully."
+        "400":
+          description: "Malformed request. Rubric may not be the correct type."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise does not exist."
+    delete:
+      tags: [exercises]
+      summary: "Delete the exercise rubric."
+      parameters:
+        - name: rubricId
+          in: path
+          description: rubric identifier
+          required: true
+          schema:
+            type: string
+            example: "rubric1"
+      responses:
+        "200":
+          description: "Deletion successful."
+        "401":
+          description: "Unauthorized operation."
+        "404":
+          description: "Exercise does not exist."
+  /exercises/tag:
+    get:
+      tags: [exercises]
+      summary: Retrieve tags.
+      description: | 
+        Retrieves the tags used to characterize the exercises. 
+        A path or paths can be given to define where the retrieval of tags should start. 
+        A number of levels can also be provided to inform how much depth the retrieval should cover.
+      parameters:
+        - name: paths
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            default: ["/"]
+          description: Array of paths from which the tags should be retrieved.
+        - name: levels
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: -1
+          description: Number of levels, starting from the given paths that should be retrieved. -1 to retrieve every tag starting at the given paths.
+      responses:
+        "200":
+          description: "Tags retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+
+  # Tests related paths
+  /tests:
+    get: 
+      tags: [tests]
+      summary: Retrieve tests.
+      description: Retrieves tests that match the given filters.
+      parameters:
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
+        - name: tags
+          description: Array of identifiers from the tags that will be used to filter the tests.
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+            default: []
+          required: false
+        - name: matchAllTags
+          description: Value that defines if the exercise must have all the given tags to be retrieved. 
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: false
+        - name: visibilityType
+          description: | 
+            Describes the type of visibility that the tests must have. 
+            This parameter must be paired with the parameter 'visibilityTarget' 
+            when the value is either 'institution' or 'course'.
+          in: query
+          schema:
+            type: string
+            default: public
+            enum:
+              - public
+              - institution
+              - course
+        - name: visibilityTarget
+          description: |
+            Identifier of the visibility target. For example, if visibilityType='institution', 
+            then this parameter is the identifier of the institution.
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: specialistId
+          in: query
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: "Successful retrieval."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Test"
+        "401":
+          description: "Unauthorized operation. Example: When trying to access tests from a specific course that the user does not belong to."  
+    post:
+      tags: ["tests"]
+      summary: Create a test
+      parameters:
+        - name: visibility
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Visibility' 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Test"
+      responses:
+        "200":
+          description: "Success."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Test"
+        "400":
+          description: "Bad syntax."
+        "401": 
+          description: "Unauthorized operation."
+        
+
+  #courses - methods to add specialist, students, etc. Invitation links?
+    #todo - manual/automatic/ai test correction
+
+  
