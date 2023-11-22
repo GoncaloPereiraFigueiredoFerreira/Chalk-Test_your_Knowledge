@@ -3,12 +3,27 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./components/objects/Sidebar/Sidebar";
 import { UserContext } from "./context";
 
+export enum ExerciseType {
+  MULTIPLE_CHOICE = "multiple-choice",
+  OPEN_ANSWER = "open-answer",
+  TRUE_OR_FALSE = "true-or-false",
+  FILL_IN_THE_BLANK = "fill-in-the-blank",
+  CODE = "code",
+}
+
+export enum ExerciseJustificationKind {
+  JUSTIFY_ALL = "JUSTIFY_ALL",
+  JUSTIFY_FALSE = "JUSTIFY_FALSE",
+  JUSTIFY_TRUE = "JUSTIFY_TRUE",
+  NO_JUSTIFICATION = "NO_JUSTIFICATION",
+}
+
 // Exercise definition
 export interface Exercise {
   id: string;
   name: string;
   visibility: string;
-  type: string;
+  type: ExerciseType;
   author: string;
   enunciado: {
     text: string;
@@ -18,10 +33,91 @@ export interface Exercise {
     };
   };
   problem?: {
-    justify?: string;
+    justify?: ExerciseJustificationKind;
     statements: string[];
   };
 }
+
+// function createNewExercise(newExercisetype: ExerciseType) {
+//   // colocar aqui as chamadas para criação dos exercicios
+//   switch (newExercisetype) {
+//     case ExerciseType.MULTIPLE_CHOICE:
+//       return {
+//         id: "-1",
+//         name: "",
+//         visibility: "public",
+//         type: ExerciseType.MULTIPLE_CHOICE,
+//         author: "utilizador atual", //userState.username,
+//         enunciado: {
+//           text: "",
+//         },
+//         problem: {
+//           justify: ExerciseJustificationKind.NO_JUSTIFICATION,
+//           statements: [""],
+//         },
+//       };
+//     case ExerciseType.OPEN_ANSWER:
+//       return {
+//         id: "-1",
+//         name: "",
+//         visibility: "public",
+//         type: ExerciseType.MULTIPLE_CHOICE,
+//         author: "utilizador atual", //userState.username,
+//         enunciado: {
+//           text: "",
+//         },
+//         problem: {
+//           justify: ExerciseJustificationKind.NO_JUSTIFICATION,
+//           statements: [""],
+//         },
+//       };
+//     case ExerciseType.TRUE_OR_FALSE:
+//       return {
+//         id: "-1",
+//         name: "",
+//         visibility: "public",
+//         type: ExerciseType.MULTIPLE_CHOICE,
+//         author: "utilizador atual", //userState.username,
+//         enunciado: {
+//           text: "",
+//         },
+//         problem: {
+//           justify: ExerciseJustificationKind.NO_JUSTIFICATION,
+//           statements: [""],
+//         },
+//       };
+//     case ExerciseType.FILL_IN_THE_BLANK:
+//       return {
+//         id: "-1",
+//         name: "",
+//         visibility: "public",
+//         type: ExerciseType.MULTIPLE_CHOICE,
+//         author: "utilizador atual", //userState.username,
+//         enunciado: {
+//           text: "",
+//         },
+//         problem: {
+//           justify: ExerciseJustificationKind.NO_JUSTIFICATION,
+//           statements: [""],
+//         },
+//       };
+//     case ExerciseType.CODE:
+//       return {
+//         id: "-1",
+//         name: "",
+//         visibility: "public",
+//         type: ExerciseType.MULTIPLE_CHOICE,
+//         author: "utilizador atual", //userState.username,
+//         enunciado: {
+//           text: "",
+//         },
+//         problem: {
+//           justify: ExerciseJustificationKind.NO_JUSTIFICATION,
+//           statements: [""],
+//         },
+//       };
+//   }
+// }
 
 // UserState definition
 export interface UserState {
@@ -34,6 +130,7 @@ export interface UserState {
 // Type of actions allowed on the state
 export enum UserActionKind {
   ADD_EXERCISES = "ADD_EXERCISES",
+  CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE",
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   SET_SELECTED_EXERCISE = "SET_SELECTED_EXERCISE",
   SET_SELECTED_GROUP = "SET_SELECTED_GROUP",
@@ -44,6 +141,7 @@ export interface UserAction {
   type: UserActionKind;
   payload?: {
     exercises?: Exercise[];
+    type?: ExerciseType;
     selectedExercise?: string;
     selectedGroup?: string;
   };
@@ -53,17 +151,34 @@ export interface UserAction {
 function UserStateReducer(userState: UserState, userAction: UserAction) {
   switch (userAction.type) {
     case UserActionKind.ADD_EXERCISES:
+      console.log(UserActionKind.ADD_EXERCISES);
+
       if (userAction.payload)
         if (userAction.payload.exercises) {
           let newListExercises = { ...userState.listExercises };
           userAction.payload.exercises.forEach((element) => {
-            newListExercises[element.id] = element;
+            if (newListExercises[element.id])
+              console.log("already present " + element.id);
+            else newListExercises[element.id] = element;
           });
           return { ...userState, listExercises: newListExercises };
         } else
           throw new Error("No data provided in userAction.payload.exercises");
       else throw new Error("No data provided in userAction.payload");
+    case UserActionKind.CREATE_NEW_EXERCISE:
+      console.log(UserActionKind.CREATE_NEW_EXERCISE);
+
+      //   if (userAction.payload)
+      //     if (userAction.payload.type) {
+      //       let newListExercises = { ...userState.listExercises };
+      //       newListExercises["-1"] = createNewExercise(userAction.payload.type);
+      //       return { ...userState, listExercises: newListExercises };
+      //     } else throw new Error("No data provided in userAction.payload.type");
+      //   else throw new Error("No data provided in userAction.payload");
+      return userState;
     case UserActionKind.REMOVE_EXERCISE:
+      console.log(UserActionKind.REMOVE_EXERCISE);
+
       if (userAction.payload)
         if (userAction.payload.selectedExercise) {
           let exerciseID = userAction.payload.selectedExercise;
@@ -81,6 +196,8 @@ function UserStateReducer(userState: UserState, userAction: UserAction) {
           );
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.SET_SELECTED_EXERCISE:
+      console.log(UserActionKind.SET_SELECTED_EXERCISE);
+
       if (userAction.payload)
         if (userAction.payload.selectedExercise) {
           let exerciseID = userAction.payload.selectedExercise;
@@ -95,6 +212,8 @@ function UserStateReducer(userState: UserState, userAction: UserAction) {
           );
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.SET_SELECTED_GROUP:
+      console.log(UserActionKind.SET_SELECTED_GROUP);
+
       if (userAction.payload)
         if (userAction.payload.selectedGroup) {
           return {

@@ -1,5 +1,4 @@
 import { useReducer } from "react";
-import { ExerciseHeaderEdit } from "../ExHeader";
 
 enum TFEditActionKind {
   JUSTIFYFALSE = "JUSTIFYFALSE",
@@ -82,16 +81,6 @@ export function TFEdit({ enunciado, problem }: TFEditProps) {
   return (
     <>
       <form>
-        <ExerciseHeaderEdit
-          header={{ ...enunciado, text: state.header }}
-          editFunc={(e: any) => {
-            dispatch({
-              type: TFEditActionKind.CHANGEHEADER,
-              payload: { value: e },
-            });
-          }}
-        ></ExerciseHeaderEdit>
-
         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
           Adicione as afirmações e indique se são verdadeiras ou falsas
         </p>

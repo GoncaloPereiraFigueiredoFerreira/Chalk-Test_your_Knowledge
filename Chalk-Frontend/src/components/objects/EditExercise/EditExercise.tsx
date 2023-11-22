@@ -9,10 +9,11 @@ interface EditExerciseProps {
 }
 
 export function EditExercise({ setEditMenuIsOpen }: EditExerciseProps) {
+  const { userState, dispatch } = useUserContext();
+
   const [img, setImg] = useState("");
   const [addImg, setAddImg] = useState(false);
   const [postionImg, setPostionImg] = useState(ImgPos.RIGHT);
-  const { userState, dispatch } = useUserContext();
 
   console.log(userState.listExercises[userState.selectedExercise]);
 

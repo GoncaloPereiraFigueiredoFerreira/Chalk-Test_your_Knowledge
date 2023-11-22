@@ -5,6 +5,7 @@ import {
   ListIcon,
 } from "../../SVGImages/SVGImages";
 import { ExerciseHeader } from "../ExHeader";
+import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface ExerciseProps {
   enunciado: any;
@@ -12,7 +13,7 @@ interface ExerciseProps {
   name: string;
   position: string;
   contexto: string;
-  justify?: string;
+  justify?: ExerciseJustificationKind;
 }
 
 export function OAExercise({
@@ -98,18 +99,6 @@ function OASolve(props: any) {
           </div>
         </div>
       </form>
-    </>
-  );
-}
-
-export function OAEdit(props: any) {
-  const [state, setState] = useState(props.enunciado.text);
-  return (
-    <>
-      {/* <ExerciseHeaderEdit
-        header={{ ...props.enunciado, text: state }}
-        editFunc={setState}
-      ></ExerciseHeaderEdit> */}
     </>
   );
 }

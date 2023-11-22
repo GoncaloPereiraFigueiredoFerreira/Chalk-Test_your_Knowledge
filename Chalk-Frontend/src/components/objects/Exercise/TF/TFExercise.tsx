@@ -1,5 +1,6 @@
 import { useReducer } from "react";
 import { ExerciseHeader } from "../ExHeader";
+import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface TFStatement {
   phrase: string;
@@ -27,7 +28,7 @@ interface TFExerciseProps {
   name: string;
   position: string;
   contexto: string;
-  justify?: string;
+  justify?: ExerciseJustificationKind;
   enunciado: any;
   problem?: any;
 }
@@ -128,10 +129,6 @@ function TFSolve(props: any) {
 }
 
 function TFStatement(props: any) {
-  console.log(props.id);
-  console.log(props.state);
-  console.log(props.state[props.id]);
-
   return (
     <>
       <div className="flex items-start justify-center">
