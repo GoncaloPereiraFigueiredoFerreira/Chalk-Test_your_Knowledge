@@ -1,0 +1,191 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+
+paths:
+  /course:
+    post:
+      summary: Create course
+      description: This method is used to create an course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course
+              properties:
+                course:
+                  $ref: '#/components/schemas/CourseWithoutId'
+      responses:
+        "200":
+          description: OK
+        '401':
+          description: Unauthorized operation
+
+    get:
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find the courses this student belongs to.
+        - name: specialistId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find the courses this specialist belongs to.
+        - name: institutionId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+            Find the courses of this institution.
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                additionalProperties: false
+                items:
+                  $ref: '#/components/schemas/Course'
+        '400':
+          description: Either 'studentId' or 'specialistId' or 'institution' are required.
+        '401':
+          description: Unauthorized operation
+
+  /course/{courseId}:
+    parameters:
+      - name: courseId
+        in: path
+        description: Course identifier
+        required: true
+        schema:
+          $ref: "#/components/schemas/StringInput"
+    get:
+      summary: Get course by course id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseWithoutId'
+        '400':
+          description: Invalid course id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Course not found
+    put:
+      tags:
+        - course
+      summary: Update course
+      description: Update an existent course in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course
+              properties:
+                course:
+                  $ref: '#/components/schemas/CourseWithoutId'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid course id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Course not found
+
+    delete:
+      tags:
+        - course
+      summary: Delete course
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid coursename supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Course not found
+
+components:
+  schemas:
+    Course:
+      description: "Basic properties of a course."
+      type: object
+      required:
+        - id
+        - name
+        - institutionId
+        - description
+      additionalProperties: false
+      properties:
+        id:
+          $ref: "#/components/schemas/StringInput"
+        name:
+          $ref: "#/components/schemas/StringInput"
+        institutionId:
+          $ref: "#/components/schemas/StringInput"
+        description:
+          $ref: "#/components/schemas/StringInput"
+      example:
+        id: "course1"
+        name: "EngenhariaInformatica"
+        institutionId: "uminho"
+        description: ""
+
+    CourseWithoutId:
+      description: "Course's Schema. Course Id is not required"
+      type: object
+      required:
+        - name
+        - institutionId
+        - description
+      additionalProperties: false
+      properties:
+        name:
+          $ref: "#/components/schemas/StringInput"
+        institutionId:
+          $ref: "#/components/schemas/StringInput"
+        description:
+          $ref: "#/components/schemas/StringInput"
+      example:
+        name: "EngenhariaInformatica"
+        institutionId: "uminho"
+        description: ""
+
+    StringInput:
+      description: "The structure of accepted strings"
+      type: string
+      pattern: ^[A-Za-z0-9]{3,10}$
+      maxLength: 500
+      minLength: 1

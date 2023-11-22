@@ -1,0 +1,96 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+
+components:
+  schemas:
+    TestResolution:
+      description: "Test resolution's schema."
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        studentId: 
+          type: string
+        testId:
+          type: string
+        startTime:
+          type: string
+          format: DateTime
+        submissionTime:
+          type: string
+          format: DateTime
+        test:
+          $ref: "#/components/schemas/Test"
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestResolutionGroup"
+      
+    Test:
+      description: "Test resolution's schema."
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        specialistId:
+          type: string
+        institutionId:
+          type: string
+        title:
+          type: string
+        globalInstructions:
+          type: string
+        globalCotation:
+          type: number
+          format: float
+        timeLimit:
+          type: number
+          format: float
+        conclusion:
+          type: string
+        creationDate:
+          type: string
+          format: DateTime
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestGroup"
+        
+    TestResolutionGroup:
+      description: "Test resolution group's schema."
+      type: object
+      required:
+        - groupCotation
+      properties:
+        groupCotation:
+          type: number
+          format: float
+
+    TestGroup:
+      description: "Test group's schema."
+      type: object
+      required:
+        - groupCotation
+      properties:
+        groupInstructions:
+          type: string
+        groupCotation:
+          type: number
+          format: float
+        
+ 
+paths:
+  /placeholder:
+    post:
+      summary: Placeholder
+      responses:
+        "420":
+          description: ""

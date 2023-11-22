@@ -1,0 +1,567 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+  
+paths:
+  /subscription:
+    post:
+      summary: Create subscription plan
+      description: This method is used to create a new subsctiption plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - subscriptionPlan
+              additionalProperties: false
+              properties:
+                subscriptionPlan:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+      responses:
+        "200":
+          description: OK
+        '401':
+          description: Unauthorized operation
+
+    get:
+      description: Returns all the subscription plans.
+      parameters:
+        - name: specialistId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+              Finds the specialist subscription.
+        - name: studentId
+          in: query
+          schema:
+            $ref: "#/components/schemas/StringInput"
+          description: >
+              Finds the student subscription.
+        - name: page
+          schema:
+            type: integer
+          in: query
+          required: true
+        - name: itemsPerPage
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+        '401':
+          description: Unauthorized operation
+
+  /subscription/{subscriptionPlanId}:
+    parameters:
+      - name: subscriptionPlanId
+        in: path
+        description: Subscription Plan identifier
+        required: true
+        schema:
+          $ref: "#/components/schemas/StringInput"
+          example: "uminhoDefaultPlan01"
+    get:
+      summary: Get subscription plan by subscription plan id
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+        '400':
+          description: Invalid user id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: User not found
+    put:
+      summary: Update subscription plan
+      description: Update an existent subscription plan in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exercise:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid subscription plan id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Subscription plan not found
+
+    delete:
+      summary: Delete subscription plan
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid subscription plan identifier supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Subscription plan not found
+        '405':
+          description: The subsctiption plan cannot be deleted because its being used.
+
+  /subscription/institution:
+    post:
+      summary: Create subscription for a institution
+      description: This method is used to create a new subsctiption for a institution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - SubscriptionWithPlan
+                - InstitutionId
+              additionalProperties: false
+              properties:
+                SubscriptionWithPlan:
+                  $ref: '#/components/schemas/SubscriptionWithPlanId'
+                institutionId:
+                  $ref: "#/components/schemas/StringInput"
+      responses:
+        "200":
+          description: OK
+        '401':
+          description: Unauthorized operation
+
+
+  /subscription/institution/{institutionId}:
+    parameters:
+      - name: institutionId
+        in: path
+        description: Institution identifier
+        required: true
+        schema:
+          $ref: "#/components/schemas/StringInput"
+          example: "uminho"
+    get:
+      summary: Get subscription by institution id.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: Invalid institution id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Institution not found
+    put:
+      summary: Update institution subscription
+      description: Update an existent subscription in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - SubscriptionWithPlan
+              additionalProperties: false
+              properties:
+                SubscriptionWithPlan:
+                  $ref: '#/components/schemas/SubscriptionWithPlanId'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid institution id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Institution not found
+        '405':
+          description: This method is only for update, use the post method.
+
+    delete:
+      summary: Delete subscription from institution
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid institution id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Institution not found
+
+  /subscription/specialist:
+    post:
+      summary: Create subscription for a specialist
+      description: This method is used to create a new subsctiption for a specialist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - SubscriptionWithPlan
+                - SpecialistId
+              additionalProperties: false
+              properties:
+                SubscriptionWithPlan:
+                  $ref: '#/components/schemas/SubscriptionWithPlanId'
+                specialistId:
+                  $ref: "#/components/schemas/StringInput"
+      responses:
+        "200":
+          description: OK
+        '401':
+          description: Unauthorized operation
+
+
+  /subscription/specialist/{specialistId}:
+    parameters:
+      - name: specialistId
+        in: path
+        description: Specialist identifier
+        required: true
+        schema:
+          $ref: "#/components/schemas/StringInput"
+          example: "uminho"
+    get:
+      summary: Get subscription by specialist id.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: Invalid specialist id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Specialist not found
+    put:
+      summary: Update specialist subscription
+      description: Update an existent subscription in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - SubscriptionWithPlan
+              additionalProperties: false
+              properties:
+                SubscriptionWithPlan:
+                  $ref: '#/components/schemas/SubscriptionWithPlanId'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid specialist id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Specialist not found
+        '405':
+          description: This method is only for update, use the post method.
+
+    delete:
+      summary: Delete subscription from specialist
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid specialist id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Specialist not found
+
+  /subscription/student:
+    post:
+      summary: Create subscription for a student
+      description: This method is used to create a new subsctiption for a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - SubscriptionWithPlan
+                - StudentId
+              additionalProperties: false
+              properties:
+                SubscriptionWithPlan:
+                  $ref: '#/components/schemas/SubscriptionWithPlanId'
+                studentId:
+                  $ref: "#/components/schemas/StringInput"
+      responses:
+        "200":
+          description: OK
+        '401':
+          description: Unauthorized operation
+
+
+  /subscription/student/{studentId}:
+    parameters:
+      - name: studentId
+        in: path
+        description: Student identifier
+        required: true
+        schema:
+          $ref: "#/components/schemas/StringInput"
+          example: "uminho"
+    get:
+      summary: Get subscription by student id.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: Invalid student id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Student not found
+    put:
+      summary: Update student subscription
+      description: Update an existent subscription in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - SubscriptionWithPlan
+              additionalProperties: false
+              properties:
+                SubscriptionWithPlan:
+                  $ref: '#/components/schemas/SubscriptionWithPlanId'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid student id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Student not found
+        '405':
+          description: This method is only for update, use the post method.
+
+    delete:
+      summary: Delete subscription
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid student id supplied
+        '401':
+          description: Unauthorized operation
+        '404':
+          description: Student not found
+
+          
+components:
+  schemas:
+    Subscription:
+      description: "Subscription's schema."
+      type: object
+      required:
+        - plan
+        - nextPayment
+        - payment
+      additionalProperties: false
+      properties:
+        plan:
+          $ref: "#/components/schemas/SubscriptionPlan"
+        nextPayment:
+          type: string
+          format: DateTime
+        payment:
+          $ref: "#/components/schemas/Payment"
+      example:
+        plan:
+          name: "IDK yet"
+          targetAudience: ["audience1"]
+          perks: ["perk1"]
+          priceMonth: 100000.5
+        nextPayment: "11-09-2024"
+        payment:
+          creditCard:
+            name: "GONÇALO COUTO DOS SANTOS"
+            number: "5555555555554444"
+            cvv: "666"
+            expirationDate: "11-09-2050"
+
+    SubscriptionWithPlanId:
+      description: "Subscription's schema."
+      type: object
+      required:
+        - planId
+        - nextPayment
+        - payment
+      additionalProperties: false  
+      properties:
+        planId:
+          $ref: "#/components/schemas/StringInput"
+        nextPayment:
+          type: string
+          format: DateTime
+        payment:
+          $ref: "#/components/schemas/Payment"
+      example:
+        plan:
+          name: "IDK yet"
+          targetAudience: ["audience1"]
+          perks: ["perk1"]
+          priceMonth: 100000.5
+        nextPayment: "11-09-2024"
+        payment:
+          creditCard:
+            name: "GONÇALO COUTO DOS SANTOS"
+            number: "5555555555554444"
+            cvv: "666"
+            expirationDate: "11-09-2050"  
+    Payment:
+      description: "Payment's schema."
+      type: object
+      required:
+        - payMethod
+      additionalProperties: false  
+      properties:
+        payMethod:
+          oneOf:
+            - $ref: "#/components/schemas/CreditCard"
+      example:
+        creditCard:
+          name: "GONÇALO COUTO DOS SANTOS"
+          number: "5555555555554444"
+          cvv: "666"
+          expirationDate: "11-09-2050"
+          
+    CreditCard:
+      description: "Credit card's schema."
+      type: object
+      required:
+        - name
+        - number
+        - cvv
+        - expirationDate
+      additionalProperties: false  
+      properties:
+        name: 
+          type: string
+        number: 
+          type: string
+        cvv: 
+          type: string
+        expirationDate:
+          type: string
+          format: Date
+      example:
+        name: "GONÇALO COUTO DOS SANTOS"
+        number: "5555555555554444"
+        cvv: "666"
+        expirationDate: "11-09-2050"
+        
+    SubscriptionPlan:
+      description: "Subscription Plan's schema."
+      type: object
+      required:
+        - name
+        - targetAudience
+        - perks
+        - priceMonth
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        targetAudience:
+          type: array
+          items:
+            type: object
+        perks:
+          type: array
+          items:
+            type: object
+        priceMonth:
+          type: number
+          format: float
+      example:
+        name: "IDK yet"
+        targetAudience: ["audience1"]
+        perks: ["perk1"]
+        priceMonth: 100000.5
+
+    Institution:
+      description: "Institution's schema."
+      type: object
+      required:
+        - name
+        - description
+        - logoPath
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        logoPath: 
+          type: string
+        subscription:
+          $ref: "#/components/schemas/InstitutionSubscription"
+      example:
+        name: "Escola de Engenharia - Universidade do Minho"
+        description: "a escola onde estão os boys"
+        logoPath: "https://upload.wikimedia.org/wikipedia/commons/9/93/EEUMLOGO.png"
+  
+    InstitutionSubscription:
+      description: "Institution subscription's schema."
+      type: object
+      additionalProperties: false
+      properties:
+        studentsSub:
+          $ref: "#/components/schemas/Subscription"
+        specialistsSub:
+          $ref: "#/components/schemas/Subscription"
+        
+    StringInput:
+      description: "The structure of accepted strings"
+      type: string
+      pattern: ^[A-Za-z0-9]{3,10}$
+      maxLength: 500
+      minLength: 1
