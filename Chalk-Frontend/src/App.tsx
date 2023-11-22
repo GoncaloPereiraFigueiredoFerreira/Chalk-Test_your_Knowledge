@@ -6,7 +6,7 @@ import { FrontPage } from "./components/pages/FrontPage/FrontPage";
 import { TestPage } from "./components/pages/TestPage/TestPage";
 //import { EditExercisePage } from "./components/pages/EditExercisePage/EditExercisePage";
 import { Catalog } from "./components/objects/SVGImages/catalog";
-import { UserInterface } from "./UserInterface";
+import { UserInterface, UserRole } from "./UserInterface";
 import "./App.css";
 
 function App() {
@@ -21,7 +21,13 @@ function App() {
           element={
             <UserInterface
               userData={{
-                id: 1,
+                profile: {
+                  id: "bronzeiscute@hotmail.com",
+                  profilePic:
+                    "https://fernandoparreiras.files.wordpress.com/2023/02/screenshot-2023-02-08-at-00.32.21.png?w=1092",
+                  role: UserRole.SPECIALIST,
+                  name: "Hugo Nigueira",
+                },
                 listExercises: {},
                 selectedExercise: "",
                 selectedGroup: "all",

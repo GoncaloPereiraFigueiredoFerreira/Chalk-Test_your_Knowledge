@@ -3,6 +3,12 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./components/objects/Sidebar/Sidebar";
 import { UserContext } from "./context";
 
+// User Roles Enum // Might add admin or other
+export enum UserRole {
+  SPECIALIST = "SPECIALIST",
+  STUDENT = "STUDENT",
+}
+
 // Exercise definition
 export interface Exercise {
   id: string;
@@ -20,9 +26,16 @@ export interface Exercise {
   problem?: any;
 }
 
+export interface UserProfile {
+  id: string;
+  name: string;
+  profilePic: string;
+  role: UserRole;
+}
+
 // UserState definition
 export interface UserState {
-  id: number;
+  profile: UserProfile;
   listExercises: { [key: string]: Exercise };
   selectedExercise: string;
   selectedGroup: string;

@@ -158,7 +158,7 @@ z"
             className={`font-jetbrains dark:text-white   ${
               props.size === "big"
                 ? "lg:text-5xl ml-5 text-3xl"
-                : "text-[0.5rem] ml-1"
+                : "text-[0.6rem] ml-1"
             }`}
           >
             Test Your Knowledge
