@@ -1,0 +1,132 @@
+openapi: "3.0.3"
+info:
+  title: Chalk - Test Your Knowledge
+  version: "1.0.0"
+servers:
+  - url: https://localhost:8080/v1/
+
+paths:
+  /institution:
+    post:
+      summary: Create institution
+      description: This method is used to create an institution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - institution
+              properties:
+                institution:
+                  $ref: '#/components/schemas/InstitutionWithoutId'
+      responses:
+        "200":
+          description: OK
+
+  /institution/{institutionId}:
+    parameters:
+      - name: institutionId
+        in: path
+        description: Institution identifier
+        required: true
+        schema:
+          $ref: "#/components/schemas/StringInput"
+    get:
+      summary: Get institution by institution id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstitutionWithoutId'
+        '400':
+          description: Invalid institution id supplied
+        '404':
+          description: Institution not found
+    put:
+      summary: Update Institution
+      description: Update an existent institution in the store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - institution
+              properties:
+                institution:
+                  $ref: '#/components/schemas/InstitutionWithoutId'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid institution supplied
+        '404':
+          description: Institution not found
+
+    delete:
+      summary: Delete institution
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid institution supplied
+        '404':
+          description: Institution not found
+
+components:
+  schemas:
+    Institution:
+      description: "Basic properties of a institution."
+      type: object
+      required:
+        - id
+        - name
+        - photoPath
+        - logopath
+      additionalProperties: false
+      properties:
+        id:
+          $ref: "#/components/schemas/StringInput"
+        name:
+          $ref: "#/components/schemas/StringInput"
+        photoPath:
+          $ref: "#/components/schemas/StringInput"
+        logopath:
+          $ref: "#/components/schemas/StringInput"
+      example:
+        id: "uminho"
+        name: "Universidade do minho"
+        institutionId: ""
+        description: "LEI>LCC"
+
+    InstitutionWithoutId:
+      description: "Basic properties of a institution."
+      type: object
+      required:
+        - name
+        - photoPath
+        - logopath
+      additionalProperties: false
+      properties:
+        name:
+          $ref: "#/components/schemas/StringInput"
+        photoPath:
+          $ref: "#/components/schemas/StringInput"
+        logopath:
+          $ref: "#/components/schemas/StringInput"
+      example:
+        name: "Universidade do minho"
+        institutionId: ""
+        description: "LEI>LCC"
+
+    StringInput:
+      description: "The structure of accepted strings"
+      type: string
+      pattern: ^[A-Za-z0-9]{3,10}$
+      maxLength: 500
+      minLength: 1
