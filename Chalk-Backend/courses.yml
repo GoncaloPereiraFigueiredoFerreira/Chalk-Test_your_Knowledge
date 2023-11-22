@@ -54,7 +54,7 @@ paths:
                 type: array
                 additionalProperties: false
                 items:
-                  $ref: '#/components/schemas/CourseWithoutId'
+                  $ref: '#/components/schemas/Course'
         '400':
           description: Either 'studentId' or 'specialistId' or 'institution' are required.
 
@@ -125,6 +125,7 @@ components:
         - name
         - institutionId
         - description
+      additionalProperties: false
       properties:
         id:
           $ref: "#/components/schemas/StringInput"
@@ -147,9 +148,8 @@ components:
         - name
         - institutionId
         - description
+      additionalProperties: false
       properties:
-        id:
-          $ref: "#/components/schemas/StringInput"
         name:
           $ref: "#/components/schemas/StringInput"
         institutionId:

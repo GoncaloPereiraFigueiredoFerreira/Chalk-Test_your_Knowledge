@@ -22,9 +22,9 @@ paths:
               properties:
                 user:
                   oneOf:
-                    - $ref: '#/components/schemas/Student'
-                    - $ref: '#/components/schemas/Specialist'
-                    - $ref: '#/components/schemas/InstitutionManager'
+                    - $ref: '#/components/schemas/StudentWithoutId'
+                    - $ref: '#/components/schemas/SpecialistWithoutId'
+                    - $ref: '#/components/schemas/InstitutionManagerWithoutId'
       responses:
         "200":
           description: OK
@@ -218,7 +218,9 @@ components:
       description: "Basic properties of an user."
       type: object
       required:
+        - id
         - name
+      additionalProperties: false
       properties:
         id:
           $ref: "#/components/schemas/StringInput"
@@ -226,11 +228,27 @@ components:
           $ref: "#/components/schemas/StringInput"
         photoPath:
           $ref: "#/components/schemas/StringInput"
+
+    UserWithoutId:
+      description: "Basic properties of an user."
+      type: object
+      required:
+        - name
+      additionalProperties: false
+      properties:
+        name:
+          $ref: "#/components/schemas/StringInput"
+        photoPath:
+          $ref: "#/components/schemas/StringInput"
           
     SpecialistWithoutId:
       description: "Specialist's Schema. The user id is not required."
-      allOf:
-        - $ref: "#/components/schemas/User"
+      required:
+        - UserWithoutId
+      additionalProperties: false
+      properties:
+        UserWithoutId:
+          $ref: "#/components/schemas/UserWithoutId"
       example:
         name: "Alexandre Martins"
         photoPath: "https://i.imgur.com/FRwhrhG.jpg"
@@ -239,9 +257,11 @@ components:
     Specialist:
       description: "Specialist's Schema"
       required:
-        - id
-      allOf:
-        - $ref: '#/components/schemas/SpecialistWithoutId'
+        - User
+      additionalProperties: false
+      properties:
+        User:
+          $ref: '#/components/schemas/User'
       example:
         id: "id_Alex"
         name: "Alexandre Martins"
@@ -249,8 +269,12 @@ components:
           
     StudentWithoutId:
       description: "Student's Schema. The user id is not required."
-      allOf:
-        - $ref: "#/components/schemas/User"
+      required:
+        - UserWithoutId
+      additionalProperties: false
+      properties:
+        UserWithoutId:
+          $ref: "#/components/schemas/UserWithoutId"
       example:
         name: "Luís Silva"
         photoPath: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Osama_bin_Laden%2C_portr%C3%A6t.jpg"
@@ -258,9 +282,11 @@ components:
     Student:
       description: "Student's Schema"
       required:
-        - id
-      allOf:
-        - $ref: '#/components/schemas/StudentWithoutId'
+        - User
+      additionalProperties: false
+      properties:
+        User:
+          $ref: "#/components/schemas/User"
       example:
         id: "id_Luis"
         name: "Luĩs Silva"
@@ -270,12 +296,12 @@ components:
       description: "Institution Manager's Schema. The user id is not required."
       required:
         - institutionId
-      allOf:
-        - $ref: "#/components/schemas/User"
-        - type: object
-          properties:
-            institutionId:
-              $ref: "#/components/schemas/StringInput"
+        - UserWithoutId
+      properties:
+        UserWithoutId: 
+          $ref: "#/components/schemas/UserWithoutId"
+        institutionId:
+          $ref: "#/components/schemas/StringInput"
       example:
         name: "Rui Braga"
         photoPath: "https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng"
@@ -284,9 +310,13 @@ components:
     InstitutionManager:
       description: "Institution Manager's Schema"
       required:
-        - id
-      allOf:
-        - $ref: '#/components/schemas/InstitutionManagerWithoutId'
+        - institutionId
+        - User
+      properties:
+        User: 
+          $ref: "#/components/schemas/User"
+        institutionId:
+          $ref: "#/components/schemas/StringInput"
       example:
         id: "id_Ray"
         name: "Rui Braga"

@@ -5,8 +5,6 @@ info:
 servers:
   - url: https://localhost:8080/v1/
   
-
-
 paths:
   /subscription:
     post:
@@ -349,14 +347,18 @@ paths:
           description: Invalid student id supplied
         '404':
           description: Student not found
+
+          
 components:
   schemas:
     Subscription:
       description: "Subscription's schema."
       type: object
-      additionalProperties: false
       required:
-        - name
+        - plan
+        - nextPayment
+        - payment
+      additionalProperties: false
       properties:
         plan:
           $ref: "#/components/schemas/SubscriptionPlan"
@@ -383,10 +385,12 @@ components:
       description: "Subscription's schema."
       type: object
       required:
-        - name
-      additionalProperties: false        
+        - planId
+        - nextPayment
+        - payment
+      additionalProperties: false  
       properties:
-        plan:
+        planId:
           $ref: "#/components/schemas/StringInput"
         nextPayment:
           type: string
@@ -409,10 +413,13 @@ components:
     Payment:
       description: "Payment's schema."
       type: object
-      additionalProperties: false
+      required:
+        - payMethod
+      additionalProperties: false  
       properties:
-        oneOf:
-          $ref: "#/components/schemas/CreditCard"
+        payMethod:
+          oneOf:
+            - $ref: "#/components/schemas/CreditCard"
       example:
         creditCard:
           name: "GONÇALO COUTO DOS SANTOS"
@@ -423,7 +430,12 @@ components:
     CreditCard:
       description: "Credit card's schema."
       type: object
-      additionalProperties: false
+      required:
+        - name
+        - number
+        - cvv
+        - expirationDate
+      additionalProperties: false  
       properties:
         name: 
           type: string
@@ -443,9 +455,12 @@ components:
     SubscriptionPlan:
       description: "Subscription Plan's schema."
       type: object
-      additionalProperties: false
       required:
+        - name
+        - targetAudience
+        - perks
         - priceMonth
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -471,6 +486,8 @@ components:
       type: object
       required:
         - name
+        - description
+        - logoPath
       additionalProperties: false
       properties:
         name:
