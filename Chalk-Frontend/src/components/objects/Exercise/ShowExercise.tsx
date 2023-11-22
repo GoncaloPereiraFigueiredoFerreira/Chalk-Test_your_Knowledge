@@ -41,8 +41,6 @@ export function ShowExercise({
   const [preview, setPreview] = useState(<></>);
 
   useEffect(() => {
-    console.log("show exercise");
-    console.log(exercise);
     switch (exercise.type) {
       case "multiple-choice":
         setTypeLabel(

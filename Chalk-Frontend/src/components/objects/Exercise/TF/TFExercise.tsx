@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { ExerciseHeader } from "../ExHeader";
+import { ExerciseHeader } from "../Header/ExHeader";
 import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface TFStatement {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExerciseHeader } from "../ExHeader";
+import { ExerciseHeader } from "../Header/ExHeader";
 import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface ExerciseProps {
@@ -18,15 +18,6 @@ export function MCExercise({
   position,
   contexto,
 }: ExerciseProps) {
-  console.log("MC exercise");
-  console.log({
-    enunciado: enunciado,
-    problem: problem,
-    name: name,
-    position: position,
-    contexto: contexto,
-  });
-
   let exerciseDisplay = <></>;
   switch (contexto) {
     case "solve":

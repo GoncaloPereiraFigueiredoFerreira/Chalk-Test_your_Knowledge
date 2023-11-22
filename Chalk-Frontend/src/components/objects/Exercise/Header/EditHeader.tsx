@@ -1,6 +1,5 @@
-import { ImgPos } from "../Exercise/ExHeader";
-import { Dropdown } from "../../interactiveElements/Dropdown";
-import "./EditExercise.css";
+import { ImgPos } from "./ExHeader";
+import { Dropdown } from "../../../interactiveElements/Dropdown";
 
 interface EditHeaderProps {
   setAddImg: (value: boolean) => void;

@@ -8,7 +8,7 @@ import {
   ExerciseType,
   UserActionKind,
 } from "../../../UserInterface";
-import { ImgPos } from "../Exercise/ExHeader";
+import { ImgPos } from "../Exercise/Header/ExHeader";
 import { ListExercisesPopUp } from "./ListExercisesPopUp";
 
 const userExercises = [

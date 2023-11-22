@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useState } from "react";
-import { ExerciseHeader } from "../ExHeader";
+import { ExerciseHeader } from "../Header/ExHeader";
 import {
   DownloadIcon,
   FileUploadIcon,

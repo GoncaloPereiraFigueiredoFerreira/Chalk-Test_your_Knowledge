@@ -4,7 +4,7 @@ import {
   FileUploadIcon,
   ListIcon,
 } from "../../SVGImages/SVGImages";
-import { ExerciseHeader } from "../ExHeader";
+import { ExerciseHeader } from "../Header/ExHeader";
 import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface ExerciseProps {

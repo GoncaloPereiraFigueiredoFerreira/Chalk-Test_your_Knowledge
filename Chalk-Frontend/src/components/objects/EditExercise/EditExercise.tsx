@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useUserContext } from "../../../context";
-import { ImgPos } from "../Exercise/ExHeader";
+import { ImgPos } from "../Exercise/Header/ExHeader";
 import "./EditExercise.css";
-import { EditHeader } from "./EditHeader";
+import { EditHeader } from "../Exercise/Header/EditHeader";
 
 interface EditExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
