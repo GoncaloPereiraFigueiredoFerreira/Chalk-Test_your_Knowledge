@@ -8,6 +8,7 @@ import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
+  createNewExercise,
 } from "../Exercise/Exercise";
 
 const userExercises: Exercise[] = [
@@ -125,9 +126,9 @@ export function ListExercises() {
 
   const remExercise = (id: string) => {
     let tempList = { ...exerciseList };
-    if (!Object.keys(exerciseList).includes(id)) {
+    if (Object.keys(exerciseList).includes(id)) {
       delete tempList[id];
-      return tempList;
+      setExerciseList(tempList);
     }
   };
 
@@ -159,15 +160,12 @@ export function ListExercises() {
         show={newExercisePopUp}
         closePopUp={() => setNewExercisePopUp(false)}
         children={
-          <></>
-          /*
           <ListExercisesPopUp
             createNewExercise={(newExercisetype: ExerciseType) => {
               createNewExercise(newExercisetype);
               setNewExercisePopUp(false);
             }}
-            
-          />*/
+          />
         }
       />
     </>

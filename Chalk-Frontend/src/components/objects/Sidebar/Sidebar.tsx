@@ -102,17 +102,16 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
 
         <ul className="sidebar-divisions border-t-0">
           <li>
-            <a href="#" className="relative inline-block text-lg group">
-              <span className="relative z-10 block px-3 py-3  overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white dark:group-hover:text-gray-900">
-                {/*Bloco inicial*/}
-                <span className="absolute inset-0 w-full h-full px-5 py-5 rounded-sm bg-gray-100 dark:bg-gray-400 "></span>
+            <button className="relative inline-block text-lg group">
+              {/*Bloco inicial*/}
+              <span className="relative z-10 block px-3 py-3 overflow-hidden font-bold leading-tight transition-colors duration-500 ease-out border-2 text-gray-700 group-hover:text-white dark:text-gray-300 dark:group-hover:text-gray-800 bg-white group-hover:bg-gray-700 dark:bg-gray-800 dark:group-hover:bg-gray-500 border-gray-700 dark:border-gray-600 rounded-lg">
                 {/*Bloco que surge*/}
-                <span className="absolute left-0 w-64 h-64 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 dark:bg-gray-200 group-hover:-rotate-180 ease"></span>
+                <span className="absolute left-0 w-64 h-64 -ml-2 transition-all duration-200 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-700 dark:bg-gray-300 group-hover:-rotate-180 ease"></span>
                 {/*Conteudo*/}
                 <span className="relative flex space-x-2 items-center">
                   <PlusIcon
                     style={
-                      "group-hover:text-white dark:text-gray-900 dark:group-hover:text-gray-900"
+                      "group-hover:text-white text-gray-700 dark:text-gray-300 dark:group-hover:text-black transition-colors duration-500"
                     }
                   ></PlusIcon>
 
@@ -128,12 +127,11 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               {/*Sombra*/}
               <span
                 className={`${isOpen ? " h-12" : "h-11"}
-              absolute bottom-0 right-0 w-full -mb-1 -mr-1 transition-all duration-200 ease-linear bg-gray-900 dark:bg-gray-200 rounded-lg group-hover:mb-0 group-hover:mr-0`}
+                absolute bottom-0 right-0 w-full -mb-1 -mr-1 transition-all duration-200 ease-linear bg-gray-500 dark:bg-gray-400 rounded-lg group-hover:mb-0 group-hover:mr-0`}
                 data-rounded="rounded-lg"
               ></span>
-            </a>
+            </button>
           </li>
-
           <li>
             <Link to={"test"}>
               <button className="sidebar-item bg-btn-1 group">

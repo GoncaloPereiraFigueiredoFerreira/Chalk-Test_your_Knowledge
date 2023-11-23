@@ -37,6 +37,7 @@ export function ShowExercise({
   setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
+  remExercise,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
@@ -235,7 +236,10 @@ export function ShowExercise({
               <EyeSlashIcon size="size-5" />
               Visibilidade
             </button>
-            <button className="btn-options-exercise gray-icon">
+            <button
+              className="btn-options-exercise gray-icon"
+              onClick={() => remExercise(exercise.id)}
+            >
               <GarbageIcon size="size-5" />
               Eliminar
             </button>
