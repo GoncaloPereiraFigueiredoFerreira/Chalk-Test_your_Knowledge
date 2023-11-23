@@ -31,10 +31,14 @@ router.post("/register", (req, res, next) => {
     req.body.password,
     (err, user) => {
       if (err) {
-        res.status(500);
-        res.setHeader("Content-Type", "application/json");
-        res.json({ success: false, err: err });
-        res.end();
+        res
+          .status(403)
+          .setHeader("Content-Type", "application/json")
+          .jsonp({
+            sucess: false,
+            err: err,
+          })
+          .end();
       } else {
         var token = authenticate.getToken({
           username: req.body.email,
@@ -46,9 +50,12 @@ router.post("/register", (req, res, next) => {
           .setHeader("Content-Type", "application/json")
           .cookie("chalkauthtoken", token)
           .jsonp({
-            username: req.body.email,
-            role: "user",
-            name: req.body.name,
+            sucess: true,
+            user: {
+              username: req.body.email,
+              role: "user",
+              name: req.body.name,
+            },
           })
           .end();
       }
@@ -67,19 +74,32 @@ router.post(
         role: "user",
         name: req.user.name,
       });
-      // Response
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "application/json");
       var date = new Date().toISOString().substring(0, 16);
       User.updateOne(
         { username: req.user.username },
         { last_access: date }
       ).then(() => {
-        res.cookie("chalkauthtoken", token);
-        res.status(200);
-        res.redirect(frontendAdress);
+        res
+          .status(200)
+          .setHeader("Content-Type", "application/json")
+          .cookie("chalkauthtoken", token)
+          .jsonp({
+            success: true,
+            user: {
+              username: req.user.username,
+              role: "user",
+              name: req.user.name,
+            },
+          })
+          .end();
       });
-    } else res.json({ success: false, status: "Deactivated Account" });
+    } else {
+      res
+        .status(401)
+        .setHeader("Content-Type", "application/json")
+        .json({ success: false, status: "Deactivated Account" })
+        .end();
+    }
   }
 );
 
@@ -123,9 +143,19 @@ router.get("/google", (req, res, next) => {
             role: "user",
             name: gres2.data.name,
           });
-          res.cookie("chalkauthtoken", token);
-          res.status(200);
-          res.redirect(frontendAdress);
+          res
+            .status(200)
+            .setHeader("Content-Type", "application/json")
+            .cookie("chalkauthtoken", token)
+            .jsonp({
+              sucess: true,
+              user: {
+                username: req.body.email,
+                role: "user",
+                name: req.body.name,
+              },
+            })
+            .end();
         });
     });
 });
