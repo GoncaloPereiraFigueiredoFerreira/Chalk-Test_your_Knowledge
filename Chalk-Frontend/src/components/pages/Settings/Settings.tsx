@@ -2,8 +2,6 @@ import { Footer } from "../../objects/Footer/Footer";
 import { NavBar } from "../../objects/NavBar/NavBar";
 
 import { Tabs } from "flowbite";
-import type { TabsOptions, TabsInterface, TabItem } from "flowbite";
-import type { InstanceOptions } from "flowbite";
 
 import { Profile } from "./Profile";
 import { Subscription } from "./Subscription";
@@ -16,12 +14,10 @@ export function Settings() {
   const tabsElement = document.getElementById("tabs");
 
   // create an array of objects with the id, trigger element (eg. button), and the content element
-  const tabElements: TabItem[] = [
+  const tabElements = [
     {
       id: "profile",
-      triggerEl: document.querySelector<HTMLElement>("#profile-tab")
-        ? document.querySelector<HTMLElement>("#profile-tab")
-        : undefined,
+      triggerEl: document.querySelector<HTMLElement>("#profile-tab"),
       targetEl: document.querySelector("#profile"),
     },
     {
@@ -40,6 +36,62 @@ export function Settings() {
       targetEl: document.querySelector("#account"),
     },
   ];
+
+  /*  
+const tabElements = [
+    {
+      id: "profile",
+      triggerEl:
+        document.querySelector<HTMLElement>("#profile-tab") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+      targetEl:
+        document.querySelector<HTMLElement>("#profile") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+    },
+    {
+      id: "dashboard",
+      triggerEl:
+        document.querySelector<HTMLElement>("#dashboard-tab") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+      targetEl:
+        document.querySelector<HTMLElement>("#dashboard") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+    },
+    {
+      id: "subscription",
+      triggerEl:
+        document.querySelector<HTMLElement>("#subscription-tab") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+      targetEl:
+        document.querySelector<HTMLElement>("#subscription") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+    },
+    {
+      id: "account",
+      triggerEl:
+        document.querySelector<HTMLElement>("#account-tab") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+      targetEl:
+        document.querySelector<HTMLElement>("#account") ??
+        (() => {
+          throw new Error("Test is nullish");
+        })(),
+    },
+  ]; */
 
   // options with default values
   const options = {
@@ -63,7 +115,10 @@ export function Settings() {
    * tabElements: array of tab objects
    * options: optional
    * instanceOptions: optional
-   */ const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions);
+   *
+   */
+
+  const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions);
 
   return (
     <>
@@ -167,6 +222,76 @@ export function Settings() {
         </div>
       </div>
       <Footer></Footer>
+      {/*<div className=" min-h-full h-screen mt-0 mb-20 sm:mx-36 mx-4 pt-20">
+        <div className=" md:max-w-xl lg:max-w-3xl">
+          <h2 className="mb-12 text-3xl font-bold">Settings</h2>
+        </div>
+        <div className="flex">
+          <div className=" relative mb-4 border-r border-gray-200 dark:border-gray-700">
+            <Tabs
+              aria-label="Tabs with underline"
+              style="underline"
+              className="flex-column text-right space-y space-y-4 text-md font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0"
+              id="tabs"
+              role="tablist"
+            >
+              <Tabs.
+                active
+                title="Profile"
+                className="me-2"
+                role="presentation"
+              >
+                <div
+                  className=" rounded-lg bg-white p-4 dark:bg-gray-800"
+                  id="profile"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab"
+                >
+                  <Profile></Profile>
+                </div>
+              </Tabs.Item>
+              <Tabs.Item
+                title="Appearance"
+                className="me-2"
+                role="presentation"
+              >
+                <div
+                  className=" rounded-lg bg-white p-4 dark:bg-gray-800"
+                  id="dashboard"
+                  role="tabpanel"
+                  aria-labelledby="dashboard-tab"
+                >
+                  <Dashboard></Dashboard>
+                </div>
+              </Tabs.Item>
+              <Tabs.Item
+                title="Billing and plans"
+                className="me-2"
+                role="presentation"
+              >
+                <div
+                  className=" rounded-lg bg-white p-4 dark:bg-gray-800"
+                  id="subscription"
+                  role="tabpanel"
+                  aria-labelledby="subscription-tab"
+                >
+                  <Subscription></Subscription>
+                </div>
+              </Tabs.Item>
+              <Tabs.Item title="Account" role="presentation">
+                <div
+                  className=" rounded-lg bg-white p-4 dark:bg-gray-800"
+                  id="account"
+                  role="tabpanel"
+                  aria-labelledby="account-tab"
+                >
+                  <Account></Account>
+                </div>
+              </Tabs.Item>
+            </TabsComponent>
+          </div>
+        </div>
+  </div>*/}
     </>
   );
 }
