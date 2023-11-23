@@ -14,7 +14,7 @@ export function HomePage() {
       {/**<!-- Front section -->*/}
       <Front></Front>
       {/**<!-- Slide section -->
-      <Slide></Slide>*/}
+      // <Slide></Slide>*/}
       {/**<!-- ABOUT section -->*/}
       <About></About>
       {/**<!-- TEAM section -->*/}

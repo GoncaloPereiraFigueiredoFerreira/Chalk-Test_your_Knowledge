@@ -84,7 +84,7 @@ export function NavBar() {
 
           {/**<!-- Profile dropdown -->*/}
 
-          <div className="dropdown w-fit ml-3 float-right p-1 right-0 mt-2 origin-top-right rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+          <div className="dropdown w-fit h-fit ml-3 float-right p-1 right-0 mt-2 origin-top-right rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
             <button
               type="button"
               className="rounded-full bg-gray-800"
@@ -94,7 +94,7 @@ export function NavBar() {
               <span className="sr-only">Open user menu</span>
               <img className="h-8 w-8 rounded-full" src="chico.jpg" alt="" />
             </button>
-            <div className=" absolute dropdown-content mt-40 mr-6 right-0 bg-white  rounded-sm shadow-inner grid-cols-1">
+            <div className=" absolute dropdown-content mt-2 mr-6 right-0 bg-white  rounded-sm shadow-inner grid-cols-1">
               <a
                 href="#"
                 className=" px-4 py-2 text-md text-gray-700"

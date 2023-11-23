@@ -118,7 +118,7 @@ const tabElements = [
    *
    */
 
-  const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions);
+  //const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions);
 
   return (
     <>
