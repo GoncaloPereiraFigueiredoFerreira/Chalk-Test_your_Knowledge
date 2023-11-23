@@ -9,7 +9,7 @@ import { Front } from "./Front";
 
 export function HomePage() {
   return (
-    <>
+    <div className="h-screen overflow-auto">
       <NavBar></NavBar>
       {/**<!-- Front section -->*/}
       <Front></Front>
@@ -23,6 +23,6 @@ export function HomePage() {
       <Contacts></Contacts>
       {/**<!-- Footer section -->*/}
       <Footer></Footer>
-    </>
+    </div>
   );
 }
