@@ -6,7 +6,7 @@ import { SearchIcon } from "../SVGImages/SVGImages";
 const options = ["Exercicios", "Testes"];
 
 export function Searchbar() {
-  const [chosenOption, setChosenOption] = useState(-1);
+  const [chosenOption, setChosenOption] = useState(null);
   const [searchText, setSearchText] = useState("");
   return (
     <>
@@ -17,6 +17,8 @@ export function Searchbar() {
             text="Categoria"
             chosenOption={chosenOption}
             setChosenOption={setChosenOption}
+            clearOption="Todas as categorias"
+            className="rounded-l-lg"
           ></Dropdown>
           <div className="relative w-full justify-center">
             <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1 pointer-events-none">

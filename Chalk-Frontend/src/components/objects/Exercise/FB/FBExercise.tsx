@@ -1,6 +1,10 @@
 import { createContext, useContext, useReducer, useState } from "react";
-import { ExerciseHeader, ExerciseHeaderEdit } from "./ExHeader";
-import { DownloadIcon, FileUploadIcon, ListIcon } from "../SVGImages/SVGImages";
+import { ExerciseHeader } from "../Header/ExHeader";
+import {
+  DownloadIcon,
+  FileUploadIcon,
+  ListIcon,
+} from "../../SVGImages/SVGImages";
 
 export function FBExercise(props: any) {
   let exerciseDisplay = <></>;
@@ -8,13 +12,13 @@ export function FBExercise(props: any) {
   switch (props.contexto) {
     case "solve":
       exerciseDisplay = (
-        <FBSolve problem={props.problema} enunciado={props.enunciado}></FBSolve>
+        <FBSolve problem={props.problema} statement={props.statement}></FBSolve>
       );
       break;
 
     case "edit":
       exerciseDisplay = (
-        <FBEdit problem={props.problema} enunciado={props.enunciado}></FBEdit>
+        <FBEdit problem={props.problema} statement={props.statement}></FBEdit>
       );
       break;
 
@@ -66,40 +70,38 @@ function FBSolveReducer(
 
 function FBSolve(props: any) {
   let initState: FBSolveState = [];
-  props.problem.statements.map((statement: FBStatement, index: number) => {
-    initState.push({ phrase: statement.phrase, solution: "" });
+  props.problem.statements.map((text: FBStatement, index: number) => {
+    initState.push({ phrase: text.phrase, solution: "" });
   });
 
   const [state, setState] = useReducer(FBSolveReducer, initState);
 
   return (
     <>
-      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
       <span>
-        {props.problem.statements.map(
-          (statement: FBStatement, index: number) => {
-            return (
-              <FBSolveStatement
-                key={index}
-                statement={statement}
-                id={index}
-                setState={setState}
-              ></FBSolveStatement>
-            );
-          }
-        )}
+        {props.problem.statements.map((text: FBStatement, index: number) => {
+          return (
+            <FBSolveStatement
+              key={index}
+              text={text}
+              id={index}
+              setState={setState}
+            ></FBSolveStatement>
+          );
+        })}
       </span>
     </>
   );
 }
 
 function FBSolveStatement(props: {
-  statement: FBStatement;
+  text: FBStatement;
   id: number;
   setState: Function;
 }) {
   let option = <></>;
-  if (props.statement.options.length == 0) {
+  if (props.text.options.length == 0) {
     option = (
       <input
         type="text"
@@ -122,7 +124,7 @@ function FBSolveStatement(props: {
         <option value="" disabled selected>
           Seleciona a opção
         </option>
-        {props.statement.options.map((opt: string, id: number) => {
+        {props.text.options.map((opt: string, id: number) => {
           return <option value={opt}>{opt}</option>;
         })}
       </select>
@@ -131,7 +133,7 @@ function FBSolveStatement(props: {
 
   return (
     <>
-      {props.statement.phrase}
+      {props.text.phrase}
       {option}
     </>
   );
@@ -229,15 +231,15 @@ const FBEditStateContext = createContext<{ state: FBEditState; dispatch: any }>(
 
 function FBEdit(props: any) {
   let initState: FBEditState = {
-    header: props.enunciado,
+    header: props.statement,
     segments: [],
     ending: "",
   };
 
-  props.problem.statements.map((statement: FBStatement) => {
+  props.problem.statements.map((text: FBStatement) => {
     initState.segments.push({
-      phrase: statement.phrase,
-      options: [...statement.options],
+      phrase: text.phrase,
+      options: [...text.options],
       correct: "",
     });
   });
@@ -245,7 +247,7 @@ function FBEdit(props: any) {
   const [state, dispatch] = useReducer(FBEditReducer, initState);
   return (
     <>
-      <ExerciseHeaderEdit
+      {/* <ExerciseHeaderEdit
         header={{
           text: "",
         }}
@@ -255,7 +257,7 @@ function FBEdit(props: any) {
             payload: { value: t },
           });
         }}
-      ></ExerciseHeaderEdit>
+      ></ExerciseHeaderEdit> */}
       <FBEditStateContext.Provider value={{ state, dispatch }}>
         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
           Escreva o texto a ser substituído
@@ -341,11 +343,11 @@ function FBEdit(props: any) {
         <div className="mt-5 p-3 border  border-gray-200 rounded dark:border-gray-700">
           <p className="font-medium">Preview:</p>
           <span>
-            {state.segments.map((statement: FBStatement, index: number) => {
+            {state.segments.map((text: FBStatement, index: number) => {
               return (
                 <FBSolveStatement
                   key={index}
-                  statement={statement}
+                  text={text}
                   id={index}
                   setState={() => {}}
                 ></FBSolveStatement>

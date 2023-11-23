@@ -14,7 +14,6 @@
     h-full
     px-4
     font-medium
-    border
-    rounded-l-lg;
+    border;
   }
 }

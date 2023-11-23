@@ -51,9 +51,10 @@ export function ShowExercise({
             Escolha múltipla
           </label>
         );
+
         setPreview(
           <MCExercise
-            enunciado={exercise.statement}
+            statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
@@ -70,7 +71,7 @@ export function ShowExercise({
         );
         setPreview(
           <OAExercise
-            enunciado={exercise.statement}
+            statement={exercise.statement}
             contexto="solve"
             name={exercise.name}
             position={position}
@@ -86,12 +87,13 @@ export function ShowExercise({
         );
         setPreview(
           <TFExercise
-            enunciado={exercise.statement}
+            id={exercise.id}
+            statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
             position={position}
-            justify="false-only" // none, false-only or all
+            justify={exercise.problem!.justify!} // none, false-only or all
           ></TFExercise>
         );
         break;
@@ -105,7 +107,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <FillBlankExercise
-          //   enunciado={exercise.statement}
+          //   statement={exercise.statement}
           //   problem={exercise.problem}
           //   contexto="solve"
           //   name={name}
@@ -122,7 +124,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <CodeExercise
-          //   enunciado={statement}
+          //   statement={statement}
           //   problem={problem}
           //   contexto="solve"
           //   name={name}
@@ -225,8 +227,8 @@ export function ShowExercise({
             <button
               className="btn-options-exercise gray-icon"
               onClick={() => {
-                setSelectedExercise(exercise.id);
                 setEditMenuIsOpen(true);
+                setSelectedExercise(exercise.id);
               }}
             >
               <PenIcon size="size-5" />

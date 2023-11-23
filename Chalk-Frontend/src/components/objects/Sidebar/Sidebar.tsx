@@ -40,7 +40,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
     id: "all",
     name: "Grupos",
   });
-  const { user } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("dark-mode") === "true"
   );
@@ -292,7 +292,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   <HelpIcon style={"group-gray-icon"} />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>Help</span>
                 </Dropdown.Item>
-                <Dropdown.Item as="button" className=" group">
+                <Dropdown.Item as="button" className=" group" onClick={logout}>
                   <LogoutIcon style={"group-gray-icon"} />
                   <span
                     className={`${isOpen ? "" : "hidden"} text-red-700 ml-3`}

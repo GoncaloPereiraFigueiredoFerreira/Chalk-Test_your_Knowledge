@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 type FillBlankExerciseProps = {
-  enunciado: any;
+  statement: any;
   problem?: any;
   contexto: string;
   cotacao?: number;
