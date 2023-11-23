@@ -4,7 +4,7 @@ import "./NavBar.css";
 export function NavBar() {
   return (
     <>
-      <nav className="bg-white fixed w-screen z-10 px-2 sm:px-6 lg:px-8 flex h-16 items-center justify-between drop-shadow">
+      <nav className="bg-white fixed w-screen z-10 px-2 sm:px-6 lg:px-8 flex h-16 items-center justify-between drop-shadow overflow-visible">
         <div className="flex flex-1 items-center sm:items-stretch justify-start">
           <div className="flex flex-shrink-0 items-center left-0">
             <Link to="/">
@@ -83,66 +83,48 @@ export function NavBar() {
           </button>
 
           {/**<!-- Profile dropdown -->*/}
-          <div className="relative ml-3 float-right">
+
+          <div className="dropdown w-fit ml-3 float-right p-1 right-0 mt-2 origin-top-right rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
             <button
               type="button"
-              className="relative flex rounded-full bg-gray-800 text-md focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              className="rounded-full bg-gray-800"
               id="user-menu-button"
-              data-dropdown-toggle="dropdownMenu"
-              data-dropdown-trigger="hover"
             >
-              <span className="absolute -inset-1.5"></span>
+              <span className=" -inset-1.5"></span>
               <span className="sr-only">Open user menu</span>
               <img className="h-8 w-8 rounded-full" src="chico.jpg" alt="" />
             </button>
-            {/**<!-- dropdown -->*/}
-            <div
-              className="hidden absolute sm:hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              role="menu"
-              id="dropdownMenu"
-              aria-orientation="vertical"
-            >
-              <ul aria-labelledby="user-menu-button">
-                <li>
-                  {" "}
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-md text-gray-700"
-                    role="menuitem"
-                    id="user-menu-item-0"
-                  >
-                    Your Profile
-                  </a>
-                </li>
-                <li>
-                  {" "}
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-md text-gray-700"
-                    role="menuitem"
-                    id="user-menu-item-1"
-                  >
-                    <Link to="/settings">Settings</Link>{" "}
-                  </a>
-                </li>
-                <li>
-                  {" "}
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-md text-gray-700"
-                    role="menuitem"
-                    id="user-menu-item-2"
-                  >
-                    Sign out
-                  </a>
-                </li>
-              </ul>
+            <div className=" absolute dropdown-content mt-40 mr-6 right-0 bg-white  rounded-sm shadow-inner grid-cols-1">
+              <a
+                href="#"
+                className=" px-4 py-2 text-md text-gray-700"
+                role="menuitem"
+                id="user-menu-item-0"
+              >
+                Your Profile
+              </a>
+              <a
+                href="#"
+                className=" px-4 py-2 text-md text-gray-700"
+                role="menuitem"
+                id="user-menu-item-1"
+              >
+                <Link to="/settings">Settings</Link>{" "}
+              </a>
+              <a
+                href="#"
+                className=" px-4 py-2 text-md text-gray-700"
+                role="menuitem"
+                id="user-menu-item-2"
+              >
+                Sign out
+              </a>
             </div>
           </div>
         </div>
 
         {/**<!-- Mobile menu -->*/}
-        <div className="absolute inset-y-0 right-0 flex items-center sm:hidden">
+        <div className="dropdown first-letter:absolute inset-y-0 right-0 flex items-center sm:hidden">
           <button
             type="button"
             className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -194,46 +176,39 @@ export function NavBar() {
             </svg>
           </button>
           <div
-            className="hidden absolute sm:hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="dropdown hidden absolute sm:hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             role="menu"
             id="mobile-menu"
             aria-orientation="vertical"
           >
-            <ul aria-labelledby="mobile-menu-button">
-              <li>
-                {" "}
-                <a
-                  href="#"
-                  className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                  role="menuitem"
-                  id="user-menu-item-0"
-                >
-                  Your Profile
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  href="#"
-                  className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                  role="menuitem"
-                  id="user-menu-item-1"
-                >
-                  <Link to="/settings">Settings</Link>{" "}
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  href="#"
-                  className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                  role="menuitem"
-                  id="user-menu-item-2"
-                >
-                  Sign out
-                </a>
-              </li>
-            </ul>
+            <div className="dropdown-content">
+              <a
+                href="#"
+                className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                role="menuitem"
+                id="user-menu-item-0"
+              >
+                Your Profile
+              </a>
+
+              <a
+                href="#"
+                className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                role="menuitem"
+                id="user-menu-item-1"
+              >
+                <Link to="/settings">Settings</Link>
+              </a>
+
+              <a
+                href="#"
+                className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                role="menuitem"
+                id="user-menu-item-2"
+              >
+                Sign out
+              </a>
+            </div>
           </div>
         </div>
       </nav>
