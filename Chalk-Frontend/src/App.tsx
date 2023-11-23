@@ -9,6 +9,8 @@ import { FrontPage } from "./components/pages/FrontPage/FrontPage";
 import { RealFrontPage } from "./components/pages/RealFrontPage/RealFrontPage";
 import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/TestPage/TestPage";
+import { Settings } from "./components/pages/Settings/Settings";
+import { Subscription } from "./components/pages/Settings/Subscription";
 
 function App() {
   const { user } = useContext(UserContext);
