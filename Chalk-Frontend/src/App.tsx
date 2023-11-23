@@ -17,7 +17,6 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/pricing" element={<Subscription />} />
-
         <Route path="/settings" element={<Settings />} />
         <Route path="/user" element={<Sidebar />}>
           <Route index element={<FrontPage />} />
