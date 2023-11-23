@@ -19,7 +19,7 @@ import { MCExercise } from "./MC/MCExercise";
 import { OAExercise } from "./OA/OAExercise";
 import { TFExercise } from "./TF/TFExercise";
 import { useEffect, useState } from "react";
-import { Exercise } from "../../../UserInterface";
+import { Exercise } from "./Exercise";
 import "./ShowExercise.css";
 
 interface ExerciseProps {
@@ -28,6 +28,7 @@ interface ExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
+  remExercise: (value: string) => void;
 }
 
 export function ShowExercise({
@@ -36,6 +37,7 @@ export function ShowExercise({
   setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
+  remExercise,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
@@ -49,9 +51,10 @@ export function ShowExercise({
             Escolha múltipla
           </label>
         );
+
         setPreview(
           <MCExercise
-            enunciado={exercise.enunciado}
+            statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
@@ -68,7 +71,7 @@ export function ShowExercise({
         );
         setPreview(
           <OAExercise
-            enunciado={exercise.enunciado}
+            statement={exercise.statement}
             contexto="solve"
             name={exercise.name}
             position={position}
@@ -84,12 +87,13 @@ export function ShowExercise({
         );
         setPreview(
           <TFExercise
-            enunciado={exercise.enunciado}
+            id={exercise.id}
+            statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
             position={position}
-            justify="false-only" // none, false-only or all
+            justify={exercise.problem!.justify!} // none, false-only or all
           ></TFExercise>
         );
         break;
@@ -103,7 +107,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <FillBlankExercise
-          //   enunciado={exercise.enunciado}
+          //   statement={exercise.statement}
           //   problem={exercise.problem}
           //   contexto="solve"
           //   name={name}
@@ -120,7 +124,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <CodeExercise
-          //   enunciado={enunciado}
+          //   statement={statement}
           //   problem={problem}
           //   contexto="solve"
           //   name={name}
@@ -223,8 +227,8 @@ export function ShowExercise({
             <button
               className="btn-options-exercise gray-icon"
               onClick={() => {
-                setSelectedExercise(exercise.id);
                 setEditMenuIsOpen(true);
+                setSelectedExercise(exercise.id);
               }}
             >
               <PenIcon size="size-5" />
@@ -234,7 +238,10 @@ export function ShowExercise({
               <EyeSlashIcon size="size-5" />
               Visibilidade
             </button>
-            <button className="btn-options-exercise gray-icon">
+            <button
+              className="btn-options-exercise gray-icon"
+              onClick={() => remExercise(exercise.id)}
+            >
               <GarbageIcon size="size-5" />
               Eliminar
             </button>

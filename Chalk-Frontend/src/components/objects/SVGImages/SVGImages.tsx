@@ -726,3 +726,126 @@ export function ListIcon({ style, size }: IconProps) {
     </>
   );
 }
+
+export function LogoutIcon({ style, size }: IconProps) {
+  return (
+    <>
+      <svg
+        viewBox="0 0 24 24"
+        className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-5"}`}
+        fill="currentColor"
+        stroke="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M16.125 12C16.125 11.5858 15.7892 11.25 15.375 11.25L4.40244 11.25L6.36309 9.56944C6.67759 9.29988 6.71401 8.8264 6.44444 8.51191C6.17488 8.19741 5.7014 8.16099 5.38691 8.43056L1.88691 11.4306C1.72067 11.573 1.625 11.7811 1.625 12C1.625 12.2189 1.72067 12.427 1.88691 12.5694L5.38691 15.5694C5.7014 15.839 6.17488 15.8026 6.44444 15.4881C6.71401 15.1736 6.67759 14.7001 6.36309 14.4306L4.40244 12.75L15.375 12.75C15.7892 12.75 16.125 12.4142 16.125 12Z"
+          ></path>
+          <path d="M9.375 8C9.375 8.70219 9.375 9.05329 9.54351 9.3055C9.61648 9.41471 9.71025 9.50848 9.81946 9.58145C10.0717 9.74996 10.4228 9.74996 11.125 9.74996L15.375 9.74996C16.6176 9.74996 17.625 10.7573 17.625 12C17.625 13.2426 16.6176 14.25 15.375 14.25L11.125 14.25C10.4228 14.25 10.0716 14.25 9.8194 14.4185C9.71023 14.4915 9.6165 14.5852 9.54355 14.6944C9.375 14.9466 9.375 15.2977 9.375 16C9.375 18.8284 9.375 20.2426 10.2537 21.1213C11.1324 22 12.5464 22 15.3748 22L16.3748 22C19.2032 22 20.6174 22 21.4961 21.1213C22.3748 20.2426 22.3748 18.8284 22.3748 16L22.3748 8C22.3748 5.17158 22.3748 3.75736 21.4961 2.87868C20.6174 2 19.2032 2 16.3748 2L15.3748 2C12.5464 2 11.1324 2 10.2537 2.87868C9.375 3.75736 9.375 5.17157 9.375 8Z"></path>
+        </g>
+      </svg>
+    </>
+  );
+}
+
+export function PlusIcon({ style, size }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="800px"
+      height="800px"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      className={`icon 
+      ${style ? style : ""}
+      ${size ? size : "size-4"}`}
+    >
+      <path
+        d="M4 12H20M12 4V20"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function StarIcon({ style, size }: IconProps) {
+  return (
+    <>
+      <svg
+        className={`icon 
+        ${style ? style : ""}
+        ${size ? size : "size-6"}`}
+        viewBox="0 0 24.00 24.00"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        stroke="currentColor"
+        strokeWidth="0.00024000000000000003"
+      >
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            opacity="0.5"
+            d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+          ></path>
+          <path d="M10.4127 8.49812L10.5766 8.20419C11.2099 7.06807 11.5266 6.5 12 6.5C12.4734 6.5 12.7901 7.06806 13.4234 8.20419L13.5873 8.49813C13.7672 8.82097 13.8572 8.98239 13.9975 9.0889C14.1378 9.19541 14.3126 9.23495 14.6621 9.31402L14.9802 9.38601C16.2101 9.66428 16.825 9.80341 16.9713 10.2739C17.1176 10.7443 16.6984 11.2345 15.86 12.215L15.643 12.4686C15.4048 12.7472 15.2857 12.8865 15.2321 13.0589C15.1785 13.2312 15.1965 13.4171 15.2325 13.7888L15.2653 14.1272C15.3921 15.4353 15.4554 16.0894 15.0724 16.3801C14.6894 16.6709 14.1137 16.4058 12.9622 15.8756L12.6643 15.7384C12.337 15.5878 12.1734 15.5124 12 15.5124C11.8266 15.5124 11.663 15.5878 11.3357 15.7384L11.0378 15.8756C9.88633 16.4058 9.31059 16.6709 8.92757 16.3801C8.54456 16.0894 8.60794 15.4353 8.7347 14.1272L8.76749 13.7888C8.80351 13.4171 8.82152 13.2312 8.76793 13.0589C8.71434 12.8865 8.59521 12.7472 8.35696 12.4686L8.14005 12.215C7.30162 11.2345 6.88241 10.7443 7.02871 10.2739C7.17501 9.80341 7.78994 9.66427 9.01977 9.38601L9.33794 9.31402C9.68743 9.23495 9.86217 9.19541 10.0025 9.0889C10.1428 8.98239 10.2328 8.82097 10.4127 8.49812Z"></path>
+        </g>
+      </svg>
+    </>
+  );
+}
+
+export function UserIcon({ style, size }: IconProps) {
+  return (
+    <>
+      <svg
+        className={`icon 
+              ${style ? style : ""}
+              ${size ? size : "size-6"}`}
+        version="1.1"
+        id="Capa_1"
+        viewBox="0 0 60.671 60.671"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        stroke="currentColor"
+      >
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <g>
+            <g>
+              <ellipse
+                cx="30.336"
+                cy="12.097"
+                rx="11.997"
+                ry="12.097"
+              ></ellipse>
+              <path d="M35.64,30.079H25.031c-7.021,0-12.714,5.739-12.714,12.821v17.771h36.037V42.9 C48.354,35.818,42.661,30.079,35.64,30.079z"></path>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </>
+  );
+}

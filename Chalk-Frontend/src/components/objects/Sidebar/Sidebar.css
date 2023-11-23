@@ -5,6 +5,7 @@
 @layer components {
   .sidebar-background {
     @apply fixed
+    flex flex-col
     top-0
     left-0
     h-screen
@@ -20,7 +21,7 @@
 
   .sidebar-divisions {
     @apply pt-5
-    mt-5
+    mt-3
     space-y-2
     border-t;
   }

@@ -7,15 +7,18 @@ import {
   TextIcon,
 } from "../SVGImages/SVGImages";
 import { useState } from "react";
+import { ExerciseType } from "../Exercise/Exercise";
 
-interface ListExercisesPopUpProps {
-  createNewExercise: (value: string) => void;
+interface CreateNewExercisePopUpProps {
+  createNewExercise: (value: ExerciseType) => void;
 }
 
-export function ListExercisesPopUp({
+export function CreateNewExercisePopUp({
   createNewExercise,
-}: ListExercisesPopUpProps) {
-  const [newExercisetype, setNewExercisetype] = useState("multiple-choice");
+}: CreateNewExercisePopUpProps) {
+  const [newExercisetype, setNewExercisetype] = useState(
+    ExerciseType.MULTIPLE_CHOICE
+  );
   return (
     <>
       <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-title-1 border-b-2 border-gray-1">
@@ -23,36 +26,42 @@ export function ListExercisesPopUp({
       </label>
       <div className="grid grid-cols-2">
         <button
-          onClick={() => setNewExercisetype("multiple-choice")}
+          onClick={() => setNewExercisetype(ExerciseType.MULTIPLE_CHOICE)}
           className={`${
-            "multiple-choice" != newExercisetype ? "bg-btn-4-1" : "btn-selected"
+            ExerciseType.MULTIPLE_CHOICE != newExercisetype
+              ? "bg-btn-4-1"
+              : "btn-selected"
           } btn-ListExercises text-lg group`}
         >
           <CheckedListIcon style="inherit-icon" size="size-12" />
           Escolha múltipla
         </button>
         <button
-          onClick={() => setNewExercisetype("open-answer")}
+          onClick={() => setNewExercisetype(ExerciseType.OPEN_ANSWER)}
           className={`${
-            "open-answer" != newExercisetype ? "bg-btn-4-1" : "btn-selected"
+            ExerciseType.OPEN_ANSWER != newExercisetype
+              ? "bg-btn-4-1"
+              : "btn-selected"
           } btn-ListExercises text-lg group`}
         >
           <TextIcon style="inherit-icon" size="size-12" />
           Resposta aberta
         </button>
         <button
-          onClick={() => setNewExercisetype("true-or-false")}
+          onClick={() => setNewExercisetype(ExerciseType.TRUE_OR_FALSE)}
           className={`${
-            "true-or-false" != newExercisetype ? "bg-btn-4-1" : "btn-selected"
+            ExerciseType.TRUE_OR_FALSE != newExercisetype
+              ? "bg-btn-4-1"
+              : "btn-selected"
           } btn-ListExercises text-lg group`}
         >
           <CheckboxIcon style="inherit-icon" size="size-12" />
           Verdadeiro ou falso
         </button>
         <button
-          onClick={() => setNewExercisetype("fill-in-the-blank")}
+          onClick={() => setNewExercisetype(ExerciseType.FILL_IN_THE_BLANK)}
           className={`${
-            "fill-in-the-blank" != newExercisetype
+            ExerciseType.FILL_IN_THE_BLANK != newExercisetype
               ? "bg-btn-4-1"
               : "btn-selected"
           } btn-ListExercises text-lg group`}
@@ -61,9 +70,9 @@ export function ListExercisesPopUp({
           Preenchimento de espaços
         </button>
         <button
-          onClick={() => setNewExercisetype("code")}
+          onClick={() => setNewExercisetype(ExerciseType.CODE)}
           className={`${
-            "code" != newExercisetype ? "bg-btn-4-1" : "btn-selected"
+            ExerciseType.CODE != newExercisetype ? "bg-btn-4-1" : "btn-selected"
           } btn-ListExercises text-lg group`}
         >
           <CodeIcon style="inherit-icon" size="size-12" />

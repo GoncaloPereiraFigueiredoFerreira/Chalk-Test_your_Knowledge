@@ -2,43 +2,42 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Login } from "./components/pages/Login/Login";
 import { Register } from "./components/pages/Register/Register";
 import { HomePage } from "./components/pages/HomePage/HomePage";
-import { FrontPage } from "./components/pages/FrontPage/FrontPage";
-import { TestPage } from "./components/pages/TestPage/TestPage";
-import { Settings } from "./components/pages/Settings/Settings.js";
-import { Subscription } from "./components/pages/Subsciption/Subscription.js";
-import { Correction } from "./components/pages/Correction/Correction.js";
-//import { EditExercisePage } from "./components/pages/EditExercisePage/EditExercisePage";
-import { Catalog } from "./components/objects/SVGImages/catalog";
-import { UserInterface } from "./UserInterface";
 import "./App.css";
+import { UserContext } from "./UserContext";
+import { useContext } from "react";
+import { FrontPage } from "./components/pages/FrontPage/FrontPage";
+import { RealFrontPage } from "./components/pages/RealFrontPage/RealFrontPage";
+import { WebApp } from "./WebApp";
+import { TestPage } from "./components/pages/TestPage/TestPage";
 
 function App() {
+  const { user } = useContext(UserContext);
   return (
     <Router>
       <Routes>
+        <Route index element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<HomePage />} />
+
         <Route path="/settings" element={<Settings />} />
         <Route path="/pricing" element={<Subscription />} />
         <Route
-          path="/user"
-          element={
-            <UserInterface
-              userData={{
-                id: 1,
-                listExercises: {},
-                selectedExercise: "",
-                selectedGroup: "all",
-              }}
-            />
-          }
+          path="/webapp"
+          element={user.authenticated ? <WebApp /> : <Login />}
         >
-          <Route index element={<FrontPage />} />
+          <Route index element={<RealFrontPage />} />
+          <Route path="exercise-bank" element={<FrontPage />} />
           <Route path="test" element={<TestPage />} />
-          <Route path="correction" element={<Correction />} />
+           {/*<Route path="correction" element={<Correction />} />*/}
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
-          <Route path="catalog" element={<Catalog />} />
+          {/*<Route path="catalog" element={<Catalog />} />*/}
+          {/*<Route path="test"  element={<TestCreator />} />*/}
+          {/*<Route path="group" element={<Group />} />*/}
+          {/*<Route path="search" element={<Group />} />*/}
+          {/*<Route path="profile" element={<Group />} />*/}
+          {/*<Route path="upgrade" element={<Group />} />*/}
+          {/*<Route path="history" element={<Group />} />*/}
+          {/*<Route path="exercise-list" element={<Group />} />*/}
         </Route>
       </Routes>
     </Router>
