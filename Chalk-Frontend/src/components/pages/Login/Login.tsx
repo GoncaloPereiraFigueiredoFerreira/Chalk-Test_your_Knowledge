@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../MainLogo";
 import { MainLogo } from "../../MainLogo";
-import axios from "axios";
+import { UserContext } from "../../../UserContext";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorState, setErrorState] = useState(false);
+  const [errorState, setErrorState] = useState(0);
+  const { user, login, logout } = useContext(UserContext);
 
+  const navigate = useNavigate();
   const AUTHSERVER = import.meta.env.VITE_AUTH;
+  const BACKSERVER = import.meta.env.VITE_BACKEND;
   const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
 
-  // Should be removed, in favor of a .env
   const googleDetails = {
     scope: "https://www.googleapis.com/auth/userinfo.email",
     client_id: GCLIENTID,
@@ -21,16 +23,63 @@ export function Login() {
     response_type: "code",
   };
 
-  const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
-    let valid = true;
-    if (valid) {
-      alert("Valid Form");
-      return true;
-    } else {
-      e.preventDefault();
-      alert("Invalid Form");
-      return false;
-    }
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    fetch(AUTHSERVER + "login", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    }).then((response) => {
+      switch (response.status) {
+        case 200:
+          response.json().then((result) => {
+            /*/////////////////// PEDIDO BACKEND ////////////////
+              fetch(BACKSERVER + "login", {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  user: {
+                    email: result.user.username,
+                    name: result.user.name,
+                    role: result.user.role,
+                  },
+                }),
+              }).then(()=>{
+                navigate("user");
+              })
+            */
+            login({
+              email: result.user.username,
+              name: result.user.name,
+              profilePic: "", //vai se buscar ao BE
+              role: result.user.role,
+              courses: [
+                //vai se buscar ao BE
+                { id: "1", name: "Professores da escola AFS Gualtar" },
+                { id: "2", name: "Turma A" },
+                { id: "3", name: "Turma b" },
+              ],
+            });
+            navigate("/webapp");
+          });
+          break;
+        case 401:
+          // Algum erro aconteceu
+          break;
+        default:
+          console.log("N sei o que se passou!");
+      }
+    });
   };
 
   return (
@@ -42,11 +91,7 @@ export function Login() {
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form
-              action="http://localhost:3000/login"
-              onSubmit={(e) => validateForm(e)}
-              method="POST"
-            >
+            <form onSubmit={(e) => submitForm(e)}>
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
                 <p className="mb-0 mr-4 text-2xl">Log in with</p>
 
@@ -180,7 +225,6 @@ export function Login() {
                 <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                   Don't have an account?
                   <Link className="text-blue-600" to="/register">
-                    {" "}
                     Register
                   </Link>
                 </p>

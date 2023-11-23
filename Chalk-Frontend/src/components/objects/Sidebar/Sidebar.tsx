@@ -22,13 +22,9 @@ import {
   WorldIcon,
   CircularGraficIcon,
 } from "../SVGImages/SVGImages.tsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MainLogo } from "../../MainLogo.tsx";
-import { UserActionKind, UserRole } from "../../../UserInterface.tsx";
-import { useUserContext } from "../../../context.ts";
-
-const groups = ["Professores da escola AFS Gualtar", "Turma A", "Turma F"];
 
 interface SidebarProps {
   isOpen: boolean;
@@ -36,14 +32,18 @@ interface SidebarProps {
 }
 
 import { Dropdown } from "flowbite-react";
+import { Course, UserContext } from "../../../UserContext.tsx";
 
 export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [showGroup, setShowGroup] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Course>({
+    id: "all",
+    name: "Grupos",
+  });
+  const { user } = useContext(UserContext);
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("dark-mode") === "true"
   );
-
-  const { userState, dispatch } = useUserContext();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -55,7 +55,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   };
 
   function getGroup() {
-    if (userState.selectedGroup === "all" || showGroup) {
+    if (selectedGroup.id === "all" || showGroup) {
       return (
         <>
           <GroupIcon style={"group-gray-icon"} />
@@ -70,7 +70,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
         <>
           <TeacherIcon style={"group-gray-icon"} />
           <span className={`sidebar-dropdown-item ${isOpen ? "" : "hidden"}`}>
-            {userState.selectedGroup}
+            {selectedGroup.name}
           </span>
           {isOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
         </>
@@ -135,7 +135,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
 
           <li>
-            <Link to={"/user/test"}>
+            <Link to={"test"}>
               <button className="sidebar-item bg-btn-1 group">
                 <SearchIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>
@@ -145,7 +145,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </Link>
           </li>
           <li>
-            <Link to={"/user/test"}>
+            <Link to={"test"}>
               <button className="sidebar-item bg-btn-1 group">
                 <CheckListIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>Os meus testes</span>
@@ -153,7 +153,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </Link>
           </li>
           <li>
-            <Link to={"/user"}>
+            <Link to={""}>
               <button className="sidebar-item bg-btn-1 group">
                 <PenIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>
@@ -182,15 +182,13 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 <button
                   onClick={() => {
                     setShowGroup(false);
-                    dispatch({
-                      type: UserActionKind.SET_SELECTED_GROUP,
-                      payload: {
-                        selectedGroup: "all",
-                      },
+                    setSelectedGroup({
+                      id: "all",
+                      name: "Grupos",
                     });
                   }}
                   className={`sidebar-item ${
-                    "all" === userState.selectedGroup
+                    "all" === selectedGroup.id
                       ? "bg-btn-1-selected"
                       : "bg-btn-1"
                   } group`}
@@ -199,37 +197,30 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   <span className={isOpen ? "" : "hidden"}>Geral</span>
                 </button>
               </li>
-              {groups.map((item, index) => (
+              {user.user?.courses.map((item, index) => (
                 <li key={index}>
                   <button
                     onClick={() => {
                       setShowGroup(false);
-                      dispatch({
-                        type: UserActionKind.SET_SELECTED_GROUP,
-                        payload: {
-                          selectedGroup: item,
-                        },
-                      });
+                      setSelectedGroup(item);
                     }}
                     className={`sidebar-item ${
-                      item === userState.selectedGroup
-                        ? "bg-btn-1-selected"
-                        : "bg-btn-1"
+                      item === selectedGroup ? "bg-btn-1-selected" : "bg-btn-1"
                     } group`}
                   >
                     <TeacherIcon style={"group-gray-icon"} />
-                    <span className={isOpen ? "" : "hidden"}>{item}</span>
+                    <span className={isOpen ? "" : "hidden"}>{item.name}</span>
                   </button>
                 </li>
               ))}
             </ul>
             <ul
               className={`${
-                !showGroup && userState.selectedGroup !== "all" ? "" : "hidden"
+                !showGroup && selectedGroup.id !== "all" ? "" : "hidden"
               } sidebar-dropdown transition-all`}
             >
               <li>
-                <Link to={"/user"}>
+                <Link to={""}>
                   <button className="sidebar-item bg-btn-1 group">
                     <GraduateIcon style={"group-gray-icon"} />
                     <span className={isOpen ? "" : "hidden"}>Alunos</span>
@@ -237,7 +228,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 </Link>
               </li>
               <li>
-                <Link to={"/user"}>
+                <Link to={""}>
                   <button className="sidebar-item bg-btn-1 group">
                     <WorldIcon style={"group-gray-icon"} />
                     <span className={isOpen ? "" : "hidden"}>
@@ -247,7 +238,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 </Link>
               </li>
               <li>
-                <Link to={"/user"}>
+                <Link to={""}>
                   <button className="sidebar-item bg-btn-1 group">
                     <CircularGraficIcon style={"group-gray-icon"} />
                     <span className={isOpen ? "" : "hidden"}>Avaliações</span>
@@ -267,7 +258,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 renderTrigger={() => (
                   <button className="sidebar-item bg-btn-1 group">
                     <img
-                      src={userState.profile.profilePic ?? ""}
+                      src={user.user?.profilePic ?? ""}
                       className={`${
                         isOpen ? "w-10 h-10 " : "size-6"
                       } rounded-full ease-linear duration-75`}
@@ -275,17 +266,15 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                     />
 
                     <span className={isOpen ? "" : "hidden"}>
-                      {userState.profile.name}
+                      {user.user?.name}
                     </span>
                   </button>
                 )}
               >
                 <Dropdown.Header>
-                  <span className="block text-sm">
-                    {userState.profile.name}
-                  </span>
+                  <span className="block text-sm">{user.user?.name}</span>
                   <span className="block truncate text-sm font-medium">
-                    {userState.profile.id}
+                    {user.user?.email}
                   </span>
                 </Dropdown.Header>
 

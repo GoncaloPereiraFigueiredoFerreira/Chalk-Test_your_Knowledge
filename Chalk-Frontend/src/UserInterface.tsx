@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "./components/objects/Sidebar/Sidebar";
-import { UserContext } from "./context";
+import { UserContext3 } from "./context";
 
 // User Roles Enum // Might add admin or other
 export enum UserRole {
@@ -123,7 +123,7 @@ export function UserInterface({ userData }: UserInterfaceProps) {
 
   return (
     <div className="flex flex-row h-full">
-      <UserContext.Provider value={{ userState, dispatch }}>
+      <UserContext3.Provider value={{ userState, dispatch }}>
         <Sidebar isOpen={isOpen} toggle={toggle}></Sidebar>
         <div
           className={`w-full z-10 h-full transition-all ${
@@ -132,7 +132,7 @@ export function UserInterface({ userData }: UserInterfaceProps) {
         >
           <Outlet />
         </div>
-      </UserContext.Provider>
+      </UserContext3.Provider>
       <div className="fixed top-0 left-0 h-screen w-screen bg-1-1 -z-10"></div>
     </div>
   );

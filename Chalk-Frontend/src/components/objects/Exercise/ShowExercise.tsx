@@ -19,7 +19,7 @@ import { MCExercise } from "./MC/MCExercise";
 import { OAExercise } from "./OA/OAExercise";
 import { TFExercise } from "./TF/TFExercise";
 import { useEffect, useState } from "react";
-import { Exercise } from "../../../UserInterface";
+import { Exercise } from "./Exercise";
 import "./ShowExercise.css";
 
 interface ExerciseProps {
@@ -28,6 +28,7 @@ interface ExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
+  remExercise: (value: string) => void;
 }
 
 export function ShowExercise({
@@ -51,7 +52,7 @@ export function ShowExercise({
         );
         setPreview(
           <MCExercise
-            enunciado={exercise.enunciado}
+            enunciado={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
@@ -68,7 +69,7 @@ export function ShowExercise({
         );
         setPreview(
           <OAExercise
-            enunciado={exercise.enunciado}
+            enunciado={exercise.statement}
             contexto="solve"
             name={exercise.name}
             position={position}
@@ -84,7 +85,7 @@ export function ShowExercise({
         );
         setPreview(
           <TFExercise
-            enunciado={exercise.enunciado}
+            enunciado={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
@@ -103,7 +104,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <FillBlankExercise
-          //   enunciado={exercise.enunciado}
+          //   enunciado={exercise.statement}
           //   problem={exercise.problem}
           //   contexto="solve"
           //   name={name}
@@ -120,7 +121,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <CodeExercise
-          //   enunciado={enunciado}
+          //   enunciado={statement}
           //   problem={problem}
           //   contexto="solve"
           //   name={name}

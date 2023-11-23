@@ -1,5 +1,4 @@
 import { Searchbar } from "../../objects/Searchbar/Searchbar.tsx";
-import { Exercise } from "../../objects/Exercise/ShowExercise.tsx";
 import { useState } from "react";
 
 export function TestPage() {

@@ -1,18 +1,21 @@
-import { useState } from "react";
-import { Link, redirect } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { MainLogo } from "../../MainLogo";
+import { UserContext } from "../../../UserContext";
 
-export function Register({}) {
+export function Register() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [cpass, setCPass] = useState("");
-  const [error, setError] = useState(0);
+  const [error, setErrorState] = useState(0);
+  const { user, login, logout } = useContext(UserContext);
 
+  const navigate = useNavigate();
   const AUTHSERVER = import.meta.env.VITE_AUTH;
+  const BACKSERVER = import.meta.env.VITE_BACKEND;
   const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
 
-  // Should be removed, in favor of a .env
   const googleDetails = {
     scope: "https://www.googleapis.com/auth/userinfo.email",
     client_id: GCLIENTID,
@@ -25,16 +28,61 @@ export function Register({}) {
     if (password === cpass) {
       fetch(AUTHSERVER + "register", {
         method: "POST",
+        mode: "cors",
+        credentials: "include",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ email: email, name: name, password: password }),
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-          redirect("/users");
-        });
+        body: JSON.stringify({
+          email: email,
+          name: name,
+          password: password,
+        }),
+      }).then((response) => {
+        switch (response.status) {
+          case 200:
+            response.json().then((result) => {
+              /*/////////////////// PEDIDO BACKEND ////////////////
+              fetch(BACKSERVER + "register", {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  user: {
+                    email: result.user.username,
+                    name: result.user.name,
+                    role: result.user.role,
+                  },
+                }),
+              }).then(()=>{
+                navigate("user");
+              })
+              */
+
+              login({
+                email: result.user.username,
+                name: result.user.name,
+                profilePic: "", //vai se buscar ao BE
+                role: result.user.role,
+                courses: [
+                  //vai se buscar ao BE
+                  { id: "1", name: "Professores da escola AFS Gualtar" },
+                  { id: "2", name: "Turma A" },
+                  { id: "3", name: "Turma b" },
+                ],
+              });
+              navigate("/webapp");
+            });
+            break;
+          case 403:
+            // Algum erro aconteceu
+            break;
+          default:
+            console.log("N sei o que se passou!");
+        }
+      });
     } else {
       alert("Diferent password registered");
       return false;
