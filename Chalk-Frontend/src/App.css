@@ -230,3 +230,7 @@ html {
     dark:focus:border-gray-600;
   }
 }
+
+.chalkBackground {
+  background-image: url(../public/blackboard.jpg);
+}

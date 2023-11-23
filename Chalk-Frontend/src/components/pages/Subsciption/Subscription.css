@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.first-section {
+.chalkBackground {
   background-image: url(../../../../public/blackboard.jpg);
-}
-
-.vomit {
-  background: linear-gradient(to right, #4a7b9d 0%, #85bda6 100%);
 }
