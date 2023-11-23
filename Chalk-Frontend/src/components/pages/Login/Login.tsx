@@ -29,11 +29,12 @@ export function Login() {
     fetch(AUTHSERVER + "login", {
       method: "POST",
       mode: "cors",
+      credentials: "include",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify({
-        email: email,
+        username: email,
         password: password,
       }),
     }).then((response) => {
