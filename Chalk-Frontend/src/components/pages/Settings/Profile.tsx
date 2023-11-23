@@ -56,8 +56,19 @@ export function Profile() {
               </dd>
             </div>
             <div className="px-4 pb-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 ">
-              <Button onClick={() => setOpenModal(true)}>Edit Profile</Button>
-              <Modal show={openModal} size="md" onClose={onCloseModal} popup>
+              <Button
+                className="mt-6 inline-block w-fit h-fit rounded bg-blue-600 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                onClick={() => setOpenModal(true)}
+              >
+                Edit Profile
+              </Button>
+              <Modal
+                dismissible
+                show={openModal}
+                size="md"
+                onClose={onCloseModal}
+                popup
+              >
                 <Modal.Header />
                 <Modal.Body>
                   <div className="space-y-6">
