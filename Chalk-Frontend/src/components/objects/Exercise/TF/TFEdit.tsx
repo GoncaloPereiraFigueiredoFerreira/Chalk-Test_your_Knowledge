@@ -63,16 +63,14 @@ function TFEditReducer(state: TFEditState, action: TFEditAction) {
 }
 
 interface TFEditProps {
-  enunciado: any;
+  statement: any;
   problem: any;
-  name: string;
-  position: string;
   justify: string;
 }
 
-export function TFEdit({ enunciado, problem }: TFEditProps) {
+export function TFEdit({ statement, problem }: TFEditProps) {
   let initState: TFEditState = { justify: false, header: "", statements: [] };
-  initState.header = enunciado.text;
+  initState.header = statement.text;
   problem.statements.map((text: any) =>
     initState.statements.push({ phrase: text, tfvalue: "" })
   );

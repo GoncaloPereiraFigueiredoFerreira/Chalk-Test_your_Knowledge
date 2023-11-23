@@ -29,7 +29,7 @@ interface TFExerciseProps {
   position: string;
   contexto: string;
   justify?: ExerciseJustificationKind;
-  enunciado: any;
+  statement: any;
   problem?: any;
 }
 
@@ -39,7 +39,7 @@ export function TFExercise({
   position,
   contexto,
   justify,
-  enunciado,
+  statement,
   problem,
 }: TFExerciseProps) {
   let exerciseDisplay = <></>;
@@ -51,7 +51,7 @@ export function TFExercise({
           id={id}
           position={position}
           problem={problem}
-          enunciado={enunciado}
+          statement={statement}
           justify={justify}
         ></TFSolve>
       ) : (
@@ -106,7 +106,7 @@ function TFSolve(props: any) {
 
   return (
     <>
-      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
       <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
         <div className="flex text-xl font-bold px-4">V</div>
         <div className="flex text-xl font-bold px-4">F</div>
@@ -129,6 +129,8 @@ function TFSolve(props: any) {
 }
 
 function TFStatement(props: any) {
+  console.log(props.state[props.id].tfvalue);
+
   return (
     <>
       <div className="flex items-start justify-center">
@@ -136,7 +138,7 @@ function TFStatement(props: any) {
           className="radio-green"
           type="radio"
           name={props.name}
-          onChange={() => {
+          onClick={() => {
             props.state[props.id].tfvalue === "true"
               ? props.dispatch({
                   type: TFActionKind.CHOOSE,
@@ -150,6 +152,7 @@ function TFStatement(props: any) {
                 });
           }}
           checked={props.state[props.id].tfvalue === "true"}
+          readOnly
         ></input>
       </div>
       <div className="flex items-start justify-center">
@@ -157,7 +160,7 @@ function TFStatement(props: any) {
           className="radio-red"
           type="radio"
           name={props.name}
-          onChange={() => {
+          onClick={() => {
             props.state[props.id].tfvalue === "false"
               ? props.dispatch({
                   type: TFActionKind.CHOOSE,
@@ -171,6 +174,7 @@ function TFStatement(props: any) {
                 });
           }}
           checked={props.state[props.id].tfvalue === "false"}
+          readOnly
         ></input>
       </div>
       <div className="">
@@ -187,27 +191,24 @@ function TFStatement(props: any) {
 }
 
 function TFJustify(props: any) {
-  return props.justify === "none" ? (
+  let justify =
+    (props.justify === ExerciseJustificationKind.JUSTIFY_ALL &&
+      props.state[props.id].tfvalue != "") ||
+    (props.justify === ExerciseJustificationKind.JUSTIFY_FALSE &&
+      props.state[props.id].tfvalue === "false") ||
+    (props.justify === ExerciseJustificationKind.JUSTIFY_TRUE &&
+      props.state[props.id].tfvalue === "true");
+  return props.justify === ExerciseJustificationKind.NO_JUSTIFICATION ? (
     <div className="col-span-3"></div>
   ) : (
     <div
       className={`${
-        props.justify === "all" ||
-        (props.justify === "false-only" &&
-          props.state[props.id].tfvalue === "false")
-          ? "h-28"
-          : "h-0"
+        justify ? "h-28" : "h-0"
       } col-span-3 transition-[height] duration-75`}
     >
       <div className="h-full px-7 overflow-hidden">
         <textarea
-          className={`${
-            props.justify === "all" ||
-            (props.justify === "false-only" &&
-              props.state[props.id].tfvalue === "false")
-              ? ""
-              : "hidden"
-          } basic-input-text`}
+          className={`${justify ? "" : "hidden"} basic-input-text`}
           name={"justification" + props.id}
           rows={3}
           placeholder="Justifique a sua resposta"

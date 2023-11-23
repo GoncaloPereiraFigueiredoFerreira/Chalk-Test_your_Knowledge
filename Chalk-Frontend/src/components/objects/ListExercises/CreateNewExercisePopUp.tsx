@@ -9,13 +9,13 @@ import {
 import { useState } from "react";
 import { ExerciseType } from "../../../UserInterface";
 
-interface ListExercisesPopUpProps {
+interface CreateNewExercisePopUpProps {
   createNewExercise: (value: ExerciseType) => void;
 }
 
-export function ListExercisesPopUp({
+export function CreateNewExercisePopUp({
   createNewExercise,
-}: ListExercisesPopUpProps) {
+}: CreateNewExercisePopUpProps) {
   const [newExercisetype, setNewExercisetype] = useState(
     ExerciseType.MULTIPLE_CHOICE
   );

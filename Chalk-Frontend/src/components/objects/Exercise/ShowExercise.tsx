@@ -52,7 +52,7 @@ export function ShowExercise({
 
         setPreview(
           <MCExercise
-            enunciado={exercise.enunciado}
+            statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
@@ -69,7 +69,7 @@ export function ShowExercise({
         );
         setPreview(
           <OAExercise
-            enunciado={exercise.enunciado}
+            statement={exercise.statement}
             contexto="solve"
             name={exercise.name}
             position={position}
@@ -86,7 +86,7 @@ export function ShowExercise({
         setPreview(
           <TFExercise
             id={exercise.id}
-            enunciado={exercise.enunciado}
+            statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
             name={exercise.name}
@@ -105,7 +105,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <FillBlankExercise
-          //   enunciado={exercise.enunciado}
+          //   statement={exercise.statement}
           //   problem={exercise.problem}
           //   contexto="solve"
           //   name={name}
@@ -122,7 +122,7 @@ export function ShowExercise({
         setPreview(
           <></>
           // <CodeExercise
-          //   enunciado={enunciado}
+          //   statement={statement}
           //   problem={problem}
           //   contexto="solve"
           //   name={name}

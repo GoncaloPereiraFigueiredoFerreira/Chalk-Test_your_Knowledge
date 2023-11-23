@@ -134,5 +134,18 @@
     before:group-hover:opacity-20
     !important;
   }
+
+  .basic-input-text {
+    @apply p-3
+    w-full
+    resize-none
+    text-black
+    bg-white
+    rounded-lg
+    border-2
+    border-gray-300
+    focus:ring-0
+    focus:border-gray-300;
+  }
 }
 @tailwind utilities;

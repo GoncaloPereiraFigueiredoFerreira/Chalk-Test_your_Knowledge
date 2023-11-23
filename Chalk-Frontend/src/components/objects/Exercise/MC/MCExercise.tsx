@@ -3,7 +3,7 @@ import { ExerciseHeader } from "../Header/ExHeader";
 import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface ExerciseProps {
-  enunciado: any;
+  statement: any;
   problem?: any;
   name: string;
   position: string;
@@ -12,7 +12,7 @@ interface ExerciseProps {
 }
 
 export function MCExercise({
-  enunciado,
+  statement,
   problem,
   name,
   position,
@@ -22,7 +22,7 @@ export function MCExercise({
   switch (contexto) {
     case "solve":
       exerciseDisplay = (
-        <MCSolve problem={problem} enunciado={enunciado}></MCSolve>
+        <MCSolve problem={problem} statement={statement}></MCSolve>
       );
       break;
 
@@ -51,7 +51,7 @@ function MCSolve(props: any) {
 
   return (
     <>
-      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
       <ul>
         {props.problem.statements.map((text: string, id: number) => {
           return (

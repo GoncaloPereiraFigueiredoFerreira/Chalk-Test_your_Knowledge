@@ -8,7 +8,7 @@ import { ExerciseHeader } from "../Header/ExHeader";
 import { ExerciseJustificationKind } from "../../../../UserInterface";
 
 interface ExerciseProps {
-  enunciado: any;
+  statement: any;
   problem?: any;
   name: string;
   position: string;
@@ -17,7 +17,7 @@ interface ExerciseProps {
 }
 
 export function OAExercise({
-  enunciado,
+  statement,
   name,
   position,
   contexto,
@@ -25,7 +25,7 @@ export function OAExercise({
   let exerciseDisplay = <></>;
   switch (contexto) {
     case "solve":
-      exerciseDisplay = <OASolve enunciado={enunciado}></OASolve>;
+      exerciseDisplay = <OASolve statement={statement}></OASolve>;
       break;
 
     case "preview":
@@ -53,7 +53,7 @@ function OASolve(props: any) {
 
   return (
     <>
-      <ExerciseHeader header={props.enunciado}></ExerciseHeader>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
 
       <form>
         <div className="w-full mb-4 border-2 rounded-lg ex-1">

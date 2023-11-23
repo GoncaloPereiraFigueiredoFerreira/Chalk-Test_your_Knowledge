@@ -9,7 +9,7 @@ import {
   UserActionKind,
 } from "../../../UserInterface";
 import { ImgPos } from "../Exercise/Header/ExHeader";
-import { ListExercisesPopUp } from "./ListExercisesPopUp";
+import { CreateNewExercisePopUp } from "./CreateNewExercisePopUp";
 
 const userExercises = [
   {
@@ -18,7 +18,7 @@ const userExercises = [
     visibility: "public",
     type: ExerciseType.OPEN_ANSWER,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
@@ -32,7 +32,7 @@ const userExercises = [
     visibility: "private",
     type: ExerciseType.TRUE_OR_FALSE,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
@@ -55,7 +55,7 @@ const userExercises = [
     visibility: "private",
     type: ExerciseType.TRUE_OR_FALSE,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
@@ -78,7 +78,7 @@ const userExercises = [
     visibility: "private",
     type: ExerciseType.TRUE_OR_FALSE,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
@@ -101,7 +101,7 @@ const userExercises = [
     visibility: "private",
     type: ExerciseType.MULTIPLE_CHOICE,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
     },
     problem: {
@@ -119,7 +119,7 @@ const userExercises = [
     visibility: "private",
     type: ExerciseType.OPEN_ANSWER,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
@@ -133,7 +133,7 @@ const userExercises = [
     visibility: "private",
     type: ExerciseType.TRUE_OR_FALSE,
     author: "Dudu",
-    enunciado: {
+    statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
       img: {
         url: "https://static.fnac-static.com/multimedia/Images/PT/NR/8c/63/11/1139596/1540-1/tsp20200722170925/Canetas-de-Cor-Staedtler-Triplus-Fineliner-0-3mm-10-Unidades.jpg",
@@ -183,11 +183,10 @@ export function ListExercises({
             Criar exercício
           </button>
         </div>
-        {Object.entries(userState.listExercises).map(([key, exercise]) => (
+        {userState.listExercises.hasOwnProperty("-1") ? (
           <ShowExercise
-            key={key}
-            position={key}
-            exercise={exercise}
+            position={"1"}
+            exercise={userState.listExercises["-1"]}
             setEditMenuIsOpen={setEditMenuIsOpen}
             selectedExercise={userState.selectedExercise}
             setSelectedExercise={(value) => {
@@ -201,20 +200,42 @@ export function ListExercises({
                   });
             }}
           ></ShowExercise>
-        ))}
+        ) : null}
+        {Object.entries(userState.listExercises).map(([key, exercise]) =>
+          exercise.id === "-1" ? null : (
+            <ShowExercise
+              key={key}
+              position={key}
+              exercise={exercise}
+              setEditMenuIsOpen={setEditMenuIsOpen}
+              selectedExercise={userState.selectedExercise}
+              setSelectedExercise={(value) => {
+                editMenuIsOpen
+                  ? {}
+                  : dispatch({
+                      type: UserActionKind.SET_SELECTED_EXERCISE,
+                      payload: {
+                        selectedExercise: value,
+                      },
+                    });
+              }}
+            ></ShowExercise>
+          )
+        )}
       </div>
       <PopUp
         show={newExercisePopUp}
         closePopUp={() => setNewExercisePopUp(false)}
         children={
-          <ListExercisesPopUp
-            createNewExercise={(newExercisetype) => {
+          <CreateNewExercisePopUp
+            createNewExercise={(newExerciseType: ExerciseType) => {
               dispatch({
-                type: UserActionKind.CREATE_NEW_EXERCISE,
+                type: UserActionKind.SET_SELECTED_EXERCISE,
                 payload: {
-                  type: newExercisetype,
+                  newExercise: newExerciseType,
                 },
               });
+              setEditMenuIsOpen(true);
               setNewExercisePopUp(false);
             }}
           />

@@ -25,7 +25,7 @@ export interface Exercise {
   visibility: string;
   type: ExerciseType;
   author: string;
-  enunciado: {
+  statement: {
     text: string;
     img?: {
       url: string;
@@ -48,11 +48,10 @@ function createNewExercise(newExercisetype: ExerciseType) {
         visibility: "public",
         type: ExerciseType.MULTIPLE_CHOICE,
         author: "utilizador atual", //userState.username,
-        enunciado: {
+        statement: {
           text: "",
         },
         problem: {
-          justify: ExerciseJustificationKind.NO_JUSTIFICATION,
           statements: [""],
         },
       };
@@ -61,14 +60,10 @@ function createNewExercise(newExercisetype: ExerciseType) {
         id: "-1",
         name: "",
         visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
+        type: ExerciseType.OPEN_ANSWER,
         author: "utilizador atual", //userState.username,
-        enunciado: {
+        statement: {
           text: "",
-        },
-        problem: {
-          justify: ExerciseJustificationKind.NO_JUSTIFICATION,
-          statements: [""],
         },
       };
     case ExerciseType.TRUE_OR_FALSE:
@@ -76,9 +71,9 @@ function createNewExercise(newExercisetype: ExerciseType) {
         id: "-1",
         name: "",
         visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
+        type: ExerciseType.TRUE_OR_FALSE,
         author: "utilizador atual", //userState.username,
-        enunciado: {
+        statement: {
           text: "",
         },
         problem: {
@@ -93,11 +88,10 @@ function createNewExercise(newExercisetype: ExerciseType) {
         visibility: "public",
         type: ExerciseType.MULTIPLE_CHOICE,
         author: "utilizador atual", //userState.username,
-        enunciado: {
+        statement: {
           text: "",
         },
         problem: {
-          justify: ExerciseJustificationKind.NO_JUSTIFICATION,
           statements: [""],
         },
       };
@@ -108,11 +102,10 @@ function createNewExercise(newExercisetype: ExerciseType) {
         visibility: "public",
         type: ExerciseType.MULTIPLE_CHOICE,
         author: "utilizador atual", //userState.username,
-        enunciado: {
+        statement: {
           text: "",
         },
         problem: {
-          justify: ExerciseJustificationKind.NO_JUSTIFICATION,
           statements: [""],
         },
       };
@@ -141,8 +134,9 @@ export interface UserAction {
   type: UserActionKind;
   payload?: {
     exercises?: Exercise[];
-    type?: ExerciseType;
+    exercise?: Exercise;
     selectedExercise?: string;
+    newExercise?: ExerciseType;
     selectedGroup?: string;
   };
 }
@@ -168,11 +162,18 @@ function UserStateReducer(userState: UserState, userAction: UserAction) {
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.CREATE_NEW_EXERCISE:
       if (userAction.payload)
-        if (userAction.payload.type) {
-          let newListExercises = { ...userState.listExercises };
-          newListExercises["-1"] = createNewExercise(userAction.payload.type);
-          return { ...userState, listExercises: newListExercises };
-        } else throw new Error("No data provided in userAction.payload.type");
+        if (userAction.payload.exercise) {
+          let newListExercises = {
+            [userAction.payload.exercise.id]: userAction.payload.exercise,
+            ...userState.listExercises,
+          };
+          return {
+            ...userState,
+            listExercises: newListExercises,
+            selectedExercise: "",
+          };
+        } else
+          throw new Error("No data provided in userAction.payload.exercise");
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.REMOVE_EXERCISE:
       // console.log(UserActionKind.REMOVE_EXERCISE);
@@ -195,9 +196,32 @@ function UserStateReducer(userState: UserState, userAction: UserAction) {
       else throw new Error("No data provided in userAction.payload");
     case UserActionKind.SET_SELECTED_EXERCISE:
       // console.log(UserActionKind.SET_SELECTED_EXERCISE);
-
       if (userAction.payload)
-        if (userAction.payload.selectedExercise) {
+        if (userAction.payload.newExercise) {
+          let newExercise: Exercise = {
+            id: "-1",
+            name: "Novo exercício",
+            visibility: "public",
+            type: userAction.payload.newExercise,
+            author: "This user",
+            statement: {
+              text: "Escreva aqui o enunciado...",
+            },
+            problem: {
+              justify: ExerciseJustificationKind.NO_JUSTIFICATION,
+              statements: ["opção 1"],
+            },
+          };
+          let newListExercises = {
+            ...userState.listExercises,
+            "-1": newExercise,
+          };
+          return {
+            ...userState,
+            listExercises: newListExercises,
+            selectedExercise: "-1",
+          };
+        } else if (userAction.payload.selectedExercise) {
           let exerciseID = userAction.payload.selectedExercise;
           if (userState.listExercises[exerciseID])
             return { ...userState, selectedExercise: exerciseID };
