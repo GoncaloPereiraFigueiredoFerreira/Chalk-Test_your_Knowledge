@@ -6,6 +6,7 @@ import "./App.css";
 import { UserContext } from "./UserContext";
 import { useContext } from "react";
 import { FrontPage } from "./components/pages/FrontPage/FrontPage";
+import { RealFrontPage } from "./components/pages/RealFrontPage/RealFrontPage";
 import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/TestPage/TestPage";
 
@@ -21,7 +22,8 @@ function App() {
           path="/webapp"
           element={user.authenticated ? <WebApp /> : <Login />}
         >
-          <Route index element={<FrontPage />} />
+          <Route index element={<RealFrontPage />} />
+          <Route path="exercise-bank" element={<FrontPage />} />
           <Route path="test" element={<TestPage />} />
           {/*<Route path="test"  element={<TestCreator />} />*/}
           {/*<Route path="group" element={<Group />} />*/}

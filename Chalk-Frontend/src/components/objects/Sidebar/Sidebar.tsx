@@ -96,7 +96,10 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             <SidebarIcon style={"group-gray-icon"} />
           </button>
           <div className={` ${isOpen ? "" : "hidden"}`}>
-            <MainLogo></MainLogo>
+            <Link to="/webapp">
+              {" "}
+              <MainLogo></MainLogo>
+            </Link>
           </div>
         </div>
 
@@ -151,7 +154,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </Link>
           </li>
           <li>
-            <Link to={""}>
+            <Link to={"exercise-bank"}>
               <button className="sidebar-item bg-btn-1 group">
                 <PenIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>
