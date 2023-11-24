@@ -1,0 +1,65 @@
+get:
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              properties:
+                resolution:
+                  $ref: ../../../components/schemas/_index.yml#/TestResolution
+                student:
+                  $ref: ../../../components/schemas/_index.yml#/StudentSimplified
+              type: object
+            type: array
+      description: Successful retrieval.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test not found.
+  summary: Get all test resolutions.
+  tags:
+  - tests
+post:
+  parameters:
+  - in: query
+    name: testId
+    required: true
+    schema:
+      type: integer
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/_index.yml#/TestResolution
+    required: true
+  responses:
+    '200':
+      description: Test resolution created successfully.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Could not find any test with the given id.
+  summary: Create a test resolution
+  tags:
+  - tests

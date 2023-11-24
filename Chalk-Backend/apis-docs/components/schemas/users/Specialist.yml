@@ -1,0 +1,8 @@
+allOf:
+- $ref: ../_index.yml#/UserBasicProperties
+additionalProperties: false
+description: Specialist's Schema
+example:
+  id: id_Alex
+  name: Alexandre Martins
+  photoPath: https://i.imgur.com/FRwhrhG.jpg

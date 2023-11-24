@@ -1,0 +1,46 @@
+description: Schema of a test
+properties:
+  conclusion:
+    type: string
+  courseId:
+    type: string
+  creationDate:
+    format: date-time
+    type: string
+  globalCotation:
+    format: float
+    type: number
+  globalInstructions:
+    type: string
+  groups:
+    items:
+      $ref: ../_index.yml#/TestGroup
+    type: array
+  id:
+    type: string
+  institutionId:
+    type: string
+  publishDate:
+    format: date-time
+    type: string
+  specialistId:
+    type: string
+  title:
+    type: string
+  type:
+    type: string
+required:
+- specialistId
+- institutionId
+- title
+- globalInstructions
+- globalCotation
+- conclusion
+- creationDate
+- publishDate
+- startDate
+- endDate
+- startTolerance
+- numberOfResubmissions
+- groups
+type: object

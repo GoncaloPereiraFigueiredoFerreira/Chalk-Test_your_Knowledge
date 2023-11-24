@@ -1,0 +1,102 @@
+get:
+  tags:
+    - user
+  parameters:
+  - description: 'Find users from this institution.'
+    in: query
+    name: institution
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - description: 'Find users from this course (institution is required).'
+    in: query
+    name: course
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              anyOf:
+              - $ref: ../components/schemas/_index.yml#/Student
+              - $ref: ../components/schemas/_index.yml#/Specialist
+              - $ref: ../components/schemas/_index.yml#/InstitutionManager
+            type: array
+      description: successful operation
+    '400':
+      description: Either 'institution' or 'course'+'institution' are required.
+    '401':
+      description: Unauthorized operation
+post:
+  tags:
+    - user
+  description: This method is used to create an user regardless of its type.
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            user:
+              oneOf:
+              - $ref: ../components/schemas/_index.yml#/StudentWithoutId
+              - $ref: ../components/schemas/_index.yml#/SpecialistWithoutId
+              - $ref: ../components/schemas/_index.yml#/InstitutionManagerWithoutId
+          required:
+          - user
+          type: object
+    required: true
+  responses:
+    '200':
+      description: OK
+    '401':
+      description: Unauthorized operation
+  summary: Create user
+put:
+  tags:
+    - user
+  description: Update an existent user in the store
+  parameters:
+  - in: cookie
+    name: userId
+    required: true
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            user:
+              oneOf:
+              - $ref: ../components/schemas/_index.yml#/StudentWithoutId
+              - $ref: ../components/schemas/_index.yml#/SpecialistWithoutId
+              - $ref: ../components/schemas/_index.yml#/InstitutionManagerWithoutId
+          required:
+          - user
+          type: object
+    required: true
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid user id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: User not found
+  summary: Update user

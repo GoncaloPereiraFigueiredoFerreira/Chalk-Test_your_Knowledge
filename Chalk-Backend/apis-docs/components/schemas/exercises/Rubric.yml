@@ -1,0 +1,6 @@
+description: Rubric schema.
+oneOf:
+- $ref: ../_index.yml#/MultipleChoiceRubric
+- $ref: ../_index.yml#/OpenAnswerRubric
+- $ref: ../_index.yml#/FillTheBlanksRubric
+type: object

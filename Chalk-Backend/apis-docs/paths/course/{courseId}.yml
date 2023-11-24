@@ -1,0 +1,60 @@
+delete:
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid coursename supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Course not found
+  summary: Delete course
+  tags:
+  - course
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/_index.yml#/CourseWithoutId
+      description: successful operation
+    '400':
+      description: Invalid course id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Course not found
+  summary: Get course by course id
+parameters:
+- description: Course identifier
+  in: path
+  name: courseId
+  required: true
+  schema:
+    $ref: ../../components/schemas/_index.yml#/StringInput
+put:
+  description: Update an existent course in the store
+  requestBody:
+    content:
+      application/json:
+        schema:
+          properties:
+            course:
+              $ref: ../../components/schemas/_index.yml#/CourseWithoutId
+          required:
+          - course
+          type: object
+    required: true
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid course id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Course not found
+  summary: Update course
+  tags:
+  - course

@@ -1,0 +1,4 @@
+allOf:
+  - $ref: ../_index.yml#/UserBasicProperties
+additionalProperties: false
+description: Student's Schema. The user id is not required.

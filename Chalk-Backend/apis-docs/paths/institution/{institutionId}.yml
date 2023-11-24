@@ -1,0 +1,56 @@
+delete:
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid institution supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Institution not found
+  summary: Delete institution
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/_index.yml#/InstitutionWithoutId
+      description: successful operation
+    '400':
+      description: Invalid institution id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Institution not found
+  summary: Get institution by institution id
+parameters:
+- description: Institution identifier
+  in: path
+  name: institutionId
+  required: true
+  schema:
+    $ref: ../../components/schemas/_index.yml#/StringInput
+put:
+  description: Update an existent institution in the store
+  requestBody:
+    content:
+      application/json:
+        schema:
+          properties:
+            institution:
+              $ref: ../../components/schemas/_index.yml#/InstitutionWithoutId
+          required:
+          - institution
+          type: object
+    required: true
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid institution supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Institution not found
+  summary: Update Institution

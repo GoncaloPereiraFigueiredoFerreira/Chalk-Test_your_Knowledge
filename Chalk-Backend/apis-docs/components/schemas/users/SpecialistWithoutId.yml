@@ -1,0 +1,10 @@
+additionalProperties: false
+description: Specialist's Schema. The user id is not required.
+example:
+  name: Alexandre Martins
+  photoPath: https://i.imgur.com/FRwhrhG.jpg
+properties:
+  UserWithoutId:
+    $ref: ../_index.yml#/UserWithoutId
+required:
+- UserWithoutId

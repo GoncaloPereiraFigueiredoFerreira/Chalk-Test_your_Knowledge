@@ -1,0 +1,17 @@
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              description: id of a resolution
+              type: string
+            type: array
+      description: Success.
+    '401':
+      description: Unauthorized operation.
+  summary: Get the list of identifiers of the student's resolutions for the given
+    test.
+  tags:
+  - tests

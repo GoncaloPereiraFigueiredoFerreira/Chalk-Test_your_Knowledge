@@ -1,0 +1,4 @@
+type: string
+pattern: /^[a-f\d]{24}$/i
+maxLength: 24
+minLength: 24

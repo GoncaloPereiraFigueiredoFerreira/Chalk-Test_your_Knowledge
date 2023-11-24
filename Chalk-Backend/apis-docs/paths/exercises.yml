@@ -1,0 +1,116 @@
+get:
+  description: Retrieves exercises that match the given filters.
+  parameters:
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  - description: Array of identifiers from the tags that will be used to filter the
+      exercises.
+    in: query
+    name: tags
+    required: false
+    schema:
+      default: []
+      items:
+        type: integer
+      type: array
+  - description: Value that defines if the exercise must have all the given tags to
+      be retrieved.
+    in: query
+    name: matchAllTags
+    required: false
+    schema:
+      default: false
+      type: boolean
+  - description: "Describes the type of visibility that the exercises must have. \n\
+      This parameter must be paired with the parameter 'visibilityTarget' \nwhen the\
+      \ value is either 'institution' or 'course'.\n"
+    in: query
+    name: visibilityType
+    schema:
+      default: public
+      enum:
+      - public
+      - institution
+      - course
+      type: string
+  - description: "Identifier of the visibility target. For example, if visibilityType='institution',\
+      \ \nthen this parameter is the identifier of the institution.\n"
+    in: query
+    name: visibilityTarget
+    required: false
+    schema:
+      type: string
+  - in: query
+    name: specialistId
+    required: false
+    schema:
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../components/schemas/_index.yml#/Exercise
+            type: array
+      description: Successful retrieval.
+    '401':
+      description: 'Unauthorized operation. Example: When trying to access exercises
+        from a specific course that the user does not belong to.'
+  summary: Retrieve exercises.
+  tags:
+  - exercises
+post:
+  description: This method is used to create an exercise regardless of its type. Check
+    the request body schema to understand how to create the different exercises.
+  requestBody:
+    content:
+      application/json:
+        schema:
+          description: If a rubric and a solution are provided, their type must match
+            the type of the exercise.
+          properties:
+            exercise:
+              $ref: ../components/schemas/_index.yml#/ExerciseWithoutId
+            rubric:
+              $ref: ../components/schemas/_index.yml#/Rubric
+            solution:
+              $ref: ../components/schemas/_index.yml#/ExerciseSolution
+            tagsIds:
+              items:
+                example: '12345'
+                type: string
+              type: array
+            visibility:
+              $ref: ../components/schemas/_index.yml#/Visibility
+          required:
+          - visibility
+          - exercise
+          - tagsIds
+          type: object
+    required: true
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            description: identifier of the new exercise
+            type: string
+      description: Exercise created successfully.
+    '400':
+      description: Bad input.
+    '401':
+      description: Unauthorized operation.
+  summary: Create an exercise
+  tags:
+  - exercises

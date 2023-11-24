@@ -1,0 +1,31 @@
+description: Test resolution's schema.
+properties:
+  groups:
+    items:
+      $ref: ../_index.yml#/TestResolutionGroup
+    type: array
+  id:
+    type: string
+  startDate:
+    format: date-time
+    type: string
+  status:
+    enum:
+    - ongoing
+    - not_revised
+    - revised
+    - revision_ongoing
+    - invalidated
+    type: string
+  studentId:
+    type: string
+  submissionDate:
+    format: date-time
+    type: string
+  submissionNr:
+    type: integer
+  testId:
+    type: string
+required:
+- id
+type: object

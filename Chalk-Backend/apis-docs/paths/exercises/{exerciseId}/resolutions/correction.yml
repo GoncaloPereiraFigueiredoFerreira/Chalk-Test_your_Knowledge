@@ -1,0 +1,36 @@
+put:
+  parameters:
+  - description: Exercise identifier
+    in: path
+    name: exerciseId
+    required: true
+    schema:
+      example: exercise1
+      type: string
+  - description: 'Type of correction. The correction can either be automatic or done
+      by AI.
+
+      For a given exercise, it may support either, both, or none of the correction
+      types.
+
+      '
+    in: query
+    name: correctionType
+    schema:
+      enum:
+      - auto
+      - ai
+      type: string
+  responses:
+    '200':
+      description: Success.
+    '400':
+      description: The requested type of correction is not supported for the given
+        exercise.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise not found.
+  summary: Issue the automatic correction of the exercise resolutions.
+  tags:
+  - exercises

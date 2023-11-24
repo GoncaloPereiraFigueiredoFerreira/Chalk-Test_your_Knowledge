@@ -1,0 +1,60 @@
+get:
+  description: Returns all the subscription plans.
+  parameters:
+  - description: 'Finds the specialist subscription.
+
+      '
+    in: query
+    name: specialistId
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - description: 'Finds the student subscription.
+
+      '
+    in: query
+    name: studentId
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../components/schemas/_index.yml#/SubscriptionPlan
+            type: array
+      description: successful operation
+    '401':
+      description: Unauthorized operation
+post:
+  description: This method is used to create a new subsctiption plan
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            subscriptionPlan:
+              $ref: ../components/schemas/_index.yml#/SubscriptionPlan
+          required:
+          - subscriptionPlan
+          type: object
+    required: true
+  responses:
+    '200':
+      description: OK
+    '401':
+      description: Unauthorized operation
+  summary: Create subscription plan

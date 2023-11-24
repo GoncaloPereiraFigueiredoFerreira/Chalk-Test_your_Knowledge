@@ -1,0 +1,28 @@
+get:
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  - description: student identifier
+    in: path
+    name: studentId
+    required: true
+    schema:
+      example: student1
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            type: boolean
+      description: Successful retrieval.
+    '404':
+      description: Test not found.
+  summary: Allows to check if the student can submit a resolution for the test.
+  tags:
+  - tests

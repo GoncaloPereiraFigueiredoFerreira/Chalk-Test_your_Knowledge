@@ -1,0 +1,55 @@
+allOf:
+- $ref: ../_index.yml#/ExerciseBasicProperties
+- properties:
+    items:
+      items:
+        properties:
+          id:
+            type: integer
+          text:
+            type: string
+          type:
+            example: string
+            type: string
+        type: object
+      type: array
+    mctype:
+      description: "Defines the type of multiple choice exercise.\nShould follow the\
+        \ format \"XX\".\nOptions:\n  1X -> multiple choice /\n  2X -> true or false\
+        \ / \n  X0 means 'no justification' / \n  X1 means 'justify all items' / \n\
+        \  X2 means 'justify false/unmarked items' / \n  X3 means 'justify true/marked\
+        \ items'\"\n"
+      type: integer
+    type:
+      enum:
+      - MC
+  type: object
+description: Multiple Choice or True/False exercise schema. The exercise id is not
+  required.
+example:
+  cotation: 1.6
+  courseId: course1
+  institutionId: institution1
+  items:
+  - id: 0
+    text: '1'
+    type: string
+  - id: 1
+    text: '2'
+    type: string
+  - id: 2
+    text: '3'
+    type: string
+  - id: 3
+    text: '4'
+    type: string
+  mctype: 10
+  specialistId: specialist1
+  statement:
+    imagePath: http://somewhere.com/canetasVerdes.jpg
+    text: "Quantas canetas verdes est\xE3o presentes na figura?"
+  title: Quantas canetas?
+  type: MC
+required:
+- mctype
+- items

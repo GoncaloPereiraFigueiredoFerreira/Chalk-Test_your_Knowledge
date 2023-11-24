@@ -1,0 +1,7 @@
+properties:
+  items:
+    items:
+      oneOf:
+      - type: string
+    type: array
+type: object

@@ -1,0 +1,34 @@
+get:
+  parameters:
+  - description: 'Find specialists from this institution.
+
+      '
+    in: query
+    name: institutionId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../../components/schemas/_index.yml#/InstitutionManager
+            type: array
+      description: successful operation
+    '400':
+      description: The 'institutionId+page+itemsPerPage' is required.
+    '401':
+      description: Unauthorized operation

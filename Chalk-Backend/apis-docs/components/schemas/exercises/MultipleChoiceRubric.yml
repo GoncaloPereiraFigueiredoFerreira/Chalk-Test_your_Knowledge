@@ -1,0 +1,20 @@
+allOf:
+- $ref: ../_index.yml#/RubricBasicProperties
+- properties:
+    choiceCotation:
+      format: float
+      type: number
+    penalty:
+      format: float
+      type: number
+    type:
+      enum:
+      - MC
+  type: object
+example:
+  choiceCotation: 0.4
+  penalty: 0
+  type: MC
+required:
+- choiceCotation
+- penalty

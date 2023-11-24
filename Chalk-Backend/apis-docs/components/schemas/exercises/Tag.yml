@@ -1,0 +1,11 @@
+example:
+  name: "Algebra"
+  path: "/Matematica/"
+properties:
+  id:
+    $ref: "../_index.yml#/StringID"
+  name:
+    type: string
+  path:
+    type: string
+type: object

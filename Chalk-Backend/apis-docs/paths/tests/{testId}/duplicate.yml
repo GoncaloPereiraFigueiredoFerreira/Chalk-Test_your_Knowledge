@@ -1,0 +1,24 @@
+post:
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            description: identifier of the duplicated test
+            type: string
+      description: Successful duplication.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test with the given id does not exist.
+  summary: Duplicates the test using its identifier.
+  tags:
+  - tests

@@ -1,0 +1,8 @@
+additionalProperties: false
+description: Institution subscription's schema.
+properties:
+  specialistsSub:
+    $ref: ../_index.yml#/Subscription
+  studentsSub:
+    $ref: ../_index.yml#/Subscription
+type: object

@@ -1,0 +1,11 @@
+additionalProperties: false
+description: Schema of a course.
+allOf:
+  - $ref: "../_index.yml#/CourseWithoutId"
+  - type: object
+    properties:
+      id:
+        $ref: "../_index.yml#/StringID"
+required:
+- id
+type: object

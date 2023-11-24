@@ -1,0 +1,24 @@
+post:
+  parameters:
+  - description: Exercise identifier
+    in: path
+    name: exerciseId
+    required: true
+    schema:
+      example: exercise1
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            description: identifier of the new exercise
+            type: string
+      description: Successful duplication.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise with the given id does not exist.
+  summary: Duplicates the exercise using its identifier.
+  tags:
+  - exercises

@@ -1,0 +1,46 @@
+delete:
+  parameters:
+  - description: rubric identifier
+    in: path
+    name: rubricId
+    required: true
+    schema:
+      example: rubric1
+      type: string
+  responses:
+    '200':
+      description: Deletion successful.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise does not exist.
+  summary: Delete the exercise rubric.
+  tags:
+  - exercises
+put:
+  parameters:
+  - description: rubric identifier
+    in: path
+    name: rubricId
+    required: true
+    schema:
+      example: rubric1
+      type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/_index.yml#/Rubric
+    required: true
+  responses:
+    '200':
+      description: Rubric created successfully.
+    '400':
+      description: Malformed request. Rubric may not be the correct type.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise does not exist.
+  summary: Update the rubric.
+  tags:
+  - exercises

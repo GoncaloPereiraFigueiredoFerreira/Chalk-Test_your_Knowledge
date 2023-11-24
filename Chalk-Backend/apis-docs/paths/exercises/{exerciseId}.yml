@@ -1,0 +1,65 @@
+delete:
+  parameters:
+  - description: Exercise identifier
+    in: path
+    name: exerciseId
+    required: true
+    schema:
+      example: exercise1
+      type: string
+  responses:
+    '200':
+      description: Exercise deleted successfully.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise not found.
+  summary: Delete exercise by its id.
+  tags:
+  - exercises
+put:
+  description: This method is used to update an existing exercise. Check the schema
+  parameters:
+  - description: Exercise identifier
+    in: path
+    name: exerciseId
+    required: true
+    schema:
+      example: exercise1
+      type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          description: If a rubric and a solution are provided, their type must match
+            the type of the exercise. The given properties will be updated. The hidden
+            properties will not be modified. If a property is null, then it is considered
+            that it should be deleted.
+          properties:
+            exercise:
+              $ref: ../../components/schemas/_index.yml#/ExerciseWithoutId
+            rubric:
+              $ref: ../../components/schemas/_index.yml#/Rubric
+            solution:
+              $ref: ../../components/schemas/_index.yml#/ExerciseSolution
+            tagsIds:
+              items:
+                example: '12345'
+                type: string
+              type: array
+            visibility:
+              $ref: ../../components/schemas/_index.yml#/Visibility
+          type: object
+    required: true
+  responses:
+    '200':
+      description: Exercise updated successfully.
+    '400':
+      description: Bad input.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise not found.
+  summary: Update an exercise
+  tags:
+  - exercises

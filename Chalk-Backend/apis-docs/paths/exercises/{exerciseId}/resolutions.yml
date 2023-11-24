@@ -1,0 +1,65 @@
+get:
+  parameters:
+  - description: Exercise identifier
+    in: path
+    name: exerciseId
+    required: true
+    schema:
+      example: exercise1
+      type: string
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              properties:
+                resolution:
+                  $ref: ../../../components/schemas/_index.yml#/ExerciseResolution
+                student:
+                  $ref: ../../../components/schemas/_index.yml#/StudentSimplified
+              type: object
+            type: array
+      description: Successful retrieval.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise not found.
+  summary: Get all exercise resolutions.
+  tags:
+  - exercises
+post:
+  parameters:
+  - in: query
+    name: exerciseId
+    required: true
+    schema:
+      type: integer
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/_index.yml#/ExerciseResolution
+    required: true
+  responses:
+    '200':
+      description: Exercise resolution created successfully.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Could not find any exercise with the given id.
+  summary: Create an exercise resolution
+  tags:
+  - exercises

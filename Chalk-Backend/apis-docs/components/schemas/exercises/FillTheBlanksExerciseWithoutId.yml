@@ -1,0 +1,32 @@
+allOf:
+- $ref: ../_index.yml#/ExerciseBasicProperties
+- properties:
+    options:
+      items:
+        items:
+          type: string
+        type: array
+      type: array
+    textSegments:
+      items:
+        type: string
+      type: array
+    type:
+      enum:
+      - FTB
+  type: object
+description: Fill the blanks exercise schema. The exercise id is not required.
+example:
+  cotation: 20.0
+  courseId: course3
+  institutionId: institution3
+  options:
+  - - Espanha
+    - "Fran\xE7a"
+  specialistId: specialist3
+  statement: null
+  textSegments:
+  - "O pa\xEDs que faz fronteira com Portugal \xE9 "
+  - .
+  title: "Exemplo preencher espa\xE7os"
+  type: FTB

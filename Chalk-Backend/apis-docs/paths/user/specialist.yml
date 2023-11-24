@@ -1,0 +1,49 @@
+get:
+  parameters:
+  - description: 'Find the specialists that are the owners of the test.
+
+      '
+    in: query
+    name: testId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - description: 'Find specialists from this institution.
+
+      '
+    in: query
+    name: institutionId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - description: 'Find specialists from this course (institution is required).
+
+      '
+    in: query
+    name: courseId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../../components/schemas/_index.yml#/Specialist
+            type: array
+      description: successful operation
+    '400':
+      description: Either 'institutionId+page+itemsPerPage' or 'courseId+institutionId+page+itemsPerPage'
+        or 'testId+page+itemsPerPage' are required.
+    '401':
+      description: Unauthorized operation

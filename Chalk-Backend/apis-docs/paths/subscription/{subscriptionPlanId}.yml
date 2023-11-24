@@ -1,0 +1,57 @@
+delete:
+  responses:
+    '200':
+      description: Successful operation
+    '400':
+      description: Invalid subscription plan identifier supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Subscription plan not found
+    '405':
+      description: The subsctiption plan cannot be deleted because its being used.
+  summary: Delete subscription plan
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/_index.yml#/SubscriptionPlan
+      description: Successful operation
+    '400':
+      description: Invalid user id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: User not found
+  summary: Get subscription plan by subscription plan id
+parameters:
+- description: Subscription Plan identifier
+  in: path
+  name: subscriptionPlanId
+  required: true
+  schema:
+    $ref: ../../components/schemas/_index.yml#/StringInput
+    example: uminhoDefaultPlan01
+put:
+  description: Update an existent subscription plan in the store
+  requestBody:
+    content:
+      application/json:
+        schema:
+          properties:
+            exercise:
+              $ref: ../../components/schemas/_index.yml#/SubscriptionPlan
+          type: object
+    required: true
+  responses:
+    '200':
+      description: Successful operation
+    '400':
+      description: Invalid subscription plan id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Subscription plan not found
+  summary: Update subscription plan

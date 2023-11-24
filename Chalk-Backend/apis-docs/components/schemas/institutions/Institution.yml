@@ -1,0 +1,12 @@
+additionalProperties: false
+description: Basic properties of a institution.
+example:
+  id: uminho
+allOf:
+  - $ref: "../_index.yml#/InstitutionWithoutId"
+  - type: object
+    properties:
+      id:
+        $ref: "../_index.yml#/StringID"
+required:
+- id

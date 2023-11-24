@@ -1,0 +1,13 @@
+additionalProperties: false
+description: Basic properties of an user.
+properties:
+  id:
+    $ref: ../_index.yml#/StringInput
+  name:
+    $ref: ../_index.yml#/StringInput
+  photoPath:
+    $ref: ../_index.yml#/StringInput
+required:
+- id
+- name
+type: object

@@ -1,0 +1,146 @@
+##### Courses #####
+
+Course:
+  $ref: courses/Course.yml
+CourseWithoutId:
+  $ref: courses/CourseWithoutId.yml
+
+##### Exercises #####
+
+Visibility:
+  $ref: exercises/Visibility.yml
+Comment:
+  $ref: exercises/Comment.yml
+Tag:
+  $ref: exercises/Tag.yml
+
+ExerciseBasicProperties:
+  $ref: exercises/ExerciseBasicProperties.yml
+Exercise:
+  $ref: exercises/Exercise.yml
+ExerciseWithoutId:
+  $ref: exercises/ExerciseWithoutId.yml
+
+ExerciseSolution:
+  $ref: exercises/ExerciseSolution.yml
+ExerciseResolution:
+  $ref: exercises/ExerciseResolution.yml
+ExerciseResolutionData:
+  $ref: exercises/ExerciseResolutionData.yml
+
+RubricBasicProperties:
+  $ref: exercises/RubricBasicProperties.yml
+Rubric:
+  $ref: exercises/Rubric.yml
+
+FillTheBlanksData:
+  $ref: exercises/FillTheBlanksData.yml
+FillTheBlanksExercise:
+  $ref: exercises/FillTheBlanksExercise.yml
+FillTheBlanksExerciseWithoutId:
+  $ref: exercises/FillTheBlanksExerciseWithoutId.yml
+FillTheBlanksRubric:
+  $ref: exercises/FillTheBlanksRubric.yml
+
+MultipleChoiceData:
+  $ref: exercises/MultipleChoiceData.yml
+MultipleChoiceExercise:
+  $ref: exercises/MultipleChoiceExercise.yml
+MultipleChoiceExerciseWithoutId:
+  $ref: exercises/MultipleChoiceExerciseWithoutId.yml
+MultipleChoiceRubric:
+  $ref: exercises/MultipleChoiceRubric.yml
+
+OpenAnswerData:
+  $ref: exercises/OpenAnswerData.yml
+OpenAnswerExercise:
+  $ref: exercises/OpenAnswerExercise.yml
+OpenAnswerExerciseWithoutId:
+  $ref: exercises/OpenAnswerExerciseWithoutId.yml
+OpenAnswerRubric:
+  $ref: exercises/OpenAnswerRubric.yml
+
+
+##### Institutions #####
+
+Institution:
+  $ref: institutions/Institution.yml
+InstitutionWithoutId:
+  $ref: institutions/InstitutionWithoutId.yml
+
+
+##### Miscellaneous #####
+
+StringInput:
+  $ref: miscellaneous/StringInput.yml
+
+StringID:
+  $ref: miscellaneous/StringID.yml
+
+##### Payments #####
+
+Payment:
+  $ref: payments/Payment.yml
+CreditCard:
+  $ref: payments/CreditCard.yml
+
+
+##### Subscriptions #####
+
+SubscriptionPlan:
+  $ref: subscriptions/SubscriptionPlan.yml
+
+Subscription:
+  $ref: subscriptions/Subscription.yml
+
+InstitutionSubscription:
+  $ref: subscriptions/InstitutionSubscription.yml
+
+
+##### Tests #####
+
+TestGroup:
+  $ref: tests/TestGroup.yml
+TestBasicProperties:
+  $ref: tests/TestBasicProperties.yml
+
+BasicTest:
+  $ref: tests/BasicTest.yml
+DeliverDateTest:
+  $ref: tests/DeliverDateTest.yml
+LiveTest:
+  $ref: tests/LiveTest.yml
+Test:
+  $ref: tests/Test.yml
+
+TestResolutionGroup:
+  $ref: tests/TestResolutionGroup.yml
+TestResolution:
+  $ref: tests/TestResolution.yml
+
+
+##### Users #####
+
+User:
+  $ref: users/User.yml
+UserBasicProperties:
+  $ref: users/UserBasicProperties.yml
+UserWithoutId:
+  $ref: users/UserWithoutId.yml
+
+InstitutionManager:
+  $ref: users/InstitutionManager.yml
+InstitutionManagerWithoutId:
+  $ref: users/InstitutionManagerWithoutId.yml
+
+Specialist:
+  $ref: users/Specialist.yml
+SpecialistWithoutId:
+  $ref: users/SpecialistWithoutId.yml
+
+Student:
+  $ref: users/Student.yml
+StudentSimplified:
+  $ref: users/StudentSimplified.yml
+StudentWithoutId:
+  $ref: users/StudentWithoutId.yml

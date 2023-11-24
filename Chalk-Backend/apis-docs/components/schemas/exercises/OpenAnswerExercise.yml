@@ -1,0 +1,16 @@
+allOf:
+- $ref: ../_index.yml#/OpenAnswerExerciseWithoutId
+description: Schema of an open answer exercise.
+example:
+  cotation: 100.0
+  courseId: course2
+  id: exercise2
+  institutionId: institution2
+  specialistId: specialist2
+  statement:
+    imagePath: https://cdn.flash.pt/images/2019-10/img_828x523$2019_10_15_13_49_46_227057_im_637409554131662405.png
+    text: "Qual \xE9 o sentido da vida?"
+  title: Exemplo resposta aberta
+  type: OA
+required:
+- id

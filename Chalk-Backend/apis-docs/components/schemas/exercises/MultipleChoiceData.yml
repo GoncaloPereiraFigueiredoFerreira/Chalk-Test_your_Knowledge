@@ -1,0 +1,30 @@
+allOf:
+- $ref: ../_index.yml#/ExerciseSolution
+- properties:
+    items:
+      items:
+        properties:
+          id:
+            type: integer
+          value:
+            type: boolean
+        type: object
+      type: array
+    type:
+      enum:
+      - MC
+  type: object
+description: Multiple choice resolution data.
+example:
+  items:
+  - id: 0
+    value: true
+  - id: 1
+    value: false
+  - id: 2
+    value: true
+  - id: 3
+    value: true
+  type: MC
+required:
+- items

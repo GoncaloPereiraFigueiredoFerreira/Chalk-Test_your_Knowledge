@@ -1,0 +1,44 @@
+allOf:
+- $ref: ../_index.yml#/RubricBasicProperties
+- properties:
+    criteria:
+      items:
+        properties:
+          standards:
+            items:
+              properties:
+                cotation:
+                  format: float
+                  type: number
+                description:
+                  type: string
+                title:
+                  type: string
+              type: object
+            type: array
+          title:
+            type: string
+        type: object
+      type: array
+    type:
+      enum:
+      - OA
+  type: object
+example:
+  criteria:
+  - standards:
+    - cotation: 30.0
+      description: ''
+      title: ''
+    - cotation: 50.0
+      description: ''
+      title: ''
+    title: ''
+  - standards:
+    - cotation: 20.0
+      description: ''
+      title: ''
+    title: ''
+  type: OA
+required:
+- criteria

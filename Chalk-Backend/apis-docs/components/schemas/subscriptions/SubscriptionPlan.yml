@@ -1,0 +1,32 @@
+additionalProperties: false
+description: Subscription Plan's schema.
+example:
+  name: IDK yet
+  perks:
+  - perk1
+  priceMonth: 100000.5
+  targetAudience:
+  - audience1
+properties:
+  id:
+    $ref: "../_index.yml#/StringID"
+    nullable: true
+  name:
+    type: string
+  perks:
+    items:
+      type: object
+    type: array
+  priceMonth:
+    format: float
+    type: number
+  targetAudience:
+    items:
+      type: object
+    type: array
+required:
+- name
+- targetAudience
+- perks
+- priceMonth
+type: object

@@ -1,0 +1,22 @@
+allOf:
+- $ref: ../_index.yml#/ExerciseSolution
+- properties:
+    comment:
+      $ref: ../_index.yml#/Comment
+    cotation:
+      format: float
+      type: number
+    data:
+      $ref: ../_index.yml#/ExerciseResolutionData
+    exerciseId:
+      $ref: "../_index.yml#/StringID"
+    status:
+      enum:
+      - not_revised
+      - revised
+      type: string
+    studentId:
+      $ref: "../_index.yml#/StringID"
+    submissionNr:
+      type: integer
+  type: object

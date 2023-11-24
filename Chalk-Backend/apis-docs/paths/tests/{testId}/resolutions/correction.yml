@@ -1,0 +1,34 @@
+put:
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  - description: 'Type of correction. The correction can either be automatic or done
+      by AI.
+
+      When using AI correction, the AI will only be used to correct questions that
+
+      cannot be corrected automatically, i.e., by using the solution.
+
+      '
+    in: query
+    name: correctionType
+    schema:
+      enum:
+      - auto
+      - ai
+      type: string
+  responses:
+    '200':
+      description: Success.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test not found.
+  summary: Issue the automatic correction of the test resolutions.
+  tags:
+  - tests

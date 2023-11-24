@@ -1,0 +1,23 @@
+post:
+  description: This method is used to create a new subsctiption for a student
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            SubscriptionWithPlan:
+              $ref: ../../components/schemas/_index.yml#/Subscription
+            studentId:
+              $ref: ../../components/schemas/_index.yml#/StringID
+          required:
+          - SubscriptionWithPlan
+          - StudentId
+          type: object
+    required: true
+  responses:
+    '200':
+      description: OK
+    '401':
+      description: Unauthorized operation
+  summary: Create subscription for a student

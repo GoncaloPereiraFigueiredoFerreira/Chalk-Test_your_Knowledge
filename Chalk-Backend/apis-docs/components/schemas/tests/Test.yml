@@ -1,0 +1,5 @@
+description: Schema of a test
+oneOf:
+- $ref: ../_index.yml#/BasicTest
+- $ref: ../_index.yml#/DeliverDateTest
+- $ref: ../_index.yml#/LiveTest
