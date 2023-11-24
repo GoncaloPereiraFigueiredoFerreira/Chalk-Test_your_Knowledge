@@ -8,8 +8,6 @@ servers:
 tags:
   - name: exercises
     description: Everything related to exercises.
-  - name: tests
-    description: Everything related to tests.
 
 components:
   schemas:
@@ -535,176 +533,6 @@ components:
             institutionId:
               type: string
 
-    # Test / Test Resolution Schemas
-    TestBasicProperties:
-      description: "Schema of a test"
-      type: object
-      required: 
-        - specialistId  
-        - institutionId  
-        - title  
-        - globalInstructions  
-        - globalCotation
-        - conclusion  
-        - creationDate  
-        - publishDate  
-        - startDate  
-        - endDate  
-        - startTolerance  
-        - numberOfResubmissions
-        - groups
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        specialistId:
-          type: string
-        institutionId:
-          type: string
-        courseId:
-          type: string
-        title:
-          type: string
-        globalInstructions:
-          type: string
-        globalCotation:
-          type: number
-          format: float
-        conclusion:
-          type: string
-        creationDate:
-          type: string
-          format: date-time
-        publishDate:
-          type: string
-          format: date-time
-        groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/TestGroup"
-    BasicTest:
-      description: "Schema of a basic test."
-      allOf:
-        - type: object
-          properties:
-            type:
-              enum:
-                - "basic"
-        - $ref: "#/components/schemas/TestBasicProperties"
-    DeliverDateTest:
-      description: "Schema of a deliver date test"
-      allOf:
-        - type: object
-          properties:
-            deliverDate:
-              type: string
-              format: date-time
-            type:
-              enum:
-                - "deliver_date"
-        - $ref: "#/components/schemas/TestBasicProperties"
-    LiveTest:
-      description: "Schema of a live test"
-      allOf:
-        - type: object
-          properties:
-            type:
-              enum:
-                - "live"
-            startDate:
-              type: string
-              format: date-time
-            startTolerance:
-              type: string
-              format: time
-              example: "23:22:30.524"
-              description: "HH:mm:ss.SSS"
-            duration:
-              type: string
-              format: time
-              example: "23:22:30.524"
-              description: "HH:mm:ss.SSS"
-        - $ref: "#/components/schemas/TestBasicProperties"
-    Test:
-      description: "Schema of a test"
-      oneOf:
-        - $ref: "#/components/schemas/BasicTest"
-        - $ref: "#/components/schemas/DeliverDateTest"
-        - $ref: "#/components/schemas/LiveTest"
-    TestGroup:
-      description: "Test group's schema."
-      type: object
-      required:
-        - groupCotation
-        - exercises
-      properties:
-        groupInstructions:
-          type: string
-        groupCotation:
-          type: number
-          format: float
-        exercises:
-          type: array
-          items:
-            oneOf:
-              - $ref: "#/components/schemas/Exercise"
-              - type: object
-                description: "Used only for POST methods, when there is a need to copy existing exercises."
-                properties:
-                  originalExerciseId:
-                    type: string
-                    description: "Identifier of the exercise that is supposed to be copied."
-                    example: "exercise123"
-                  cotation:
-                    type: number
-                    format: float
-                    description: "Cotation associated to the copied exercise."              
-    TestResolution:
-      description: "Test resolution's schema."
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          type: string
-        studentId: 
-          type: string
-        testId:
-          type: string
-        startDate:
-          type: string
-          format: date-time
-        submissionDate:
-          type: string
-          format: date-time
-        submissionNr:
-          type: integer
-        status:
-          type: string
-          enum:
-            - "ongoing"
-            - "not_revised"
-            - "revised"
-            - "revision_ongoing"
-            - "invalidated"
-        groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/TestResolutionGroup"
-    TestResolutionGroup:
-      description: "Test resolution group's schema."
-      type: object
-      required:
-        - groupCotation
-      properties:
-        resolutions:
-          type: array
-          items:
-            $ref: "#/components/schemas/TestResolution"
-        groupCotation:
-          type: number
-          format: float
 #todo - ver como adicionar parte dos cookies, nomeadamente da seguranca
 #todo - verificar parte dos campos required. Tirar o required dos schemas e definir no schema de cada método.
 
@@ -823,6 +651,11 @@ paths:
       responses:
         "200":
           description: Exercise created successfully.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: "identifier of the new exercise"
         "400":
           description: Bad input.
         "401":
@@ -907,6 +740,7 @@ paths:
             application/json:
               schema:
                 type: string
+                description: identifier of the new exercise
         "401":
           description: "Unauthorized operation."
         "404":
@@ -1082,7 +916,9 @@ paths:
       tags:
         - exercises
       summary: Retrieves the number of students that submitted a resolution for a specific exercise.
-      description: Retrieves the number of students that submitted a resolution for a specific exercise. The otal submissions can be obtained by setting the 'total' query parameter to 'true'.
+      description: |
+        Retrieves the number of students that submitted a resolution for a specific exercise. 
+        The total number of  submissions can be obtained by setting the 'total' query parameter to 'true'.
       parameters:
         - name: exerciseId
           in: path
@@ -1095,6 +931,7 @@ paths:
           description: "'false' to count the number of students that made a submission. 'true' to count the total number of submissions."
           schema:
             type: boolean
+            default: false
           in: query
           required: false
       responses:
@@ -1135,35 +972,49 @@ paths:
                 type: integer
         "404":
           description: "Exercise not found."
-  /exercises/{exerciseId}/resolutions/{studentId}/can-submit:
+  /exercises/{exerciseId}/resolutions/{studentId}/ids:
     get:
-      tags:
-        - exercises
-      summary: Allows to check if the student can submit a resolution for the exercise.
-      parameters:
-        - name: exerciseId
-          in: path
-          description: Exercise identifier
-          required: true
-          schema:
-            type: string
-            example: "exercise1"
-        - name: studentId
-          in: path
-          description: student identifier
-          required: true
-          schema:
-            type: string
-            example: "student1"
+      tags: [exercises]
+      summary: Get the list of identifiers of the student's resolutions for the given exercise.
       responses:
         "200":
-          description: "Successful retrieval."
+          description: "Success."
           content:
             application/json:
               schema:
-                type: boolean
+                type: array
+                items:
+                  type: string
+                  description: "id of a resolution"
+        "401":
+          description: "Unauthorized operation."
+  /exercises/{exerciseId}/resolutions/{studentId}/last:
+    get:
+      tags: [exercises]
+      summary: Get latest exercise resolution made by the student.
+      parameters:
+        - name: exerciseId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: studentId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: "Success."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExerciseResolution"
+                nullable: false
+        "401":
+          description: "Unauthorized operation."
         "404":
-          description: "Exercise not found."
+          description: "Not found."
   /exercises/{exerciseId}/rubric:
     get:
       tags: [exercises]
@@ -1287,108 +1138,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tag'
-
-  # Tests related paths
-  /tests:
-    get: 
-      tags: [tests]
-      summary: Retrieve tests.
-      description: Retrieves tests that match the given filters.
-      parameters:
-        - name: page
-          schema:
-            type: integer
-          in: query
-          required: true
-        - name: itemsPerPage
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 50
-          in: query
-          required: true
-        - name: tags
-          description: Array of identifiers from the tags that will be used to filter the tests.
-          in: query
-          schema:
-            type: array
-            items:
-              type: integer
-            default: []
-          required: false
-        - name: matchAllTags
-          description: Value that defines if the exercise must have all the given tags to be retrieved. 
-          in: query
-          schema:
-            type: boolean
-            default: false
-          required: false
-        - name: visibilityType
-          description: | 
-            Describes the type of visibility that the tests must have. 
-            This parameter must be paired with the parameter 'visibilityTarget' 
-            when the value is either 'institution' or 'course'.
-          in: query
-          schema:
-            type: string
-            default: public
-            enum:
-              - public
-              - institution
-              - course
-        - name: visibilityTarget
-          description: |
-            Identifier of the visibility target. For example, if visibilityType='institution', 
-            then this parameter is the identifier of the institution.
-          in: query
-          schema:
-            type: string
-          required: false
-        - name: specialistId
-          in: query
-          schema:
-            type: string
-          required: false
-      responses:
-        "200":
-          description: "Successful retrieval."
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Test"
-        "401":
-          description: "Unauthorized operation. Example: When trying to access tests from a specific course that the user does not belong to."  
-    post:
-      tags: ["tests"]
-      summary: Create a test
-      parameters:
-        - name: visibility
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/Visibility' 
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Test"
-      responses:
-        "200":
-          description: "Success."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Test"
-        "400":
-          description: "Bad syntax."
-        "401": 
-          description: "Unauthorized operation."
         
 
-  #courses - methods to add specialist, students, etc. Invitation links?
-    #todo - manual/automatic/ai test correction
+  #todo - courses -> methods to add specialist, students, etc. Invitation links?
+  #todo - manual/automatic/ai test correction
 
   
