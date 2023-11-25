@@ -1,0 +1,36 @@
+get:
+  description: "Retrieves the tags used to characterize the exercises. \nA path or\
+    \ paths can be given to define where the retrieval of tags should start. \nA number\
+    \ of levels can also be provided to inform how much depth the retrieval should\
+    \ cover.\n"
+  parameters:
+  - description: Array of paths from which the tags should be retrieved.
+    in: query
+    name: paths
+    required: false
+    schema:
+      default:
+      - /
+      items:
+        type: string
+      type: array
+  - description: Number of levels, starting from the given paths that should be retrieved.
+      -1 to retrieve every tag starting at the given paths.
+    in: query
+    name: levels
+    required: false
+    schema:
+      default: -1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../../components/schemas/_index.yml#/Tag
+            type: array
+      description: Tags retrieved successfully.
+  summary: Retrieve tags.
+  tags:
+  - exercises

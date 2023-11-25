@@ -1,0 +1,51 @@
+get:
+  tags:
+    - institution
+  parameters:
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../components/schemas/_index.yml#/Institution
+            type: array
+      description: successful operation
+    '400':
+      description: page and itemsPerPage are required
+    '401':
+      description: Unauthorized operation
+  summary: Get page of institutions.
+post:
+  tags:
+    - institution
+  description: This method is used to create an institution
+  requestBody:
+    content:
+      application/json:
+        schema:
+          properties:
+            institution:
+              $ref: ../components/schemas/_index.yml#/InstitutionWithoutId
+          required:
+          - institution
+          type: object
+    required: true
+  responses:
+    '200':
+      description: OK
+    '401':
+      description: Unauthorized operation
+  summary: Create institution

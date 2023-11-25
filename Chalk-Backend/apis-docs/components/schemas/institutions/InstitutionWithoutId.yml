@@ -1,0 +1,18 @@
+additionalProperties: false
+description: Basic properties of a institution.
+example:
+  description: LEI>LCC
+  institutionId: ''
+  name: Universidade do minho
+properties:
+  logopath:
+    $ref: ../_index.yml#/StringInput
+  name:
+    $ref: ../_index.yml#/StringInput
+  photoPath:
+    $ref: ../_index.yml#/StringInput
+required:
+- name
+- photoPath
+- logopath
+type: object

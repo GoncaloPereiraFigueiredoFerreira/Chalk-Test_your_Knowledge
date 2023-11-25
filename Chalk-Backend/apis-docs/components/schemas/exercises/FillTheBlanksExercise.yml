@@ -1,0 +1,20 @@
+allOf:
+- $ref: ../_index.yml#/FillTheBlanksExerciseWithoutId
+description: Fill the blanks exercise schema.
+example:
+  cotation: 20.0
+  courseId: course3
+  id: exercise3
+  institutionId: institution3
+  options:
+  - - Espanha
+    - "Fran\xE7a"
+  specialistId: specialist3
+  statement: null
+  textSegments:
+  - "O pa\xEDs que faz fronteira com Portugal \xE9 "
+  - .
+  title: "Exemplo preencher espa\xE7os"
+  type: FTB
+required:
+- id

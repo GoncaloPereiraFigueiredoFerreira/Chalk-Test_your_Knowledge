@@ -1,0 +1,23 @@
+get:
+  parameters:
+  - description: Exercise resolution identifier
+    in: path
+    name: resolutionId
+    required: true
+    schema:
+      example: resolution1
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/_index.yml#/ExerciseResolution
+      description: Successful retrieval.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise resolution not found.
+  summary: Get exercise resolution using its id.
+  tags:
+  - exercises

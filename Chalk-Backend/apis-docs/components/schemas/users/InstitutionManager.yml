@@ -1,0 +1,14 @@
+allOf:
+- $ref: ../_index.yml#/UserBasicProperties
+- properties:
+    institutionId:
+      type: string
+  type: object
+required:
+  - institutionId
+description: Institution Manager's Schema
+example:
+  id: id_Ray
+  institutionId: institution1
+  name: Rui Braga
+  photoPath: https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng

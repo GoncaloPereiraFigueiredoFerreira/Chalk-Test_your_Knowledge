@@ -1,0 +1,26 @@
+additionalProperties: false
+description: Subscription's schema.
+example:
+  nextPayment: 11-09-2024
+  payment:
+    creditCard:
+      cvv: '666'
+      expirationDate: 11-09-2050
+      name: "GONCALO COUTO DOS SANTOS"
+      number: '5555555555554444'
+  planId : "planID"
+properties:
+  nextPayment:
+    format: DateTime
+    type: string
+  payment:
+    $ref: ../_index.yml#/Payment
+  planId:
+    $ref: "../_index.yml#/StringID"
+  id:
+    $ref: "../_index.yml#/StringID"
+required:
+- planId
+- nextPayment
+- payment
+type: object

@@ -1,0 +1,33 @@
+get:
+  description: "- Retrieves the number of students that submitted a resolution for\
+    \ a specific test. \nThe total number of submissions can be obtained by setting\
+    \ the 'total' query parameter to 'true'.\n"
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  - description: '''false'' to count the number of students that made a submission.
+      ''true'' to count the total number of submissions.'
+    in: query
+    name: total
+    required: false
+    schema:
+      default: false
+      type: boolean
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            type: integer
+      description: Successful retrieval.
+    '404':
+      description: Test not found.
+  summary: Retrieves the number of students that submitted a resolution for a specific
+    test.
+  tags:
+  - tests

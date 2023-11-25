@@ -1,0 +1,6 @@
+description: Exercise (with id) schema
+oneOf:
+- $ref: ../_index.yml#/MultipleChoiceExercise
+- $ref: ../_index.yml#/OpenAnswerExercise
+- $ref: ../_index.yml#/FillTheBlanksExercise
+type: object

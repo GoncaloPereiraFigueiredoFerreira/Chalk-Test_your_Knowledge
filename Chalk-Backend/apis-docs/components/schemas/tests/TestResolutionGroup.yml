@@ -1,0 +1,12 @@
+description: Test resolution group's schema.
+properties:
+  groupCotation:
+    format: float
+    type: number
+  resolutions:
+    items:
+      $ref: ../_index.yml#/ExerciseResolution
+    type: array
+required:
+- groupCotation
+type: object

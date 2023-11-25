@@ -1,0 +1,13 @@
+description: Institution Manager's Schema. The user id is not required.
+example:
+  institutionId: institution1
+  name: Rui Braga
+  photoPath: https://media.vogue.fr/photos/5c3618b2093f3f72befae9d6/2:3/w_2560%2Cc_limit/mood_gosling_8365.jpeg?lang=eng
+properties:
+  UserWithoutId:
+    $ref: ../_index.yml#/UserWithoutId
+  institutionId:
+    $ref: ../_index.yml#/StringInput
+required:
+- institutionId
+- UserWithoutId

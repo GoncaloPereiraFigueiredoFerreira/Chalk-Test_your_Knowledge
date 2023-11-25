@@ -1,0 +1,6 @@
+allOf:
+  - $ref: "../_index.yml#/StudentWithoutId"
+additionalProperties: false
+description: Student's Schema
+required:
+  - id

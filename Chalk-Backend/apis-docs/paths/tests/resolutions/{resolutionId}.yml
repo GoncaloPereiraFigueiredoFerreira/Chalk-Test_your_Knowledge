@@ -1,0 +1,23 @@
+get:
+  parameters:
+  - description: Test resolution identifier
+    in: path
+    name: resolutionId
+    required: true
+    schema:
+      example: resolution1
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/_index.yml#/TestResolution
+      description: Successful retrieval.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test resolution not found.
+  summary: Get test resolution using its id.
+  tags:
+  - tests

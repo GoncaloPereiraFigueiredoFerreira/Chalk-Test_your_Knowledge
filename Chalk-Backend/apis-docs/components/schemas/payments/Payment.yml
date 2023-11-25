@@ -1,0 +1,15 @@
+additionalProperties: false
+description: Payment's schema.
+example:
+  creditCard:
+    cvv: '666'
+    expirationDate: 11-09-2050
+    name: "GON\xC7ALO COUTO DOS SANTOS"
+    number: '5555555555554444'
+properties:
+  payMethod:
+    oneOf:
+    - $ref: ../_index.yml#/CreditCard
+required:
+- payMethod
+type: object

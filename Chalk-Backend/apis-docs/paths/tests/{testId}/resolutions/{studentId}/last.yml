@@ -1,0 +1,27 @@
+get:
+  parameters:
+  - in: path
+    name: testId
+    required: true
+    schema:
+      type: string
+  - in: path
+    name: studentId
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../../components/schemas/_index.yml#/TestResolution
+            nullable: false
+      description: Success.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Not found.
+  summary: Get latest test resolution made by the student.
+  tags:
+  - tests

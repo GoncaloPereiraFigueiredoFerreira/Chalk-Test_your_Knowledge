@@ -1,0 +1,56 @@
+get:
+  tags:
+    - user
+  parameters:
+  - description: 'Find the student that is the owner of the resoluton.
+
+      '
+    in: query
+    name: testResolutionId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - description: 'Find the student that is the owner of the resoluton.
+
+      '
+    in: query
+    name: exerciseResolutionId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - description: 'Find students from this institution.
+
+      '
+    in: query
+    name: institutionId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - description: 'Find students from this course (institution is required).
+
+      '
+    in: query
+    name: courseId
+    schema:
+      $ref: ../../components/schemas/_index.yml#/StringInput
+  - in: query
+    name: page
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: ../../components/schemas/_index.yml#/Student
+            type: array
+      description: successful operation
+    '400':
+      description: Either 'institutionId+page+itemsPerPage' or 'courseId'+'institutionId+page+itemsPerPage'
+        or 'testResolutionId' or 'exerciseResolutionId' are required.
+    '401':
+      description: Unauthorized operation

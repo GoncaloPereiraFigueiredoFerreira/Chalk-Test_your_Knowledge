@@ -1,0 +1,45 @@
+get:
+  description: Retrieve exercise rubric. 'null' is returned if a rubric does not exist.
+  parameters:
+  - description: Exercise identifier
+    in: path
+    name: exerciseId
+    required: true
+    schema:
+      example: exercise1
+      type: string
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/_index.yml#/Rubric
+            nullable: true
+      description: Retrieval successful.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise does not exist.
+  summary: Retrieve exercise rubric.
+  tags:
+  - exercises
+post:
+  requestBody:
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - $ref: ../../../components/schemas/_index.yml#/MultipleChoiceRubric
+          - $ref: ../../../components/schemas/_index.yml#/OpenAnswerRubric
+          - $ref: ../../../components/schemas/_index.yml#/FillTheBlanksRubric
+    required: true
+  responses:
+    '200':
+      description: Rubric created successfully.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise does not exist.
+  summary: Create a rubric for an exercise.
+  tags:
+  - exercises

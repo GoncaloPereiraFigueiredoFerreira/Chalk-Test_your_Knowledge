@@ -1,0 +1,15 @@
+allOf:
+- $ref: ../_index.yml#/ExerciseSolution
+- properties:
+    text:
+      type: string
+    type:
+      enum:
+      - OA
+  type: object
+description: Open answer resolution data.
+example:
+  text: "\xC9 o Toy"
+  type: OA
+required:
+- text

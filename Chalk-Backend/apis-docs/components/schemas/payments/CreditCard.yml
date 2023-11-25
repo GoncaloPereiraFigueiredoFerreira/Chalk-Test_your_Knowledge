@@ -1,0 +1,23 @@
+additionalProperties: false
+description: Credit card's schema.
+example:
+  cvv: '666'
+  expirationDate: 11-09-2050
+  name: "GONCALO COUTO DOS SANTOS"
+  number: '5555555555554444'
+properties:
+  cvv:
+    type: string
+  expirationDate:
+    format: Date
+    type: string
+  name:
+    type: string
+  number:
+    type: string
+required:
+- name
+- number
+- cvv
+- expirationDate
+type: object

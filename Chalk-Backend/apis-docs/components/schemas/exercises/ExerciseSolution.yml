@@ -1,0 +1,9 @@
+description: Exercise solution schema.
+properties:
+  data:
+    $ref: ../_index.yml#/ExerciseResolutionData
+  id:
+    $ref: "../_index.yml#/StringID"
+required:
+- type
+type: object

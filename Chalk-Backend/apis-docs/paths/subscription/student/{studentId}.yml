@@ -1,0 +1,66 @@
+delete:
+  tags:
+  - subscription
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid student id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Student not found
+  summary: Delete subscription
+get:
+  tags:
+  - subscription
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/_index.yml#/Subscription
+      description: Successful operation
+    '400':
+      description: Invalid student id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Student not found
+  summary: Get subscription by student id.
+parameters:
+- description: Student identifier
+  in: path
+  name: studentId
+  required: true
+  schema:
+    $ref: ../../../components/schemas/_index.yml#/StringID
+    example: uminho
+put:
+  tags:
+  - subscription
+  description: Update an existent subscription in the store
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            SubscriptionWithPlan:
+              $ref: ../../../components/schemas/_index.yml#/Subscription
+          required:
+          - SubscriptionWithPlan
+          type: object
+    required: true
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid student id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Student not found
+    '405':
+      description: This method is only for update, use the post method.
+  summary: Update student subscription

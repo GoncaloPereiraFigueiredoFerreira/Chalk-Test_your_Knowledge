@@ -1,0 +1,9 @@
+description: Basic properties of a rubric
+properties:
+  type:
+    type: string
+  id:
+    $ref: "../_index.yml#/StringID"
+required:
+- type
+type: object

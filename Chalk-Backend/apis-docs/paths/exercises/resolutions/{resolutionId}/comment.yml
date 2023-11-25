@@ -1,0 +1,25 @@
+post:
+  parameters:
+  - description: Exercise resolution identifier
+    in: path
+    name: resolutionId
+    required: true
+    schema:
+      example: resolution1
+      type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../../../components/schemas/_index.yml#/Comment
+    required: true
+  responses:
+    '200':
+      description: Success.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise resolution not found.
+  summary: Add comment to a resolution
+  tags:
+  - exercises

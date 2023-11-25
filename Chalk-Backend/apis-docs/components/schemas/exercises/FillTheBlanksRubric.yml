@@ -1,0 +1,20 @@
+allOf:
+- $ref: ../_index.yml#/RubricBasicProperties
+- properties:
+    fillingCotation:
+      format: float
+      type: number
+    penalty:
+      format: float
+      type: number
+    type:
+      enum:
+      - FTB
+  type: object
+example:
+  fillingCotation: 20.0
+  penalty: 0
+  type: FTB
+required:
+- choiceCotation
+- penalty

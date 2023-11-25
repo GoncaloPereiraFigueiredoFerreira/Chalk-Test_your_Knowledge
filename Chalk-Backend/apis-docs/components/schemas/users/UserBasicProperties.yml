@@ -1,0 +1,17 @@
+properties:
+  description:
+    type: string
+    example:  "descricao"
+  email:
+    format: email
+    type: string
+    example: "luisinho2001@gmail.com"
+  id:
+    type: string
+  name:
+    type: string
+    example: "Luis Silva"
+  photoPath:
+    type: string
+    example: https://upload.wikimedia.org/wikipedia/commons/c/c7/Osama_bin_Laden%2C_portr%C3%A6t.jpg
+type: object

@@ -1,0 +1,21 @@
+allOf:
+- properties:
+    duration:
+      description: HH:mm:ss.SSS
+      example: '23:22:30.524'
+      format: time
+      type: string
+    startDate:
+      format: date-time
+      type: string
+    startTolerance:
+      description: HH:mm:ss.SSS
+      example: '23:22:30.524'
+      format: time
+      type: string
+    type:
+      enum:
+      - live
+  type: object
+- $ref: ../_index.yml#/TestBasicProperties
+description: Schema of a live test

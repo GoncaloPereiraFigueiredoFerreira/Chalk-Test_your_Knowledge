@@ -1,0 +1,8 @@
+allOf:
+- properties:
+    type:
+      enum:
+      - basic
+  type: object
+- $ref: ../_index.yml#/TestBasicProperties
+description: Schema of a basic test.

@@ -1,0 +1,41 @@
+delete:
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid username supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: User not found
+  summary: Delete user
+  tags:
+    - user
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: ../../components/schemas/_index.yml#/Student
+            - $ref: ../../components/schemas/_index.yml#/Specialist
+            - $ref: ../../components/schemas/_index.yml#/InstitutionManager
+      description: successful operation
+    '400':
+      description: Invalid user id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: User not found
+  summary: Get user by user id
+  tags:
+    - user
+parameters:
+- description: User identifier
+  in: path
+  name: userId
+  required: true
+  schema:
+    $ref: ../../components/schemas/_index.yml#/StringInput
+    example: user1

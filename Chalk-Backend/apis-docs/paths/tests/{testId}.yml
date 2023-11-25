@@ -1,0 +1,47 @@
+delete:
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  responses:
+    '200':
+      description: Test deleted successfully.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test not found.
+  summary: Delete test by its id.
+  tags:
+  - tests
+put:
+  description: This method is used to update an existing test. Check the schema
+  parameters:
+  - description: Test identifier
+    in: path
+    name: testId
+    required: true
+    schema:
+      example: test1
+      type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/_index.yml#/Test
+    required: true
+  responses:
+    '204':
+      description: Test updated successfully.
+    '400':
+      description: Bad input.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test not found.
+  summary: Update a test
+  tags:
+  - tests

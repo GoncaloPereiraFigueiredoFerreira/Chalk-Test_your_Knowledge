@@ -1,0 +1,66 @@
+delete:
+  tags:
+  - subscription
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid institution id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Institution not found
+  summary: Delete subscription from institution
+get:
+  tags:
+  - subscription
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/_index.yml#/Subscription
+      description: Successful operation
+    '400':
+      description: Invalid institution id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Institution not found
+  summary: Get subscription by institution id.
+parameters:
+- description: Institution identifier
+  in: path
+  name: institutionId
+  required: true
+  schema:
+    $ref: ../../../components/schemas/_index.yml#/StringID
+    example: uminho
+put:
+  tags:
+  - subscription
+  description: Update an existent subscription in the store
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            SubscriptionWithPlan:
+              $ref: ../../../components/schemas/_index.yml#/Subscription
+          required:
+          - SubscriptionWithPlan
+          type: object
+    required: true
+  responses:
+    '200':
+      description: successful operation
+    '400':
+      description: Invalid institution id supplied
+    '401':
+      description: Unauthorized operation
+    '404':
+      description: Institution not found
+    '405':
+      description: This method is only for update, use the post method.
+  summary: Update institution subscription

@@ -1,0 +1,6 @@
+description: Exercise resolution data schema.
+oneOf:
+- $ref: ../_index.yml#/MultipleChoiceData
+- $ref: ../_index.yml#/OpenAnswerData
+- $ref: ../_index.yml#/FillTheBlanksData
+type: object

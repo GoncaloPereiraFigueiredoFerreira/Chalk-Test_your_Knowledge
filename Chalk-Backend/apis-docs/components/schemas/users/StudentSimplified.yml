@@ -1,0 +1,10 @@
+description: Simplified version of the student schema.
+properties:
+  email:
+    format: email
+    type: string
+  id:
+    type: string
+  name:
+    type: string
+type: object

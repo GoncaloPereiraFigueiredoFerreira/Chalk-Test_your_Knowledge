@@ -1,0 +1,72 @@
+get:
+  tags:
+    - course
+  parameters:
+  - description: 'Find the courses this student belongs to.
+
+      '
+    in: query
+    name: studentId
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - description: 'Find the courses this specialist belongs to.
+
+      '
+    in: query
+    name: specialistId
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - description: 'Find the courses of this institution.
+
+      '
+    in: query
+    name: institutionId
+    schema:
+      $ref: ../components/schemas/_index.yml#/StringInput
+  - in: query
+    name: page
+    required: true
+    schema:
+      type: integer
+  - in: query
+    name: itemsPerPage
+    required: true
+    schema:
+      maximum: 50
+      minimum: 1
+      type: integer
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            items:
+              $ref: ../components/schemas/_index.yml#/Course
+            type: array
+      description: successful operation
+    '400':
+      description: Either 'studentId' or 'specialistId' or 'institution' are required.
+    '401':
+      description: Unauthorized operation
+post:
+  tags:
+    - course
+  description: This method is used to create an course
+  requestBody:
+    content:
+      application/json:
+        schema:
+          properties:
+            course:
+              $ref: ../components/schemas/_index.yml#/CourseWithoutId
+          required:
+          - course
+          type: object
+    required: true
+  responses:
+    '200':
+      description: OK
+    '401':
+      description: Unauthorized operation
+  summary: Create course

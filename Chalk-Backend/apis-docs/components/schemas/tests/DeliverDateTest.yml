@@ -1,0 +1,11 @@
+allOf:
+- properties:
+    deliverDate:
+      format: date-time
+      type: string
+    type:
+      enum:
+      - deliver_date
+  type: object
+- $ref: ../_index.yml#/TestBasicProperties
+description: Schema of a deliver date test

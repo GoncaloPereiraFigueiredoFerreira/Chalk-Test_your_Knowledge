@@ -1,0 +1,30 @@
+allOf:
+- $ref: ../_index.yml#/MultipleChoiceExerciseWithoutId
+description: Multiple Choice or True/False exercise schema.
+example:
+  cotation: 1.6
+  courseId: course1
+  id: exercise1
+  institutionId: institution1
+  items:
+  - id: 0
+    text: '1'
+    type: string
+  - id: 1
+    text: '2'
+    type: string
+  - id: 2
+    text: '3'
+    type: string
+  - id: 3
+    text: '4'
+    type: string
+  mctype: 10
+  specialistId: specialist1
+  statement:
+    imagePath: http://somewhere.com/canetasVerdes.jpg
+    text: "Quantas canetas verdes est\xE3o presentes na figura?"
+  title: Quantas canetas?
+  type: MC
+required:
+- id

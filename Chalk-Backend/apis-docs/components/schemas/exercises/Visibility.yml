@@ -1,0 +1,7 @@
+enum:
+- public
+- not_listed
+- private
+- course
+- institution
+type: string

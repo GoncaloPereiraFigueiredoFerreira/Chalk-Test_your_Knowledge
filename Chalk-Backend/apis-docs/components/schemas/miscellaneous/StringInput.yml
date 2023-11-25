@@ -1,0 +1,5 @@
+description: The structure of accepted strings
+maxLength: 500
+minLength: 1
+pattern: ^[A-Za-z0-9]{3,10}$
+type: string

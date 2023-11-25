@@ -1,0 +1,25 @@
+post:
+  tags:
+  - subscription
+  description: This method is used to create a new subsctiption for a specialist
+  requestBody:
+    content:
+      application/json:
+        schema:
+          additionalProperties: false
+          properties:
+            SubscriptionWithPlan:
+              $ref: ../../components/schemas/_index.yml#/Subscription
+            specialistId:
+              $ref: ../../components/schemas/_index.yml#/StringID
+          required:
+          - SubscriptionWithPlan
+          - SpecialistId
+          type: object
+    required: true
+  responses:
+    '200':
+      description: OK
+    '401':
+      description: Unauthorized operation
+  summary: Create subscription for a specialist

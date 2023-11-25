@@ -1,0 +1,36 @@
+description: Basic properties of an exercise.
+properties:
+  cotation:
+    format: float
+    type: number
+  courseId:
+    $ref: "../_index.yml#/StringID"
+  id:
+    $ref: "../_index.yml#/StringID"
+  institutionId:
+    $ref: "../_index.yml#/StringID"
+  specialistId:
+    $ref: "../_index.yml#/StringID"
+  statement:
+    properties:
+      imagePath:
+        example: http://somewhere.com/canetasVerdes.jpg
+        type: string
+      text:
+        type: string
+    required:
+    - text
+    - imagePath
+    type: object
+  title:
+    type: string
+  type:
+    type: string
+required:
+- title
+- type
+- institutionId
+- courseId
+- specialistId
+- statement
+type: object
