@@ -30,8 +30,6 @@ export function Footer() {
 
               <div className="col-span-2 lg:col-span-3 lg:flex lg:items-end">
                 <form className="w-full">
-                  <label className="sr-only"> Email </label>
-
                   <div className="border border-gray-100 p-2 focus-within:ring sm:flex sm:items-center sm:gap-4">
                     <input
                       type="email"

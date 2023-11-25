@@ -4,7 +4,7 @@ import { Team } from "./Team";
 import { Contacts } from "./Contacts";
 import { About } from "./About";
 import "./HomePage.css";
-import { Slide } from "./Slide";
+//import { Slide } from "./Slide";
 import { Front } from "./Front";
 
 export function HomePage() {

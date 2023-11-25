@@ -94,7 +94,7 @@ export function NavBar() {
               <span className="sr-only">Open user menu</span>
               <img className="h-8 w-8 rounded-full" src="chico.jpg" alt="" />
             </button>
-            <div className=" absolute dropdown-content mt-2 mr-6 right-0 bg-white  rounded-sm shadow-inner grid-cols-1">
+            <div className=" absolute dropdown-content mt-40 mr-6 right-0 bg-white rounded-md shadow-inner grid-cols-1">
               <a
                 href="#"
                 className=" px-4 py-2 text-md text-gray-700"
@@ -104,12 +104,12 @@ export function NavBar() {
                 Your Profile
               </a>
               <a
-                href="#"
+                href="/settings"
                 className=" px-4 py-2 text-md text-gray-700"
                 role="menuitem"
                 id="user-menu-item-1"
               >
-                <Link to="/settings">Settings</Link>{" "}
+                Settings
               </a>
               <a
                 href="#"
@@ -124,23 +124,13 @@ export function NavBar() {
         </div>
 
         {/**<!-- Mobile menu -->*/}
-        <div className="dropdown first-letter:absolute inset-y-0 right-0 flex items-center sm:hidden">
+        <div className="dropdown w-fit h-fit p-0 first-letter:absolute inset-y-0 right-0 flex items-center sm:hidden">
           <button
             type="button"
             className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-            aria-controls="mobile-menu"
-            aria-expanded="false"
-            id="mobile-menu-button"
-            data-dropdown-toggle="mobile-menu"
-            data-dropdown-trigger="hover"
           >
             <span className="absolute -inset-0.5"></span>
             <span className="sr-only">Open main menu</span>
-            {/**<!--
-                                Icon when menu is closed.
-
-                                Menu open: "hidden", Menu closed: "block"
-                            -->*/}
             <svg
               className="block h-6 w-6"
               fill="none"
@@ -155,11 +145,6 @@ export function NavBar() {
                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
               />
             </svg>
-            {/**<!--
-                                Icon when menu is open.
-
-                                Menu open: "block", Menu closed: "hidden"
-                            -->*/}
             <svg
               className="hidden h-6 w-6"
               fill="none"
@@ -176,39 +161,35 @@ export function NavBar() {
             </svg>
           </button>
           <div
-            className="dropdown hidden absolute sm:hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="dropdown-content hidden absolute sm:hidden right-0 z-10 mt-44 mr-4 w-fit h-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             role="menu"
             id="mobile-menu"
             aria-orientation="vertical"
           >
-            <div className="dropdown-content">
-              <a
-                href="#"
-                className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                role="menuitem"
-                id="user-menu-item-0"
-              >
-                Your Profile
-              </a>
-
-              <a
-                href="#"
-                className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                role="menuitem"
-                id="user-menu-item-1"
-              >
-                <Link to="/settings">Settings</Link>
-              </a>
-
-              <a
-                href="#"
-                className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                role="menuitem"
-                id="user-menu-item-2"
-              >
-                Sign out
-              </a>
-            </div>
+            <a
+              href="#"
+              className=" px-4 py-2 text-md text-gray-700"
+              role="menuitem"
+              id="user-menu-item-0"
+            >
+              Your Profile
+            </a>
+            <a
+              href="/settings"
+              className=" px-4 py-2 text-md text-gray-700"
+              role="menuitem"
+              id="user-menu-item-1"
+            >
+              Settings
+            </a>
+            <a
+              href="#"
+              className=" px-4 py-2 text-md text-gray-700"
+              role="menuitem"
+              id="user-menu-item-2"
+            >
+              Sign out
+            </a>
           </div>
         </div>
       </nav>

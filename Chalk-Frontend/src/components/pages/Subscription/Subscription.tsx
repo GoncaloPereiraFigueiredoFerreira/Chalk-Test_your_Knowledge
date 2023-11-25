@@ -5,7 +5,7 @@ import "./Subscription.css";
 
 export function Subscription() {
   return (
-    <>
+    <div className="h-screen overflow-auto">
       <NavBar></NavBar>
 
       <div
@@ -15,7 +15,7 @@ export function Subscription() {
         premiumPrice: '29',
         proPrice: '39'
     }"
-        className="min-h-full h-screen py-12 chalkBackground dark:bg-black"
+        className="min-h-full py-12 chalkBackground dark:bg-black"
       >
         <div className="w-full pt-16 pb-24 text-center">
           <h4 className=" text-4xl text-white font-pacifico">
@@ -26,8 +26,9 @@ export function Subscription() {
             package that suits your needs.
           </p>
         </div>
-        <div className="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8 ">
-          <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="w-full 2xl:w-3/4 items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8 ">
+          <div className="w-fit h-fit grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+            {/* Basic */}
             <div className="bg-white shadow-2xl rounded-lg py-4">
               <p className="text-xl text-center font-bold text-yellow-400">
                 Basic
@@ -47,9 +48,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -66,9 +67,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -83,9 +84,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -100,9 +101,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -117,9 +118,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -134,9 +135,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -151,9 +152,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -170,7 +171,9 @@ export function Subscription() {
                 </a>
               </div>
             </div>
-            <div className="bg-white shadow-2xl rounded-lg py-4">
+
+            {/* Premium */}
+            <div className="w-fit h-fit bg-white shadow-2xl rounded-lg py-4 ">
               <p className="text-xl text-center font-bold text-blue-600">
                 Premium
               </p>
@@ -192,9 +195,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -211,9 +214,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -228,9 +231,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -245,9 +248,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -262,9 +265,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -279,9 +282,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -296,9 +299,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -315,7 +318,9 @@ export function Subscription() {
                 </a>
               </div>
             </div>
-            <div className="bg-white shadow-2xl rounded-lg py-4">
+
+            {/* Pro */}
+            <div className=" w-fit h-fit bg-white shadow-2xl rounded-lg py-4">
               <p className="text-xl text-center font-bold text-blue-600">Pro</p>
               <p className="text-center py-8">
                 <span className="text-4xl font-bold text-gray-700">
@@ -335,9 +340,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -354,9 +359,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -371,9 +376,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -388,9 +393,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -405,9 +410,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -422,9 +427,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -439,9 +444,9 @@ export function Subscription() {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </span>
@@ -463,6 +468,6 @@ export function Subscription() {
       </div>
 
       <Footer></Footer>
-    </>
+    </div>
   );
 }
