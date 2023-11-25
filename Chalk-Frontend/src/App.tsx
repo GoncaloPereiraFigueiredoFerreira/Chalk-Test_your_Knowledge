@@ -29,14 +29,19 @@ function App() {
         >
           <Route index element={<RealFrontPage />} />
           <Route path="exercise-bank" element={<FrontPage />} />
-          <Route path="test" element={<TestPage />} />
-           {/*<Route path="correction" element={<Correction />} />*/}
+          <Route path="tests" element={<TestPage />}>
+            <Route index path="" />
+            <Route path="group/:id" />
+          </Route>
+          <Route path="profile" element={<Settings />} />
+
+          {/*<Route path="correction" element={<Correction />} />*/}
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
           {/*<Route path="catalog" element={<Catalog />} />*/}
           {/*<Route path="test"  element={<TestCreator />} />*/}
           {/*<Route path="group" element={<Group />} />*/}
           {/*<Route path="search" element={<Group />} />*/}
-          {/*<Route path="profile" element={<Group />} />*/}
+
           {/*<Route path="upgrade" element={<Group />} />*/}
           {/*<Route path="history" element={<Group />} />*/}
           {/*<Route path="exercise-list" element={<Group />} />*/}

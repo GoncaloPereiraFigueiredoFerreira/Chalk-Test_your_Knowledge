@@ -23,7 +23,7 @@ import {
   CircularGraficIcon,
 } from "../SVGImages/SVGImages.tsx";
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MainLogo } from "../../MainLogo.tsx";
 
 interface SidebarProps {
@@ -44,6 +44,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("dark-mode") === "true"
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -73,6 +74,49 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             {selectedGroup.name}
           </span>
           {isOpen ? (showGroup ? UpArrowIcon() : DownArrowIcon()) : null}
+        </>
+      );
+    }
+  }
+
+  function showGrupOptions() {
+    if (selectedGroup.id === "all") {
+      return <></>;
+    } else {
+      return (
+        <>
+          <ul
+            className={`${
+              !showGroup && selectedGroup.id !== "all" ? "" : "hidden"
+            } sidebar-dropdown transition-all`}
+          >
+            <li>
+              <Link to={""}>
+                <button className="sidebar-item bg-btn-1 group">
+                  <GraduateIcon style={"group-gray-icon"} />
+                  <span className={isOpen ? "" : "hidden"}>Alunos</span>
+                </button>
+              </Link>
+            </li>
+            <li>
+              <Link to={""}>
+                <button className="sidebar-item bg-btn-1 group">
+                  <WorldIcon style={"group-gray-icon"} />
+                  <span className={isOpen ? "" : "hidden"}>
+                    Testes Partilhados
+                  </span>
+                </button>
+              </Link>
+            </li>
+            <li>
+              <Link to={""}>
+                <button className="sidebar-item bg-btn-1 group">
+                  <CircularGraficIcon style={"group-gray-icon"} />
+                  <span className={isOpen ? "" : "hidden"}>Avaliações</span>
+                </button>
+              </Link>
+            </li>
+          </ul>
         </>
       );
     }
@@ -136,7 +180,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </button>
           </li>
           <li>
-            <Link to={"test"}>
+            <Link to={"tests"}>
               <button className="sidebar-item bg-btn-1 group">
                 <SearchIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>
@@ -146,7 +190,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </Link>
           </li>
           <li>
-            <Link to={"test"}>
+            <Link to={"tests"}>
               <button className="sidebar-item bg-btn-1 group">
                 <CheckListIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>Os meus testes</span>
@@ -215,38 +259,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 </li>
               ))}
             </ul>
-            <ul
-              className={`${
-                !showGroup && selectedGroup.id !== "all" ? "" : "hidden"
-              } sidebar-dropdown transition-all`}
-            >
-              <li>
-                <Link to={""}>
-                  <button className="sidebar-item bg-btn-1 group">
-                    <GraduateIcon style={"group-gray-icon"} />
-                    <span className={isOpen ? "" : "hidden"}>Alunos</span>
-                  </button>
-                </Link>
-              </li>
-              <li>
-                <Link to={""}>
-                  <button className="sidebar-item bg-btn-1 group">
-                    <WorldIcon style={"group-gray-icon"} />
-                    <span className={isOpen ? "" : "hidden"}>
-                      Testes Partilhados
-                    </span>
-                  </button>
-                </Link>
-              </li>
-              <li>
-                <Link to={""}>
-                  <button className="sidebar-item bg-btn-1 group">
-                    <CircularGraficIcon style={"group-gray-icon"} />
-                    <span className={isOpen ? "" : "hidden"}>Avaliações</span>
-                  </button>
-                </Link>
-              </li>
-            </ul>
+            {showGrupOptions()}
           </li>
         </ul>
 
@@ -279,7 +292,11 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   </span>
                 </Dropdown.Header>
 
-                <Dropdown.Item as="button" className=" group">
+                <Dropdown.Item
+                  as="button"
+                  className=" group"
+                  onClick={() => navigate("profile")}
+                >
                   <UserIcon style={"group-gray-icon"} />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>
                     Profile Page
