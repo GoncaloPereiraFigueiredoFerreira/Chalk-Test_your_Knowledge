@@ -1,4 +1,6 @@
 get:
+  tags:
+    - course
   parameters:
   - description: 'Find the courses this student belongs to.
 
@@ -48,6 +50,8 @@ get:
     '401':
       description: Unauthorized operation
 post:
+  tags:
+    - course
   description: This method is used to create an course
   requestBody:
     content:

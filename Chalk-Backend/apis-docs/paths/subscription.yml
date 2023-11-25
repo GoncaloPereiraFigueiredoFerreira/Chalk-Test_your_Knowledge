@@ -1,4 +1,6 @@
 get:
+  tags:
+    - subscription
   description: Returns all the subscription plans.
   parameters:
   - description: 'Finds the specialist subscription.
@@ -39,6 +41,8 @@ get:
     '401':
       description: Unauthorized operation
 post:
+  tags:
+    - subscription
   description: This method is used to create a new subsctiption plan
   requestBody:
     content:

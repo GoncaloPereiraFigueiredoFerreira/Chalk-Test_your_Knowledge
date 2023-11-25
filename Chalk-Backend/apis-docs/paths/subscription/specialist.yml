@@ -1,4 +1,6 @@
 post:
+  tags:
+  - subscription
   description: This method is used to create a new subsctiption for a specialist
   requestBody:
     content:

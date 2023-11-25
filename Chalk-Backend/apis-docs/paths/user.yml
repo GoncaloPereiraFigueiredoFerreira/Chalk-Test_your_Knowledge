@@ -72,7 +72,7 @@ put:
   parameters:
   - in: cookie
     name: userId
-    required: true
+    required: false
     schema:
       $ref: ../components/schemas/_index.yml#/StringInput
   requestBody:

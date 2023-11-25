@@ -1,0 +1,33 @@
+post:
+  parameters:
+  - in: path
+    name: testResolutionId
+    required: true
+    schema:
+      type: ../../../../components/schemas/_index.yml#/StringID
+  - in: path
+    name: exerciseId
+    required: true
+    schema:
+      type: ../../../../components/schemas/_index.yml#/StringID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            -resolution
+          additionalProperties:
+            false
+          properties:
+            resolution:
+              $ref: ../../../../components/schemas/_index.yml#/ExerciseResolution
+  responses:
+    '200':
+      description: Success.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Exercise/test not found
+  summary: Upload a exercise resolution for a ongoing test.
+  tags:
+  - tests

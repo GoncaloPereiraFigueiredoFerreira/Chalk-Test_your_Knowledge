@@ -1,0 +1,30 @@
+get:
+  parameters:
+  - in: path
+    name: testId
+    required: true
+    schema:
+      type: ../../../../components/schemas/_index.yml#/StringID
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            required:
+              - test
+            additionalProperties:
+              false
+            schema:
+            properties:
+              test:
+                $ref: ../../../components/schemas/_index.yml#/Test
+              resolution:
+                $ref: ../../../components/schemas/_index.yml#/TestResolution
+      description: Success. Test resolution is returned in case the student already started the test.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Test not found.
+  summary: To start solving a test.
+  tags:
+  - tests

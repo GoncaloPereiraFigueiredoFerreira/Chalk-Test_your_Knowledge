@@ -12,6 +12,8 @@ delete:
   tags:
   - course
 get:
+  tags:
+  - course
   responses:
     '200':
       content:

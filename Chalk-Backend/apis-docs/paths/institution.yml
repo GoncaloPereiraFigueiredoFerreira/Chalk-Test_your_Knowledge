@@ -1,4 +1,6 @@
 get:
+  tags:
+    - institution
   parameters:
   - in: query
     name: page
@@ -27,6 +29,8 @@ get:
       description: Unauthorized operation
   summary: Get page of institutions.
 post:
+  tags:
+    - institution
   description: This method is used to create an institution
   requestBody:
     content:

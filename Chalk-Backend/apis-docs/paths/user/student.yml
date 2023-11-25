@@ -1,4 +1,6 @@
 get:
+  tags:
+    - user
   parameters:
   - description: 'Find the student that is the owner of the resoluton.
 

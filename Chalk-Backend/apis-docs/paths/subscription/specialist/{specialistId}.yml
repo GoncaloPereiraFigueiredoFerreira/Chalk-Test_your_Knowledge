@@ -1,4 +1,6 @@
 delete:
+  tags:
+  - subscription
   responses:
     '200':
       description: successful operation
@@ -10,6 +12,8 @@ delete:
       description: Specialist not found
   summary: Delete subscription from specialist
 get:
+  tags:
+  - subscription
   responses:
     '200':
       content:
@@ -33,6 +37,8 @@ parameters:
     $ref: ../../../components/schemas/_index.yml#/StringInput
     example: uminho
 put:
+  tags:
+  - subscription
   description: Update an existent subscription in the store
   requestBody:
     content:

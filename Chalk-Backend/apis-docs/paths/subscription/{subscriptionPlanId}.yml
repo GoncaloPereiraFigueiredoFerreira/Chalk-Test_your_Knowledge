@@ -1,4 +1,6 @@
 delete:
+  tags:
+  - subscription
   responses:
     '200':
       description: Successful operation
@@ -12,6 +14,8 @@ delete:
       description: The subsctiption plan cannot be deleted because its being used.
   summary: Delete subscription plan
 get:
+  tags:
+  - subscription
   responses:
     '200':
       content:
@@ -35,6 +39,8 @@ parameters:
     $ref: ../../components/schemas/_index.yml#/StringInput
     example: uminhoDefaultPlan01
 put:
+  tags:
+  - subscription
   description: Update an existent subscription plan in the store
   requestBody:
     content:

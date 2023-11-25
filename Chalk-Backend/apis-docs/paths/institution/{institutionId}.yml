@@ -1,4 +1,6 @@
 delete:
+  tags:
+    - institution
   responses:
     '200':
       description: successful operation
@@ -10,6 +12,8 @@ delete:
       description: Institution not found
   summary: Delete institution
 get:
+  tags:
+    - institution
   responses:
     '200':
       content:
@@ -32,6 +36,8 @@ parameters:
   schema:
     $ref: ../../components/schemas/_index.yml#/StringInput
 put:
+  tags:
+    - institution
   description: Update an existent institution in the store
   requestBody:
     content:

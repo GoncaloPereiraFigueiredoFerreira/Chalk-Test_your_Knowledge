@@ -1,0 +1,33 @@
+post:
+  parameters:
+  - in: path
+    name: testResolutionId
+    required: true
+    schema:
+      type: ../../../../components/schemas/_index.yml#/StringID
+  - in: path
+    name: resolutionId
+    required: true
+    schema:
+      type: ../../../../components/schemas/_index.yml#/StringID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            false
+          additionalProperties:
+            false
+          properties:
+            comment:
+              $ref: ../../../../components/schemas/_index.yml#/StringInput
+  responses:
+    '200':
+      description: Success.
+    '401':
+      description: Unauthorized operation.
+    '404':
+      description: Resolution not found.
+  summary: To set the cotation of an exercise from a test resolution manually.
+  tags:
+  - tests

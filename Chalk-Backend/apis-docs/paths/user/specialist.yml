@@ -1,4 +1,6 @@
 get:
+  tags:
+    - user
   parameters:
   - description: 'Find the specialists that are the owners of the test.
 

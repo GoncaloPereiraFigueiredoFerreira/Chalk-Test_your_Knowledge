@@ -9,6 +9,8 @@ delete:
     '404':
       description: User not found
   summary: Delete user
+  tags:
+    - user
 get:
   responses:
     '200':
@@ -27,6 +29,8 @@ get:
     '404':
       description: User not found
   summary: Get user by user id
+  tags:
+    - user
 parameters:
 - description: User identifier
   in: path
