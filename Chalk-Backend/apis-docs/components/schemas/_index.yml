@@ -14,12 +14,16 @@ Comment:
 Tag:
   $ref: exercises/Tag.yml
 
+ExerciseMetadata:
+  $ref: exercises/ExerciseMetadata.yml
 ExerciseBasicProperties:
   $ref: exercises/ExerciseBasicProperties.yml
 Exercise:
   $ref: exercises/Exercise.yml
 ExerciseWithoutId:
   $ref: exercises/ExerciseWithoutId.yml
+ExerciseReference:
+  $ref: exercises/ExerciseReference.yml
 
 ExerciseSolution:
   $ref: exercises/ExerciseSolution.yml
