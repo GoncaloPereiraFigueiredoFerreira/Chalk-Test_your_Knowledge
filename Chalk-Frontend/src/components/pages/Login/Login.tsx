@@ -1,28 +1,86 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../MainLogo";
 import { MainLogo } from "../../MainLogo";
+import { UserContext } from "../../../UserContext";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorState, setErrorState] = useState(false);
+  const [errorState, setErrorState] = useState(0);
+  const { user, login, logout } = useContext(UserContext);
 
-  const validateForm = (e: React.FormEvent<HTMLFormElement>) => {
-    let login = {
-      email: email,
-      password: password,
-    };
-    let valid = true;
-    if (valid) {
-      alert("Valid Form");
-      return true;
-    } else {
-      e.preventDefault();
-      alert("Invalid Form");
-      return false;
-    }
+  const navigate = useNavigate();
+  const AUTHSERVER = import.meta.env.VITE_AUTH;
+  const BACKSERVER = import.meta.env.VITE_BACKEND;
+  const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
+
+  const googleDetails = {
+    scope: "https://www.googleapis.com/auth/userinfo.email",
+    client_id: GCLIENTID,
+    redirect_uri: AUTHSERVER + "google",
+    response_type: "code",
+  };
+
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    fetch(AUTHSERVER + "login", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        username: email,
+        password: password,
+      }),
+    }).then((response) => {
+      switch (response.status) {
+        case 200:
+          response.json().then((result) => {
+            /*/////////////////// PEDIDO BACKEND ////////////////
+              fetch(BACKSERVER + "login", {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  user: {
+                    email: result.user.username,
+                    name: result.user.name,
+                    role: result.user.role,
+                  },
+                }),
+              }).then(()=>{
+                navigate("user");
+              })
+            */
+            login({
+              email: result.user.username,
+              name: result.user.name,
+              profilePic: "", //vai se buscar ao BE
+              role: result.user.role,
+              courses: [
+                //vai se buscar ao BE
+                { id: "1", name: "Professores da escola AFS Gualtar" },
+                { id: "2", name: "Turma A" },
+                { id: "3", name: "Turma b" },
+              ],
+            });
+            navigate("/webapp");
+          });
+          break;
+        case 401:
+          // Algum erro aconteceu
+          break;
+        default:
+          console.log("N sei o que se passou!");
+      }
+    });
   };
 
   return (
@@ -34,13 +92,24 @@ export function Login() {
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form onSubmit={(e) => validateForm(e)}>
+            <form onSubmit={(e) => submitForm(e)}>
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
                 <p className="mb-0 mr-4 text-2xl">Log in with</p>
 
                 <a
                   className="mb-3 bg-white text-black flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href="#!"
+                  href={
+                    "https://accounts.google.com/o/oauth2/v2/auth?" +
+                    "scope=" +
+                    googleDetails.scope +
+                    "&response_type=" +
+                    googleDetails.response_type +
+                    "&redirect_uri=" +
+                    googleDetails.redirect_uri +
+                    "&client_id=" +
+                    googleDetails.client_id +
+                    "&include_granted_scopes=true"
+                  }
                   role="button"
                 >
                   <svg
@@ -88,7 +157,7 @@ export function Login() {
                 </a>
                 <a
                   className="mb-3 bg-blue-400 flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href="#!"
+                  href="!#"
                   role="button"
                 >
                   <svg
@@ -109,6 +178,7 @@ export function Login() {
               <div className="relative mb-6">
                 <input
                   type="text"
+                  name="username"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Email address"
                   onChange={(e) => setEmail(e.target.value)}
@@ -118,6 +188,7 @@ export function Login() {
 
               <div className="relative mb-6">
                 <input
+                  name="password"
                   type="password"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Password"
@@ -155,7 +226,6 @@ export function Login() {
                 <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                   Don't have an account?
                   <Link className="text-blue-600" to="/register">
-                    {" "}
                     Register
                   </Link>
                 </p>
