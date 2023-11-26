@@ -42,7 +42,7 @@ get:
   - exercises
 post:
   parameters:
-  - in: query
+  - in: path
     name: exerciseId
     required: true
     schema:

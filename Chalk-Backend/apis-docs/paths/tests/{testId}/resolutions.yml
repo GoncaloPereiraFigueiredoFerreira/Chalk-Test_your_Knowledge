@@ -42,7 +42,7 @@ get:
   - tests
 post:
   parameters:
-  - in: query
+  - in: path
     name: testId
     required: true
     schema:
