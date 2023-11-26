@@ -3,7 +3,8 @@ allOf:
   - type: object
     properties:
       originalExerciseId:
-        type: "../_index.yml#/StringID"
+        type: 
+          $ref: "../_index.yml#/StringID"
         description: Identifier of the exercise that is supposed to be copied.
 description: | 
   Used when duplicating an existing exercise. 
