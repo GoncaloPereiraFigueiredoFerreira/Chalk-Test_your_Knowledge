@@ -2,7 +2,7 @@ get:
   tags:
     - user
   parameters:
-  - description: 'Find specialists from this institution.
+  - description: 'Find managers from this institution.
 
       '
     in: query

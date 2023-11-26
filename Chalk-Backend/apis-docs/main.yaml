@@ -9,28 +9,28 @@ components:
     $ref: components/schemas/_index.yml
 paths:
   # users
-  /user:
-    $ref: paths/user.yml
-  /user/manager:
-    $ref: paths/user/manager.yml
-  /user/specialist:
-    $ref: paths/user/specialist.yml
-  /user/student:
-    $ref: paths/user/student.yml
-  /user/{userId}:
-    $ref: paths/user/{userId}.yml
+  /users:
+    $ref: paths/users.yml
+  /users/managers:
+    $ref: paths/users/managers.yml
+  /users/specialists:
+    $ref: paths/users/specialists.yml
+  /users/students:
+    $ref: paths/users/students.yml
+  /users/{userId}:
+    $ref: paths/users/{userId}.yml
 
   # institutions
-  /institution:
-    $ref: paths/institution.yml
-  /institution/{institutionId}:
-    $ref: paths/institution/{institutionId}.yml
+  /institutions:
+    $ref: paths/institutions.yml
+  /institutions/{institutionId}:
+    $ref: paths/institutions/{institutionId}.yml
 
   # courses
-  /course:
-    $ref: paths/course.yml
-  /course/{courseId}:
-    $ref: paths/course/{courseId}.yml
+  /courses:
+    $ref: paths/courses.yml
+  /courses/{courseId}:
+    $ref: paths/courses/{courseId}.yml
 
   # exercises
   /exercises:
@@ -90,19 +90,19 @@ paths:
     $ref: paths/tests/{testId}/resolutions/{studentId}/last.yml
 
   # subscriptions plans and subscription
-  /subscription:
-    $ref: paths/subscription.yml
-  /subscription/institution:
-    $ref: paths/subscription/institution.yml
-  /subscription/institution/{institutionId}:
-    $ref: paths/subscription/institution/{institutionId}.yml
-  /subscription/specialist:
-    $ref: paths/subscription/specialist.yml
-  /subscription/specialist/{specialistId}:
-    $ref: paths/subscription/specialist/{specialistId}.yml
-  /subscription/student:
-    $ref: paths/subscription/student.yml
-  /subscription/student/{studentId}:
-    $ref: paths/subscription/student/{studentId}.yml
-  /subscription/{subscriptionPlanId}:
-    $ref: paths/subscription/{subscriptionPlanId}.yml
+  /subscriptions:
+    $ref: paths/subscriptions.yml
+  /subscriptions/institutions:
+    $ref: paths/subscriptions/institutions.yml
+  /subscriptions/institutions/{institutionId}:
+    $ref: paths/subscriptions/institutions/{institutionId}.yml
+  /subscriptions/specialists:
+    $ref: paths/subscriptions/specialists.yml
+  /subscriptions/specialists/{specialistId}:
+    $ref: paths/subscriptions/specialists/{specialistId}.yml
+  /subscriptions/students:
+    $ref: paths/subscriptions/students.yml
+  /subscriptions/students/{studentId}:
+    $ref: paths/subscriptions/students/{studentId}.yml
+  /subscriptions/{subscriptionPlanId}:
+    $ref: paths/subscriptions/{subscriptionPlanId}.yml
