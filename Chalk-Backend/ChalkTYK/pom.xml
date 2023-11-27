@@ -16,6 +16,7 @@
     <description>ChalkTYK</description>
     <properties>
         <java.version>21</java.version>
+        <springdoc-version>1.7.0</springdoc-version>
     </properties>
     <dependencies>
         <dependency>
@@ -68,6 +69,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--SpringFox dependencies -->
+        <!-- SpringDoc dependencies -->
+        <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc-version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -3,11 +3,11 @@ allOf:
   - type: object
     properties:
       originalExerciseId:
-        type: 
-          $ref: "../_index.yml#/StringID"
-        description: Identifier of the exercise that is supposed to be copied.
+        $ref: "../_index.yml#/StringID"
 description: | 
   Used when duplicating an existing exercise. 
   This schema allows to include the new metadata, 
   and refer the identifier of the exercise that 
   contains the exercise data to be copied.
+  The 'originalExerciseId' is the identifier of 
+  the exercise that is supposed to be copied.
