@@ -42,7 +42,7 @@ public interface ExercisesApi {
         @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/exercises/{exerciseId}",
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> exercisesExerciseIdDelete(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Void> deleteExerciseById(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 );
 
 
@@ -56,7 +56,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/duplicate",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<String> exercisesExerciseIdDuplicatePost(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<String> duplicateExerciseById(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 );
 
 
@@ -72,7 +72,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}",
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<Void> exercisesExerciseIdPut(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Void> updateExercise(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExercisesExerciseIdBody body
 );
 
@@ -88,7 +88,7 @@ public interface ExercisesApi {
         @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions/correction",
         method = RequestMethod.PUT)
-    ResponseEntity<Void> exercisesExerciseIdResolutionsCorrectionPut(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Void> issueExerciseResolutionsCorrection(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.QUERY, description = "Type of correction. The correction can either be automatic or done by AI. For a given exercise, it may support either, both, or none of the correction types. " ,schema=@Schema(allowableValues={ "auto", "ai" }
 )) @Valid @RequestParam(value = "correctionType", required = false) String correctionType
 );
@@ -102,7 +102,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions/count",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Integer> exercisesExerciseIdResolutionsCountGet(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Integer> countExerciseResolutions(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.QUERY, description = "'false' to count the number of students that made a submission. 'true' to count the total number of submissions." ,schema=@Schema( defaultValue="false")) @Valid @RequestParam(value = "total", required = false, defaultValue="false") Boolean total
 );
 
@@ -117,7 +117,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<InlineResponse200>> exercisesExerciseIdResolutionsGet(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<List<InlineResponse200>> getExerciseResolutions(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 , @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
@@ -134,7 +134,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> exercisesExerciseIdResolutionsPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("exerciseId") Integer exerciseId
+    ResponseEntity<Void> createExerciseResolution(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("exerciseId") Integer exerciseId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExerciseResolution body
 );
 
@@ -147,7 +147,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions/{studentId}/count",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Integer> exercisesExerciseIdResolutionsStudentIdCountGet(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Integer> countExerciseResolutionsByStudent(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 
@@ -160,7 +160,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions/{studentId}/ids",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<String>> exercisesExerciseIdResolutionsStudentIdIdsGet(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<List<String>> getStudentListOfExerciseResolutionsIdsByExercise(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 
@@ -175,7 +175,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/resolutions/{studentId}/last",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ExerciseResolution> exercisesExerciseIdResolutionsStudentIdLastGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<ExerciseResolution> getLastExerciseResolutionByStudent(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 
@@ -190,7 +190,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/rubric",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Rubric> exercisesExerciseIdRubricGet(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Rubric> getExerciseRubric(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 );
 
 
@@ -204,7 +204,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/{exerciseId}/rubric",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> exercisesExerciseIdRubricPost(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
+    ResponseEntity<Void> createExerciseRubric(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExerciseIdRubricBody body
 );
 
@@ -217,7 +217,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Exercise>> exercisesGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
+    ResponseEntity<List<Exercise>> getExercises(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 , @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
 , @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the exercises." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "tags", required = false, defaultValue="[]") List<String> tags
@@ -240,7 +240,7 @@ public interface ExercisesApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<String> exercisesPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExercisesBody body
+    ResponseEntity<String> createExercise(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExercisesBody body
 );
 
 
@@ -254,7 +254,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/resolutions/{resolutionId}/comment",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> exercisesResolutionsResolutionIdCommentPost(@Parameter(in = ParameterIn.PATH, description = "Exercise resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
+    ResponseEntity<Void> addCommentToExerciseResolution(@Parameter(in = ParameterIn.PATH, description = "Exercise resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Comment body
 );
 
@@ -269,7 +269,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/resolutions/{resolutionId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ExerciseResolution> exercisesResolutionsResolutionIdGet(@Parameter(in = ParameterIn.PATH, description = "Exercise resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
+    ResponseEntity<ExerciseResolution> getExerciseResolution(@Parameter(in = ParameterIn.PATH, description = "Exercise resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
 );
 
 
@@ -282,7 +282,7 @@ public interface ExercisesApi {
         @ApiResponse(responseCode = "404", description = "Resolution not found.") })
     @RequestMapping(value = "/exercises/resolutions/{resolutionId}/manual-correction",
         method = RequestMethod.POST)
-    ResponseEntity<Void> exercisesResolutionsResolutionIdManualCorrectionPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
+    ResponseEntity<Void> exerciseResolutionManualCorrection(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
 , @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "cotation", required = true) Float cotation
 );
 
@@ -296,7 +296,7 @@ public interface ExercisesApi {
         @ApiResponse(responseCode = "404", description = "Exercise does not exist.") })
     @RequestMapping(value = "/exercises/rubrics/{rubricId}",
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> exercisesRubricsRubricIdDelete(@Parameter(in = ParameterIn.PATH, description = "rubric identifier", required=true, schema=@Schema()) @PathVariable("rubricId") String rubricId
+    ResponseEntity<Void> deleteExerciseRubric(@Parameter(in = ParameterIn.PATH, description = "rubric identifier", required=true, schema=@Schema()) @PathVariable("rubricId") String rubricId
 );
 
 
@@ -312,7 +312,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/rubrics/{rubricId}",
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<Void> exercisesRubricsRubricIdPut(@Parameter(in = ParameterIn.PATH, description = "rubric identifier", required=true, schema=@Schema()) @PathVariable("rubricId") String rubricId
+    ResponseEntity<Void> updateRubric(@Parameter(in = ParameterIn.PATH, description = "rubric identifier", required=true, schema=@Schema()) @PathVariable("rubricId") String rubricId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Rubric body
 );
 
@@ -323,7 +323,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/tag",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Tag>> exercisesTagGet(@Parameter(in = ParameterIn.QUERY, description = "Array of paths from which the tags should be retrieved." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "paths", required = false, defaultValue="[]") List<String> paths
+    ResponseEntity<List<Tag>> listTags(@Parameter(in = ParameterIn.QUERY, description = "Array of paths from which the tags should be retrieved." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "paths", required = false, defaultValue="[]") List<String> paths
 , @Parameter(in = ParameterIn.QUERY, description = "Number of levels, starting from the given paths that should be retrieved. -1 to retrieve every tag starting at the given paths." ,schema=@Schema( defaultValue="-1")) @Valid @RequestParam(value = "levels", required = false, defaultValue="-1") Integer levels
 );
 
