@@ -15,10 +15,14 @@
     <name>ChalkTYK</name>
     <description>ChalkTYK</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <springdoc-version>1.7.0</springdoc-version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -27,11 +31,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
