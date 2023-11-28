@@ -26,18 +26,6 @@ import java.util.List;
 @RestController
 public class InstitutionsApiController implements InstitutionsApi {
 
-    private static final Logger log = LoggerFactory.getLogger(InstitutionsApiController.class);
-
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
-    @org.springframework.beans.factory.annotation.Autowired
-    public InstitutionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
-
     public ResponseEntity<List<Institution>> institutionsGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 ,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
