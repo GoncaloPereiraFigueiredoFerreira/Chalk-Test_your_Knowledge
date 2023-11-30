@@ -38,7 +38,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Institution>> institutionsGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
+    ResponseEntity<List<Institution>> getInstitutions(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 , @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
 );
@@ -55,7 +55,7 @@ public interface InstitutionsApi {
         @ApiResponse(responseCode = "404", description = "Institution not found") })
     @RequestMapping(value = "/institutions/{institutionId}",
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> institutionsInstitutionIdDelete(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
+    ResponseEntity<Void> deleteInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
 );
 
 
@@ -71,7 +71,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions/{institutionId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<InstitutionWithoutId> institutionsInstitutionIdGet(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
+    ResponseEntity<InstitutionWithoutId> getInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
 );
 
 
@@ -87,7 +87,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions/{institutionId}",
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<Void> institutionsInstitutionIdPut(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
+    ResponseEntity<Void> updateInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsInstitutionIdBody body
 );
 
@@ -100,7 +100,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> institutionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsBody body
+    ResponseEntity<Void> createInstitution(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsBody body
 );
 
 }
