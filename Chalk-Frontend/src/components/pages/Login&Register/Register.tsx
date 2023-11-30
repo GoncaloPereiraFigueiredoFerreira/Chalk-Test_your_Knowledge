@@ -1,32 +1,72 @@
 import { useContext, useState } from "react";
-import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import "../../MainLogo";
 import { MainLogo } from "../../MainLogo";
 import { UserContext } from "../../../UserContext";
+import { useGoogleLogin } from "@react-oauth/google";
+import { HiExclamation } from "react-icons/hi";
+import { APIContext } from "../../../APIContext";
+import { Toast } from "flowbite-react";
 
-export function Login() {
+enum ErrorType {
+  NOERROR = 0,
+  IN_USE = 1,
+  FILL = 2,
+  NTRIES = 3,
+  NOMATCH = 4,
+  UNKNOWN = 5,
+  MISS = 6,
+}
+
+function renderErrorToast(err: ErrorType, setError: Function) {
+  let message = "";
+  switch (err) {
+    case ErrorType.NOERROR:
+      return <></>;
+    case ErrorType.IN_USE:
+      message = "Username is already in use!";
+      break;
+    case ErrorType.NOMATCH:
+      message = "Passwords do not match!";
+      break;
+    case ErrorType.MISS:
+      message = "Missing username or password!";
+      break;
+    default:
+      message = "Unknown error!";
+  }
+  return (
+    <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+      <Toast>
+        <div className=" inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
+          <HiExclamation className="h-5 w-5" />
+        </div>
+        <div className="ml-3 font-normal">{message}</div>
+        <Toast.Toggle onClick={() => setError(0)} />
+      </Toast>
+    </div>
+  );
+}
+
+export function Register() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [errorState, setErrorState] = useState(0);
-  const { user, login, logout } = useContext(UserContext);
+  const [cpass, setCPass] = useState("");
+  const [error, setErrorState] = useState(ErrorType.NOERROR);
+  const { authAPI, backendAPI } = useContext(APIContext);
+  const { login } = useContext(UserContext);
 
   const navigate = useNavigate();
-  const AUTHSERVER = import.meta.env.VITE_AUTH;
-  const BACKSERVER = import.meta.env.VITE_BACKEND;
-  const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
 
-  const googleDetails = {
-    scope: "https://www.googleapis.com/auth/userinfo.email",
-    client_id: GCLIENTID,
-    redirect_uri: AUTHSERVER + "google",
-    response_type: "code",
-  };
+  const customGoogleRegister = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      submitGoogleRegister(codeResponse.access_token);
+    },
+    flow: "implicit",
+  });
 
-  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    fetch(AUTHSERVER + "login", {
+  const submitGoogleRegister = (acessToken: any) => {
+    fetch(authAPI + "google", {
       method: "POST",
       mode: "cors",
       credentials: "include",
@@ -34,82 +74,82 @@ export function Login() {
         "Content-type": "application/json",
       },
       body: JSON.stringify({
-        username: email,
-        password: password,
+        acess_token: acessToken,
       }),
-    }).then((response) => {
-      switch (response.status) {
-        case 200:
-          response.json().then((result) => {
-            /*/////////////////// PEDIDO BACKEND ////////////////
-              fetch(BACKSERVER + "login", {
-                method: "POST",
-                mode: "cors",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  user: {
-                    email: result.user.username,
-                    name: result.user.name,
-                    role: result.user.role,
-                  },
-                }),
-              }).then(()=>{
-                navigate("user");
-              })
-            */
-            login({
-              email: result.user.username,
-              name: result.user.name,
-              profilePic: "", //vai se buscar ao BE
-              role: result.user.role,
-              courses: [
-                //vai se buscar ao BE
-                { id: "1", name: "Professores da escola AFS Gualtar" },
-                { id: "2", name: "Turma A" },
-                { id: "3", name: "Turma b" },
-              ],
-            });
-            navigate("/webapp");
+    }).then((response) => handleUserRegister(response));
+  };
+
+  const submitNormalRegister = () => {
+    if (password === cpass) {
+      fetch(authAPI + "register", {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          name: name,
+          password: password,
+        }),
+      }).then((response) => handleUserRegister(response));
+    } else setErrorState(ErrorType.NOMATCH);
+  };
+
+  const handleUserRegister = (response: any) => {
+    switch (response.status) {
+      case 200:
+        response.json().then((result: any) => {
+          // TODO: Register in backend
+          login({
+            email: result.user.username,
+            name: result.user.name,
+            profilePic:
+              "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg", //vai se buscar ao BE
+            role: result.user.role,
+            courses: [
+              //vai se buscar ao BE
+              { id: "1", name: "Professores da escola AFS Gualtar" },
+              { id: "2", name: "Turma A" },
+              { id: "3", name: "Turma b" },
+            ],
           });
-          break;
-        case 401:
-          // Algum erro aconteceu
-          break;
-        default:
-          console.log("N sei o que se passou!");
-      }
-    });
+          navigate("/webapp");
+        });
+        break;
+      case 400:
+        setErrorState(ErrorType.MISS);
+        break;
+      case 403:
+        response.json().then((result: any) => {
+          if (result.err.name == "UserExistsError")
+            setErrorState(ErrorType.IN_USE);
+          else setErrorState(ErrorType.MISS);
+        });
+
+        break;
+      default:
+        console.log("N sei o que se passou!");
+    }
   };
 
   return (
     <section className="h-screen">
       <div className="h-full">
-        <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
+        <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between p-16">
           <div className="flex justify-center mb-12 grow-0 basis-auto md:mb-0 md:w-9/12 lg:w-6/12 xl:w-6/12">
             <MainLogo size="big"></MainLogo>
           </div>
 
           <div className="mb-12 mr-20 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form onSubmit={(e) => submitForm(e)}>
+            <form>
               <div className="flex flex-col space-y-4 items-center justify-center lg:justify-start">
-                <p className="mb-0 mr-4 text-2xl">Log in with</p>
+                <p className="mb-0 mr-4 text-2xl">Create an account with</p>
 
                 <a
                   className="mb-3 bg-white text-black flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href={
-                    "https://accounts.google.com/o/oauth2/v2/auth?" +
-                    "scope=" +
-                    googleDetails.scope +
-                    "&response_type=" +
-                    googleDetails.response_type +
-                    "&redirect_uri=" +
-                    googleDetails.redirect_uri +
-                    "&client_id=" +
-                    googleDetails.client_id +
-                    "&include_granted_scopes=true"
-                  }
+                  onClick={() => customGoogleRegister()}
                   role="button"
                 >
                   <svg
@@ -157,7 +197,7 @@ export function Login() {
                 </a>
                 <a
                   className="mb-3 bg-blue-400 flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                  href="!#"
+                  href="#!"
                   role="button"
                 >
                   <svg
@@ -174,64 +214,74 @@ export function Login() {
               <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
                 <p className="mx-4 mb-0 text-center font-semibold">Or</p>
               </div>
-
-              <div className="relative mb-6">
+              <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
+                  name="name"
                   type="text"
-                  name="username"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
-                  placeholder="Email address"
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Name"
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="relative mb-6">
+              <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
-                  name="password"
+                  type="text"
+                  name="email"
+                  className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email address"
+                  required
+                />
+              </div>
+
+              <div className="relative mb-6" data-te-input-wrapper-init>
+                <input
                   type="password"
+                  name="password"
                   className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
                   placeholder="Password"
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
+              <div className="relative mb-6" data-te-input-wrapper-init>
+                <input
+                  type="password"
+                  name="cpassword"
+                  className="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[2.15]"
+                  placeholder="Confirm Password"
+                  onChange={(e) => setCPass(e.target.value)}
+                  required
+                />
+              </div>
 
               <div className="mb-6 flex items-center justify-between">
-                <div className="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
-                  <input
-                    className="relative float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] rounded-[0.25rem] text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
-                    type="checkbox"
-                    value=""
-                    id="exampleCheck2"
-                  />
-                  <label className="inline-block pl-[0.15rem] hover:cursor-pointer">
-                    Remember me
-                  </label>
-                </div>
-
                 <a href="#!" className="text-blue-600">
                   Forgot password?
                 </a>
               </div>
 
-              <div className="flex justify-between text-center lg:text-left">
+              <div className="flex  justify-between text-center lg:text-left">
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => submitNormalRegister()}
                   className="inline-block rounded bg-slate-700 px-7 pb-2.5 pt-3 text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                 >
-                  Login
+                  Register
                 </button>
 
-                <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
-                  Don't have an account?
-                  <Link className="text-blue-600" to="/register">
-                    Register
+                <span className="flex mb-0 mt-2 pt-1 text-sm font-semibold space-x-2">
+                  <p>Already have an account?</p>
+                  <Link className="text-blue-600" to="/login">
+                    Login
                   </Link>
-                </p>
+                </span>
               </div>
             </form>
           </div>
+          {renderErrorToast(error, setErrorState)}
         </div>
       </div>
     </section>

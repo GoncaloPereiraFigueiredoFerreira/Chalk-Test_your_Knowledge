@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Login } from "./components/pages/Login/Login";
-import { Register } from "./components/pages/Register/Register";
+import { Login } from "./components/pages/Login&Register/Login";
+import { Register } from "./components/pages/Login&Register/Register";
 import { HomePage } from "./components/pages/HomePage/HomePage";
 import "./App.css";
 import { UserContext } from "./UserContext";
@@ -11,6 +11,8 @@ import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/TestPage/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
 import { Subscription } from "./components/pages/Subscription/Subscription";
+//import { CreateTest } from "./components/pages/CreateTest/CreateTest";
+import { SearchList } from "./components/pages/SearchList/SearchList";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -28,7 +30,9 @@ function App() {
           element={user.authenticated ? <WebApp /> : <Login />}
         >
           <Route index element={<RealFrontPage />} />
+          <Route path="search" element={<SearchList />} />
           <Route path="exercise-bank" element={<FrontPage />} />
+          {/*<Route path="create-test" element={<CreateTest />} />*/}
           <Route path="tests" element={<TestPage />}>
             <Route index path="" />
             <Route path="group/:id" />
