@@ -27,8 +27,7 @@ public class Test implements Serializable {
 	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID", nullable=false) })
 	private Course course;
 	
-	@ManyToOne(targetEntity=Visibility.class, fetch=FetchType.LAZY)
-	@JoinColumns(value={ @JoinColumn(name="VisibilityID", referencedColumnName="ID", nullable=false) })
+	@Column(name = "visibility")
 	private Visibility visibility;
 	
 	@ManyToOne(targetEntity=Specialist.class, fetch=FetchType.LAZY)
