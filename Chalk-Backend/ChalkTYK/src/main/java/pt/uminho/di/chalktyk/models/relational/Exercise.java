@@ -39,7 +39,10 @@ public class Exercise implements Serializable {
 	
 	@Column(name="ExerciseType")
 	private String exerciseType;
-	
+
+	@Column(name = "visibility")
+	private Visibility visibility;
+
 	@Column(name="NrCopies", nullable=false)
 	private int nrCopies;
 	
