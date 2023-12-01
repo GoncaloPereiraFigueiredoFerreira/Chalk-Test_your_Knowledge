@@ -5,8 +5,8 @@ import { HomePage } from "./components/pages/HomePage/HomePage";
 import "./App.css";
 import { UserContext } from "./UserContext";
 import { useContext } from "react";
+import { ExerciseBankPage } from "./components/pages/ExerciseBankPage/ExerciseBankPage";
 import { FrontPage } from "./components/pages/FrontPage/FrontPage";
-import { RealFrontPage } from "./components/pages/RealFrontPage/RealFrontPage";
 import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/TestPage/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
@@ -25,10 +25,10 @@ function App() {
         <Route path="/pricing" element={<Subscription />} />
         <Route
           path="/webapp"
-          element={user.authenticated ? <WebApp /> : <Login />}
+          element={user.authenticated ? <WebApp /> : <WebApp />}
         >
-          <Route index element={<RealFrontPage />} />
-          <Route path="exercise-bank" element={<FrontPage />} />
+          <Route index element={<FrontPage />} />
+          <Route path="exercise-bank" element={<ExerciseBankPage />} />
           <Route path="tests" element={<TestPage />}>
             <Route index path="" />
             <Route path="group/:id" />

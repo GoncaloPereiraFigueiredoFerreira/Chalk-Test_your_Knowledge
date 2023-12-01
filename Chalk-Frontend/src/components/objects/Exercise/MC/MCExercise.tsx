@@ -1,28 +1,29 @@
 import { useState } from "react";
 import { ExerciseHeader } from "../Header/ExHeader";
-import { ExerciseJustificationKind } from "../../../../UserInterface";
+import { Exercise } from "../Exercise";
 
 interface ExerciseProps {
-  statement: any;
-  problem?: any;
-  name: string;
   position: string;
   contexto: string;
-  justify?: ExerciseJustificationKind;
+  exercise: Exercise;
 }
 
-export function MCExercise({
-  statement,
-  problem,
-  name,
-  position,
-  contexto,
-}: ExerciseProps) {
+export function MCExercise({ exercise, position, contexto }: ExerciseProps) {
   let exerciseDisplay = <></>;
+
   switch (contexto) {
     case "solve":
+      let selectedOption = "";
+
+      if (exercise.resolution && exercise.resolution.multiple_choice)
+        selectedOption = exercise.resolution.multiple_choice;
+
       exerciseDisplay = (
-        <MCSolve problem={problem} statement={statement}></MCSolve>
+        <MCSolve
+          selectedOption={selectedOption}
+          problem={exercise.problem}
+          statement={exercise.statement}
+        ></MCSolve>
       );
       break;
 
@@ -47,7 +48,7 @@ export function MCExercise({
 }
 
 function MCSolve(props: any) {
-  const [state, setState] = useState("");
+  const [state, setState] = useState(props.selectedOption);
 
   return (
     <>
