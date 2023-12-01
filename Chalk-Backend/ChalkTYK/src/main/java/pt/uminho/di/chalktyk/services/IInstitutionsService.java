@@ -3,7 +3,6 @@ package pt.uminho.di.chalktyk.services;
 import java.util.List;
 
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.subscriptions.InstitutionSubscription;
 
 public interface IInstitutionsService {
 

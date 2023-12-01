@@ -9,5 +9,4 @@ class ChalkTykApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
