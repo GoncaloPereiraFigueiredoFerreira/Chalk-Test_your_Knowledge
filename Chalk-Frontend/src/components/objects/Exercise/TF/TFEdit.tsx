@@ -1,80 +1,109 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
+import { ExerciseJustificationKind, TFStatement } from "../Exercise";
 
 enum TFEditActionKind {
-  JUSTIFYFALSE = "JUSTIFYFALSE",
-  ADDSTATEMENT = "ADDSTATEMENT",
-  CORRECTTF = "CORRECTTF",
-  CHANGESTATEMENT = "CHANGESTATEMENT",
-  CHANGEHEADER = "CHANGEHEADER",
-  REMOVESTATE = "REMOVESTATE",
+  JUSTIFY = "JUSTIFY",
+  ADD_STATEMENT = "ADD_STATEMENT",
+  CORRECT_TF = "CORRECT_TF",
+  CHANGE_STATEMENT = "CHANGE_STATEMENT",
+  REMOVE_STATEMENT = "REMOVE_STATEMENT",
 }
 
 type TFEditState = {
-  justify: boolean;
-  header: string;
-  statements: { phrase: string; tfvalue: string }[];
+  justify: ExerciseJustificationKind;
+  statements: TFStatement[];
 };
 
 type TFEditAction = {
   type: TFEditActionKind;
-  payload: { id?: number; flag?: boolean; value?: string };
+  payload: {
+    id?: number;
+    justify?: ExerciseJustificationKind;
+    tfvalue?: string;
+    phrase?: string;
+  };
 };
 
 function TFEditReducer(state: TFEditState, action: TFEditAction) {
   switch (action.type) {
-    case TFEditActionKind.JUSTIFYFALSE:
-      let justifyState = { ...state };
-      justifyState.justify = action.payload.flag ?? false;
-      return justifyState;
+    case TFEditActionKind.JUSTIFY:
+      if (action.payload.justify) {
+        return { ...state, justify: action.payload.justify };
+      } else throw new Error("Invalid action - action.payload.justify");
 
-    case TFEditActionKind.ADDSTATEMENT:
+    case TFEditActionKind.ADD_STATEMENT:
       let temp1 = [...state.statements];
-      temp1.push({ phrase: "", tfvalue: "" });
+      temp1.push({ phrase: "", tfvalue: "", justification: "" });
       let addState = { ...state, statements: temp1 };
       return addState;
 
-    case TFEditActionKind.CORRECTTF:
-      let temp2 = [...state.statements];
-      temp2[action.payload.id!].tfvalue = action.payload.value ?? "";
-      let correctstate = { ...state, statments: temp2 };
+    case TFEditActionKind.CORRECT_TF:
+      if (action.payload.id != undefined)
+        if (action.payload.tfvalue != undefined) {
+          let newStatments = [...state.statements];
+          newStatments[action.payload.id].tfvalue = action.payload.tfvalue;
+          let correctstate = { ...state, statments: newStatments };
+          return correctstate;
+        } else throw new Error("Invalid action - action.payload.tfvalue");
+      else throw new Error("Invalid action - action.payload.id");
 
-      return correctstate;
+    case TFEditActionKind.CHANGE_STATEMENT:
+      if (action.payload.id != undefined)
+        if (action.payload.phrase != undefined) {
+          let newStatments = [...state.statements];
+          newStatments[action.payload.id].phrase = action.payload.phrase;
+          let correctstate = { ...state, statments: newStatments };
+          return correctstate;
+        } else throw new Error("Invalid action - action.payload.phrase");
+      else throw new Error("Invalid action - action.payload.id");
 
-    case TFEditActionKind.CHANGEHEADER:
-      let headerState = { ...state };
-      headerState.header = action.payload.value ?? "";
-      return headerState;
-
-    case TFEditActionKind.CHANGESTATEMENT:
-      let temp3 = [...state.statements];
-      temp3[action.payload.id!].phrase = action.payload.value ?? "";
-      let statementState = { ...state, statements: temp3 };
-      return statementState;
-
-    case TFEditActionKind.REMOVESTATE:
-      let temp4 = [...state.statements];
-      temp4.splice(action.payload.id!, 1);
-      let removeState = { ...state, statements: temp4 };
-      return removeState;
-
-    default:
-      throw new Error();
+    case TFEditActionKind.REMOVE_STATEMENT:
+      if (action.payload.id != undefined) {
+        let newStatments = [...state.statements];
+        newStatments.splice(action.payload.id, 1);
+        let correctstate = { ...state, statments: newStatments };
+        return correctstate;
+      } else throw new Error("Invalid action - action.payload.id");
   }
 }
 
 interface TFEditProps {
-  statement: any;
-  problem: any;
-  justify: string;
+  justify: ExerciseJustificationKind;
+  statements: string[] | TFStatement[];
 }
 
-export function TFEdit({ statement, problem }: TFEditProps) {
-  let initState: TFEditState = { justify: false, header: "", statements: [] };
-  initState.header = statement.text;
-  problem.statements.map((text: any) =>
-    initState.statements.push({ phrase: text, tfvalue: "" })
-  );
+export function TFEdit({ justify, statements }: TFEditProps) {
+  let initState: TFEditState;
+  if (statements.length > 0) {
+    if (typeof statements[0] === "string") {
+      initState = {
+        justify: justify,
+        statements: [] as TFStatement[],
+      };
+      (statements as string[]).map((statement: string) => {
+        initState.statements.push({
+          phrase: statement,
+          tfvalue: "",
+          justification: "",
+        });
+      });
+    } else if (
+      "justification" in statements[0] &&
+      "phrase" in statements[0] &&
+      "tfvalue" in statements[0]
+    ) {
+      initState = {
+        justify: justify,
+        statements: statements as TFStatement[],
+      };
+    } else return <></>;
+  } else return <></>;
+
   const [state, dispatch] = useReducer(TFEditReducer, initState);
+
+  const [openJustificationkind, setOpenJustificationkind] = useState(
+    justify != ExerciseJustificationKind.NO_JUSTIFICATION
+  );
 
   return (
     <>
@@ -108,20 +137,15 @@ export function TFEdit({ statement, problem }: TFEditProps) {
           className="edit-btn"
           value="Add"
           onClick={() => {
-            dispatch({ type: TFEditActionKind.ADDSTATEMENT, payload: {} });
+            dispatch({ type: TFEditActionKind.ADD_STATEMENT, payload: {} });
           }}
         ></input>
         <div className="mt-5 flex items-center pl-4 border border-gray-200 rounded dark:border-gray-700">
           <input
             id="bordered-checkbox"
             type="checkbox"
-            checked={state.justify}
-            onChange={(e) => {
-              dispatch({
-                type: TFEditActionKind.JUSTIFYFALSE,
-                payload: { flag: e.target.checked },
-              });
-            }}
+            onChange={() => setOpenJustificationkind(!openJustificationkind)}
+            checked={openJustificationkind}
             name="bordered-checkbox"
             className="basic-checkbox"
           />
@@ -129,7 +153,7 @@ export function TFEdit({ statement, problem }: TFEditProps) {
             htmlFor="bordered-checkbox"
             className="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
           >
-            Pedir a justificação de afirmações falsas?
+            Pedir a justificação?
           </label>
         </div>
       </form>
@@ -149,8 +173,8 @@ function TFStatementEdit(props: any) {
             name={name}
             onChange={() =>
               props.dispatch({
-                type: TFEditActionKind.CORRECTTF,
-                payload: { id: props.id, value: "true" },
+                type: TFEditActionKind.CORRECT_TF,
+                payload: { id: props.id, tfvalue: "true" },
               })
             }
           ></input>
@@ -162,8 +186,8 @@ function TFStatementEdit(props: any) {
             name={name}
             onChange={() =>
               props.dispatch({
-                type: TFEditActionKind.CORRECTTF,
-                payload: { id: props.id, value: "false" },
+                type: TFEditActionKind.CORRECT_TF,
+                payload: { id: props.id, tfvalue: "false" },
               })
             }
           ></input>
@@ -174,8 +198,8 @@ function TFStatementEdit(props: any) {
             className="basic-input-text"
             onChange={(e) =>
               props.dispatch({
-                type: TFEditActionKind.CHANGESTATEMENT,
-                payload: { id: props.id, value: e.target.value },
+                type: TFEditActionKind.CHANGE_STATEMENT,
+                payload: { id: props.id, phrase: e.target.value },
               })
             }
             value={props.state.statements[props.id].phrase}
@@ -187,7 +211,7 @@ function TFStatementEdit(props: any) {
             type="button"
             onClick={() =>
               props.dispatch({
-                type: TFEditActionKind.REMOVESTATE,
+                type: TFEditActionKind.REMOVE_STATEMENT,
                 payload: { id: props.id },
               })
             }
