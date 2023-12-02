@@ -1,3 +1,4 @@
 **/node_modules
 .env
 **/keys
+Chalk-Frontend/package-lock.json
