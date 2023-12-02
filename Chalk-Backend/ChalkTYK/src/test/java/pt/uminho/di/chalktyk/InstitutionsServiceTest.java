@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import pt.uminho.di.chalktyk.services.IInstitutionsService;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 
 @SpringBootTest
@@ -20,7 +22,7 @@ public class InstitutionsServiceTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws NotFoundException, BadInputException {
         Institution inst = new Institution("UM");
         inst.setDescription("Universidade do Minho");
         inst.setLogoPath("image.png");
@@ -42,7 +44,7 @@ public class InstitutionsServiceTest {
         assertTrue(resultOp.isPresent());
         MerchandiseEntity result = resultOp.get();
         */
-        Institution inst2 = service.getInstitutionByID("UM");
+        Institution inst2 = service.getInstitutionById("UM");
 
         assertEquals(inst2.getName(), "UM");
         assertEquals(inst2.getDescription(), "Universidade do Minho");
