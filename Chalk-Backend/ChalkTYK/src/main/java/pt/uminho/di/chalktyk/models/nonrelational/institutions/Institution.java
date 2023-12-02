@@ -24,4 +24,14 @@ public class Institution {
 	public Institution(String name){
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "Institution{" +
+				"name='" + name + '\'' +
+				", description='" + description + '\'' +
+				", logoPath='" + logoPath + '\'' +
+				", subscription=" + subscription +
+				'}';
+	}
 }

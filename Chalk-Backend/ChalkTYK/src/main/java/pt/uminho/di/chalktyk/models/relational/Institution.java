@@ -15,5 +15,5 @@ public class Institution implements Serializable {
 	
 	@Column(name="ID")
 	@Id	
-	private String name;
+	private String id;
 }

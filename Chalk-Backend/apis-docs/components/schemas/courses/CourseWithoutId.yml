@@ -2,16 +2,19 @@ additionalProperties: false
 description: Course's Schema. Course Id is not required
 properties:
   description:
-    $ref: ../_index.yml#/StringInput
+    type: String
     example: "something"  
   institutionId:
-    $ref: ../_index.yml#/StringInput
+    type: String
     example: uminho
   name:
-    $ref: ../_index.yml#/StringInput
+    type: String
     example: EngenhariaInformatica
+  creatorId:
+    $ref: '../_index.yml#/StringID'
 required:
 - name
 - institutionId
 - description
+- creatorId
 type: object
