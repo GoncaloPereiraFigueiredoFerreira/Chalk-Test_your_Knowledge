@@ -16,7 +16,7 @@ public class Tag implements Serializable {
 	
 	@Column(name="ID")
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 	
 	@Column(name="Name")
@@ -24,4 +24,13 @@ public class Tag implements Serializable {
 	
 	@Column(name="Path")
 	private String path;
+
+	@Override
+	public String toString() {
+		return "Tag{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", path='" + path + '\'' +
+				'}';
+	}
 }
