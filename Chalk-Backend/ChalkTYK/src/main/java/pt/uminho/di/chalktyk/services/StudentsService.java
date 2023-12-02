@@ -53,13 +53,21 @@ public class StudentsService implements IStudentsService{
 
     @Override
     public Student getStudentById(String studentId) throws NotFoundException {
-        //Query query = new Query();
-        //query.addCriteria(Criteria.where("_id").is(studentId))
-        //     .addCriteria(Criteria.where("_class").is("student"));
         User u = userDAO.findById(studentId).orElse(null);
         if (u instanceof Student s)
             return s;
         else
             throw new NotFoundException("No student with the given id was found.");
+    }
+
+    /**
+     * Checks if a student exists with the given id.
+     *
+     * @param studentId identifier of the student
+     * @return 'true' if a student exists with the given id
+     */
+    @Override
+    public boolean existsStudentById(String studentId) {
+        return studentSqlDAO.existsById(studentId);
     }
 }

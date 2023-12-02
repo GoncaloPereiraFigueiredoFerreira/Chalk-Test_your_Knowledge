@@ -23,4 +23,11 @@ public interface IStudentsService {
      * @throws NotFoundException if no student was found with the given id
      */
     Student getStudentById(String studentId) throws NotFoundException;
+
+    /**
+     * Checks if a student exists with the given id.
+     * @param studentId identifier of the student
+     * @return 'true' if a student exists with the given id
+     */
+    boolean existsStudentById(String studentId);
 }

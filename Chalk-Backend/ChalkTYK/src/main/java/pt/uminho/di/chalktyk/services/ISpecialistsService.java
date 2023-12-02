@@ -21,4 +21,11 @@ public interface ISpecialistsService {
      * @throws NotFoundException if no specialist was found with the given id
      */
     Specialist getSpecialistById(String specialistId)  throws NotFoundException;
+
+    /**
+     * Checks if a specialist exists with the given id.
+     * @param specialistId identifier of the specialist
+     * @return 'true' if a specialist exists with the given id
+     */
+    boolean existsSpecialistById(String specialistId);
 }

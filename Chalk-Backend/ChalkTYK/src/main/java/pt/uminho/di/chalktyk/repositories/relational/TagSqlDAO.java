@@ -3,11 +3,13 @@ package pt.uminho.di.chalktyk.repositories.relational;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import pt.uminho.di.chalktyk.models.relational.Tag;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface TagSqlDAO extends JpaRepository<Tag, String> {
     Tag findByNameAndPath(String name, String path);
     boolean existsByNameAndPath(String name, String path);

@@ -53,13 +53,21 @@ public class SpecialistsService implements ISpecialistsService{
 
     @Override
     public Specialist getSpecialistById(String specialistId) throws NotFoundException {
-        //Query query = new Query();
-        //query.addCriteria(Criteria.where("_id").is(specialistId))
-        //     .addCriteria(Criteria.where("_class").is("specialist"));
         User u = userDAO.findById(specialistId).orElse(null);
         if (u instanceof Specialist s)
             return s;
         else
             throw new NotFoundException("No specialist with the given id was found.");
+    }
+
+    /**
+     * Checks if a specialist exists with the given id.
+     *
+     * @param specialistId identifier of the specialist
+     * @return 'true' if a specialist exists with the given id
+     */
+    @Override
+    public boolean existsSpecialistById(String specialistId) {
+        return specialistSqlDAO.existsById(specialistId);
     }
 }
