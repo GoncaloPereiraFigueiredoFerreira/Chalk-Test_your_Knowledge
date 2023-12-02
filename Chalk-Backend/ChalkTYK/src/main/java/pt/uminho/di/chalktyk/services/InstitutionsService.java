@@ -1,16 +1,18 @@
 package pt.uminho.di.chalktyk.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.repositories.nonrelational.InstitutionDAO;
 import pt.uminho.di.chalktyk.repositories.relational.InstitutionSqlDAO;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @Service("institutionsService")
 public class InstitutionsService implements IInstitutionsService {
@@ -25,36 +27,33 @@ public class InstitutionsService implements IInstitutionsService {
     }
 
     @Override
-    public List<Institution> getInstitutions(Integer page, Integer itemsPerPage) {
-        List<Institution> list = this.idao.findAll();
-        
-        List<Institution> res = new ArrayList<>();
-        for(int i = (page - 1) * itemsPerPage; i < page * itemsPerPage && i < list.size(); i ++){
-            res.add(list.get(i));
-        }
-
-        return res;
+    public Page<Institution> getInstitutions(Integer page, Integer itemsPerPage) {
+        return this.idao.findAll(PageRequest.of(page, itemsPerPage));
     }
 
     @Override
-    public void deleteInstitutionByID(String institutionID) {
-        idao.deleteById(institutionID);
-    }
-
-    @Override
-    public Institution getInstitutionByID(String institutionID) {
-        long count = idao.count();
-
-        Optional<Institution> obj = idao.findById(institutionID);
+    public Institution getInstitutionById(String institutionId) throws NotFoundException {
+        Optional<Institution> obj = idao.findById(institutionId);
         if (obj.isPresent()){
             return obj.get();
         }
         else
-            throw new ServiceException("count: " + count + "Couldn't get institution with id: " + institutionID);
+            throw new NotFoundException("Couldn't get institution with id: " + institutionId);
+    }
+
+    /**
+     * Checks if an institution exists.
+     *
+     * @param institutionId identifier of the institution
+     * @return 'true' if the institution with the given identifier exists
+     */
+    @Override
+    public boolean existsInstitutionById(String institutionId) {
+        return isqldao.existsById(institutionId);
     }
 
     @Override
-    public void updateInstitutionByID(String institutionId, Institution body) {
+    public void updateInstitutionById(String institutionId, Institution body) {
         if (body != null){
             Optional<Institution> obj = idao.findById(institutionId);
             if (obj.isPresent()){
@@ -72,20 +71,20 @@ public class InstitutionsService implements IInstitutionsService {
     }
 
     @Override
-    public void createInstitution(Institution institution) {
+    public void createInstitution(Institution institution) throws BadInputException {
         if (institution != null){
             if (institution.getName() == null)
-                throw new ServiceException("Can't create institution: institution id is null");
-            if (institution.getName() != null && !idao.existsById(institution.getName())){
+                throw new BadInputException("Can't create institution: institution id is null");
+            if (!idao.existsById(institution.getName())){
                 idao.save(institution);
                 pt.uminho.di.chalktyk.models.relational.Institution sqlInst = new pt.uminho.di.chalktyk.models.relational.Institution(institution.getName());
                 isqldao.save(sqlInst);
             }
             else
-                throw new ServiceException("Can't create institution: id is alrealy in use");
+                throw new BadInputException("Can't create institution: id is alrealy in use");
         }
         else 
-            throw new ServiceException("Can't create institution: institution is null!");
+            throw new BadInputException("Can't create institution: institution is null!");
     }
 
 }
