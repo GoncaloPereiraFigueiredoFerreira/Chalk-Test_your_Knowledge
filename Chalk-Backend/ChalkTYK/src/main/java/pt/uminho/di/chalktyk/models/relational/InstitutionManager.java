@@ -23,4 +23,8 @@ public class InstitutionManager implements Serializable {
 	
 	@Column(name="Email")
 	private String email;
+
+	@ManyToOne(targetEntity=Institution.class, fetch=FetchType.LAZY)
+	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
+	private Institution institution;
 }
