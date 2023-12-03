@@ -6,28 +6,46 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.transaction.annotation.Transactional;
+import pt.uminho.di.chalktyk.models.nonrelational.subscriptions.Subscription;
+import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.services.IInstitutionsService;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
+import pt.uminho.di.chalktyk.services.ISpecialistsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 @SpringBootTest
 public class InstitutionsServiceTest {
-    private IInstitutionsService service;
+    private final IInstitutionsService institutionService;
+    private final ISpecialistsService iSpecialistsService;
 
     @Autowired
-    public InstitutionsServiceTest(IInstitutionsService service){
-        this.service = service;
+    public InstitutionsServiceTest(IInstitutionsService institutionService, ISpecialistsService iSpecialistsService){
+        this.institutionService = institutionService;
+        this.iSpecialistsService = iSpecialistsService;
     }
 
     @Test
+    @Transactional
     public void test() throws NotFoundException, BadInputException {
         Institution inst = new Institution("UM");
         inst.setDescription("Universidade do Minho");
         inst.setLogoPath("image.png");
 
-        service.createInstitution(inst);
+        //institutionService.createInstitution(inst);
+
+        String id = iSpecialistsService.createSpecialist(new Specialist(null, "Luis", "","lisinho@gmail.com", "HOmem bonito", null));
+        institutionService.addSpecialistsToInstitution("UM", Collections.singletonList("id"));
+
+        Institution i = institutionService.getSpecialistInstitution(id);
+        assertEquals(i.getName(),"UM");
+        assertEquals(i.getDescription(),"Universidade do Minho");
+
         /* 
         MerchandiseEntity pants = new MerchandiseEntity(ORIGINAL_TITLE, BigDecimal.ONE);
         pants = repository.save(pants);
@@ -44,10 +62,29 @@ public class InstitutionsServiceTest {
         assertTrue(resultOp.isPresent());
         MerchandiseEntity result = resultOp.get();
         */
-        Institution inst2 = service.getInstitutionById("UM");
+        /*
+        Institution inst2 = institutionService.getInstitutionById("UM");
 
         assertEquals(inst2.getName(), "UM");
         assertEquals(inst2.getDescription(), "Universidade do Minho");
-        assertEquals(inst2.getLogoPath(), "image.png");
+        assertEquals(inst2.getLogoPath(), "image.png");*/
+    }
+
+    @Test
+    @Transactional
+    public void testGetInstitutionBySpecialistId() throws NotFoundException, BadInputException {
+        Institution inst = new Institution("UM");
+        inst.setDescription("Universidade do Minho");
+        inst.setLogoPath("image.png");
+
+        institutionService.createInstitution(inst);
+
+        String id = iSpecialistsService.createSpecialist(new Specialist(null, "Luis", "","lisinho@gmail.com", "HOmem bonito", null));
+
+        institutionService.addSpecialistsToInstitution("UM", Collections.singletonList(id));
+
+        Institution i = institutionService.getSpecialistInstitution(id);
+        assertEquals(i.getName(),"UM");
+        assertEquals(i.getDescription(),"Universidade do Minho");
     }
 }

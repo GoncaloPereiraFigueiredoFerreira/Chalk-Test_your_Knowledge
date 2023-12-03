@@ -6,4 +6,5 @@ import pt.uminho.di.chalktyk.models.relational.Specialist;
 
 @Repository
 public interface SpecialistSqlDAO extends JpaRepository<Specialist, String> {
+
 }

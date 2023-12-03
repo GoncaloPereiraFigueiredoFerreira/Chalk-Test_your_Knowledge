@@ -22,11 +22,15 @@ public class InstitutionsService implements IInstitutionsService {
 
     private final InstitutionDAO idao;
     private final InstitutionSqlDAO isqldao;
+    private final ISpecialistsService specialistsService;
+    private final IStudentsService studentsService;
     
     @Autowired
-    public InstitutionsService(InstitutionDAO idao, InstitutionSqlDAO isqldao){
+    public InstitutionsService(InstitutionDAO idao, InstitutionSqlDAO isqldao, ISpecialistsService specialistsService, IStudentsService studentsService){
         this.idao = idao;
         this.isqldao = isqldao;
+        this.specialistsService = specialistsService;
+        this.studentsService = studentsService;
     }
 
     @Override
@@ -98,8 +102,13 @@ public class InstitutionsService implements IInstitutionsService {
      * @param specialistsIds list of specialists identifiers
      */
     @Override
-    public void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds) {
-        // TODO
+    public void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException {
+        if(!isqldao.existsById(institutionId))
+            throw new NotFoundException("Could not add specialists: Institution not found.");
+        for(String specialistId : specialistsIds){
+            if(specialistsService.existsSpecialistById(specialistId))
+                isqldao.addSpecialistToInstitution(specialistId,institutionId);
+        }
     }
 
     /**
@@ -215,8 +224,11 @@ public class InstitutionsService implements IInstitutionsService {
      * @return institution associated with a specific specialist
      */
     @Override
-    public Institution getSpecialistInstitution(String specialistId) {
-        return null; // TODO
+    public Institution getSpecialistInstitution(String specialistId) throws NotFoundException {
+        if(!specialistsService.existsSpecialistById(specialistId))
+            throw new NotFoundException("Specialist not found");
+        String institutionId = isqldao.getInstitutionBySpecialistId(specialistId).getId();
+        return idao.findById(institutionId).orElse(null);
     }
 
     /**

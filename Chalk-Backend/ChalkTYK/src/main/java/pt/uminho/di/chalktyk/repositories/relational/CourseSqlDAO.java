@@ -14,7 +14,7 @@ public interface CourseSqlDAO extends JpaRepository<Course, String> {
     void removeSpecialistFromCourse(@Param("specialistId") String specialistId, @Param("courseId") String courseId);
 
     @Modifying
-    @Query(value = "delete from Student_Course where studentid = :specialistId and courseid = :courseId", nativeQuery = true)
+    @Query(value = "delete from Student_Course where studentid = :studentId and courseid = :courseId", nativeQuery = true)
     void removeStudentFromCourse(@Param("studentId") String studentId, @Param("courseId") String courseId);
 
     @Modifying

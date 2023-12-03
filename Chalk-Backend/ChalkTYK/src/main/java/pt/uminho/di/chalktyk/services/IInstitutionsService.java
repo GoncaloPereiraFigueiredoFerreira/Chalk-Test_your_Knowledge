@@ -54,7 +54,7 @@ public interface IInstitutionsService {
      * @param institutionId identifier of the institution
      * @param specialistsIds list of specialists identifiers
      */
-    void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds);
+    void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException;
 
     /**
      * Add students to institution.
@@ -131,7 +131,7 @@ public interface IInstitutionsService {
      * @param specialistId identifier of the specialist
      * @return institution associated with a specific specialist
      */
-    Institution getSpecialistInstitution(String specialistId);
+    Institution getSpecialistInstitution(String specialistId) throws NotFoundException;
 
     /**
      * Get institution associated with a specific manager
