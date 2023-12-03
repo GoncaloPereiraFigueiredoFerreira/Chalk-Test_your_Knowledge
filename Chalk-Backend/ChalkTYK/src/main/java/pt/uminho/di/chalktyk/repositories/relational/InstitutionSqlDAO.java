@@ -1,6 +1,8 @@
 package pt.uminho.di.chalktyk.repositories.relational;
 
 import org.hibernate.mapping.Collection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.stereotype.Repository;
 import pt.uminho.di.chalktyk.models.relational.Institution;
+import pt.uminho.di.chalktyk.models.relational.Specialist;
 
 @Repository
 public interface InstitutionSqlDAO extends JpaRepository<Institution, String> {
@@ -36,4 +39,22 @@ public interface InstitutionSqlDAO extends JpaRepository<Institution, String> {
 
     @Query(value = "SELECT im.institution FROM InstitutionManager im WHERE im.id = :institutionManagerId")
     Institution getInstitutionByInstitutionManagerId(@Param("institutionManagerId") String institutionManagerId);
+
+    @Query(value = "SELECT s.id FROM Specialist s where s.institution.id = :institutionId")
+    Page<String> getInstitutionSpecialistsIds(@Param("institutionId") String institutionId, Pageable pageable);
+
+    @Query(value = "SELECT s.id FROM Student s where s.institution.id = :institutionId")
+    Page<String> getInstitutionStudentsIds(@Param("institutionId") String institutionId, Pageable pageable);
+
+    @Query(value = "SELECT im.id FROM InstitutionManager im where im.institution.id = :institutionId")
+    Page<String> getInstitutionManagersIds(@Param("institutionId") String institutionId, Pageable pageable);
+
+    @Query(value = "SELECT COUNT (s) FROM Specialist s where s.institution.id = :institutionId")
+    int countInstitutionSpecialists(@Param("institutionId") String institutionId);
+
+    @Query(value = "SELECT COUNT (s) FROM Student s where s.institution.id = :institutionId")
+    int countInstitutionStudents(@Param("institutionId") String institutionId);
+
+    @Query(value = "SELECT COUNT (im) FROM InstitutionManager im where im.institution.id = :institutionId")
+    int countInstitutionManagersFromInstitution(@Param("institutionId") String institutionId);
 }
