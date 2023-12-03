@@ -55,7 +55,7 @@ public interface ICoursesService {
      * Update course basic information
      * @param course basic course information
      */
-    void updateCourse(Course course);
+    void updateCourse(Course course) throws BadInputException, NotFoundException;
 
     /**
      * Get list of students that are associated with a specific course.

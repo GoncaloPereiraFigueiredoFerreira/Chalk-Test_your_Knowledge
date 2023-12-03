@@ -67,24 +67,20 @@ public class CoursesService implements ICoursesService {
         if(!specialistsService.existsSpecialistById(ownerId))
             throw new BadInputException("Cannot create course: A course must have a valid owner.");
 
-        // check institution id
-        String institutionId = course.getInstituitionId();
-        if(institutionId != null){
-            if(!institutionsService.existsInstitutionById(institutionId))
-                throw new BadInputException("Cannot create course: To associate a course to an institution," +
-                                            " the institution id must be valid.");
-
-            // check if the owner of the course belongs to the given institution
-            if(!institutionsService.isSpecialistOfInstitution(ownerId, institutionId))
-                throw new BadInputException("Cannot create course: The institution of the course does not" +
-                                            " match the institution of the course's owner.");
-        }
+        // get owner's institution id
+        String institutionId = null;
+        try {
+            var inst = institutionsService.getSpecialistInstitution(ownerId);
+            if(inst != null)
+                institutionId = inst.getName();
+        }catch (NotFoundException ignored){}
+        course.setInstituitionId(institutionId);
 
         // persist the course in nosql database
         course = courseDAO.save(course);
 
         // persists the course in sql database
-        Institution inst = entityManager.getReference(Institution.class, institutionId);
+        Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
         Specialist spec = entityManager.getReference(Specialist.class, ownerId);
         var courseSQL = new pt.uminho.di.chalktyk.models.relational.Course(course.getId(), inst, course.getName(), Set.of(spec));
         courseSqlDAO.save(courseSQL);
@@ -161,13 +157,43 @@ public class CoursesService implements ICoursesService {
     }
 
     /**
-     * Update course basic information
+     * Update course basic information. Owner cannot be updated here.
      *
      * @param course basic course information
      */
     @Override
-    public void updateCourse(Course course) {
-        //TODO
+    @Transactional
+    public void updateCourse(Course course) throws BadInputException, NotFoundException {
+        if(course == null)
+            throw new BadInputException("Cannot update course: course is null.");
+
+        if(course.getId() == null)
+            throw new BadInputException("Cannot update course: identifier of the course is null");
+
+        Course origCourse = courseDAO.findById(course.getId()).orElse(null);
+        if(origCourse == null)
+            throw new NotFoundException("Cannot update course: course does not exist.");
+
+        // check name
+        String name = course.getName();
+        if(name == null || name.isEmpty())
+            throw new BadInputException("Cannot update course: A name of a course cannot be empty or null.");
+        boolean nameUpdated = origCourse.getName().equals(name);
+
+        // update course fields
+        origCourse.setName(course.getName());
+        origCourse.setDescription(course.getDescription());
+
+        // update the course in nosql database
+        origCourse = courseDAO.save(origCourse);
+
+        // Update sql information
+        if(nameUpdated) {
+            var courseSQL = courseSqlDAO.findById(origCourse.getId()).orElse(null);
+            assert courseSQL != null;
+            courseSQL.setName(origCourse.getName());
+            courseSqlDAO.save(courseSQL);
+        }
     }
 
     /**
