@@ -70,6 +70,7 @@ public class InstitutionsServiceTest {
         assertEquals(inst2.getLogoPath(), "image.png");*/
     }
 
+
     @Test
     @Transactional
     public void testGetInstitutionBySpecialistId() throws NotFoundException, BadInputException {
@@ -81,10 +82,12 @@ public class InstitutionsServiceTest {
 
         String id = iSpecialistsService.createSpecialist(new Specialist(null, "Luis", "","lisinho@gmail.com", "HOmem bonito", null));
 
-        institutionService.addSpecialistsToInstitution("UM", Collections.singletonList(id));
+        institutionService.addSpecialistsToInstitution("UM", Collections.singletonList("yo"));
 
         Institution i = institutionService.getSpecialistInstitution(id);
         assertEquals(i.getName(),"UM");
         assertEquals(i.getDescription(),"Universidade do Minho");
     }
+
+
 }
