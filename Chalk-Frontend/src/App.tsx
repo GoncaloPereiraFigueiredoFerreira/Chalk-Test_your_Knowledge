@@ -11,6 +11,7 @@ import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/TestPage/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
 import { Subscription } from "./components/pages/Subscription/Subscription";
+import { Correction } from "./components/pages/Correction/Correction";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -25,7 +26,7 @@ function App() {
         <Route path="/pricing" element={<Subscription />} />
         <Route
           path="/webapp"
-          element={user.authenticated ? <WebApp /> : <Login />}
+          element={user.authenticated ? <WebApp /> : <WebApp /> /* <Login /> */}
         >
           <Route index element={<RealFrontPage />} />
           <Route path="exercise-bank" element={<FrontPage />} />
@@ -35,7 +36,7 @@ function App() {
           </Route>
           <Route path="profile" element={<Settings />} />
 
-          {/*<Route path="correction" element={<Correction />} />*/}
+          <Route path="correction" element={<Correction />} />
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
           {/*<Route path="catalog" element={<Catalog />} />*/}
           {/*<Route path="test"  element={<TestCreator />} />*/}

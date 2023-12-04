@@ -27,7 +27,9 @@ export function MCExercise({
       break;
 
     case "preview":
-      exerciseDisplay = <></>;
+      exerciseDisplay = (
+        <MCPreview problem={problem} statement={statement}></MCPreview>
+      );
       break;
 
     case "correct":
@@ -219,3 +221,18 @@ function MCSolve(props: any) {
 //     </>
 //   );
 // }
+
+function MCPreview(props: any) {
+  const [state, setState] = useState("");
+
+  return (
+    <>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
+      <ul>
+        {props.problem.statements.map((text: string, id: number) => {
+          return <p key={id}>{text}</p>;
+        })}
+      </ul>
+    </>
+  );
+}

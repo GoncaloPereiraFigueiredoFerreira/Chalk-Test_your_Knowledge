@@ -60,7 +60,13 @@ export function TFExercise({
       break;
 
     case "preview":
-      exerciseDisplay = <></>;
+      <TFPreview
+        id={id}
+        position={position}
+        problem={problem}
+        statement={statement}
+        justify={justify}
+      ></TFPreview>;
       break;
 
     case "correct":
@@ -223,5 +229,34 @@ function TFJustify(props: any) {
         ></textarea>
       </div>
     </div>
+  );
+}
+
+function TFPreview(props: any) {
+  let initState: TFState = [];
+  props.problem.statements.map((text: any) =>
+    initState.push({ phrase: text, tfvalue: "", justification: "" })
+  );
+
+  const [state, dispatch] = useReducer(SolveReducer, initState);
+
+  console.log(props.problem.statements);
+  return (
+    <>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
+      <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
+        <div className="flex text-xl font-bold px-4">V</div>
+        <div className="flex text-xl font-bold px-4">F</div>
+        <div className="flex text-xl font-bold px-4">{props.justify}</div>
+        <div></div>
+        {state.map((_solve: TFStatement, index: number) => {
+          return (
+            <div className="">
+              <p key={index}>{props.state[props.id].phrase}</p>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }

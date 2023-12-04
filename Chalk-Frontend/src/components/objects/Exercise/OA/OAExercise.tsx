@@ -29,7 +29,7 @@ export function OAExercise({
       break;
 
     case "preview":
-      exerciseDisplay = <></>;
+      exerciseDisplay = <OAPreview statement={statement}></OAPreview>;
       break;
 
     case "correct":
@@ -99,6 +99,16 @@ function OASolve(props: any) {
           </div>
         </div>
       </form>
+    </>
+  );
+}
+
+function OAPreview(props: any) {
+  const [_state, setState] = useState("");
+
+  return (
+    <>
+      <ExerciseHeader header={props.statement}></ExerciseHeader>
     </>
   );
 }

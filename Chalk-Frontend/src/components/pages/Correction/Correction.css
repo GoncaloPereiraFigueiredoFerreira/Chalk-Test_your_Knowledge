@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-ListExercises {
+    @apply flex
+      items-center
+      justify-start
+      gap-4
+      p-4
+      m-2
+      rounded-xl;
+  }
+}

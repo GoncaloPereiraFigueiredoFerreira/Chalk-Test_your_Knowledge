@@ -105,3 +105,46 @@ export interface Exercise {
     statements: string[];
   };
 }
+
+enum ResolutionStatus {}
+
+export interface Resolution {
+  id: string;
+  cotation: number;
+  studentID: string;
+  status: ResolutionStatus;
+  data:
+    | string
+    | {
+        [id: string]: {
+          text: string;
+          justification: string;
+          type: string;
+          value: boolean;
+        };
+      };
+}
+
+export interface Exercise2 {
+  id: string;
+  title: string;
+  cotation?: number;
+  specialistId: string;
+  type: ExerciseType;
+  statement: {
+    imagePath: string;
+    imagePosition: string;
+    text: string;
+  };
+  justifyKind?: ExerciseJustificationKind;
+  items?: { [id: string]: { text: string; type: string } };
+
+  solution?: Resolution;
+  resolution?: Resolution;
+}
+
+export interface ExerciseGroup {
+  exercises: Exercise2[];
+  groupInstructions: string;
+  groupCotations: number;
+}
