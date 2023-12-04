@@ -17,73 +17,65 @@ export enum ListExerciseActionKind {
 
 // Takes the current ListExerciseState and an action to update the ListExerciseState
 function ListExerciseStateReducer(
-  listExerciseState: ListExerciseState,
-  listExerciseAction: ListExerciseAction
+  userState: ListExerciseState,
+  userAction: ListExerciseAction
 ) {
-  switch (listExerciseAction.type) {
+  switch (userAction.type) {
     case ListExerciseActionKind.ADD_EXERCISES:
-      if (listExerciseAction.payload)
-        if (listExerciseAction.payload.exercises) {
-          let newListExercises = { ...listExerciseState.listExercises };
-          listExerciseAction.payload.exercises.forEach((element) => {
+      if (userAction.payload)
+        if (userAction.payload.exercises) {
+          let newListExercises = { ...userState.listExercises };
+          userAction.payload.exercises.forEach((element) => {
             newListExercises[element.id] = element;
           });
-          return { ...listExerciseState, listExercises: newListExercises };
+          return { ...userState, listExercises: newListExercises };
         } else
-          throw new Error(
-            "No data provided in listExerciseAction.payload.exercises"
-          );
-      else throw new Error("No data provided in listExerciseAction.payload");
+          throw new Error("No data provided in userAction.payload.exercises");
+      else throw new Error("No data provided in userAction.payload");
 
     case ListExerciseActionKind.CREATE_NEW_EXERCISE:
-      if (listExerciseAction.payload)
-        if (listExerciseAction.payload.exercise) {
+      if (userAction.payload)
+        if (userAction.payload.exercise) {
           let newListExercises = {
-            [listExerciseAction.payload.exercise.id]:
-              listExerciseAction.payload.exercise,
-            ...listExerciseState.listExercises,
+            [userAction.payload.exercise.id]: userAction.payload.exercise,
+            ...userState.listExercises,
           };
           return {
-            ...listExerciseState,
+            ...userState,
             listExercises: newListExercises,
             selectedExercise: "",
           };
         } else
-          throw new Error(
-            "No data provided in listExerciseAction.payload.exercise"
-          );
-      else throw new Error("No data provided in listExerciseAction.payload");
+          throw new Error("No data provided in userAction.payload.exercise");
+      else throw new Error("No data provided in userAction.payload");
 
     case ListExerciseActionKind.REMOVE_EXERCISE:
-      if (listExerciseAction.payload)
-        if (listExerciseAction.payload.selectedExercise) {
-          let exerciseID = listExerciseAction.payload.selectedExercise;
-          if (
-            !Object.keys(listExerciseState.listExercises).includes(exerciseID)
-          ) {
-            let { exerciseID, ...newListExercises } =
-              listExerciseState.listExercises;
+      if (userAction.payload)
+        if (userAction.payload.selectedExercise) {
+          let exerciseID = userAction.payload.selectedExercise;
+          if (!Object.keys(userState.listExercises).includes(exerciseID)) {
+            let { exerciseID, ...newListExercises } = userState.listExercises;
             return {
-              ...listExerciseState,
+              ...userState,
               listExercises: newListExercises,
               selectedExercise: "",
             };
           } else throw new Error("Exercise does not exist");
         } else
           throw new Error(
-            "No data provided in listExerciseAction.payload.selectedExercise"
+            "No data provided in userAction.payload.selectedExercise"
           );
-      else throw new Error("No data provided in listExerciseAction.payload");
+      else throw new Error("No data provided in userAction.payload");
 
     case ListExerciseActionKind.SET_SELECTED_EXERCISE:
-      if (listExerciseAction.payload)
-        if (listExerciseAction.payload.newExercise) {
+      if (userAction.payload)
+        if (userAction.payload.newExercise) {
           let newExercise: Exercise = {
             id: "-1",
             name: "Novo exercício",
             visibility: "public",
-            type: listExerciseAction.payload.newExercise,
-            author: "This listExercise",
+            type: userAction.payload.newExercise,
+            author: "This user",
             statement: {
               text: "Escreva aqui o enunciado...",
             },
@@ -93,39 +85,39 @@ function ListExerciseStateReducer(
             },
           };
           let newListExercises = {
-            ...listExerciseState.listExercises,
+            ...userState.listExercises,
             "-1": newExercise,
           };
           return {
-            ...listExerciseState,
+            ...userState,
             listExercises: newListExercises,
             selectedExercise: "-1",
           };
-        } else if (listExerciseAction.payload.selectedExercise) {
-          let exerciseID = listExerciseAction.payload.selectedExercise;
-          if (listExerciseState.listExercises[exerciseID])
-            return { ...listExerciseState, selectedExercise: exerciseID };
+        } else if (userAction.payload.selectedExercise) {
+          let exerciseID = userAction.payload.selectedExercise;
+          if (userState.listExercises[exerciseID])
+            return { ...userState, selectedExercise: exerciseID };
           else throw new Error("Exercise does not exist");
-        } else if (listExerciseAction.payload.selectedExercise === "") {
-          return { ...listExerciseState, selectedExercise: "" };
+        } else if (userAction.payload.selectedExercise === "") {
+          return { ...userState, selectedExercise: "" };
         } else
           throw new Error(
-            "No data provided in listExerciseAction.payload.selectedExercise"
+            "No data provided in userAction.payload.selectedExercise"
           );
-      else throw new Error("No data provided in listExerciseAction.payload");
+      else throw new Error("No data provided in userAction.payload");
 
     case ListExerciseActionKind.SET_SELECTED_GROUP:
-      if (listExerciseAction.payload)
-        if (listExerciseAction.payload.selectedGroup) {
+      if (userAction.payload)
+        if (userAction.payload.selectedGroup) {
           return {
-            ...listExerciseState,
-            selectedGroup: listExerciseAction.payload.selectedGroup,
+            ...userState,
+            selectedGroup: userAction.payload.selectedGroup,
           };
         } else
           throw new Error(
-            "No data provided in listExerciseAction.payload.selectedGroup"
+            "No data provided in userAction.payload.selectedGroup"
           );
-      else throw new Error("No data provided in listExerciseAction.payload");
+      else throw new Error("No data provided in userAction.payload");
     default:
       throw new Error("Unknown action");
   }
@@ -189,11 +181,11 @@ export function ListExerciseProvider({
 
 // Exports function useListExerciseContext that allows you to access the contents of a ListExerciseContext if the context has already been defined
 export function useListExerciseContext() {
-  const listExercise = useContext(ListExerciseContext);
-  if (listExercise === undefined) {
+  const user = useContext(ListExerciseContext);
+  if (user === undefined) {
     throw new Error(
       "useListExerciseContext must be used with a ListExerciseContext.Provider"
     );
   }
-  return listExercise;
+  return user;
 }

@@ -22,7 +22,7 @@ export function createNewExercise(newExercisetype: ExerciseType) {
         name: "",
         visibility: "public",
         type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //exerciseState.exercisename,
+        author: "utilizador atual", //userState.username,
         statement: {
           text: "",
         },
@@ -36,7 +36,7 @@ export function createNewExercise(newExercisetype: ExerciseType) {
         name: "",
         visibility: "public",
         type: ExerciseType.OPEN_ANSWER,
-        author: "utilizador atual", //exerciseState.exercisename,
+        author: "utilizador atual", //userState.username,
         statement: {
           text: "",
         },
@@ -47,7 +47,7 @@ export function createNewExercise(newExercisetype: ExerciseType) {
         name: "",
         visibility: "public",
         type: ExerciseType.TRUE_OR_FALSE,
-        author: "utilizador atual", //exerciseState.exercisename,
+        author: "utilizador atual", //userState.username,
         statement: {
           text: "",
         },
@@ -62,7 +62,7 @@ export function createNewExercise(newExercisetype: ExerciseType) {
         name: "",
         visibility: "public",
         type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //exerciseState.exercisename,
+        author: "utilizador atual", //userState.username,
         statement: {
           text: "",
         },
@@ -76,7 +76,7 @@ export function createNewExercise(newExercisetype: ExerciseType) {
         name: "",
         visibility: "public",
         type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //exerciseState.exercisename,
+        author: "utilizador atual", //userState.username,
         statement: {
           text: "",
         },
@@ -87,85 +87,37 @@ export function createNewExercise(newExercisetype: ExerciseType) {
   }
 }
 
-enum ResolutionStatus {}
-
-export interface Resolution {
-  id: string;
-  cotation: number;
-  studentID: string;
-  status: ResolutionStatus;
-  data:
-    | string
-    | {
-        [id: string]: {
-          text: string;
-          justification: string;
-          type: string;
-          value: boolean;
-        };
-      };
-}
-
-interface exercise {
-  asd: string;
+export interface TFStatement {
+  phrase: string;
+  tfvalue: string;
+  justification: string;
 }
 
 export interface Exercise {
   id: string;
-  title: string;
-  cotation?: number;
-  specialistId: string;
+  name: string;
+  visibility: string;
   type: ExerciseType;
+  author: string;
   statement: {
-    imagePath: string;
-    imagePosition: string;
     text: string;
+    img?: {
+      url: string;
+      pos: string;
+    };
   };
-  justifyKind?: ExerciseJustificationKind;
-  items?: { [id: string]: { text: string; type: string } };
-
-  solution?: Resolution;
-  resolution?: Resolution;
-}
-
-export interface ExerciseGroup {
-  exercises: Exercise[];
-  groupInstructions: string;
-  groupCotations: number;
-}
-
-// Type of actions allowed on the state
-export enum ExerciseActionKind {
-  JUSTIFY = "JUSTIFY",
-  SELECT_OPTION = "SELECT_OPTION",
-  SET_TF = "SET_TF",
-}
-
-// ExerciseAction Definition
-export interface ExerciseAction {
-  type: ExerciseActionKind;
-  payload: {
-    optionID?: string;
-    justify?: string;
-    tfValue?: boolean;
+  problem?: {
+    justify?: ExerciseJustificationKind;
+    statements: string[];
   };
-}
-
-// Takes the current ExerciseState and an action to update the ExerciseState
-function ExerciseSolveReducer(
-  exerciseState: Exercise,
-  exerciseAction: ExerciseAction
-) {
-  switch (exerciseAction.type) {
-    case ExerciseActionKind.JUSTIFY:
-      if (exerciseAction.payload.optionID && exerciseAction.payload.justify) {
-        let newExercise = { ...exerciseState };
-        exerciseAction.payload.exercises.forEach((element) => {
-          newExercises[element.id] = element;
-        });
-        return { ...exerciseState, listExercises: newExercises };
-      } else throw new Error("Invalid data provided in exerciseAction.payload");
-    default:
-      throw new Error("Unknown action");
-  }
+  solution?: {
+    multiple_choice?: string;
+    open_answer?: string;
+    true_or_false?: TFStatement[];
+  };
+  resolution?: {
+    multiple_choice?: string;
+    open_answer?: string;
+    true_or_false?: TFStatement[];
+  };
 }
