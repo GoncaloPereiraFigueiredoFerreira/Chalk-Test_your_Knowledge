@@ -10,51 +10,43 @@ interface ExerciseProps {
 
 export function MCExercise({ exercise, position, contexto }: ExerciseProps) {
   let exerciseDisplay = <></>;
+  if (exercise.items)
+    switch (contexto) {
+      case "solve":
+        exerciseDisplay = (
+          <MCSolve
+            statement={exercise.statement}
+            items={exercise.items}
+          ></MCSolve>
+        );
+        break;
 
-  switch (contexto) {
-    case "solve":
-      let selectedOption = "";
+      case "preview":
+        exerciseDisplay = <></>;
+        break;
 
-      if (exercise.resolution && exercise.resolution.multiple_choice)
-        selectedOption = exercise.resolution.multiple_choice;
+      case "correct":
+        exerciseDisplay = <></>;
+        break;
 
-      exerciseDisplay = (
-        <MCSolve
-          selectedOption={selectedOption}
-          problem={exercise.problem}
-          statement={exercise.statement}
-        ></MCSolve>
-      );
-      break;
-
-    case "preview":
-      exerciseDisplay = <></>;
-      break;
-
-    case "correct":
-      exerciseDisplay = <></>;
-      break;
-
-    case "psolution":
-      exerciseDisplay = <></>;
-      break;
-  }
+      case "psolution":
+        exerciseDisplay = <></>;
+        break;
+    }
   return (
     <>
-      <div className="m-5 text-title-2">{position + ") " + name}</div>
+      <div className="m-5 text-title-2">{position + ") " + exercise.title}</div>
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );
 }
 
 function MCSolve(props: any) {
-  const [state, setState] = useState(props.selectedOption);
-
   return (
     <>
       <ExerciseHeader header={props.statement}></ExerciseHeader>
       <ul>
-        {props.problem.statements.map((text: string, id: number) => {
+        {props.map((text: string, id: number) => {
           return (
             <label
               key={id}
