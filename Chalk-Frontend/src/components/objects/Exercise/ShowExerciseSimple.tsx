@@ -47,6 +47,7 @@ export function ShowExerciseSimple({
             contexto="preview"
             name={exercise.name}
             position={position}
+            justify={exercise.problem!.justify!} // none, false-only or all
           ></MCExercise>
         );
         break;
@@ -75,7 +76,7 @@ export function ShowExerciseSimple({
         );
         setPreview(
           <TFExercise
-            id={exercise.id}
+            key={exercise.id}
             statement={exercise.statement}
             problem={exercise.problem}
             contexto="solve"
@@ -193,7 +194,7 @@ export function ShowExerciseSimple({
         <div
           className={`${
             exercise.id != selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 cursor-pointer`}
+          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 `}
         >
           {preview}
         </div>
