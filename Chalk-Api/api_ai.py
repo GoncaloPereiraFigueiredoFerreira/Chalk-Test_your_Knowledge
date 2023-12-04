@@ -81,6 +81,17 @@ def send_create_open(text,questions,user_input = ""):
 
 	return resp
 
+def send_create_true_false(text,questions,user_input = ""):
+	text = gen_sys_create_question(text)
+	questions = gen_user_create_true_false(user_input,questions)
+
+	pronpt = [text] + questions
+
+	resp = send_request(pronpt,1,0.5,0.5)
+	resp = json.loads(resp)
+
+	return resp
+
 def send_oral(text):
 	resp = send_request(text,1,0.5,0.5)
 	return resp
@@ -142,7 +153,7 @@ def gen_user_create_multiple(user_input,questions = None):
 			answers = []
 			if "Answers" in i:
 				answers = i["Answers"]
-			aux = {"Question":i["Question"],"Answers":i["Answers"]}
+			aux = {"Question":i["Question"],"Answers":answers}
 			ret.append({"role":"assistant","content":json.dumps(aux)})
 
 	ret.append({"role":"user","content":user_input + '.Generate a multiple choice question. The response must be in json, where there is a key "Question", "Answers", that is an array, and "Correct_answer" that is the position in "answers".'})
@@ -161,6 +172,18 @@ def gen_user_create_open(user_input,questions = None):
 			ret.append({"role":"assistant","content":json.dumps(aux)})
 
 	ret.append({"role":"user","content":user_input + '.Generate a open answer question and topics that must be covered in the answer. The response must be in json, where there is a key "Question" and "Topics".'})
+
+	return ret
+
+def gen_user_create_true_false(user_input,questions = None):
+	ret = []
+
+	if questions:
+		for i in questions:
+			aux = {"Question":i["Question"]}
+			ret.append({"role":"assistant","content":json.dumps(aux)})
+
+	ret.append({"role":"user","content":user_input + '.Generate a True or False question. The response must be in json, with this format {"Question":question,"True":True or False}.'})
 
 	return ret
 

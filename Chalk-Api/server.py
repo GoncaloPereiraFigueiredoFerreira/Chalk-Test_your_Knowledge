@@ -54,7 +54,7 @@ def open_answer():
 '''
 {
     "Text": str
-    "Input": str
+    "Input": str # opcional Expressa o input do utilizador(Caso seja intruduzido elemina o historico anterior de perguntas)
 } 
 
 {
@@ -93,7 +93,7 @@ def create_mult():
 '''
 {
     "Text": str
-    "Input": str # opcional Expressa o input do utilizador 
+    "Input": str # opcional Expressa o input do utilizador(Caso seja intruduzido elemina o historico anterior de perguntas)
 } 
 
 {
@@ -116,6 +116,43 @@ def create_open():
         questions = [questions[-1]] if questions else questions
 
     ret = api_ai.send_create_open(req["Text"] ,questions, user_input)
+
+    if questions:
+        questions.append(ret)
+        questions = questions[1:] if len(questions) > 5 else questions
+        cache.set(h_text,json.dumps(questions),cache_timeout)
+    else:
+        cache.set(h_text,json.dumps([ret]),cache_timeout)
+
+    return ret
+
+'''
+{
+    "Text": str
+    "Input": str # opcional Expressa o input do utilizador(Caso seja intruduzido elemina o historico anterior de perguntas)
+} 
+
+{
+    "True": Bool
+    "Question": str
+}
+'''
+
+@api.route('/create_true_false', methods=['GET'])
+def create_true_false():
+    req = request.json
+
+    h_text = hash(req["Text"])
+    user_input = ""
+    questions = cache.get(h_text)
+    if questions: questions = json.loads(questions)
+
+    if("Input" in req):
+        user_input = req["Input"]
+        questions = [questions[-1]] if questions else questions
+
+
+    ret = api_ai.send_create_true_false(req["Text"],questions,user_input)
 
     if questions:
         questions.append(ret)
