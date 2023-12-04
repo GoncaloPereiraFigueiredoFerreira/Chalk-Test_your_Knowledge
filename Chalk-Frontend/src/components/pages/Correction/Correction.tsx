@@ -36,7 +36,7 @@ const testResolutions: AnswerGroup[] = [
         email: "sds",
         answer: {
           type: ExerciseType.OPEN_ANSWER,
-          answers: ["fnesnfnfhn ufhewiugern erife"],
+          answers: ["fnesnfnfhn erife"],
           correction: [""],
         },
       },
@@ -46,7 +46,7 @@ const testResolutions: AnswerGroup[] = [
     question_id: "2",
     resolutions: [
       {
-        id: "3432",
+        id: "111",
         name: "Joana das Roscas",
         email: "sds",
         answer: {
@@ -198,77 +198,80 @@ const userExercises: Exercise[] = [
   },
 ];
 
-type ExerciseList = { [key: string]: Exercise };
+interface ExerciseList {
+  [key: string]: Exercise;
+}
 
-type ResolutionList = { [key: string]: AnswerGroup };
+interface ResolutionList {
+  [key: string]: AnswerGroup;
+}
 
 export function Correction() {
-  const [exerciseList, setExerciseList] = useState<ExerciseList>({});
-  const [resolutionList, setResolutionList] = useState<ResolutionList>({});
+  const [exerciseList, setExerciseList] = useState<ExerciseList>();
+  const [resolutionList, setResolutionList] = useState<ResolutionList>();
 
   const [selectedExercise, setSelectedExercise] = useState("");
 
-  const addExercises = (exercises: Exercise[]) => {
-    let tempList = { ...exerciseList };
-    exercises.forEach((ex) => (tempList[ex.id] = ex));
-    setExerciseList(tempList);
-  };
+  let tempListEx: ExerciseList = {};
+  userExercises.forEach((ex: Exercise) => (tempListEx[ex.id] = ex));
+  setExerciseList(tempListEx);
 
-  const addAnswers = (answer: AnswerGroup[]) => {
-    let tempList = { ...resolutionList };
-    answer.forEach((an) => (tempList[an.question_id] = an));
-    setResolutionList(tempList);
-  };
+  let tempListRes: ResolutionList = {};
+  testResolutions.forEach((an) => (tempListRes[an.question_id] = an));
+  setResolutionList(tempListRes);
 
-  useEffect(() => {
-    addExercises(userExercises);
-    addAnswers(testResolutions);
-    console.log(Object.entries(userExercises));
-    console.log(Object.entries(testResolutions));
-  }, []);
+  function test() {
+    console.log(resolutionList);
+    return <></>;
+  }
 
-  return (
-    <>
-      <div className="h-screen overflow-auto">
-        <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 ">
-          <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-            <label className="flex text-title-1">Teste_Turma9C </label>
-          </div>
-          <div className="grid grid-cols-2">
-            <div className=" mr-4">
-              {Object.entries(exerciseList).map(([key, exercise]) => (
-                <ShowExerciseSimple
-                  key={key}
-                  position={key}
-                  exercise={exercise}
-                  selectedExercise={selectedExercise}
-                  setSelectedExercise={(value) => setSelectedExercise(value)}
-                ></ShowExerciseSimple>
-              ))}
+  if (exerciseList && resolutionList)
+    return (
+      <>
+        <div className="h-screen overflow-auto">
+          <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 ">
+            <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
+              <label className="flex text-title-1">Teste_Turma9C </label>
             </div>
+            <div className="grid grid-cols-2">
+              <div className=" mr-4">
+                {Object.entries(exerciseList).map(([key, exercise]) => (
+                  <ShowExerciseSimple
+                    key={key}
+                    position={key}
+                    exercise={exercise}
+                    selectedExercise={selectedExercise}
+                    setSelectedExercise={(value) => setSelectedExercise(value)}
+                  ></ShowExerciseSimple>
+                ))}
+              </div>
 
-            <div>
-              {/*               {Object.entries(
+              <div>
+                {/*               {Object.entries(
                 testResolutions[selectedExercise].resolutions
               ).map(([key, resolution]) => (
                 <Answer key={key} answer={resolution}></Answer>
-              ))} */}
-              {Object.entries(testResolutions)
-                .filter(([key]) => key === selectedExercise)
-                .pop()?.[1]
-                .resolutions.map((resolution) => (
-                  <Answer
-                    key={resolution.id}
-                    id={resolution.id}
-                    email={resolution.email}
-                    name={resolution.name}
-                    answer={resolution.answer}
-                  ></Answer>
-                ))}
+              ))} 
+
+                {resolutionList[selectedExercise].resolutions.map(
+                  (resolution) => {
+                    console.log(resolution);
+                    return (
+                      <Answer
+                        key={resolution.id}
+                        id={resolution.id}
+                        email={resolution.email}
+                        name={resolution.name}
+                        answer={resolution.answer}
+                      ></Answer>
+                    );
+                  }
+                )}*/}
+                {test()}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
 }
