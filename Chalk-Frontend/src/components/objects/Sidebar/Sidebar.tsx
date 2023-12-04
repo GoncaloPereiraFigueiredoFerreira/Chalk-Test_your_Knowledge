@@ -149,7 +149,10 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
 
         <ul className="sidebar-divisions border-t-0">
           <li>
-            <button className="relative inline-block text-lg group">
+            <button
+              className="relative inline-block text-lg group"
+              onClick={() => navigate("/webapp/create-test")}
+            >
               {/*Bloco inicial*/}
               <span className="relative z-10 block px-3 py-3 overflow-hidden font-bold leading-tight transition-colors duration-500 ease-out border-2 text-gray-700 group-hover:text-white dark:text-gray-300 dark:group-hover:text-gray-800 bg-white group-hover:bg-gray-700 dark:bg-gray-800 dark:group-hover:bg-gray-500 border-gray-700 dark:border-gray-600 rounded-lg">
                 {/*Bloco que surge*/}
@@ -180,7 +183,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </button>
           </li>
           <li>
-            <Link to={"tests"}>
+            <Link to={"search"}>
               <button className="sidebar-item bg-btn-1 group">
                 <SearchIcon style={"group-gray-icon"} />
                 <span className={isOpen ? "" : "hidden"}>
@@ -260,6 +263,14 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               ))}
             </ul>
             {showGrupOptions()}
+          </li>
+          <li>
+            <Link to={""}>
+              <button className="sidebar-item bg-btn-1 group">
+                <WorldIcon style={"group-gray-icon"} />
+                <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
+              </button>
+            </Link>
           </li>
         </ul>
 

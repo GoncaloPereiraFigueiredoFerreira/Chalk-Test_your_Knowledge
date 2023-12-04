@@ -10,9 +10,6 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
-const frontendAdress = process.env.FRONTEND;
-const localPort = process.env.PORT;
-
 // Get our authenticate module
 var authenticate = require("../auth_strat");
 
@@ -103,60 +100,48 @@ router.post(
   }
 );
 
-router.get("/google", (req, res, next) => {
+router.post("/google", (req, res, next) => {
   var data = new Date().toISOString().substring(0, 16);
-  console.log(req.query.code);
   axios
-    .post("https://oauth2.googleapis.com/token", {
-      client_id: process.env.G_CLIENT_ID,
-      client_secret: process.env.G_CLIENT_SECRET,
-      code: req.query.code,
-      grant_type: "authorization_code",
-      redirect_uri: "http://localhost:" + localPort + "/google",
+    .get("https://www.googleapis.com/oauth2/v3/userinfo?alt=json", {
+      headers: { Authorization: `Bearer ${req.body.acess_token}` },
     })
-    .then((gres) => {
-      let token = gres.data.access_token;
-      axios
-        .get("https://www.googleapis.com/oauth2/v3/userinfo?alt=json", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((gres2) => {
-          if (!User.exists({ username: gres2.data.email })) {
-            User.create(
-              new User({
-                username: gres2.data.email,
-                name: gres2.data.name,
-                role: "user",
-                active: true,
-                date_created: data,
-                last_access: data,
-              })
-            );
-          } else {
-            User.updateOne(
-              { username: req.user.username },
-              { last_access: date }
-            );
-          }
-          var token = authenticate.getToken({
-            username: gres2.data.email,
-            role: "user",
-            name: gres2.data.name,
-          });
-          res
-            .status(200)
-            .setHeader("Content-Type", "application/json")
-            .cookie("chalkauthtoken", token)
-            .jsonp({
-              sucess: true,
-              user: {
-                username: req.body.email,
-                role: "user",
-                name: req.body.name,
-              },
+    .then((gres2) => {
+      User.findOne({ username: gres2.data.email }).then((result) => {
+        if (result == null) {
+          User.create(
+            new User({
+              username: gres2.data.email,
+              name: gres2.data.name,
+              role: "user",
+              active: true,
+              date_created: data,
+              last_access: data,
             })
-            .end();
+          );
+        } else {
+          User.updateOne({ username: gres2.data.email }, { last_access: data });
+        }
+
+        var token = authenticate.getToken({
+          username: gres2.data.email,
+          role: "user",
+          name: gres2.data.name,
         });
+        res
+          .status(200)
+          .setHeader("Content-Type", "application/json")
+          .cookie("chalkauthtoken", token)
+          .jsonp({
+            sucess: true,
+            user: {
+              username: gres2.data.email,
+              role: "user",
+              name: gres2.data.name,
+            },
+          })
+          .end();
+      });
     });
 });
 

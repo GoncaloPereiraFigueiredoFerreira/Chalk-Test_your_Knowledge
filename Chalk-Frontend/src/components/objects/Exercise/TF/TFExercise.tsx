@@ -1,12 +1,6 @@
 import { useReducer } from "react";
 import { ExerciseHeader } from "../Header/ExHeader";
-import { ExerciseJustificationKind } from "../Exercise";
-
-interface TFStatement {
-  phrase: string;
-  tfvalue: string;
-  justification: string;
-}
+import { Exercise, ExerciseJustificationKind, TFStatement } from "../Exercise";
 
 type TFState = TFStatement[];
 
@@ -23,60 +17,43 @@ interface TFAction {
   value: string;
 }
 
-interface TFExerciseProps {
-  id: string;
-  name: string;
+interface ExerciseProps {
   position: string;
   contexto: string;
-  justify?: ExerciseJustificationKind;
-  statement: any;
-  problem?: any;
+  exercise: Exercise;
 }
 
-export function TFExercise({
-  id,
-  name,
-  position,
-  contexto,
-  justify,
-  statement,
-  problem,
-}: TFExerciseProps) {
+export function TFExercise({ position, contexto, exercise }: ExerciseProps) {
   let exerciseDisplay = <></>;
-
-  switch (contexto) {
-    case "solve":
-      exerciseDisplay = justify ? (
+  if (exercise.problem && exercise.problem.justify)
+    switch (contexto) {
+      case "solve":
         <TFSolve
-          id={id}
+          id={exercise.id}
           position={position}
-          problem={problem}
-          statement={statement}
-          justify={justify}
-        ></TFSolve>
-      ) : (
-        <></>
-      );
-      break;
+          problem={exercise.resolution?.true_or_false as TFStatement[]}
+          statement={exercise.statement}
+          justify={exercise.problem.justify}
+        ></TFSolve>;
+        break;
 
-    case "preview":
-      <TFPreview
-        id={id}
-        position={position}
-        problem={problem}
-        statement={statement}
-        justify={justify}
-      ></TFPreview>;
-      break;
+      case "preview":
+        <TFPreview
+          id={exercise.id}
+          position={position}
+          problem={exercise.problem}
+          statement={exercise.statement}
+        ></TFPreview>;
+        break;
 
-    case "correct":
-      exerciseDisplay = <></>;
-      break;
+      case "correct":
+        exerciseDisplay = <></>;
+        break;
 
-    case "psolution":
-      exerciseDisplay = <></>;
-      break;
-  }
+      case "psolution":
+        exerciseDisplay = <></>;
+        break;
+    }
   return (
     <>
       <div className="m-5 text-title-2">{position + ") " + name}</div>
@@ -104,8 +81,12 @@ function SolveReducer(state: TFState, action: TFAction): TFState {
 
 function TFSolve(props: any) {
   let initState: TFState = [];
-  props.problem.statements.map((text: any) =>
-    initState.push({ phrase: text, tfvalue: "", justification: "" })
+  props.problem.statements.map((statment: TFStatement) =>
+    initState.push({
+      phrase: statment.phrase,
+      tfvalue: statment.tfvalue,
+      justification: statment.justification,
+    })
   );
 
   const [state, dispatch] = useReducer(SolveReducer, initState);
@@ -119,7 +100,7 @@ function TFSolve(props: any) {
         <div></div>
         {state.map((_solve: TFStatement, index: number) => {
           return (
-            <TFStatement
+            <TFShowStatement
               key={index}
               id={index}
               name={`radio-button-${index}-${props.id}-${props.position}`}
@@ -134,9 +115,7 @@ function TFSolve(props: any) {
   );
 }
 
-function TFStatement(props: any) {
-  console.log(props.state[props.id].tfvalue);
-
+function TFShowStatement(props: any) {
   return (
     <>
       <div className="flex items-start justify-center">

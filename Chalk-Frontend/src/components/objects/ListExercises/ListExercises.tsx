@@ -8,8 +8,11 @@ import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
-  createNewExercise,
 } from "../Exercise/Exercise";
+import {
+  ListExerciseActionKind,
+  useListExerciseContext,
+} from "../../pages/ExerciseBankPage/ListExerciseContext";
 
 const userExercises: Exercise[] = [
   {
@@ -48,6 +51,26 @@ const userExercises: Exercise[] = [
         "Existem mais canetas castanhas que amarelas",
       ],
     },
+    solution: {
+      true_or_false: [
+        {
+          phrase: "Existem 9 canetas roxas ou vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        {
+          phrase: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        { phrase: "Existem 8 canetas pretas", tfvalue: "", justification: "" },
+        {
+          phrase: "Existem mais canetas castanhas que amarelas",
+          tfvalue: "",
+          justification: "",
+        },
+      ],
+    },
   },
   {
     id: "6",
@@ -69,6 +92,26 @@ const userExercises: Exercise[] = [
         "Existem tantas canetas pretas ou roxas, quanto vermelhas",
         "Existem 8 canetas pretas",
         "Existem mais canetas castanhas que amarelas",
+      ],
+    },
+    solution: {
+      true_or_false: [
+        {
+          phrase: "Existem 9 canetas roxas ou vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        {
+          phrase: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        { phrase: "Existem 8 canetas pretas", tfvalue: "", justification: "" },
+        {
+          phrase: "Existem mais canetas castanhas que amarelas",
+          tfvalue: "",
+          justification: "",
+        },
       ],
     },
   },
@@ -94,6 +137,26 @@ const userExercises: Exercise[] = [
         "Existem mais canetas castanhas que amarelas",
       ],
     },
+    solution: {
+      true_or_false: [
+        {
+          phrase: "Existem 9 canetas roxas ou vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        {
+          phrase: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        { phrase: "Existem 8 canetas pretas", tfvalue: "", justification: "" },
+        {
+          phrase: "Existem mais canetas castanhas que amarelas",
+          tfvalue: "",
+          justification: "",
+        },
+      ],
+    },
   },
   {
     id: "4",
@@ -111,6 +174,9 @@ const userExercises: Exercise[] = [
         "Existem 8 canetas pretas",
         "Existem mais canetas castanhas que amarelas",
       ],
+    },
+    solution: {
+      multiple_choice: "",
     },
   },
   {
@@ -143,38 +209,47 @@ const userExercises: Exercise[] = [
     problem: {
       justify: ExerciseJustificationKind.NO_JUSTIFICATION,
       statements: [
-        "Existem tantas canetas pretas ou roxas, quanto vermelhas",
         "Existem 9 canetas roxas ou vermelhas",
+        "Existem mais canetas castanhas que amarelas",
+      ],
+    },
+    solution: {
+      true_or_false: [
+        {
+          phrase: "Existem 9 canetas roxas ou vermelhas",
+          tfvalue: "",
+          justification: "",
+        },
+        {
+          phrase: "Existem mais canetas castanhas que amarelas",
+          tfvalue: "",
+          justification: "",
+        },
       ],
     },
   },
 ];
 
-type ExerciseList = { [key: string]: Exercise };
+interface ListExercisesProps {
+  editMenuIsOpen: boolean;
+  setEditMenuIsOpen: (value: boolean) => void;
+}
 
-export function ListExercises() {
-  const [editMenuIsOpen, setEditMenuIsOpen] = useState(true);
-  const [selectedExercise, setSelectedExercise] = useState("");
+export function ListExercises({
+  editMenuIsOpen,
+  setEditMenuIsOpen,
+}: ListExercisesProps) {
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
-  const [exerciseList, setExerciseList] = useState<ExerciseList>({});
-
-  const addExercises = (exercises: Exercise[]) => {
-    let tempList = { ...exerciseList };
-    exercises.forEach((ex) => (tempList[ex.id] = ex));
-    setExerciseList(tempList);
-  };
+  const { listExerciseState, dispatch } = useListExerciseContext();
 
   useEffect(() => {
-    addExercises(userExercises);
+    dispatch({
+      type: ListExerciseActionKind.ADD_EXERCISES,
+      payload: {
+        exercises: userExercises,
+      },
+    });
   }, []);
-
-  const remExercise = (id: string) => {
-    let tempList = { ...exerciseList };
-    if (Object.keys(exerciseList).includes(id)) {
-      delete tempList[id];
-      setExerciseList(tempList);
-    }
-  };
 
   return (
     <>
@@ -188,17 +263,46 @@ export function ListExercises() {
             Criar exercício
           </button>
         </div>
-        {Object.entries(exerciseList).map(([key, exercise]) => (
+        {listExerciseState.listExercises.hasOwnProperty("-1") ? (
           <ShowExercise
-            key={key}
-            position={key}
-            exercise={exercise}
+            position={"1"}
+            exercise={listExerciseState.listExercises["-1"]}
             setEditMenuIsOpen={setEditMenuIsOpen}
-            selectedExercise={selectedExercise}
-            setSelectedExercise={(value) => setSelectedExercise(value)}
-            remExercise={(id: string) => remExercise(id)}
+            selectedExercise={listExerciseState.selectedExercise}
+            setSelectedExercise={(value) => {
+              editMenuIsOpen
+                ? {}
+                : dispatch({
+                    type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                    payload: {
+                      selectedExercise: value,
+                    },
+                  });
+            }}
           ></ShowExercise>
-        ))}
+        ) : null}
+        {Object.entries(listExerciseState.listExercises).map(
+          ([key, exercise]) =>
+            exercise.id === "-1" ? null : (
+              <ShowExercise
+                key={key}
+                position={key}
+                exercise={exercise}
+                setEditMenuIsOpen={setEditMenuIsOpen}
+                selectedExercise={listExerciseState.selectedExercise}
+                setSelectedExercise={(value) => {
+                  editMenuIsOpen
+                    ? {}
+                    : dispatch({
+                        type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                        payload: {
+                          selectedExercise: value,
+                        },
+                      });
+                }}
+              ></ShowExercise>
+            )
+        )}
       </div>
       <PopUp
         show={newExercisePopUp}
@@ -206,7 +310,12 @@ export function ListExercises() {
         children={
           <CreateNewExercisePopUp
             createNewExercise={(newExerciseType: ExerciseType) => {
-              createNewExercise(newExerciseType);
+              dispatch({
+                type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                payload: {
+                  newExercise: newExerciseType,
+                },
+              });
               setEditMenuIsOpen(true);
               setNewExercisePopUp(false);
             }}

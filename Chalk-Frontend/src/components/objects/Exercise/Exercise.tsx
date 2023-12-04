@@ -87,6 +87,12 @@ export function createNewExercise(newExercisetype: ExerciseType) {
   }
 }
 
+export interface TFStatement {
+  phrase: string;
+  tfvalue: string;
+  justification: string;
+}
+
 export interface Exercise {
   id: string;
   name: string;
@@ -103,6 +109,16 @@ export interface Exercise {
   problem?: {
     justify?: ExerciseJustificationKind;
     statements: string[];
+  };
+  solution?: {
+    multiple_choice?: string;
+    open_answer?: string;
+    true_or_false?: TFStatement[];
+  };
+  resolution?: {
+    multiple_choice?: string;
+    open_answer?: string;
+    true_or_false?: TFStatement[];
   };
 }
 

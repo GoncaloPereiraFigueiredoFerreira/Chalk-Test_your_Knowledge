@@ -1,17 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Login } from "./components/pages/Login/Login";
-import { Register } from "./components/pages/Register/Register";
+import { Login } from "./components/pages/Login&Register/Login";
+import { Register } from "./components/pages/Login&Register/Register";
 import { HomePage } from "./components/pages/HomePage/HomePage";
 import "./App.css";
 import { UserContext } from "./UserContext";
 import { useContext } from "react";
+import { ExerciseBankPage } from "./components/pages/ExerciseBankPage/ExerciseBankPage";
 import { FrontPage } from "./components/pages/FrontPage/FrontPage";
-import { RealFrontPage } from "./components/pages/RealFrontPage/RealFrontPage";
 import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/TestPage/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
 import { Subscription } from "./components/pages/Subscription/Subscription";
 import { Correction } from "./components/pages/Correction/Correction";
+//import { CreateTest } from "./components/pages/CreateTest/CreateTest";
+import { SearchList } from "./components/pages/SearchList/SearchList";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -28,8 +30,10 @@ function App() {
           path="/webapp"
           element={user.authenticated ? <WebApp /> : <WebApp /> /* <Login /> */}
         >
-          <Route index element={<RealFrontPage />} />
-          <Route path="exercise-bank" element={<FrontPage />} />
+          <Route index element={<FrontPage />} />
+          <Route path="search" element={<SearchList />} />
+          <Route path="exercise-bank" element={<ExerciseBankPage />} />
+          {/*<Route path="create-test" element={<CreateTest />} />*/}
           <Route path="tests" element={<TestPage />}>
             <Route index path="" />
             <Route path="group/:id" />

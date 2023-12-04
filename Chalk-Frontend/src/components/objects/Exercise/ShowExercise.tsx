@@ -19,8 +19,8 @@ import { MCExercise } from "./MC/MCExercise";
 import { OAExercise } from "./OA/OAExercise";
 import { TFExercise } from "./TF/TFExercise";
 import { useEffect, useState } from "react";
-import { Exercise } from "./Exercise";
 import "./ShowExercise.css";
+import { Exercise } from "./Exercise";
 
 interface ExerciseProps {
   position: string;
@@ -28,7 +28,6 @@ interface ExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
-  remExercise: (value: string) => void;
 }
 
 export function ShowExercise({
@@ -37,7 +36,6 @@ export function ShowExercise({
   setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
-  remExercise,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
@@ -54,10 +52,8 @@ export function ShowExercise({
 
         setPreview(
           <MCExercise
-            statement={exercise.statement}
-            problem={exercise.problem}
+            exercise={exercise}
             contexto="solve"
-            name={exercise.name}
             position={position}
           ></MCExercise>
         );
@@ -87,13 +83,9 @@ export function ShowExercise({
         );
         setPreview(
           <TFExercise
-            id={exercise.id}
-            statement={exercise.statement}
-            problem={exercise.problem}
+            exercise={exercise}
             contexto="solve"
-            name={exercise.name}
-            position={position}
-            justify={exercise.problem!.justify!} // none, false-only or all
+            position={position} // none, false-only or all
           ></TFExercise>
         );
         break;
@@ -238,10 +230,7 @@ export function ShowExercise({
               <EyeSlashIcon size="size-5" />
               Visibilidade
             </button>
-            <button
-              className="btn-options-exercise gray-icon"
-              onClick={() => remExercise(exercise.id)}
-            >
+            <button className="btn-options-exercise gray-icon">
               <GarbageIcon size="size-5" />
               Eliminar
             </button>

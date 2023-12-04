@@ -1,34 +1,43 @@
 import { useState } from "react";
-import { useUserContext } from "../../../context";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import "./EditExercise.css";
 import { EditHeader } from "../Exercise/Header/EditHeader";
-import { ExerciseType } from "../../../UserInterface";
 import { TFEdit } from "../Exercise/TF/TFEdit";
+import { useListExerciseContext } from "../../pages/ExerciseBankPage/ListExerciseContext";
+import { ExerciseJustificationKind, ExerciseType } from "../Exercise/Exercise";
 
 interface EditExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
 }
 
 export function EditExercise({ setEditMenuIsOpen }: EditExerciseProps) {
-  const { userState, dispatch } = useUserContext();
+  const { listExerciseState, dispatch } = useListExerciseContext();
 
   const [statement, setStatement] = useState("");
   const [img, setImg] = useState("");
   const [addImg, setAddImg] = useState(false);
   const [postionImg, setPostionImg] = useState(ImgPos.RIGHT);
 
-  console.log(userState.listExercises[userState.selectedExercise]);
+  console.log(
+    listExerciseState.listExercises[listExerciseState.selectedExercise]
+  );
 
   function editExerciseContent() {
-    let exercise = userState.listExercises[userState.selectedExercise];
+    let exercise =
+      listExerciseState.listExercises[listExerciseState.selectedExercise];
+
     switch (exercise.type) {
       case ExerciseType.MULTIPLE_CHOICE:
         return <></>;
       case ExerciseType.OPEN_ANSWER:
         return <></>;
       case ExerciseType.TRUE_OR_FALSE:
-        return <></>;
+        return (
+          <TFEdit
+            justify={exercise.problem!.justify!}
+            statements={exercise.problem!.statements}
+          />
+        );
       case ExerciseType.FILL_IN_THE_BLANK:
         return <></>;
       case ExerciseType.CODE:
