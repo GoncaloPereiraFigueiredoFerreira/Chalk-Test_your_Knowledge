@@ -207,25 +207,26 @@ interface ResolutionList {
 }
 
 export function Correction() {
-  const [exerciseList, setExerciseList] = useState<ExerciseList>();
-  const [resolutionList, setResolutionList] = useState<ResolutionList>();
+  const [exerciseList, setExerciseList] = useState<{
+    [key: string]: Exercise;
+  }>();
+  const [resolutionList, setResolutionList] = useState<{
+    [key: string]: AnswerGroup;
+  }>();
 
   const [selectedExercise, setSelectedExercise] = useState("");
 
-  let tempListEx: ExerciseList = {};
-  userExercises.forEach((ex: Exercise) => (tempListEx[ex.id] = ex));
-  setExerciseList(tempListEx);
+  useEffect(() => {
+    let tempListEx: ExerciseList = {};
+    userExercises.forEach((ex: Exercise) => (tempListEx[ex.id] = ex));
+    setExerciseList(tempListEx);
 
-  let tempListRes: ResolutionList = {};
-  testResolutions.forEach((an) => (tempListRes[an.question_id] = an));
-  setResolutionList(tempListRes);
+    let tempListRes: ResolutionList = {};
+    testResolutions.forEach((an) => (tempListRes[an.question_id] = an));
+    setResolutionList(tempListRes);
+  }, [userExercises, testResolutions]);
 
-  function test() {
-    console.log(resolutionList);
-    return <></>;
-  }
-
-  if (exerciseList && resolutionList)
+  if (exerciseList != undefined && resolutionList != undefined)
     return (
       <>
         <div className="h-screen overflow-auto">
@@ -247,31 +248,24 @@ export function Correction() {
               </div>
 
               <div>
-                {/*               {Object.entries(
-                testResolutions[selectedExercise].resolutions
-              ).map(([key, resolution]) => (
-                <Answer key={key} answer={resolution}></Answer>
-              ))} 
-
-                {resolutionList[selectedExercise].resolutions.map(
-                  (resolution) => {
-                    console.log(resolution);
-                    return (
-                      <Answer
-                        key={resolution.id}
-                        id={resolution.id}
-                        email={resolution.email}
-                        name={resolution.name}
-                        answer={resolution.answer}
-                      ></Answer>
-                    );
-                  }
-                )}*/}
-                {test()}
+                {selectedExercise
+                  ? resolutionList[selectedExercise].resolutions.map(
+                      (resolution) => (
+                        <Answer
+                          key={resolution.id}
+                          id={resolution.id}
+                          email={resolution.email}
+                          name={resolution.name}
+                          answer={resolution.answer}
+                        ></Answer>
+                      )
+                    )
+                  : null}
               </div>
             </div>
           </div>
         </div>
       </>
     );
+  else return <></>;
 }

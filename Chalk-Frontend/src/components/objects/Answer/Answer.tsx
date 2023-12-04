@@ -88,16 +88,16 @@ export function Answer({ name, id, email, answer }: AnswerProps) {
 
   return (
     <div
-      className={` ${selectedAnswer ? "max-h-full" : "max-h-[78px]"} ${
+      className={` ${selectedAnswer ? "max-h-full" : "max-h-[60px]"} ${
         answer.type === "multiple-choice"
           ? JSON.stringify(answer.answers) === JSON.stringify(answer.correction)
             ? " bg-green-400"
             : " bg-red-400"
           : ""
-      } transition-[max-height] bg-white text-black duration-300 rounded-lg flex flex-col mb-4`}
+      } transition-[max-height] bg-white text-black duration-1000 rounded-lg mb-4 overflow-hidden`}
     >
       <div
-        className=" items-center text-md font-medium transition-all cursor-pointer p-4"
+        className=" items-center text-md font-medium cursor-pointer p-4"
         onClick={() =>
           selectedAnswer ? setSelectedAnswer(false) : setSelectedAnswer(true)
         }
@@ -105,9 +105,7 @@ export function Answer({ name, id, email, answer }: AnswerProps) {
         {name + " (" + email + ")"}
       </div>
       <div
-        className={`${
-          selectedAnswer ? "" : "scale-y-0"
-        }    mx-4 my-4 rounded-lg ex-1`}
+        className={`${selectedAnswer ? "" : "scale-y-0"} p-4 rounded-lg ex-1`}
       >
         {preview}
       </div>
