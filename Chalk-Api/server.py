@@ -14,7 +14,11 @@ cache_timeout = 600 # 10 min
     "Topics":[str] #opcional
     "Rubric":[{description:str,cotation:float}]
     "Auxiliar":str #opcional (texto associados a pergunta) #opcional
-    "Answers":[{id_user: ??,answer:str}]
+    "Answers":[{id_user: str,answer:str}]
+}
+
+{
+    [{"id_user":str,"Cotation":int}]
 }
 '''
 
@@ -50,7 +54,14 @@ def open_answer():
 '''
 {
     "Text": str
-} Pode se adicionar outro campo para especificar mais a pergunta
+    "Input": str
+} 
+
+{
+    "Answers": [str],
+    "Correct_answer": int, #Indice da resposta correta 
+    "Question": str
+}
 '''
 
 @api.route('/create_mult', methods=['GET'])
@@ -58,31 +69,58 @@ def create_mult():
     req = request.json
 
     h_text = hash(req["Text"])
+    user_input = ""
     questions = cache.get(h_text)
     if questions: questions = json.loads(questions)
 
-    ret = api_ai.send_create_mult(req["Text"],questions)
+    if("Input" in req):
+        user_input = req["Input"]
+        questions = [questions[-1]] if questions else questions
+
+
+    ret = api_ai.send_create_mult(req["Text"],questions,user_input)
 
     aux = {i:ret[i] for i in ret if i != "Correct_answer"}
     if questions:
-        cache.set(h_text,json.dumps(questions.append(aux)),cache_timeout)
+        questions.append(ret)
+        questions = questions[1:] if len(questions) > 5 else questions
+        cache.set(h_text,json.dumps(questions),cache_timeout)
     else:
         cache.set(h_text,json.dumps([aux]),cache_timeout)
 
     return ret
+
+'''
+{
+    "Text": str
+    "Input": str # opcional Expressa o input do utilizador 
+} 
+
+{
+    "Question": str,
+    "Topics": [str]
+}
+'''
 
 @api.route('/create_open', methods=['GET'])
 def create_open():
     req = request.json
 
     h_text = hash(req["Text"])
+    user_input = ""
     questions = cache.get(h_text)
     if questions: questions = json.loads(questions)
 
-    ret = api_ai.send_create_open(req["Text"],questions)
+    if("Input" in req):
+        user_input = req["Input"]
+        questions = [questions[-1]] if questions else questions
+
+    ret = api_ai.send_create_open(req["Text"] ,questions, user_input)
 
     if questions:
-        cache.set(h_text,json.dumps(questions.append(ret)),cache_timeout)
+        questions.append(ret)
+        questions = questions[1:] if len(questions) > 5 else questions
+        cache.set(h_text,json.dumps(questions),cache_timeout)
     else:
         cache.set(h_text,json.dumps([ret]),cache_timeout)
 
@@ -94,6 +132,10 @@ def create_open():
     "Student_id":str
     "Topics":[str]
     "Question":str
+}
+
+{
+    ok
 }
 '''
 def hash_oral(ex_id,student_id):
@@ -109,7 +151,6 @@ def oral():
     question = req["Question"]
 
     val = [api_ai.gen_sys_oral(topics),api_ai.gen_ass_oral(question)]
-    print(val)
 
     cache.set(h_ex,json.dumps(val),cache_timeout)
 
@@ -120,6 +161,10 @@ def oral():
     "Ex_id":str
     "Student_id":str
     "Answer":str 
+}
+
+{
+    "Question":str
 }
 '''
 
@@ -135,7 +180,6 @@ def get_oral():
         answer = req["Answer"]
         answer = api_ai.gen_user_oral(answer)
         prev.append(answer)
-        print(prev)
 
         resp = api_ai.send_oral(prev)
         prev.append({"role":"assistant","content":resp})
@@ -155,6 +199,10 @@ def get_oral():
    "Student_id":str
    "Topics":[str] 
 }
+
+{
+    "Cotation": 10
+}
 '''
 
 @api.route('/eval_oral',methods=['GET'])
@@ -167,7 +215,7 @@ def eval_oral():
     if prev:
         prev = json.loads(prev)
         topics = req["Topics"]
-        resp = api_ai.send_eval_oral(topics,prev)
+        resp = api_ai.send_eval_oral(topics,prev[1:len(prev) - 1])
 
         ret = resp
 

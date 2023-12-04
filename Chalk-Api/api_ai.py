@@ -56,9 +56,9 @@ def send_open_answer(answers,question,answer_critiria,answer_topics = None,answe
 
 	return ret
 
-def send_create_mult(text,questions):
+def send_create_mult(text,questions,user_input = ""):
 	text = gen_sys_create_question(text)
-	questions = gen_user_create_multiple(questions)
+	questions = gen_user_create_multiple(user_input,questions)
 
 	pronpt = [text] + questions
 
@@ -67,11 +67,13 @@ def send_create_mult(text,questions):
 
 	return resp
 
-def send_create_open(text,questions):
+def send_create_open(text,questions,user_input = ""):
 	text = gen_sys_create_question(text)
-	questions = gen_user_create_open(questions)
+	questions = gen_user_create_open(user_input,questions)
 
 	pronpt = [text] + questions
+
+	print(pronpt)
 
 	resp = send_request(pronpt,1,0.5,0.5)
 	print(resp)
@@ -132,7 +134,7 @@ def gen_sys_create_question(text):
 	return {"role":"system",
 	"content":"You will be prompt to generate questions about the following text \"{}\".All questions must be in the text language. ".format(text)}
 
-def gen_user_create_multiple(questions = None):
+def gen_user_create_multiple(user_input,questions = None):
 	ret = []
 
 	if questions:
@@ -143,11 +145,11 @@ def gen_user_create_multiple(questions = None):
 			aux = {"Question":i["Question"],"Answers":i["Answers"]}
 			ret.append({"role":"assistant","content":json.dumps(aux)})
 
-	ret.append({"role":"user","content":'Generate a multiple choice question. The response must be in json, where there is a key "Question", "Answers", that is an array, and "Correct_answer" that is the position in "answers".'})
+	ret.append({"role":"user","content":user_input + '.Generate a multiple choice question. The response must be in json, where there is a key "Question", "Answers", that is an array, and "Correct_answer" that is the position in "answers".'})
 
 	return ret
 
-def gen_user_create_open(questions = None):
+def gen_user_create_open(user_input,questions = None):
 	ret = []
 
 	if questions:
@@ -158,7 +160,7 @@ def gen_user_create_open(questions = None):
 			aux = {"Question":i["Question"],"Topics":topics}
 			ret.append({"role":"assistant","content":json.dumps(aux)})
 
-	ret.append({"role":"user","content":'Generate a open answer question and topics that must be covered in the answer. The response must be in json, where there is a key "Question" and "Topics"..'})
+	ret.append({"role":"user","content":user_input + '.Generate a open answer question and topics that must be covered in the answer. The response must be in json, where there is a key "Question" and "Topics".'})
 
 	return ret
 
@@ -178,7 +180,7 @@ def gen_user_oral(answer):
 	return {"role":"user","content":answer}
 
 def gen_sys_eval_oral(topics):
-	ret = "Consider the following topics:\n{}You will be provided with question and answers referent to the topics presented. You must evaluate the answers from 0 to 10 based on who the answers cover the topics presented.\nThe output must only be in json, with a Key \"Cotation\" that contains the evaluation. "
+	ret = "Consider the following topics:\n{}You will be provided with question and answers referent to the topics presented. You must evaluate the answers from 0 to 10 based on who the answers cover the topics presented.\nThe output must only be in json, with the format {{\"Cotation\": evaluation}}. "
 	aux = ""
 
 	for i in topics:
