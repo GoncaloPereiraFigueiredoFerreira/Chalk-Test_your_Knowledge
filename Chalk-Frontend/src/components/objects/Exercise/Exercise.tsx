@@ -1,93 +1,66 @@
-export enum ExerciseType {
-  MULTIPLE_CHOICE = "multiple-choice",
-  OPEN_ANSWER = "open-answer",
-  TRUE_OR_FALSE = "true-or-false",
-  FILL_IN_THE_BLANK = "fill-in-the-blank",
-  CODE = "code",
-}
+//------------------------------------//
+//                                    //
+//         createNewExercise          //
+//                                    //
+//------------------------------------//
 
-export enum ExerciseJustificationKind {
-  JUSTIFY_ALL = "JUSTIFY_ALL",
-  JUSTIFY_FALSE = "JUSTIFY_FALSE",
-  JUSTIFY_TRUE = "JUSTIFY_TRUE",
-  NO_JUSTIFICATION = "NO_JUSTIFICATION",
-}
+import { ImgPos } from "./Header/ExHeader";
 
 export function createNewExercise(newExercisetype: ExerciseType) {
   // colocar aqui as chamadas para criação dos exercicios
+  let newExercise: Exercise = {
+    id: "-1",
+    title: "",
+    cotation: 0,
+    visibility: "private",
+    specialistId: "This User",
+    type: newExercisetype,
+    statement: {
+      text: "",
+    },
+  };
+
   switch (newExercisetype) {
     case ExerciseType.MULTIPLE_CHOICE:
       return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //exerciseState.exercisename,
-        statement: {
-          text: "",
-        },
-        problem: {
-          statements: [""],
-        },
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
       };
     case ExerciseType.OPEN_ANSWER:
       return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.OPEN_ANSWER,
-        author: "utilizador atual", //exerciseState.exercisename,
-        statement: {
-          text: "",
-        },
+        ...newExercise,
       };
     case ExerciseType.TRUE_OR_FALSE:
       return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.TRUE_OR_FALSE,
-        author: "utilizador atual", //exerciseState.exercisename,
-        statement: {
-          text: "",
-        },
-        problem: {
-          justify: ExerciseJustificationKind.NO_JUSTIFICATION,
-          statements: [""],
-        },
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
       };
     case ExerciseType.FILL_IN_THE_BLANK:
       return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //exerciseState.exercisename,
-        statement: {
-          text: "",
-        },
-        problem: {
-          statements: [""],
-        },
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
       };
     case ExerciseType.CODE:
       return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //exerciseState.exercisename,
-        statement: {
-          text: "",
-        },
-        problem: {
-          statements: [""],
-        },
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
       };
   }
 }
 
-enum ResolutionStatus {}
+//------------------------------------//
+//                                    //
+//            Resolution              //
+//                                    //
+//------------------------------------//
+
+enum ResolutionStatus {
+  PENDING = "pending",
+}
 
 export interface Resolution {
   id: string;
@@ -106,8 +79,27 @@ export interface Resolution {
       };
 }
 
-interface exercise {
-  asd: string;
+//------------------------------------//
+//                                    //
+//             Exercise               //
+//                                    //
+//------------------------------------//
+
+export enum ExerciseType {
+  MULTIPLE_CHOICE = "multiple-choice",
+  OPEN_ANSWER = "open-answer",
+  TRUE_OR_FALSE = "true-or-false",
+  FILL_IN_THE_BLANK = "fill-in-the-blank",
+  CODE = "code",
+}
+
+export enum ExerciseJustificationKind {
+  JUSTIFY_ALL = "X1",
+  JUSTIFY_FALSE = "X2",
+  JUSTIFY_UNMARKED = "X2",
+  JUSTIFY_TRUE = "X3",
+  JUSTIFY_MARKED = "X3",
+  NO_JUSTIFICATION = "X0",
 }
 
 export interface Exercise {
@@ -115,10 +107,11 @@ export interface Exercise {
   title: string;
   cotation?: number;
   specialistId: string;
+  visibility: string;
   type: ExerciseType;
   statement: {
-    imagePath: string;
-    imagePosition: string;
+    imagePath?: string;
+    imagePosition?: ImgPos;
     text: string;
   };
   justifyKind?: ExerciseJustificationKind;
@@ -128,44 +121,14 @@ export interface Exercise {
   resolution?: Resolution;
 }
 
+//------------------------------------//
+//                                    //
+//          ExerciseGroup             //
+//                                    //
+//------------------------------------//
+
 export interface ExerciseGroup {
   exercises: Exercise[];
   groupInstructions: string;
   groupCotations: number;
-}
-
-// Type of actions allowed on the state
-export enum ExerciseActionKind {
-  JUSTIFY = "JUSTIFY",
-  SELECT_OPTION = "SELECT_OPTION",
-  SET_TF = "SET_TF",
-}
-
-// ExerciseAction Definition
-export interface ExerciseAction {
-  type: ExerciseActionKind;
-  payload: {
-    optionID?: string;
-    justify?: string;
-    tfValue?: boolean;
-  };
-}
-
-// Takes the current ExerciseState and an action to update the ExerciseState
-function ExerciseSolveReducer(
-  exerciseState: Exercise,
-  exerciseAction: ExerciseAction
-) {
-  switch (exerciseAction.type) {
-    case ExerciseActionKind.JUSTIFY:
-      if (exerciseAction.payload.optionID && exerciseAction.payload.justify) {
-        let newExercise = { ...exerciseState };
-        exerciseAction.payload.exercises.forEach((element) => {
-          newExercises[element.id] = element;
-        });
-        return { ...exerciseState, listExercises: newExercises };
-      } else throw new Error("Invalid data provided in exerciseAction.payload");
-    default:
-      throw new Error("Unknown action");
-  }
 }

@@ -7,8 +7,8 @@ export enum ImgPos {
 
 export interface ExerciseHeader {
   text: string;
-  imagePath: string;
-  imagePosition: ImgPos;
+  imagePath?: string;
+  imagePosition?: ImgPos;
 }
 
 interface HeaderProps {

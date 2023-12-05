@@ -34,6 +34,7 @@ export function EditHeader({
             id="header"
             className="header-textarea"
             placeholder="Escreva aqui o enunciado..."
+            onChange={() => {}}
           ></textarea>
         </div>
         <div className="mt-2 mx-3 font-medium">

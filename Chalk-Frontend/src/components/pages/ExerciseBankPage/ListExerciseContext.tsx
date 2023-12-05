@@ -1,8 +1,8 @@
 import { useContext, createContext, useReducer } from "react";
 import {
   Exercise,
-  ExerciseJustificationKind,
   ExerciseType,
+  createNewExercise,
 } from "../../objects/Exercise/Exercise";
 
 // Type of actions allowed on the state
@@ -12,7 +12,6 @@ export enum ListExerciseActionKind {
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE",
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   SET_SELECTED_EXERCISE = "SET_SELECTED_EXERCISE",
-  SET_SELECTED_GROUP = "SET_SELECTED_GROUP",
 }
 
 // Takes the current ListExerciseState and an action to update the ListExerciseState
@@ -32,6 +31,27 @@ function ListExerciseStateReducer(
         } else
           throw new Error(
             "No data provided in listExerciseAction.payload.exercises"
+          );
+      else throw new Error("No data provided in listExerciseAction.payload");
+
+    case ListExerciseActionKind.ADD_NEW_EXERCISE:
+      if (listExerciseAction.payload)
+        if (listExerciseAction.payload.newExercise) {
+          let newExercise: Exercise = createNewExercise(
+            listExerciseAction.payload.newExercise
+          );
+          let newListExercises = {
+            ...listExerciseState.listExercises,
+            "-1": newExercise,
+          };
+          return {
+            ...listExerciseState,
+            listExercises: newListExercises,
+            selectedExercise: "-1",
+          };
+        } else
+          throw new Error(
+            "No data provided in listExerciseAction.payload.selectedExercise"
           );
       else throw new Error("No data provided in listExerciseAction.payload");
 
@@ -77,31 +97,7 @@ function ListExerciseStateReducer(
 
     case ListExerciseActionKind.SET_SELECTED_EXERCISE:
       if (listExerciseAction.payload)
-        if (listExerciseAction.payload.newExercise) {
-          let newExercise: Exercise = {
-            id: "-1",
-            name: "Novo exercício",
-            visibility: "public",
-            type: listExerciseAction.payload.newExercise,
-            author: "This listExercise",
-            statement: {
-              text: "Escreva aqui o enunciado...",
-            },
-            problem: {
-              justify: ExerciseJustificationKind.NO_JUSTIFICATION,
-              statements: [],
-            },
-          };
-          let newListExercises = {
-            ...listExerciseState.listExercises,
-            "-1": newExercise,
-          };
-          return {
-            ...listExerciseState,
-            listExercises: newListExercises,
-            selectedExercise: "-1",
-          };
-        } else if (listExerciseAction.payload.selectedExercise) {
+        if (listExerciseAction.payload.selectedExercise) {
           let exerciseID = listExerciseAction.payload.selectedExercise;
           if (listExerciseState.listExercises[exerciseID])
             return { ...listExerciseState, selectedExercise: exerciseID };
@@ -114,18 +110,6 @@ function ListExerciseStateReducer(
           );
       else throw new Error("No data provided in listExerciseAction.payload");
 
-    case ListExerciseActionKind.SET_SELECTED_GROUP:
-      if (listExerciseAction.payload)
-        if (listExerciseAction.payload.selectedGroup) {
-          return {
-            ...listExerciseState,
-            selectedGroup: listExerciseAction.payload.selectedGroup,
-          };
-        } else
-          throw new Error(
-            "No data provided in listExerciseAction.payload.selectedGroup"
-          );
-      else throw new Error("No data provided in listExerciseAction.payload");
     default:
       throw new Error("Unknown action");
   }
@@ -139,7 +123,6 @@ export interface ListExerciseAction {
     exercise?: Exercise;
     selectedExercise?: string;
     newExercise?: ExerciseType;
-    selectedGroup?: string;
   };
 }
 
@@ -147,7 +130,6 @@ export interface ListExerciseAction {
 export interface ListExerciseState {
   listExercises: { [key: string]: Exercise };
   selectedExercise: string;
-  selectedGroup: string;
 }
 
 // ListExerciseContext definition
@@ -172,7 +154,6 @@ export function ListExerciseProvider({
   const inicialState = {
     listExercises: listExercises ? listExercises : {},
     selectedExercise: "",
-    selectedGroup: "",
   };
 
   const [listExerciseState, dispatch] = useReducer(
