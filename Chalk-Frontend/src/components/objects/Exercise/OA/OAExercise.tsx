@@ -5,27 +5,19 @@ import {
   ListIcon,
 } from "../../SVGImages/SVGImages";
 import { ExerciseHeader } from "../Header/ExHeader";
-import { ExerciseJustificationKind } from "../../../../UserInterface";
+import { Exercise } from "../Exercise";
 
 interface ExerciseProps {
-  statement: any;
-  problem?: any;
-  name: string;
   position: string;
   contexto: string;
-  justify?: ExerciseJustificationKind;
+  exercise: Exercise;
 }
 
-export function OAExercise({
-  statement,
-  name,
-  position,
-  contexto,
-}: ExerciseProps) {
+export function OAExercise({ position, contexto, exercise }: ExerciseProps) {
   let exerciseDisplay = <></>;
   switch (contexto) {
     case "solve":
-      exerciseDisplay = <OASolve statement={statement}></OASolve>;
+      exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
       break;
 
     case "preview":
@@ -42,7 +34,7 @@ export function OAExercise({
   }
   return (
     <div className="">
-      <div className="m-5 text-title-2">{position + ") " + name}</div>
+      <div className="m-5 text-title-2">{position + ") " + exercise.title}</div>
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </div>
   );

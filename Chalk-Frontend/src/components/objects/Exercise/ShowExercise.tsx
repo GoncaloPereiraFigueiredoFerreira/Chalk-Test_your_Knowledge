@@ -67,9 +67,8 @@ export function ShowExercise({
         );
         setPreview(
           <OAExercise
-            statement={exercise.statement}
+            exercise={exercise}
             contexto="solve"
-            name={exercise.name}
             position={position}
           ></OAExercise>
         );
@@ -85,7 +84,7 @@ export function ShowExercise({
           <TFExercise
             exercise={exercise}
             contexto="solve"
-            position={position} // none, false-only or all
+            position={position}
           ></TFExercise>
         );
         break;
@@ -185,7 +184,7 @@ export function ShowExercise({
             }
           >
             <label className="flex min-w-max font-medium text-xl">
-              {exercise.name}
+              {exercise.title}
             </label>
             <div
               className={`${

@@ -1,3 +1,90 @@
+//------------------------------------//
+//                                    //
+//         createNewExercise          //
+//                                    //
+//------------------------------------//
+
+import { ImgPos } from "./Header/ExHeader";
+
+export function createNewExercise(newExercisetype: ExerciseType) {
+  // colocar aqui as chamadas para criação dos exercicios
+  let newExercise: Exercise = {
+    id: "-1",
+    title: "",
+    cotation: 0,
+    visibility: "private",
+    specialistId: "This User",
+    type: newExercisetype,
+    statement: {
+      text: "",
+    },
+  };
+
+  switch (newExercisetype) {
+    case ExerciseType.MULTIPLE_CHOICE:
+      return {
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
+      };
+    case ExerciseType.OPEN_ANSWER:
+      return {
+        ...newExercise,
+      };
+    case ExerciseType.TRUE_OR_FALSE:
+      return {
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
+      };
+    case ExerciseType.FILL_IN_THE_BLANK:
+      return {
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
+      };
+    case ExerciseType.CODE:
+      return {
+        ...newExercise,
+        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+        items: {},
+      };
+  }
+}
+
+//------------------------------------//
+//                                    //
+//            Resolution              //
+//                                    //
+//------------------------------------//
+
+enum ResolutionStatus {
+  PENDING = "pending",
+}
+
+export interface Resolution {
+  id: string;
+  cotation: number;
+  studentID: string;
+  status: ResolutionStatus;
+  data:
+    | string
+    | {
+        [id: string]: {
+          text: string;
+          justification: string;
+          type: string;
+          value: boolean;
+        };
+      };
+}
+
+//------------------------------------//
+//                                    //
+//             Exercise               //
+//                                    //
+//------------------------------------//
+
 export enum ExerciseType {
   MULTIPLE_CHOICE = "multiple-choice",
   OPEN_ANSWER = "open-answer",
@@ -7,117 +94,41 @@ export enum ExerciseType {
 }
 
 export enum ExerciseJustificationKind {
-  JUSTIFY_ALL = "JUSTIFY_ALL",
-  JUSTIFY_FALSE = "JUSTIFY_FALSE",
-  JUSTIFY_TRUE = "JUSTIFY_TRUE",
-  NO_JUSTIFICATION = "NO_JUSTIFICATION",
-}
-
-export function createNewExercise(newExercisetype: ExerciseType) {
-  // colocar aqui as chamadas para criação dos exercicios
-  switch (newExercisetype) {
-    case ExerciseType.MULTIPLE_CHOICE:
-      return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //userState.username,
-        statement: {
-          text: "",
-        },
-        problem: {
-          statements: [""],
-        },
-      };
-    case ExerciseType.OPEN_ANSWER:
-      return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.OPEN_ANSWER,
-        author: "utilizador atual", //userState.username,
-        statement: {
-          text: "",
-        },
-      };
-    case ExerciseType.TRUE_OR_FALSE:
-      return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.TRUE_OR_FALSE,
-        author: "utilizador atual", //userState.username,
-        statement: {
-          text: "",
-        },
-        problem: {
-          justify: ExerciseJustificationKind.NO_JUSTIFICATION,
-          statements: [""],
-        },
-      };
-    case ExerciseType.FILL_IN_THE_BLANK:
-      return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //userState.username,
-        statement: {
-          text: "",
-        },
-        problem: {
-          statements: [""],
-        },
-      };
-    case ExerciseType.CODE:
-      return {
-        id: "-1",
-        name: "",
-        visibility: "public",
-        type: ExerciseType.MULTIPLE_CHOICE,
-        author: "utilizador atual", //userState.username,
-        statement: {
-          text: "",
-        },
-        problem: {
-          statements: [""],
-        },
-      };
-  }
-}
-
-export interface TFStatement {
-  phrase: string;
-  tfvalue: string;
-  justification: string;
+  JUSTIFY_ALL = "X1",
+  JUSTIFY_FALSE = "X2",
+  JUSTIFY_UNMARKED = "X2",
+  JUSTIFY_TRUE = "X3",
+  JUSTIFY_MARKED = "X3",
+  NO_JUSTIFICATION = "X0",
 }
 
 export interface Exercise {
   id: string;
-  name: string;
+  title: string;
+  cotation?: number;
+  specialistId: string;
   visibility: string;
   type: ExerciseType;
-  author: string;
   statement: {
+    imagePath?: string;
+    imagePosition?: ImgPos;
     text: string;
-    img?: {
-      url: string;
-      pos: string;
-    };
   };
-  problem?: {
-    justify?: ExerciseJustificationKind;
-    statements: string[];
-  };
-  solution?: {
-    multiple_choice?: string;
-    open_answer?: string;
-    true_or_false?: TFStatement[];
-  };
-  resolution?: {
-    multiple_choice?: string;
-    open_answer?: string;
-    true_or_false?: TFStatement[];
-  };
+  justifyKind?: ExerciseJustificationKind;
+  items?: { [id: string]: { text: string; type: string } };
+
+  solution?: Resolution;
+  resolution?: Resolution;
+}
+
+//------------------------------------//
+//                                    //
+//          ExerciseGroup             //
+//                                    //
+//------------------------------------//
+
+export interface ExerciseGroup {
+  exercises: Exercise[];
+  groupInstructions: string;
+  groupCotations: number;
 }
