@@ -15,12 +15,12 @@ import {
 } from "../SVGImages/SVGImages";
 // import { FillBlankExercise } from "./FillBlank/FillBlankExercise";
 // import { CodeExercise } from "./Code/CodeExercise";
-import { MCExercise } from "./MC/MCExercise";
-import { OAExercise } from "./OA/OAExercise";
-import { TFExercise } from "./TF/TFExercise";
+import { MCExercise } from "../Exercise/MC/MCExercise";
+import { OAExercise } from "../Exercise/OA/OAExercise";
+import { TFExercise } from "../Exercise/TF/TFExercise";
 import { useEffect, useState } from "react";
 import "./ShowExercise.css";
-import { Exercise } from "./Exercise";
+import { Exercise } from "../Exercise/Exercise";
 
 interface ExerciseProps {
   position: string;
@@ -68,7 +68,7 @@ export function ShowExercise({
         setPreview(
           <OAExercise
             exercise={exercise}
-            contexto="solve"
+            contexto="preview"
             position={position}
           ></OAExercise>
         );
