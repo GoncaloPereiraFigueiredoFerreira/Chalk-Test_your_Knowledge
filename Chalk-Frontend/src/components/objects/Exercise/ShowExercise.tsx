@@ -53,7 +53,7 @@ export function ShowExercise({
         setPreview(
           <MCExercise
             exercise={exercise}
-            contexto="solve"
+            contexto="preview"
             position={position}
           ></MCExercise>
         );
@@ -83,7 +83,7 @@ export function ShowExercise({
         setPreview(
           <TFExercise
             exercise={exercise}
-            contexto="solve"
+            contexto="preview"
             position={position}
           ></TFExercise>
         );

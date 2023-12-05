@@ -1,4 +1,5 @@
 import { Exercise } from "../Exercise";
+import { TFPreview } from "./TFPreview";
 import { TFSolve } from "./TFSolve";
 
 interface ExerciseProps {
@@ -18,13 +19,21 @@ export function TFExercise({ position, contexto, exercise }: ExerciseProps) {
             position={position}
             items={exercise.items}
             statement={exercise.statement}
-            justify={exercise.justifyKind}
+            justifyKind={exercise.justifyKind}
           />
         );
         break;
 
       case "preview":
-        exerciseDisplay = <></>;
+        exerciseDisplay = (
+          <TFPreview
+            id={exercise.id}
+            position={position}
+            items={exercise.items}
+            statement={exercise.statement}
+            justifyKind={exercise.justifyKind}
+          />
+        );
         break;
 
       case "correct":
