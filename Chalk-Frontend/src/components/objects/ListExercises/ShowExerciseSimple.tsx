@@ -7,11 +7,13 @@ import {
 } from "../SVGImages/SVGImages";
 // import { FillBlankExercise } from "./FillBlank/FillBlankExercise";
 // import { CodeExercise } from "./Code/CodeExercise";
-import { MCExercise } from "./MC/MCExercise";
-import { OAExercise } from "./OA/OAExercise";
-import { TFExercise } from "./TF/TFExercise";
 import { useEffect, useState } from "react";
-import { Exercise } from "./Exercise";
+import {
+  Exercise,
+  ExerciseComponent,
+  ExerciseComponentProps,
+  ExerciseContext,
+} from "../Exercise/Exercise";
 import "./ShowExercise.css";
 
 interface ExerciseSimpleProps {
@@ -29,6 +31,11 @@ export function ShowExerciseSimple({
 }: ExerciseSimpleProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
+  const exerciseComponent: ExerciseComponentProps = {
+    exercise: exercise,
+    position: position,
+    context: { context: ExerciseContext.PREVIEW },
+  };
 
   useEffect(() => {
     switch (exercise.type) {
@@ -40,16 +47,7 @@ export function ShowExerciseSimple({
           </label>
         );
 
-        setPreview(
-          <MCExercise
-            statement={exercise.statement}
-            problem={exercise.problem}
-            contexto="preview"
-            name={exercise.name}
-            position={position}
-            justify={exercise.problem!.justify!} // none, false-only or all
-          ></MCExercise>
-        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
       case "open-answer":
         setTypeLabel(
@@ -58,14 +56,7 @@ export function ShowExerciseSimple({
             Resposta aberta
           </label>
         );
-        setPreview(
-          <OAExercise
-            statement={exercise.statement}
-            contexto="preview"
-            name={exercise.name}
-            position={position}
-          ></OAExercise>
-        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
       case "true-or-false":
         setTypeLabel(
@@ -74,17 +65,7 @@ export function ShowExerciseSimple({
             Verdadeiro ou falso
           </label>
         );
-        setPreview(
-          <TFExercise
-            key={exercise.id}
-            statement={exercise.statement}
-            problem={exercise.problem}
-            contexto="solve"
-            name={exercise.name}
-            position={position}
-            justify={exercise.problem!.justify!} // none, false-only or all
-          ></TFExercise>
-        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
       case "fill-in-the-blank":
         setTypeLabel(
@@ -148,7 +129,7 @@ export function ShowExerciseSimple({
                 exercise.id === selectedExercise ? " text-black" : " "
               } flex min-w-max font-medium text-xl`}
             >
-              {exercise.name}
+              {exercise.title}
             </label>
             <div
               className={`${
