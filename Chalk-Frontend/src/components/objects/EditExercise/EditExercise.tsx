@@ -5,6 +5,7 @@ import { EditHeader } from "../Exercise/Header/EditHeader";
 import { TFEdit } from "../Exercise/TF/TFEdit";
 import { useListExerciseContext } from "../../pages/ExerciseBankPage/ListExerciseContext";
 import { ExerciseJustificationKind, ExerciseType } from "../Exercise/Exercise";
+import { PreviewExercise } from "../Exercise/PreviewExercise";
 
 interface EditExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
@@ -32,12 +33,10 @@ export function EditExercise({ setEditMenuIsOpen }: EditExerciseProps) {
       case ExerciseType.OPEN_ANSWER:
         return <></>;
       case ExerciseType.TRUE_OR_FALSE:
-        return (
-          <TFEdit
-            justify={exercise.problem!.justify!}
-            statements={exercise.problem!.statements}
-          />
-        );
+        return <></>;
+      // return (
+      //   <TFEdit justifyKind={exercise.justifyKind} items={exercise.items} />
+      // );
       case ExerciseType.FILL_IN_THE_BLANK:
         return <></>;
       case ExerciseType.CODE:
@@ -57,7 +56,10 @@ export function EditExercise({ setEditMenuIsOpen }: EditExerciseProps) {
             Guardar e fechar
           </button>
         </div>
+        {/* <PreviewExercise position="1" exercise={}></PreviewExercise> */}
         <EditHeader
+          setStatement={setStatement}
+          statement={statement}
           setAddImg={setAddImg}
           addImg={addImg}
           setPostionImg={setPostionImg}

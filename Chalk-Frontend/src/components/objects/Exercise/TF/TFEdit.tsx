@@ -1,5 +1,5 @@
 import { useReducer, useState } from "react";
-import { ExerciseJustificationKind, TFStatement } from "../Exercise";
+import { ExerciseJustificationKind } from "../Exercise";
 
 enum TFEditActionKind {
   JUSTIFY = "JUSTIFY",

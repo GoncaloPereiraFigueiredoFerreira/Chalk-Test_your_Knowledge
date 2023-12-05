@@ -22,7 +22,7 @@ import {
   ExerciseComponent,
   ExerciseComponentProps,
   ExerciseContext,
-} from "./Exercise";
+} from "../Exercise/Exercise";
 
 interface ExerciseProps {
   position: string;

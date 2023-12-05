@@ -61,18 +61,18 @@ function ExerciseTFReducer(tfState: TFState, tfAction: TFAction) {
 export interface TFSolveProps {
   id: string;
   position: string;
+  statement: {
+    imagePath?: string;
+    imagePosition?: ImgPos;
+    text: string;
+  };
+  justifyKind: ExerciseJustificationKind;
   items: {
     [id: string]: {
       text: string;
       type: string;
     };
   };
-  statement: {
-    imagePath?: string;
-    imagePosition?: ImgPos;
-    text: string;
-  };
-  justify: ExerciseJustificationKind;
 }
 
 export function TFSolve({
@@ -80,7 +80,7 @@ export function TFSolve({
   position,
   items,
   statement,
-  justify,
+  justifyKind,
 }: TFSolveProps) {
   let initState: TFState = Object.fromEntries(
     Object.entries(items).map(([index, value]) => [
@@ -108,7 +108,7 @@ export function TFSolve({
             key={index}
             index={index}
             name={`radio-button-${index}-${id}-${position}`}
-            justify={justify}
+            justifyKind={justifyKind}
             state={state}
             dispatch={dispatch}
           />
@@ -157,7 +157,7 @@ function TFShowStatement(props: any) {
         index={props.index}
         state={props.state}
         dispatch={props.dispatch}
-        justify={props.justify}
+        justifyKind={props.justifyKind}
       ></TFJustify>
     </>
   );
@@ -165,12 +165,12 @@ function TFShowStatement(props: any) {
 
 function TFJustify(props: any) {
   let justify =
-    props.justify === ExerciseJustificationKind.JUSTIFY_ALL ||
-    (props.justify === ExerciseJustificationKind.JUSTIFY_FALSE &&
+    props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&
       !props.state[props.index].value) ||
-    (props.justify === ExerciseJustificationKind.JUSTIFY_TRUE &&
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_TRUE &&
       props.state[props.index].value);
-  return props.justify === ExerciseJustificationKind.NO_JUSTIFICATION ? (
+  return props.justifyKind === ExerciseJustificationKind.NO_JUSTIFICATION ? (
     <div className="col-span-3"></div>
   ) : (
     <div

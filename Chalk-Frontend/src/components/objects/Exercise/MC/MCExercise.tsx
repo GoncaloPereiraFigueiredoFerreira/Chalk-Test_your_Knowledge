@@ -1,4 +1,5 @@
 import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import { MCPreview } from "./MCPreview";
 import { MCSolve } from "./MCSolve";
 
 export function MCExercise({
@@ -16,20 +17,20 @@ export function MCExercise({
             position={position}
             items={exercise.items}
             statement={exercise.statement}
-            justify={exercise.justifyKind}
+            justifyKind={exercise.justifyKind}
           ></MCSolve>
         );
         break;
 
       case ExerciseContext.PREVIEW:
         exerciseDisplay = (
-          <MCSolve
+          <MCPreview
             id={exercise.id}
             position={position}
             items={exercise.items}
             statement={exercise.statement}
-            justify={exercise.justifyKind}
-          ></MCSolve>
+            justifyKind={exercise.justifyKind}
+          ></MCPreview>
         );
         break;
 

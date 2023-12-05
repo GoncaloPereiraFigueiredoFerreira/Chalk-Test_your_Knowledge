@@ -38,7 +38,7 @@ export function MCSolve({
   items,
   position,
   statement,
-  justify,
+  justifyKind,
 }: TFSolveProps) {
   let initState: TFState = Object.fromEntries(
     Object.entries(items).map(([index, value]) => [
@@ -82,7 +82,7 @@ export function MCSolve({
               index={index}
               state={state}
               dispatch={dispatch}
-              justify={justify}
+              justifyKind={justifyKind}
             ></MCJustify>
           </div>
         ))}
@@ -93,13 +93,13 @@ export function MCSolve({
 
 function MCJustify(props: any) {
   let justify =
-    props.justify === ExerciseJustificationKind.JUSTIFY_ALL ||
-    (props.justify === ExerciseJustificationKind.JUSTIFY_UNMARKED &&
+    props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_UNMARKED &&
       !props.state[props.index].value) ||
-    (props.justify === ExerciseJustificationKind.JUSTIFY_MARKED &&
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_MARKED &&
       props.state[props.index].value);
 
-  return props.justify === ExerciseJustificationKind.NO_JUSTIFICATION ? (
+  return props.justifyKind === ExerciseJustificationKind.NO_JUSTIFICATION ? (
     <div className="col-span-3"></div>
   ) : (
     <div
