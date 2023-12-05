@@ -20,7 +20,7 @@ router.post("/register", (req, res, next) => {
     new User({
       username: req.body.email,
       name: req.body.name,
-      role: "user",
+      role: req.body.role,
       active: true,
       date_created: data,
       last_access: data,
@@ -39,7 +39,7 @@ router.post("/register", (req, res, next) => {
       } else {
         var token = authenticate.getToken({
           username: req.body.email,
-          role: "user",
+          role: req.body.role,
           name: req.body.name,
         });
         res
@@ -50,7 +50,7 @@ router.post("/register", (req, res, next) => {
             sucess: true,
             user: {
               username: req.body.email,
-              role: "user",
+              role: req.body.role,
               name: req.body.name,
             },
           })
@@ -68,7 +68,7 @@ router.post(
       // Create a token
       var token = authenticate.getToken({
         username: req.user.username,
-        role: "user",
+        role: req.user.role,
         name: req.user.name,
       });
       var date = new Date().toISOString().substring(0, 16);
@@ -84,7 +84,7 @@ router.post(
             success: true,
             user: {
               username: req.user.username,
-              role: "user",
+              role: req.user.role,
               name: req.user.name,
             },
           })
@@ -113,7 +113,7 @@ router.post("/google", (req, res, next) => {
             new User({
               username: gres2.data.email,
               name: gres2.data.name,
-              role: "user",
+              role: req.body.role,
               active: true,
               date_created: data,
               last_access: data,
@@ -125,7 +125,7 @@ router.post("/google", (req, res, next) => {
 
         var token = authenticate.getToken({
           username: gres2.data.email,
-          role: "user",
+          role: req.body.role,
           name: gres2.data.name,
         });
         res
@@ -136,7 +136,7 @@ router.post("/google", (req, res, next) => {
             sucess: true,
             user: {
               username: gres2.data.email,
-              role: "user",
+              role: req.body.role,
               name: gres2.data.name,
             },
           })

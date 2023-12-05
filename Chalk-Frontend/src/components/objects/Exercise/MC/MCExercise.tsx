@@ -1,37 +1,47 @@
-import { Exercise } from "../Exercise";
+import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import { MCPreview } from "./MCPreview";
 import { MCSolve } from "./MCSolve";
 
-interface ExerciseProps {
-  position: string;
-  contexto: string;
-  exercise: Exercise;
-}
-
-export function MCExercise({ exercise, position, contexto }: ExerciseProps) {
+export function MCExercise({
+  exercise,
+  position,
+  context,
+}: ExerciseComponentProps) {
   let exerciseDisplay = <></>;
   if (exercise.items && exercise.justifyKind)
-    switch (contexto) {
-      case "solve":
+    switch (context.context) {
+      case ExerciseContext.SOLVE:
         exerciseDisplay = (
           <MCSolve
             id={exercise.id}
             position={position}
             items={exercise.items}
             statement={exercise.statement}
-            justify={exercise.justifyKind}
+            justifyKind={exercise.justifyKind}
           ></MCSolve>
         );
         break;
 
-      case "preview":
+      case ExerciseContext.PREVIEW:
+        exerciseDisplay = (
+          <MCPreview
+            id={exercise.id}
+            position={position}
+            items={exercise.items}
+            statement={exercise.statement}
+            justifyKind={exercise.justifyKind}
+          ></MCPreview>
+        );
+        break;
+
+      case ExerciseContext.EDIT:
         exerciseDisplay = <></>;
         break;
 
-      case "correct":
+      case ExerciseContext.GRADING:
         exerciseDisplay = <></>;
         break;
-
-      case "psolution":
+      case ExerciseContext.REVIEW:
         exerciseDisplay = <></>;
         break;
     }

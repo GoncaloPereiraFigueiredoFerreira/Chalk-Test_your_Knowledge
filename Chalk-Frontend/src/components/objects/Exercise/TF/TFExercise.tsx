@@ -1,42 +1,48 @@
-import { Exercise } from "../Exercise";
+import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import { TFPreview } from "./TFPreview";
 import { TFSolve } from "./TFSolve";
 
-interface ExerciseProps {
-  position: string;
-  contexto: string;
-  exercise: Exercise;
-}
-
-export function TFExercise({ position, contexto, exercise }: ExerciseProps) {
+export function TFExercise({
+  position,
+  context,
+  exercise,
+}: ExerciseComponentProps) {
   let exerciseDisplay = <></>;
   if (exercise.items && exercise.justifyKind)
-    switch (contexto) {
-      case "solve":
+    switch (context.context) {
+      case ExerciseContext.SOLVE:
         exerciseDisplay = (
           <TFSolve
             id={exercise.id}
             position={position}
             items={exercise.items}
             statement={exercise.statement}
-            justify={exercise.justifyKind}
+            justifyKind={exercise.justifyKind}
           />
         );
         break;
 
-      case "preview":
-        /*         <TFPreview
-          id={exercise.id}
-          position={position}
-          problem={exercise.problem}
-          statement={exercise.statement}
-        ></TFPreview>; */ <></>;
+      case ExerciseContext.PREVIEW:
+        exerciseDisplay = (
+          <TFPreview
+            id={exercise.id}
+            position={position}
+            items={exercise.items}
+            statement={exercise.statement}
+            justifyKind={exercise.justifyKind}
+          />
+        );
         break;
 
-      case "correct":
+      case ExerciseContext.EDIT:
         exerciseDisplay = <></>;
         break;
 
-      case "psolution":
+      case ExerciseContext.GRADING:
+        exerciseDisplay = <></>;
+        break;
+
+      case ExerciseContext.REVIEW:
         exerciseDisplay = <></>;
         break;
     }

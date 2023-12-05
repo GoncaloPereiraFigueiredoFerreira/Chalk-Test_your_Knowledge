@@ -14,6 +14,7 @@ import { Subscription } from "./components/pages/Subscription/Subscription";
 import { Correction } from "./components/pages/Correction/Correction";
 //import { CreateTest } from "./components/pages/CreateTest/CreateTest";
 import { SearchList } from "./components/pages/SearchList/SearchList";
+import { SolveTest } from "./components/pages/SolveTest/SolveTest";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -34,8 +35,9 @@ function App() {
           <Route path="search" element={<SearchList />} />
           <Route path="exercise-bank" element={<ExerciseBankPage />} />
           {/*<Route path="create-test" element={<CreateTest />} />*/}
-          <Route path="tests" element={<TestPage />}>
-            <Route index path="" />
+          <Route path="tests">
+            <Route index path="" element={<TestPage />} />
+            <Route path="solve" element={<SolveTest />} />
             <Route path="group/:id" />
           </Route>
           <Route path="profile" element={<Settings />} />

@@ -2,6 +2,8 @@ import { ImgPos } from "./ExHeader";
 import { Dropdown } from "../../../interactiveElements/Dropdown";
 
 interface EditHeaderProps {
+  setStatement: (value: string) => void;
+  statement: string;
   setAddImg: (value: boolean) => void;
   addImg: boolean;
   setPostionImg: (value: ImgPos) => void;
@@ -11,6 +13,8 @@ interface EditHeaderProps {
 }
 
 export function EditHeader({
+  setStatement,
+  statement,
   setAddImg,
   addImg,
   setPostionImg,
@@ -18,8 +22,6 @@ export function EditHeader({
   setImg,
   img,
 }: EditHeaderProps) {
-  // const { userState, dispatch } = useUserContext();
-
   return (
     <>
       <div className="mb-9">
@@ -34,7 +36,8 @@ export function EditHeader({
             id="header"
             className="header-textarea"
             placeholder="Escreva aqui o enunciado..."
-            onChange={() => {}}
+            value={statement}
+            onChange={(e) => setStatement(e.target.value)}
           ></textarea>
         </div>
         <div className="mt-2 mx-3 font-medium">
@@ -42,9 +45,7 @@ export function EditHeader({
             id="putImg"
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
-            onChange={() => {
-              setAddImg(!addImg);
-            }}
+            onChange={() => setAddImg(!addImg)}
             checked={addImg}
           ></input>
           <label

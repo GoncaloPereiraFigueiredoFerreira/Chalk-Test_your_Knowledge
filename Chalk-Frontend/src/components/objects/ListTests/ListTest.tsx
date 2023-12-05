@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Badge, Dropdown, Pagination } from "flowbite-react";
 import { GridIcon, ListIcon } from "../SVGImages/SVGImages";
+import { Link } from "react-router-dom";
 
 const exampleData = [
   {
@@ -60,18 +61,18 @@ function ShowTestList(test: Test) {
             })}
           </div>
           <div className="flex space-x-2">
-            <a
-              href="#"
+            <Link
+              to="#"
               className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Edit
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="solve" // /solve/id
               className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Solve
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -109,18 +110,18 @@ function ShowTestGrid(test: Test) {
           })}
         </div>
         <div className="flex w-full justify-between">
-          <a
-            href="#"
+          <Link
+            to="#"
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Edit
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="solve"
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           >
             Solve
-          </a>
+          </Link>
         </div>
       </div>
     </div>

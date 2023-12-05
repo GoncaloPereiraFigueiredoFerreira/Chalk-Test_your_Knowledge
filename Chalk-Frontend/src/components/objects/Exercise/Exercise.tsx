@@ -5,6 +5,9 @@
 //------------------------------------//
 
 import { ImgPos } from "./Header/ExHeader";
+import { MCExercise } from "./MC/MCExercise";
+import { OAExercise } from "./OA/OAExercise";
+import { TFExercise } from "./TF/TFExercise";
 
 export function createNewExercise(newExercisetype: ExerciseType) {
   // colocar aqui as chamadas para criação dos exercicios
@@ -133,45 +136,88 @@ export interface ExerciseGroup {
   groupCotations: number;
 }
 
-enum ResolutionStatus {}
+//------------------------------------//
+//                                    //
+//         ExerciseComponent          //
+//                                    //
+//------------------------------------//
 
-export interface Resolution {
-  id: string;
-  cotation: number;
-  studentID: string;
-  status: ResolutionStatus;
-  data:
-    | string
-    | {
-        [id: string]: {
-          text: string;
-          justification: string;
-          type: string;
-          value: boolean;
-        };
-      };
+export enum ExerciseContext {
+  PREVIEW = "PREVIEW",
+  SOLVE = "SOLVE",
+  EDIT = "EDIT",
+  GRADING = "GRADING",
+  REVIEW = "REVIEW",
 }
 
-export interface Exercise2 {
-  id: string;
-  title: string;
-  cotation?: number;
-  specialistId: string;
-  type: ExerciseType;
-  statement: {
-    imagePath: string;
-    imagePosition: string;
-    text: string;
-  };
-  justifyKind?: ExerciseJustificationKind;
-  items?: { [id: string]: { text: string; type: string } };
-
-  solution?: Resolution;
-  resolution?: Resolution;
+export interface ExerciseComponentProps {
+  exercise: Exercise;
+  position: string;
+  context: ContextBasedProps;
 }
 
-export interface ExerciseGroup {
-  exercises: Exercise2[];
-  groupInstructions: string;
-  groupCotations: number;
+type ContextBasedProps =
+  | PreviewProps
+  | SolveProps
+  | CreateEditProps
+  | GradingProps
+  | ReviewProps;
+
+export interface PreviewProps {
+  context: ExerciseContext.PREVIEW;
+}
+
+export interface SolveProps {
+  context: ExerciseContext.SOLVE;
+  setExerciseSolution: Function;
+}
+
+export interface CreateEditProps {
+  context: ExerciseContext.EDIT;
+  setExercise: Function;
+}
+
+export interface GradingProps {
+  context: ExerciseContext.GRADING;
+  setExerciseGrade: Function;
+}
+
+export interface ReviewProps {
+  context: ExerciseContext.REVIEW;
+}
+
+export function ExerciseComponent({
+  exercise,
+  context,
+  position,
+}: ExerciseComponentProps) {
+  switch (exercise.type) {
+    case ExerciseType.MULTIPLE_CHOICE: {
+      return (
+        <MCExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></MCExercise>
+      );
+    }
+    case ExerciseType.TRUE_OR_FALSE: {
+      return (
+        <TFExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></TFExercise>
+      );
+    }
+    case ExerciseType.OPEN_ANSWER: {
+      return (
+        <OAExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></OAExercise>
+      );
+    }
+  }
 }

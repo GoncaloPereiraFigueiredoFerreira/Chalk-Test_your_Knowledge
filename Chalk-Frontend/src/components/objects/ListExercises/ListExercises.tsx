@@ -1,4 +1,4 @@
-import { ShowExercise } from "../Exercise/ShowExercise";
+import { ShowExercise } from "./ShowExercise";
 import "./ListExercises.css";
 import { useEffect, useState } from "react";
 import { PopUp } from "../../interactiveElements/PopUp";

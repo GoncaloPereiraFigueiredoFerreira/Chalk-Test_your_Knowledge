@@ -15,12 +15,14 @@ import {
 } from "../SVGImages/SVGImages";
 // import { FillBlankExercise } from "./FillBlank/FillBlankExercise";
 // import { CodeExercise } from "./Code/CodeExercise";
-import { MCExercise } from "./MC/MCExercise";
-import { OAExercise } from "./OA/OAExercise";
-import { TFExercise } from "./TF/TFExercise";
 import { useEffect, useState } from "react";
 import "./ShowExercise.css";
-import { Exercise } from "./Exercise";
+import {
+  Exercise,
+  ExerciseComponent,
+  ExerciseComponentProps,
+  ExerciseContext,
+} from "../Exercise/Exercise";
 
 interface ExerciseProps {
   position: string;
@@ -39,6 +41,11 @@ export function ShowExercise({
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
+  const exerciseComponent: ExerciseComponentProps = {
+    exercise: exercise,
+    position: position,
+    context: { context: ExerciseContext.PREVIEW },
+  };
 
   useEffect(() => {
     switch (exercise.type) {
@@ -50,13 +57,7 @@ export function ShowExercise({
           </label>
         );
 
-        setPreview(
-          <MCExercise
-            exercise={exercise}
-            contexto="solve"
-            position={position}
-          ></MCExercise>
-        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
       case "open-answer":
         setTypeLabel(
@@ -65,13 +66,7 @@ export function ShowExercise({
             Resposta aberta
           </label>
         );
-        setPreview(
-          <OAExercise
-            exercise={exercise}
-            contexto="solve"
-            position={position}
-          ></OAExercise>
-        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
       case "true-or-false":
         setTypeLabel(
@@ -80,13 +75,7 @@ export function ShowExercise({
             Verdadeiro ou falso
           </label>
         );
-        setPreview(
-          <TFExercise
-            exercise={exercise}
-            contexto="solve"
-            position={position}
-          ></TFExercise>
-        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
       case "fill-in-the-blank":
         setTypeLabel(
