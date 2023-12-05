@@ -5,30 +5,32 @@ import {
   ListIcon,
 } from "../../SVGImages/SVGImages";
 import { ExerciseHeader } from "../Header/ExHeader";
-import { Exercise } from "../Exercise";
+import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
 
-interface ExerciseProps {
-  position: string;
-  contexto: string;
-  exercise: Exercise;
-}
-
-export function OAExercise({ position, contexto, exercise }: ExerciseProps) {
+export function OAExercise({
+  position,
+  context,
+  exercise,
+}: ExerciseComponentProps) {
   let exerciseDisplay = <></>;
-  switch (contexto) {
-    case "solve":
+  switch (context.context) {
+    case ExerciseContext.SOLVE:
       exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
       break;
 
-    case "preview":
+    case ExerciseContext.PREVIEW:
+      exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
+      break;
+
+    case ExerciseContext.EDIT:
       exerciseDisplay = <></>;
       break;
 
-    case "correct":
+    case ExerciseContext.GRADING:
       exerciseDisplay = <></>;
       break;
 
-    case "psolution":
+    case ExerciseContext.REVIEW:
       exerciseDisplay = <></>;
       break;
   }

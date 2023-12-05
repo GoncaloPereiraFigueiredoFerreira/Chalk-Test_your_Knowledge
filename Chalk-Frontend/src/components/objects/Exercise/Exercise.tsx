@@ -5,6 +5,9 @@
 //------------------------------------//
 
 import { ImgPos } from "./Header/ExHeader";
+import { MCExercise } from "./MC/MCExercise";
+import { OAExercise } from "./OA/OAExercise";
+import { TFExercise } from "./TF/TFExercise";
 
 export function createNewExercise(newExercisetype: ExerciseType) {
   // colocar aqui as chamadas para criação dos exercicios
@@ -131,4 +134,90 @@ export interface ExerciseGroup {
   exercises: Exercise[];
   groupInstructions: string;
   groupCotations: number;
+}
+
+//------------------------------------//
+//                                    //
+//         ExerciseComponent          //
+//                                    //
+//------------------------------------//
+
+export enum ExerciseContext {
+  PREVIEW = "PREVIEW",
+  SOLVE = "SOLVE",
+  EDIT = "EDIT",
+  GRADING = "GRADING",
+  REVIEW = "REVIEW",
+}
+
+export interface ExerciseComponentProps {
+  exercise: Exercise;
+  position: string;
+  context: ContextBasedProps;
+}
+
+type ContextBasedProps =
+  | PreviewProps
+  | SolveProps
+  | CreateEditProps
+  | GradingProps
+  | ReviewProps;
+
+export interface PreviewProps {
+  context: ExerciseContext.PREVIEW;
+}
+
+export interface SolveProps {
+  context: ExerciseContext.SOLVE;
+  setExerciseSolution: Function;
+}
+
+export interface CreateEditProps {
+  context: ExerciseContext.EDIT;
+  setExercise: Function;
+}
+
+export interface GradingProps {
+  context: ExerciseContext.GRADING;
+  setExerciseGrade: Function;
+}
+
+export interface ReviewProps {
+  context: ExerciseContext.REVIEW;
+}
+
+export function ExerciseComponent({
+  exercise,
+  context,
+  position,
+}: ExerciseComponentProps) {
+  switch (exercise.type) {
+    case ExerciseType.MULTIPLE_CHOICE: {
+      return (
+        <MCExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></MCExercise>
+      );
+    }
+    case ExerciseType.TRUE_OR_FALSE: {
+      return (
+        <TFExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></TFExercise>
+      );
+    }
+    case ExerciseType.OPEN_ANSWER: {
+      return (
+        <OAExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></OAExercise>
+      );
+    }
+  }
 }
