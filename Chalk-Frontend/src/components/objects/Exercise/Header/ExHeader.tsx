@@ -7,7 +7,8 @@ export enum ImgPos {
 
 export interface ExerciseHeader {
   text: string;
-  img?: { pos: ImgPos; url: string };
+  imagePath?: string;
+  imagePosition?: ImgPos;
 }
 
 interface HeaderProps {
@@ -15,16 +16,16 @@ interface HeaderProps {
 }
 
 export function ExerciseHeader({ header }: HeaderProps) {
-  if (header.img) {
+  if (header.imagePath) {
     const imgComponent = (
       <div className="flex w-full justify-center m-4">
-        <img className="max-h-52" src={header.img.url}></img>
+        <img className="max-h-52" src={header.imagePath}></img>
       </div>
     );
 
     var style;
 
-    switch (header.img.pos) {
+    switch (header.imagePosition) {
       case ImgPos.BOT:
       case ImgPos.TOP: {
         style = "flex flex-col justify-center ";
@@ -37,9 +38,9 @@ export function ExerciseHeader({ header }: HeaderProps) {
     }
     return (
       <div className={"mx-12 mb-6 " + style}>
-        {ImgPos.LEFT === header.img.pos ? imgComponent : null}
+        {ImgPos.LEFT === header.imagePosition ? imgComponent : null}
         {header.text}
-        {ImgPos.LEFT === header.img.pos ? null : imgComponent}
+        {ImgPos.LEFT === header.imagePosition ? null : imgComponent}
       </div>
     );
   } else {
