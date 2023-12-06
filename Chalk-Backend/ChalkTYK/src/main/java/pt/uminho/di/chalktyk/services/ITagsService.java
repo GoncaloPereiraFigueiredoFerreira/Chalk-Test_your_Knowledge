@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.services;
 
 import pt.uminho.di.chalktyk.models.relational.Tag;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 import java.util.List;
 
