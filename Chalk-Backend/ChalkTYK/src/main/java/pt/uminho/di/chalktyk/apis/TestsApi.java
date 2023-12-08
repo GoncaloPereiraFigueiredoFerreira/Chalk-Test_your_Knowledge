@@ -36,7 +36,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Test>> testsGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
+    ResponseEntity<List<Test>> getTests(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 , @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
 , @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the tests." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "tags", required = false, defaultValue="[]") List<Integer> tags
@@ -59,7 +59,7 @@ public interface TestsApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<String> testsPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "visibility", required = true) Visibility visibility
+    ResponseEntity<String> createTest(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "visibility", required = true) Visibility visibility
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Test body
 );
 
@@ -74,7 +74,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/resolutions/{resolutionId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<TestResolution> testsResolutionsResolutionIdGet(@Parameter(in = ParameterIn.PATH, description = "Test resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
+    ResponseEntity<TestResolution> getTestResolutionById(@Parameter(in = ParameterIn.PATH, description = "Test resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
 );
 
 
@@ -87,7 +87,7 @@ public interface TestsApi {
         @ApiResponse(responseCode = "404", description = "Test not found.") })
     @RequestMapping(value = "/tests/{testId}",
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> testsTestIdDelete(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<Void> deleteTestById(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 );
 
 
@@ -101,7 +101,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/duplicate",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<String> testsTestIdDuplicatePost(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<String> duplicateTestById(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 );
 
 
@@ -117,7 +117,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}",
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<Void> testsTestIdPut(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<Void> updateTest(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Test body
 );
 
@@ -131,7 +131,7 @@ public interface TestsApi {
         @ApiResponse(responseCode = "404", description = "Test not found.") })
     @RequestMapping(value = "/tests/{testId}/resolutions/correction",
         method = RequestMethod.PUT)
-    ResponseEntity<Void> testsTestIdResolutionsCorrectionPut(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<Void> automaticCorrection(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.QUERY, description = "Type of correction. The correction can either be automatic or done by AI. When using AI correction, the AI will only be used to correct questions that cannot be corrected automatically, i.e., by using the solution. " ,schema=@Schema(allowableValues={ "auto", "ai" }
 )) @Valid @RequestParam(value = "correctionType", required = false) String correctionType
 );
@@ -145,7 +145,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions/count",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Integer> testsTestIdResolutionsCountGet(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<Integer> countStudentsTestResolutions(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.QUERY, description = "'false' to count the number of students that made a submission. 'true' to count the total number of submissions." ,schema=@Schema( defaultValue="false")) @Valid @RequestParam(value = "total", required = false, defaultValue="false") Boolean total
 );
 
@@ -160,7 +160,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<InlineResponse2001>> testsTestIdResolutionsGet(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<List<InlineResponse2001>> getTestResolutions(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 , @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
@@ -177,7 +177,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> testsTestIdResolutionsPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") Integer testId
+    ResponseEntity<Void> createTestResolution(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") Integer testId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody TestResolution body
 );
 
@@ -190,7 +190,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions/{studentId}/can-submit",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Boolean> testsTestIdResolutionsStudentIdCanSubmitGet(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<Boolean> canStudentSubmitResolution(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 
@@ -203,7 +203,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions/{studentId}/count",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Integer> testsTestIdResolutionsStudentIdCountGet(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<Integer> countStudentSubmissionsForTest(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 
@@ -216,7 +216,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions/{studentId}/ids",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<String>> testsTestIdResolutionsStudentIdIdsGet(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<List<String>> getStudentTestResolutionsIds(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 
@@ -231,7 +231,7 @@ public interface TestsApi {
     @RequestMapping(value = "/tests/{testId}/resolutions/{studentId}/last",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<TestResolution> testsTestIdResolutionsStudentIdLastGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") String testId
+    ResponseEntity<TestResolution> getStudentLastResolution(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") String testId
 , @Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 );
 

@@ -2,6 +2,12 @@ package pt.uminho.di.chalktyk.models.nonrelational.tests;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,6 +17,10 @@ import java.util.*;
 /**
  * type = "basic"
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "tests")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonTypeName("basic")

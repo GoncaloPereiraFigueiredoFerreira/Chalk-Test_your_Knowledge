@@ -1,20 +1,17 @@
 package pt.uminho.di.chalktyk.models.relational;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name="Test")
 public class Test implements Serializable {
-	public Test() {
-	}
-
 	@Column(name="ID")
 	@Id	
 	private String id;

@@ -2,10 +2,13 @@ package pt.uminho.di.chalktyk.services;
 
 import java.util.List;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 public interface ITestsService {
     /**
@@ -29,7 +32,7 @@ public interface ITestsService {
      * @param body
      * @return test identifier
      **/
-    String createTest(String visibility, Test body);
+    String createTest(Visibility visibility, Test body) throws BadInputException, NotFoundException;
 
     /**
      * Get test resolution using its id

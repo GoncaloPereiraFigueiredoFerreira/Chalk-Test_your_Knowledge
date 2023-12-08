@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.relational;
 
-import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;

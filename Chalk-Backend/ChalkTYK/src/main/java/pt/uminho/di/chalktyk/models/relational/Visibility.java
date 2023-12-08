@@ -2,9 +2,6 @@ package pt.uminho.di.chalktyk.models.relational;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.persistence.*;
-import lombok.*;
-import java.io.Serializable;
 
 /**
  * Gets or Sets Visibility

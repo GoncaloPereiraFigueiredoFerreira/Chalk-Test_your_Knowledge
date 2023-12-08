@@ -103,6 +103,11 @@ public class CoursesService implements ICoursesService {
         return c;
     }
 
+    @Override
+    public boolean existsCourseById(String courseId) {
+        return courseSqlDAO.existsById(courseId);
+    }
+
     /**
      * Add specialists to course
      *
@@ -241,6 +246,15 @@ public class CoursesService implements ICoursesService {
         if(!courseSqlDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
         return specialistsSqlToNoSql(courseSqlDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage)));
+    }
+
+
+    @Override
+    public boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException {
+        if(!courseSqlDAO.existsById(courseId))
+            throw new NotFoundException("Could not get course specialists: the course does not exist.");
+        // TODO: make the actual query
+        return true;
     }
 
     /**

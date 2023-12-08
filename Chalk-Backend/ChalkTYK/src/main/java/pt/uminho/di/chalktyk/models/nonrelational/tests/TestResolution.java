@@ -1,13 +1,16 @@
 package pt.uminho.di.chalktyk.models.nonrelational.tests;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Getter
+@Setter
 @Document(collection = "tests_resolutions")
 public class TestResolution {
 	@Id

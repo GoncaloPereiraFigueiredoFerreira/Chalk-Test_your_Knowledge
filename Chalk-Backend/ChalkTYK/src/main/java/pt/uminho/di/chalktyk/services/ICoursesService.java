@@ -31,6 +31,13 @@ public interface ICoursesService {
     Course getCourseById(String courseId) throws NotFoundException;
 
     /**
+     * Checks if a course exists.
+     * @param courseId
+     * @return 'true' if the course with the given identifier exists
+     */
+    boolean existsCourseById(String courseId);
+
+    /**
      * Add specialists to course
      * @param courseId identifier of the course
      * @param specialistsIds list of specialists identifiers
@@ -83,6 +90,15 @@ public interface ICoursesService {
      * @return list of specialists that are associated with a specific course.
      */
     List<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException;
+
+    /**
+     * Check if specialist belongs to a course
+     *
+     * @param courseId     course identifier
+     * @param specalistId  specialist identifier
+     * @return 'true' or 'false' depending on whether the specialist belongs to a course or not 
+     */
+    boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException;
 
     /**
      * Get list of courses that a specific student is associated with
