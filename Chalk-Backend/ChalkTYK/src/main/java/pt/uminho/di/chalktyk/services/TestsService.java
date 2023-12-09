@@ -30,15 +30,18 @@ public class TestsService implements ITestsService {
     private final ISpecialistsService specialistsService;
     private final IInstitutionsService institutionsService;
     private final ICoursesService coursesService;
+    private final ITestResolutionsService resolutionsService;
 
     @Autowired
-    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, ISpecialistsService specialistsService, IInstitutionsService institutionsService, ICoursesService coursesService){
+    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, ISpecialistsService specialistsService, 
+            IInstitutionsService institutionsService, ICoursesService coursesService, ITestResolutionsService resolutionsService){
         this.entityManager = entityManager;
         this.testDAO = testDAO;
         this.testSqlDAO = testSqlDAO;
         this.specialistsService = specialistsService;
         this.institutionsService = institutionsService;
         this.coursesService = coursesService;
+        this.resolutionsService = resolutionsService;
     }
 
     @Override
@@ -104,8 +107,8 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public TestResolution getTestResolutionById(String resolutionId) {
-        throw new UnsupportedOperationException("Unimplemented method 'getTestResolutionById'");
+    public TestResolution getTestResolutionById(String resolutionId) throws NotFoundException{
+        return resolutionsService.getTestResolutionById(resolutionId);
     }
 
     @Override

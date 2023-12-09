@@ -2,13 +2,13 @@ package pt.uminho.di.chalktyk.services;
 
 import java.util.List;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.relational.Visibility;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 public interface ITestsService {
     /**
@@ -31,16 +31,18 @@ public interface ITestsService {
      * @param visibility
      * @param body
      * @return test identifier
+     * @throws BadInputException if any property of the test is not valid.
      **/
-    String createTest(Visibility visibility, Test body) throws BadInputException, NotFoundException;
+    String createTest(Visibility visibility, Test body) throws BadInputException;
 
     /**
      * Get test resolution using its id
      *
      * @param resolutionId
      * @return test resolution
+     * @throws NotFoundException if no test resolution was found with the given id
      **/
-    TestResolution getTestResolutionById(String resolutionId);
+    TestResolution getTestResolutionById(String resolutionId) throws NotFoundException;
 
     /**
      * Delete test by its id
