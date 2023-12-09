@@ -51,7 +51,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../../components/schemas/_index.yml#/ExerciseResolution
+          $ref: ../../../components/schemas/_index.yml#/ExerciseResolutionData
     required: true
   responses:
     '200':
