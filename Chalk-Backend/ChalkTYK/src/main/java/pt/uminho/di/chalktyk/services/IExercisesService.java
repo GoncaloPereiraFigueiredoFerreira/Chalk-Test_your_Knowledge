@@ -17,13 +17,12 @@ public interface IExercisesService{
 
     /**
      * Creates an exercise.
-     * @param specialistId identifier of the specialist that wants to create the exercise
      * @param exercise body of the exercise to be created. Regarding the metadata should
      *                 contain, at least, the specialist identifier
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
-    String createExercise(String specialistId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException;
+    String createExercise(Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException;
 
     /**
      * Delete exercise by id.

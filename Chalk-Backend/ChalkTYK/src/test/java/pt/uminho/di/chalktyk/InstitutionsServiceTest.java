@@ -1,6 +1,7 @@
 package pt.uminho.di.chalktyk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,5 +90,11 @@ public class InstitutionsServiceTest {
         assertEquals(i.getDescription(),"Universidade do Minho");
     }
 
+    @Test
+    @Transactional
+    public void createSpecialist() throws BadInputException {
+        String id = iSpecialistsService.createSpecialist(new Specialist(null, "Luis", "","lisinho@gmail.com", "HOmem bonito", null));
+        assertTrue(iSpecialistsService.existsSpecialistById(id));
+    }
 
 }
