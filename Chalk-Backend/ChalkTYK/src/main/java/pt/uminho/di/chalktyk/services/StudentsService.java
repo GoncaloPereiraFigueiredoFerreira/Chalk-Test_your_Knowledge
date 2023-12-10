@@ -3,6 +3,9 @@ package pt.uminho.di.chalktyk.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
 import pt.uminho.di.chalktyk.models.nonrelational.users.User;
 import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
@@ -12,11 +15,14 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @Service
 public class StudentsService implements IStudentsService{
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final UserDAO userDAO;
     private final StudentSqlDAO studentSqlDAO;
 
     @Autowired
-    public StudentsService(UserDAO userDAO, StudentSqlDAO studentSqlDAO) {
+    public StudentsService(EntityManager entityManager, UserDAO userDAO, StudentSqlDAO studentSqlDAO) {
+        this.entityManager = entityManager;
         this.userDAO = userDAO;
         this.studentSqlDAO = studentSqlDAO;
     }

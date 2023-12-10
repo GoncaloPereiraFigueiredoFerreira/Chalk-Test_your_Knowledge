@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 import pt.uminho.di.chalktyk.models.relational.Course;
 import pt.uminho.di.chalktyk.models.relational.Specialist;
 import pt.uminho.di.chalktyk.models.relational.Student;
@@ -43,4 +44,7 @@ public interface CourseSqlDAO extends JpaRepository<Course, String> {
 
     @Query(value = "select c from Course c where c.institution.id = :institutionId")
     Page<Course> getInstitutionCourses(@Param("institutionId") String institutionId, Pageable pageable);
+
+    @Query(value = "SELECT COUNT(*) FROM specialist_course WHERE courseid = :courseId AND specialistid = :specialistId", nativeQuery = true)
+    int checkSpecialistInCourse(@Param("courseId") String courseId, @Param("specialistId") String specialistId);
 }

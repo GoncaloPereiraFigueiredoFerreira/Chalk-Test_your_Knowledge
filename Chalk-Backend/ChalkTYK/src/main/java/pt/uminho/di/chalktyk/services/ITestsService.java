@@ -99,8 +99,9 @@ public interface ITestsService {
      *
      * @param testId
      * @param studentId
+     * @throws BadInputException if any property of the test resolution is not valid.
      **/
-    void createTestResolution(Integer testId, TestResolution body);
+    void createTestResolution(String testId, TestResolution body) throws BadInputException;
 
     /**
      * Allows to check if the student can submit a resolution for the test

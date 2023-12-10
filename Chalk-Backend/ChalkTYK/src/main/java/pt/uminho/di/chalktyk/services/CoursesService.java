@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
-import pt.uminho.di.chalktyk.models.relational.Institution;
 import pt.uminho.di.chalktyk.repositories.nonrelational.CourseDAO;
 import pt.uminho.di.chalktyk.repositories.relational.CourseSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -69,7 +68,9 @@ public class CoursesService implements ICoursesService {
         if(!specialistsService.existsSpecialistById(ownerId))
             throw new BadInputException("Cannot create course: A course must have a valid owner.");
 
+        // TODO: add institution later
         // get owner's institution id
+        /* 
         String institutionId = null;
         try {
             var inst = institutionsService.getSpecialistInstitution(ownerId);
@@ -77,14 +78,17 @@ public class CoursesService implements ICoursesService {
                 institutionId = inst.getName();
         }catch (NotFoundException ignored){}
         course.setInstituitionId(institutionId);
+        */
 
         // persist the course in nosql database
         course = courseDAO.save(course);
 
         // persists the course in sql database
-        Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
+        // TODO: add institution later
+        //Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
         var spec = entityManager.getReference(pt.uminho.di.chalktyk.models.relational.Specialist.class, ownerId);
-        var courseSQL = new pt.uminho.di.chalktyk.models.relational.Course(course.getId(), inst, course.getName(), Set.of(spec));
+        // TODO: add institution later
+        var courseSQL = new pt.uminho.di.chalktyk.models.relational.Course(course.getId(), null, course.getName(), Set.of(spec));
         courseSqlDAO.save(courseSQL);
 
         return course.getId();
@@ -253,8 +257,10 @@ public class CoursesService implements ICoursesService {
     public boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException {
         if(!courseSqlDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        // TODO: make the actual query
-        return true;
+        if(courseSqlDAO.checkSpecialistInCourse(courseId, specialistId) > 0)
+            return true;
+        else
+            return false;
     }
 
     /**

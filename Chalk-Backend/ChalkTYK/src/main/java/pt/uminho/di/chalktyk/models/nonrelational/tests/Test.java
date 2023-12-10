@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -37,4 +38,18 @@ public class Test {
 	private LocalDateTime creationDate;
 	private LocalDateTime publishDate;
 	private List<TestGroup> groups;
+
+	public void verifyProperties() throws BadInputException{
+        // check title
+		if (title == null || title.isEmpty())
+			throw new BadInputException("Cannot create test: A title of a test cannot be empty or null.");
+
+		// check publish date
+		if (publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
+            throw new BadInputException("Cannot create test: Publish date is outdated.");
+
+		// check global cotation
+		if (globalCotation < 0)
+			throw new BadInputException("Cannot create test: Global cotation can't be negative.");
+    }
 }

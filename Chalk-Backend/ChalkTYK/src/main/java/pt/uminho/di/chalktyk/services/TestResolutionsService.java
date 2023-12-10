@@ -1,5 +1,7 @@
 package pt.uminho.di.chalktyk.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +11,6 @@ import jakarta.persistence.PersistenceContext;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.relational.Student;
 import pt.uminho.di.chalktyk.models.relational.Test;
-import pt.uminho.di.chalktyk.repositories.nonrelational.TestDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestResolutionSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -22,17 +23,14 @@ public class TestResolutionsService implements ITestResolutionsService {
     private final EntityManager entityManager;
     private final TestResolutionDAO resolutionDAO;
     private final TestResolutionSqlDAO resolutionSqlDAO;
-    // TODO: ver isto, TestDAO não devia estar aqui, mas é para evitar imports circulares
-    private final TestDAO testDAO;
     private final IStudentsService studentsService;
 
     @Autowired
     public TestResolutionsService(EntityManager entityManager, TestResolutionDAO resolutionDAO, 
-            TestResolutionSqlDAO resolutionSqlDAO, TestDAO testDAO, IStudentsService studentsService){
+            TestResolutionSqlDAO resolutionSqlDAO, IStudentsService studentsService){
         this.entityManager = entityManager;
         this.resolutionDAO = resolutionDAO;
         this.resolutionSqlDAO = resolutionSqlDAO;
-        this.testDAO = testDAO;
         this.studentsService = studentsService;
     }
 
@@ -45,17 +43,7 @@ public class TestResolutionsService implements ITestResolutionsService {
         //set the identifier to null to avoid overwrite attacks
         resolution.setId(null);
 
-        // Save resolution in nosql database
-        resolution = resolutionDAO.save(resolution);
-
-        // check test
-        String testId = resolution.getTestId();
-        if (testId == null)
-            throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
-        // TODO: change this
-        if (!testDAO.existsById(testId))
-            throw new BadInputException("Cannot create test resolution: resolution must belong to a valid test.");
-
+        // TODO: check other resolutions made by the student and update the submission nr
         // check student
         String studentId = resolution.getStudentId();
         if (studentId == null)
@@ -63,7 +51,13 @@ public class TestResolutionsService implements ITestResolutionsService {
         if (!studentsService.existsStudentById(studentId))
             throw new BadInputException("Cannot create test resolution: resolution must belong to a valid student.");
 
+        // Save resolution in nosql database
+        resolution = resolutionDAO.save(resolution);
+
+        // TODO: check resolution status
+
         // Persists the test resolution in SQL database
+        String testId = resolution.getTestId();
         Test test = testId != null ? entityManager.getReference(Test.class, testId) : null;
         Student student = studentId != null ? entityManager.getReference(Student.class, studentId) : null;
         var resolutionSql = new pt.uminho.di.chalktyk.models.relational.TestResolution(resolution.getId(), test, student);
@@ -83,5 +77,15 @@ public class TestResolutionsService implements ITestResolutionsService {
     @Override
     public boolean existsTestResolutionById(String resolutionId) {
         return resolutionSqlDAO.existsById(resolutionId);
+    }
+
+    @Override
+    public Integer countStudentSubmissionsForTest(String testId, String studentId) {
+        return resolutionSqlDAO.countStudentSubmissionsForTest(studentId, testId);
+    }
+
+    @Override
+    public List<String> getStudentTestResolutionsIds(String testId, String studentId) {
+        return resolutionSqlDAO.getStudentTestResolutionsIds(testId, studentId);
     }
 }
