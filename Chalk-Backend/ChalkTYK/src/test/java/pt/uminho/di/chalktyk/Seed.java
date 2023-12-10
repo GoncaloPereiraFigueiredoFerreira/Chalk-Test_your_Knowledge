@@ -55,13 +55,11 @@ public class Seed {
         String student3 = studentsService.createStudent(st3);
 
         // specialists
-        Specialist s1 = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg", 
-            "senor@chang.com", "#1", null);
         Specialist s2 = new Specialist(null, "Professor Ian Duncan", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg", 
             "iduncan@gmail.com", "#2", null);
         Specialist s3 = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg", 
             "whitman@yahoo.com", "#3", null);
-        String specialist1 = specialistsService.createSpecialist(s1);
+        String specialist1 = this.addSpecialistChang();
         String specialist2 = specialistsService.createSpecialist(s2);
         String specialist3 = specialistsService.createSpecialist(s3);
 
@@ -101,6 +99,11 @@ public class Seed {
     public void addInstitution() throws BadInputException {
         Institution inst = new Institution("Greendale Community College", "não quero", "some_image.jpg", null);
         institutionsService.createInstitution(inst);
+    }
+    public String addSpecialistChang() throws BadInputException {
+        Specialist s1 = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
+                "senor@chang.com", "#1", null);
+        return specialistsService.createSpecialist(s1);
     }
 
     @Test void test() throws BadInputException{
