@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import org.apache.commons.lang3.tuple.Pair;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
+import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.models.relational.Student;
 import pt.uminho.di.chalktyk.models.relational.Specialist;
 import pt.uminho.di.chalktyk.models.relational.Visibility;
@@ -16,13 +17,38 @@ import java.util.Optional;
 public interface IExercisesService{
 
     /**
+     * Get Exercise by ID
+     *
+     * @param exerciseId of the exercise
+     * @return exercise from the given ID
+     **/
+    Exercise getExerciseById(String exerciseId) throws NotFoundException;
+
+
+    /**
+     * Verify if exercise exists
+     *
+     * @param exerciseId of the exercise
+     * @return true if exercise exists, false otherwise
+     **/
+    boolean exerciseExists(String exerciseId);
+
+    /**
+     * Verify is exercise is shallow
+     *
+     * @param exerciseId of the exercise
+     * @return true if exercise is shallow, false otherwise
+     **/
+    boolean exerciseIsShallow(String exerciseId) throws NotFoundException;
+
+    /**
      * Creates an exercise.
      * @param exercise body of the exercise to be created. Regarding the metadata should
      *                 contain, at least, the specialist identifier
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
-    String createExercise(Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException;
+    String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException;
 
     /**
      * Delete exercise by id.

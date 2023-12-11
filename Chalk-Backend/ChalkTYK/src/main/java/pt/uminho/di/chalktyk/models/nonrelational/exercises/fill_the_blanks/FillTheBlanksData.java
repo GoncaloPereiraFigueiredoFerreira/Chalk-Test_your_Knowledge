@@ -7,6 +7,7 @@ import lombok.Setter;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ConcreteExercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.List;
 
@@ -23,5 +24,15 @@ public class FillTheBlanksData extends ExerciseResolutionData {
 			if(fill==null)
 				throw new BadInputException("Fillings from fill the blank data cannot bet null");
 		}
+	}
+
+	/**
+	 * Updates an exercise resolution. If an object is 'null' than it is considered that it should remain the same.
+	 *
+	 * @param exerciseResolutionData new exercise resolution body
+	 */
+	@Override
+	public boolean updateExerciseResolutionData(ExerciseResolutionData exerciseResolutionData) throws UnauthorizedException {
+		return false;
 	}
 }

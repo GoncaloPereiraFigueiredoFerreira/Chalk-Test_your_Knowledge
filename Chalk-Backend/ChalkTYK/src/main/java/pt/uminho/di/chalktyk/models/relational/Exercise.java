@@ -49,4 +49,16 @@ public class Exercise implements Serializable {
 	@ManyToMany(targetEntity=Tag.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Exercise_Tag", joinColumns={ @JoinColumn(name="ExerciseID") }, inverseJoinColumns={ @JoinColumn(name="TagID") })
 	private java.util.Set<Tag> tags = new java.util.HashSet<>();
+
+	public void increaseNrCopies(){
+		nrCopies++;
+	}
+
+	public void decreaseNrCopies(){
+		nrCopies--;
+	}
+
+	public Exercise createShallow(String newId,Institution institution,Specialist specialist,Course course){
+		return new Exercise(newId,null,institution,specialist,course,title,exerciseType,visibility,0,tags);
+	}
 }

@@ -57,17 +57,14 @@ public class Seed {
         // specialists
         Specialist s2 = new Specialist(null, "Professor Ian Duncan", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg", 
             "iduncan@gmail.com", "#2", null);
-        Specialist s3 = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg", 
-            "whitman@yahoo.com", "#3", null);
         String specialist1 = this.addSpecialistChang();
         String specialist2 = specialistsService.createSpecialist(s2);
-        String specialist3 = specialistsService.createSpecialist(s3);
+        String specialist3 = addSpecialistWhitman();
 
         // courses
-        Course c1 = new Course(null, "Spanish 101", "Greendale Community College", "#1", specialist1);
         Course c2 = new Course(null, "Anthropology", "Greendale Community College", "#2", specialist2);
         Course c3 = new Course(null, "Seize the Day", "Greendale Community College", "#3", specialist3);
-        String course1 = coursesService.createCourse(c1);
+        String course1 = this.addCourse(specialist1);
         String course2 = coursesService.createCourse(c2);
         String course3 = coursesService.createCourse(c3);
 
@@ -101,9 +98,20 @@ public class Seed {
         institutionsService.createInstitution(inst);
     }
     public String addSpecialistChang() throws BadInputException {
-        Specialist s1 = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
+        Specialist s = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
                 "senor@chang.com", "#1", null);
-        return specialistsService.createSpecialist(s1);
+        return specialistsService.createSpecialist(s);
+    }
+
+    public String addSpecialistWhitman() throws BadInputException {
+        Specialist s = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
+                "whitman@yahoo.com", "#3", null);
+        return specialistsService.createSpecialist(s);
+    }
+
+    public String addCourse(String specialistId) throws BadInputException {
+        Course c1 = new Course(null, "Spanish 101", "Greendale Community College", "#1", specialistId);
+        return coursesService.createCourse(c1);
     }
 
     @Test void test() throws BadInputException{

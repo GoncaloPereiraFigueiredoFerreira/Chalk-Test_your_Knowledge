@@ -318,14 +318,14 @@ public class InstitutionsService implements IInstitutionsService {
      * Get institution associated with a specific specialist
      *
      * @param specialistId identifier of the specialist
-     * @return institution associated with a specific specialist
+     * @return institution associated with a specific specialist or null if not found
      */
     @Override
     public Institution getSpecialistInstitution(String specialistId) throws NotFoundException { //TODO test
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Specialist not found");
         pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionBySpecialistId(specialistId);
-        return idao.findById(institution.getId()).orElse(null);
+        return institution == null ? null : idao.findById(institution.getId()).orElse(null);
     }
 
     /**

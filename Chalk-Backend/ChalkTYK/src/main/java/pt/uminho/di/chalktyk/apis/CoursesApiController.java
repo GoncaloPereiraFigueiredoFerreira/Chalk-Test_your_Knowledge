@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.servlet.http.HttpServletRequest;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +30,10 @@ public class CoursesApiController implements CoursesApi {
 
     public ResponseEntity<Void> coursesCourseIdDelete(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
 ) {
+
         throw new RuntimeException("Not implemented");
+        //jwt.verify if is specialist
+        //throw new UnauthorizedException("Method is only available for specialists");
     }
 
     public ResponseEntity<CourseWithoutId> coursesCourseIdGet(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
