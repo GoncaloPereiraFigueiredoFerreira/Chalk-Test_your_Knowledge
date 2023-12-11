@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,7 @@ public interface SubscriptionsApi {
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
 , @Parameter(in = ParameterIn.QUERY, description = "Finds the specialist subscription. " ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
 , @Parameter(in = ParameterIn.QUERY, description = "Finds the student subscription. " ,schema=@Schema()) @Valid @RequestParam(value = "studentId", required = false) String studentId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Delete subscription from institution", description = "", tags={ "subscription" })
@@ -62,7 +63,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/institutions/{institutionId}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> subscriptionsInstitutionsInstitutionIdDelete(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get subscription by institution id.", description = "", tags={ "subscription" })
@@ -78,7 +79,7 @@ public interface SubscriptionsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Subscription> subscriptionsInstitutionsInstitutionIdGet(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update institution subscription", description = "Update an existent subscription in the store", tags={ "subscription" })
@@ -97,7 +98,7 @@ public interface SubscriptionsApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsInstitutionsInstitutionIdPut(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsInstitutionIdBody1 body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Create subscription for a institution", description = "This method is used to create a new subsctiption for a institution", tags={ "subscription" })
@@ -109,7 +110,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> subscriptionsInstitutionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsInstitutionsBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Create subscription plan", description = "This method is used to create a new subsctiption plan", tags={ "subscription" })
@@ -121,7 +122,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> subscriptionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Create subscription for a specialist", description = "This method is used to create a new subsctiption for a specialist", tags={ "subscription" })
@@ -133,7 +134,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> subscriptionsSpecialistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsSpecialistsBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Delete subscription from specialist", description = "", tags={ "subscription" })
@@ -148,7 +149,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/specialists/{specialistId}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> subscriptionsSpecialistsSpecialistIdDelete(@Parameter(in = ParameterIn.PATH, description = "Specialist identifier", required=true, schema=@Schema()) @PathVariable("specialistId") String specialistId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get subscription by specialist id.", description = "", tags={ "subscription" })
@@ -164,7 +165,7 @@ public interface SubscriptionsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Subscription> subscriptionsSpecialistsSpecialistIdGet(@Parameter(in = ParameterIn.PATH, description = "Specialist identifier", required=true, schema=@Schema()) @PathVariable("specialistId") String specialistId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update specialist subscription", description = "Update an existent subscription in the store", tags={ "subscription" })
@@ -183,7 +184,7 @@ public interface SubscriptionsApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsSpecialistsSpecialistIdPut(@Parameter(in = ParameterIn.PATH, description = "Specialist identifier", required=true, schema=@Schema()) @PathVariable("specialistId") String specialistId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SpecialistsSpecialistIdBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Create subscription for a student", description = "This method is used to create a new subsctiption for a student", tags={ "subscription" })
@@ -195,7 +196,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> subscriptionsStudentsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsStudentsBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Delete subscription", description = "", tags={ "subscription" })
@@ -210,7 +211,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/students/{studentId}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> subscriptionsStudentsStudentIdDelete(@Parameter(in = ParameterIn.PATH, description = "Student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get subscription by student id.", description = "", tags={ "subscription" })
@@ -226,7 +227,7 @@ public interface SubscriptionsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Subscription> subscriptionsStudentsStudentIdGet(@Parameter(in = ParameterIn.PATH, description = "Student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update student subscription", description = "Update an existent subscription in the store", tags={ "subscription" })
@@ -245,7 +246,7 @@ public interface SubscriptionsApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsStudentsStudentIdPut(@Parameter(in = ParameterIn.PATH, description = "Student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody StudentsStudentIdBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Delete subscription plan", description = "", tags={ "subscription" })
@@ -262,7 +263,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/{subscriptionPlanId}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> subscriptionsSubscriptionPlanIdDelete(@Parameter(in = ParameterIn.PATH, description = "Subscription Plan identifier", required=true, schema=@Schema()) @PathVariable("subscriptionPlanId") String subscriptionPlanId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get subscription plan by subscription plan id", description = "", tags={ "subscription" })
@@ -278,7 +279,7 @@ public interface SubscriptionsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<SubscriptionPlan> subscriptionsSubscriptionPlanIdGet(@Parameter(in = ParameterIn.PATH, description = "Subscription Plan identifier", required=true, schema=@Schema()) @PathVariable("subscriptionPlanId") String subscriptionPlanId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update subscription plan", description = "Update an existent subscription plan in the store", tags={ "subscription" })
@@ -295,7 +296,7 @@ public interface SubscriptionsApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsSubscriptionPlanIdPut(@Parameter(in = ParameterIn.PATH, description = "Subscription Plan identifier", required=true, schema=@Schema()) @PathVariable("subscriptionPlanId") String subscriptionPlanId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsSubscriptionPlanIdBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 }
 

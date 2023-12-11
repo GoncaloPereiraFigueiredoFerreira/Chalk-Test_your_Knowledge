@@ -34,7 +34,7 @@ public class UsersApiController implements UsersApi {
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
 ,@Parameter(in = ParameterIn.QUERY, description = "Find users from this institution." ,schema=@Schema()) @Valid @RequestParam(value = "institution", required = false) String institution
 ,@Parameter(in = ParameterIn.QUERY, description = "Find users from this course (institution is required)." ,schema=@Schema()) @Valid @RequestParam(value = "course", required = false) String course
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
@@ -42,18 +42,18 @@ public class UsersApiController implements UsersApi {
 ,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
 ,@Parameter(in = ParameterIn.QUERY, description = "Find managers from this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
     public ResponseEntity<Void> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody UsersBody1 body
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
     public ResponseEntity<Void> usersPut(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody UsersBody body
 ,
-@Parameter(in = ParameterIn.COOKIE, description = "" ,schema=@Schema()) @CookieValue(value="userId", required=false) String userId) {
+@Parameter(in = ParameterIn.COOKIE, description = "" ,schema=@Schema()) @CookieValue(value="userId", required=false) String userId, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
@@ -63,7 +63,7 @@ public class UsersApiController implements UsersApi {
 ,@Parameter(in = ParameterIn.QUERY, description = "Find the specialists that are the owners of the test. " ,schema=@Schema()) @Valid @RequestParam(value = "testId", required = false) String testId
 ,@Parameter(in = ParameterIn.QUERY, description = "Find specialists from this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
 ,@Parameter(in = ParameterIn.QUERY, description = "Find specialists from this course (institution is required). " ,schema=@Schema()) @Valid @RequestParam(value = "courseId", required = false) String courseId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
@@ -74,17 +74,17 @@ public class UsersApiController implements UsersApi {
 ,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "page", required = false) Integer page
 ,@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = false) Integer itemsPerPage
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
     public ResponseEntity<Void> usersUserIdDelete(@Parameter(in = ParameterIn.PATH, description = "User identifier", required=true, schema=@Schema()) @PathVariable("userId") String userId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
     public ResponseEntity<InlineResponse2002> usersUserIdGet(@Parameter(in = ParameterIn.PATH, description = "User identifier", required=true, schema=@Schema()) @PathVariable("userId") String userId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
