@@ -9,19 +9,19 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="TestResolution")
-public class TestResolution implements Serializable {
-	public TestResolution() {
+public class TestResolutionSQL implements Serializable {
+	public TestResolutionSQL() {
 	}
 
 	@Column(name="ID")
 	@Id	
 	private String id;
 	
-	@ManyToOne(targetEntity=Test.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= TestSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TestID", referencedColumnName="ID", nullable=false) })
-	private Test test;
+	private TestSQL test;
 	
-	@ManyToOne(targetEntity=Student.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= StudentSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="StudentID", referencedColumnName="ID", nullable=false) })
-	private Student student;
+	private StudentSQL student;
 }

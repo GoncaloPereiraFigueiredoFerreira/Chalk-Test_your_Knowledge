@@ -2,17 +2,13 @@ package pt.uminho.di.chalktyk.services;
 
 import org.apache.commons.lang3.tuple.Pair;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.relational.Student;
-import pt.uminho.di.chalktyk.models.relational.Specialist;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.StudentSQL;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public interface IExercisesService{
 
@@ -48,7 +44,7 @@ public interface IExercisesService{
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
-    String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException;
+    String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws BadInputException;
 
     /**
      * Delete exercise by id.
@@ -86,7 +82,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      */
     // TODO - criar metodos privados para update individual de cada componente
-    void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws UnauthorizedException, NotFoundException;
+    void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException;
 
     /**
      * Retrieves the rubric of an exercise.
@@ -135,7 +131,7 @@ public interface IExercisesService{
      * @param itemsPerPage number of pairs in each page
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage);
+    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage);
 
     /**
      * Create a resolution for a specific exercise.

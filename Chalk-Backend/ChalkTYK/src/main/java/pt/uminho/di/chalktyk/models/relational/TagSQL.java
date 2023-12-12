@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.relational;
 
-import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -10,8 +9,8 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="Tag")
-public class Tag implements Serializable {
-	public Tag() {
+public class TagSQL implements Serializable {
+	public TagSQL() {
 	}
 	
 	@Column(name="ID")

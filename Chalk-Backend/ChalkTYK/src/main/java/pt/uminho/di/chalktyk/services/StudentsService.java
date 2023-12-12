@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
 import pt.uminho.di.chalktyk.models.nonrelational.users.User;
+import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
 import pt.uminho.di.chalktyk.repositories.relational.StudentSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -51,7 +52,7 @@ public class StudentsService implements IStudentsService{
         student = userDAO.save(student);
 
         // Create entry in sql database using the id created by the nosql database
-        var studentSql = new pt.uminho.di.chalktyk.models.relational.Student(student.getId(), null, student.getName(), student.getEmail(), null);
+        var studentSql = new StudentSQL(student.getId(), null, student.getName(), student.getEmail(), null);
         studentSqlDAO.save(studentSql);
 
         return student.getId();

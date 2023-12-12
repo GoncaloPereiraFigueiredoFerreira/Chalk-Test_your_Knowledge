@@ -8,9 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceData;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceExercise;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceResolutionItem;
 import pt.uminho.di.chalktyk.models.relational.*;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseRubricDAO;
@@ -99,62 +96,84 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     @Transactional
-    public String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException {
+    public String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws BadInputException {
+        if(exercise == null)
+            throw new BadInputException("Cannot create exercise: Exercise is null");
+
+        // Check if tags are valid
         for (String id:tagsIds)
             if(iTagsService.getTagById(id)==null)
-                throw new BadInputException("Tag referenced in the exercise does not exist("+id+")");
-        if(visibility==null)
+                throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
+        // Check if visibility is valid
+        if(visibility == null)
             throw new BadInputException("Cannot create exercise: Visibility cant be null");
 
-        //Exercise verifications
-        if (!specialistsService.existsSpecialistById(exercise.getSpecialistId())) {
-            throw new BadInputException("Cannot create exercise: specialistId not found.");
-        } else if (exercise.getInstitutionId() != null && !institutionsService.existsInstitutionById(exercise.getInstitutionId())) {
-            throw new BadInputException("Cannot create exercise: institution not found.");
-        } else if (exercise.getInstitutionId() == null && visibility == Visibility.INSTITUTION) {
-            throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION without institution associated");
-        } else {
-            String courseId = exercise.getCourseId();
-            if (courseId == null && visibility == Visibility.COURSE)
-                throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without course associated");
-            if (courseId != null && !coursesService.existsCourseById(courseId)) {
-                throw new BadInputException("Cannot create exercise: institution not found.");
-            }
-            //TODO se o curso tiver uma instituição e for diferente da que foi dada dar erro, se a instituição for null e o curso tiver instituiçao entao dar set a instituição
+        // Checks if specialist exists and gets the institution where it belongs
+        pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
+        try { institution = institutionsService.getSpecialistInstitution(exercise.getSpecialistId()); }
+        catch (NotFoundException nfe){ throw new BadInputException("Cannot create exercise: Specialist does not exist."); }
+
+        // sets identifier of the institution
+        if(institution != null) exercise.setInstitutionId(institution.getName());
+
+        // If the specialist that owns the exercise does not have an institution,
+        // then the exercise's visibility cannot be set to institution.
+        if (visibility == VisibilitySQL.INSTITUTION && institution == null)
+            throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION");
+
+        // Check if course is valid
+        String courseId = exercise.getCourseId();
+        try {
+            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+                throw new BadInputException("Cannot create exercise: course not found.");
+        } catch (NotFoundException nfe){
+            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
         }
 
+        // Cannot set visibility to COURSE without a course associated
+        if (courseId == null && visibility == VisibilitySQL.COURSE)
+            throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
+
+        // Prevent overrides
+        exercise.setId(null);
+        exercise.setRubricId(null);
+        exercise.setSolutionId(null);
+
+        // Check exercise properties
         exercise.verifyProperties();
+
+        // Check solution
         if (solution != null) {
             solution.verifyInsertProperties();
             exercise.verifyResolutionProperties(solution.getData());
             solution = exerciseSolutionDAO.save(solution);
             exercise.setSolutionId(solution.getId());
-            if (exercise instanceof MultipleChoiceExercise mce && solution.getData() instanceof MultipleChoiceData mcd) {
-                mce.updateIdsBySolution(mcd.getItemResolutions().stream().map(MultipleChoiceResolutionItem::getId).toList());
-            }
         }
+
+        // Check rubric
         if (rubric != null) {
             exercise.verifyRubricProperties(rubric);
             rubric = exerciseRubricDAO.save(rubric);
             exercise.setRubricId(rubric.getId());
         }
+
+        // persists the exercise in nosql database
         exercise = exerciseDAO.save(exercise);
-        //TODO qualquer coisa para os testes maybe
-        Institution institution = exercise.getInstitutionId() != null ? entityManager.getReference(Institution.class, exercise.getInstitutionId()) : null;
-        Specialist specialist = exercise.getSpecialistId() != null ? entityManager.getReference(Specialist.class, exercise.getSpecialistId()) : null;
-        Course course = exercise.getCourseId() != null ? entityManager.getReference(Course.class, exercise.getCourseId()) : null;
-        Set<Tag> tagsSet = new HashSet<>();
-        for(String tag:tagsIds){
-            tagsSet.add(entityManager.getReference(Tag.class, tag));
+
+        InstitutionSQL institutionSql = exercise.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, exercise.getInstitutionId()) : null;
+        SpecialistSQL specialistSql = exercise.getSpecialistId() != null ? entityManager.getReference(SpecialistSQL.class, exercise.getSpecialistId()) : null;
+        CourseSQL courseSql = exercise.getCourseId() != null ? entityManager.getReference(CourseSQL.class, exercise.getCourseId()) : null;
+        Set<TagSQL> tagsSet = new HashSet<>();
+        for(String tag : tagsIds){
+            tagsSet.add(entityManager.getReference(TagSQL.class, tag));
         }
 
-        pt.uminho.di.chalktyk.models.relational.Exercise relExercise =
-                new pt.uminho.di.chalktyk.models.relational.Exercise(
+        ExerciseSQL relExercise =
+                new ExerciseSQL(
                         exercise.getId(),
-                        null,
-                        institution,
-                        specialist,
-                        course,
+                        institutionSql,
+                        specialistSql,
+                        courseSql,
                         exercise.getTitle(),
                         exercise.getExerciseType(),
                         visibility,
@@ -196,8 +215,8 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public String duplicateExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException {
-        Specialist specialist = verifyOwnershipAuthorization(specialistId, exerciseId);
-        pt.uminho.di.chalktyk.models.relational.Exercise relExerciseToBeCopied;
+        SpecialistSQL specialist = verifyOwnershipAuthorization(specialistId, exerciseId);
+        ExerciseSQL relExerciseToBeCopied;
 
 
         //Success
@@ -219,21 +238,21 @@ public class ExercisesService implements IExercisesService{
         relExerciseToBeCopied = exerciseSqlDAO.getReferenceById(nonRelExerciseToBeCopied.getId());
 
         shallowExercise = exerciseDAO.save(shallowExercise);
-        Institution relInstitution = institutionId != null ? entityManager.getReference(Institution.class, institutionId) :null;
-        pt.uminho.di.chalktyk.models.relational.Exercise shallowRelExercise =
+        InstitutionSQL relInstitution = institutionId != null ? entityManager.getReference(InstitutionSQL.class, institutionId) :null;
+        ExerciseSQL shallowRelExercise =
                 relExerciseToBeCopied.createShallow(shallowExercise.getId(),relInstitution,specialist,null);
         exerciseSqlDAO.save(shallowRelExercise);
         return shallowExercise.getId();
     }
 
-    private Specialist verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
+    private SpecialistSQL verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
         if(!exerciseSqlDAO.existsById(exerciseId))
             throw new NotFoundException("Exercise not found");
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Specialist not found");
 
-        pt.uminho.di.chalktyk.models.relational.Exercise relExerciseToBeCopied = exerciseSqlDAO.getReferenceById(exerciseId);
-        Specialist specialist = relExerciseToBeCopied.getSpecialist();
+        ExerciseSQL relExerciseToBeCopied = exerciseSqlDAO.getReferenceById(exerciseId);
+        SpecialistSQL specialist = relExerciseToBeCopied.getSpecialist();
         if(specialist==null || !specialist.getId().equals(specialistId)) //TODO maybe mudar isto
             throw new UnauthorizedException("The specialist is not the owner of the exercise");
         return specialist;
@@ -254,8 +273,8 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the exercise was not found
      */
     @Override
-    public void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws UnauthorizedException, NotFoundException {
-        Specialist specialist = verifyOwnershipAuthorization(specialistId, exerciseId);
+    public void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException {
+        SpecialistSQL specialist = verifyOwnershipAuthorization(specialistId, exerciseId);
         //TODO verify if ids in multiple choice are changed
     }
 
@@ -322,7 +341,7 @@ public class ExercisesService implements IExercisesService{
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
     @Override
-    public List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage) {
+    public List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage) {
         return null;
     }
 

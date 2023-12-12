@@ -7,7 +7,7 @@ import lombok.Setter;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseSolution;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 
 import java.util.List;
 
@@ -19,6 +19,6 @@ public class CreateExerciseDTO {
     private Exercise exercise;
     private ExerciseRubric rubric;
     private ExerciseSolution solution;
-    private Visibility visibility;
+    private VisibilitySQL visibility;
     private List<String> tagsIds;
 }

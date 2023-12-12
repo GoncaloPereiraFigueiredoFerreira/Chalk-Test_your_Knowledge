@@ -9,8 +9,8 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="Institution")
-public class Institution implements Serializable {
-	public Institution() {
+public class InstitutionSQL implements Serializable {
+	public InstitutionSQL() {
 	}
 	
 	@Column(name="ID")

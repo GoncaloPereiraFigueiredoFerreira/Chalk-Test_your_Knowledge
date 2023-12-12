@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.relational.Tag;
+import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.repositories.relational.TagSqlDAO;
 import pt.uminho.di.chalktyk.services.ITagsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -55,7 +55,7 @@ public class TestTags {
     @Transactional
     void listTags() throws BadInputException {
         _createTags();
-        List<Tag> tags = iTagsService.listTags("/", -1);
+        List<TagSQL> tags = iTagsService.listTags("/", -1);
         assert existsTagByNameAndPath("A", "/", tags);
         assert existsTagByNameAndPath("C", "/A/", tags);
         assert existsTagByNameAndPath("A", "/A/C/", tags);
@@ -84,8 +84,8 @@ public class TestTags {
         assert existsTagByNameAndPath("B", "/B/", tags);
     }
 
-    boolean existsTagByNameAndPath(String name, String path, List<Tag> tags){
-        for(Tag t : tags){
+    boolean existsTagByNameAndPath(String name, String path, List<TagSQL> tags){
+        for(TagSQL t : tags){
             if(t.getName().equals(name) && t.getPath().equals(path))
                 return true;
         }

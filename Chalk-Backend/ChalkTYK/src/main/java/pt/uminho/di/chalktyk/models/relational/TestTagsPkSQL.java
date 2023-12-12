@@ -8,12 +8,12 @@ import java.io.Serializable;
 @Setter
 @Embeddable
 @EqualsAndHashCode
-public class TestTagsPK implements Serializable {
-	@ManyToOne(targetEntity=pt.uminho.di.chalktyk.models.relational.Tag.class, fetch=FetchType.LAZY)	
+public class TestTagsPkSQL implements Serializable {
+	@ManyToOne(targetEntity= TagSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TagID", referencedColumnName="ID", nullable=false) })
-	private pt.uminho.di.chalktyk.models.relational.Tag tag;
+	private TagSQL tag;
 	
-	@ManyToOne(targetEntity=pt.uminho.di.chalktyk.models.relational.Test.class, fetch=FetchType.LAZY)	
+	@ManyToOne(targetEntity= TestSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TestID", referencedColumnName="ID", nullable=false) })
-	private pt.uminho.di.chalktyk.models.relational.Test test;
+	private TestSQL test;
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.nonrelational.users.User;
+import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
 import pt.uminho.di.chalktyk.repositories.relational.SpecialistSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -45,7 +46,7 @@ public class SpecialistsService implements ISpecialistsService{
         specialist = userDAO.save(specialist);
 
         // Create entry in sql database using the id created by the nosql database
-        var specialistSql = new pt.uminho.di.chalktyk.models.relational.Specialist(specialist.getId(), null, specialist.getName(), specialist.getEmail());
+        var specialistSql = new SpecialistSQL(specialist.getId(), null, specialist.getName(), specialist.getEmail());
         specialistSqlDAO.save(specialistSql);
 
         return specialist.getId();

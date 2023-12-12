@@ -3,14 +3,10 @@ package pt.uminho.di.chalktyk.models.relational;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Gets or Sets Visibility
  */
-public enum Visibility {
+public enum VisibilitySQL {
 	PUBLIC("public"),
 	NOT_LISTED("not_listed"),
 	PRIVATE("private"),
@@ -19,7 +15,7 @@ public enum Visibility {
 
 	private String value;
 
-	Visibility(String value) {
+	VisibilitySQL(String value) {
 		this.value = value;
 	}
 
@@ -30,8 +26,8 @@ public enum Visibility {
 	}
 
 	@JsonCreator
-	public static Visibility fromValue(String text) {
-		for (Visibility b : Visibility.values()) {
+	public static VisibilitySQL fromValue(String text) {
+		for (VisibilitySQL b : VisibilitySQL.values()) {
 			if (String.valueOf(b.value).equals(text)) {
 				return b;
 			}

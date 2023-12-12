@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.Services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksData;
@@ -10,10 +9,7 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.Fill
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.*;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.relational.Exercise;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -21,7 +17,6 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -119,7 +114,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createOASolution();
         ExerciseRubric exerciseRubric = createOARubric();
         ConcreteExercise exercise = createOAExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -130,7 +125,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         ConcreteExercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -141,7 +136,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -152,7 +147,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertFalse(exercisesService.exerciseIsShallow(exerciseId));
         assertTrue(exercisesService.exerciseIsShallow(shallowId));

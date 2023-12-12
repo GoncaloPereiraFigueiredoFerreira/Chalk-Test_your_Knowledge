@@ -11,25 +11,25 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="Test")
-public class Test implements Serializable {
+public class TestSQL implements Serializable {
 	@Column(name="ID")
 	@Id	
 	private String id;
 	
-	@ManyToOne(targetEntity=Institution.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= InstitutionSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
-	private Institution institution;
+	private InstitutionSQL institution;
 	
-	@ManyToOne(targetEntity=Course.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= CourseSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID", nullable=false) })
-	private Course course;
+	private CourseSQL course;
 	
 	@Column(name = "visibility")
-	private Visibility visibility;
+	private VisibilitySQL visibility;
 	
-	@ManyToOne(targetEntity=Specialist.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= SpecialistSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="SpecialistID", referencedColumnName="ID", nullable=false) })
-	private Specialist specialist;
+	private SpecialistSQL specialist;
 	
 	@Column(name="Title")
 	private String title;

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -33,7 +33,7 @@ public interface ITestsService {
      * @return test identifier
      * @throws BadInputException if any property of the test is not valid.
      **/
-    String createTest(Visibility visibility, Test body) throws BadInputException;
+    String createTest(VisibilitySQL visibility, Test body) throws BadInputException;
 
     /**
      * Delete test by its id

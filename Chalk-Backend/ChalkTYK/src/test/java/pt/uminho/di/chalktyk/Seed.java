@@ -12,7 +12,7 @@ import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.ICoursesService;
 import pt.uminho.di.chalktyk.services.IInstitutionsService;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
@@ -78,9 +78,9 @@ public class Seed {
         pt.uminho.di.chalktyk.models.nonrelational.tests.Test t3 = new pt.uminho.di.chalktyk.models.nonrelational.tests.Test(null, specialist3,
                         null, course3, "TEST #3", null, Float.valueOf(5), 
                         "?", LocalDateTime.now(), LocalDateTime.now().plusHours(1), null);
-        String test1 = testsService.createTest(Visibility.PUBLIC, t1);
-        String test2 = testsService.createTest(Visibility.PRIVATE, t2);
-        String test3 = testsService.createTest(Visibility.NOT_LISTED, t3);
+        String test1 = testsService.createTest(VisibilitySQL.PUBLIC, t1);
+        String test2 = testsService.createTest(VisibilitySQL.PRIVATE, t2);
+        String test3 = testsService.createTest(VisibilitySQL.NOT_LISTED, t3);
 
 
         // test resolutions

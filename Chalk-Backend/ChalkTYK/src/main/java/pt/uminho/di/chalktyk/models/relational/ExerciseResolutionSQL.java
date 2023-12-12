@@ -9,23 +9,23 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="ExerciseResolution")
-public class ExerciseResolution implements Serializable {
-	public ExerciseResolution() {
+public class ExerciseResolutionSQL implements Serializable {
+	public ExerciseResolutionSQL() {
 	}
 
 	@Column(name="ID")
 	@Id	
 	private String id;
 	
-	@ManyToOne(targetEntity=TestResolution.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= TestResolutionSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TestResolutionID", referencedColumnName="ID") })
-	private TestResolution testResolution;
+	private TestResolutionSQL testResolution;
 	
-	@ManyToOne(targetEntity=Student.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= StudentSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="StudentID", referencedColumnName="ID", nullable=false) })
-	private Student student;
+	private StudentSQL student;
 	
-	@ManyToOne(targetEntity=Exercise.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= ExerciseSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="ExerciseID", referencedColumnName="ID", nullable=false) })
-	private Exercise exercise;
+	private ExerciseSQL exercise;
 }

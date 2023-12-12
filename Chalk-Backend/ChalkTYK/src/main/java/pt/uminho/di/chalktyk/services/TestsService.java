@@ -11,9 +11,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.relational.Course;
-import pt.uminho.di.chalktyk.models.relational.Specialist;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.CourseSQL;
+import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
+import pt.uminho.di.chalktyk.models.relational.TestSQL;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -53,7 +54,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public String createTest(Visibility visibility, Test body) throws BadInputException {
+    public String createTest(VisibilitySQL visibility, Test body) throws BadInputException {
         // TODO: live tests + resto das classes
 
         if (body == null)
@@ -101,10 +102,10 @@ public class TestsService implements ITestsService {
         // TODO: add institution later
         //Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
         // TODO: check if course exists
-        Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
-        Specialist specialist = specialistId != null ? entityManager.getReference(Specialist.class, specialistId) : null;
+        CourseSQL course = courseId != null ? entityManager.getReference(CourseSQL.class, courseId) : null;
+        SpecialistSQL specialist = specialistId != null ? entityManager.getReference(SpecialistSQL.class, specialistId) : null;
         // TODO: add institution later
-        var bodySQL = new pt.uminho.di.chalktyk.models.relational.Test(body.getId(), null, course, visibility, specialist, body.getTitle(), body.getPublishDate());
+        var bodySQL = new TestSQL(body.getId(), null, course, visibility, specialist, body.getTitle(), body.getPublishDate());
         testSqlDAO.save(bodySQL);
 
         return body.getId();

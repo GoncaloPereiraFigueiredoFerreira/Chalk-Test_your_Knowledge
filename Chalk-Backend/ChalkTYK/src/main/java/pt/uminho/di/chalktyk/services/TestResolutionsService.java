@@ -1,20 +1,18 @@
 package pt.uminho.di.chalktyk.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.relational.Student;
-import pt.uminho.di.chalktyk.models.relational.Test;
+import pt.uminho.di.chalktyk.models.relational.StudentSQL;
+import pt.uminho.di.chalktyk.models.relational.TestResolutionSQL;
+import pt.uminho.di.chalktyk.models.relational.TestSQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestResolutionSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -69,9 +67,9 @@ public class TestResolutionsService implements ITestResolutionsService {
 
         // Persists the test resolution in SQL database
         String testId = resolution.getTestId();
-        Test test = testId != null ? entityManager.getReference(Test.class, testId) : null;
-        Student student = studentId != null ? entityManager.getReference(Student.class, studentId) : null;
-        var resolutionSql = new pt.uminho.di.chalktyk.models.relational.TestResolution(resolution.getId(), test, student);
+        TestSQL test = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
+        StudentSQL student = studentId != null ? entityManager.getReference(StudentSQL.class, studentId) : null;
+        var resolutionSql = new TestResolutionSQL(resolution.getId(), test, student);
         resolutionSqlDAO.save(resolutionSql);
 
         return resolution.getId();
