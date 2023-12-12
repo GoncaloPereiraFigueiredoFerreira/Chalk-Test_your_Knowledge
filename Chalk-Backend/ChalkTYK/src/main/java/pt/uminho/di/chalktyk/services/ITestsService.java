@@ -104,10 +104,11 @@ public interface ITestsService {
      *
      * @param testId
      * @param studentId
+     * @return test resolution identifier
      * @throws BadInputException if any property of the test resolution is not valid.
      * @throws NotFoundException if no test was found with the given id
      **/
-    void createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException;
+    String createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException;
 
     /**
      * Allows to check if the student can submit a resolution for the test
