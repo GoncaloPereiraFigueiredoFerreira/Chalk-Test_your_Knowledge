@@ -2,11 +2,23 @@ package pt.uminho.di.chalktyk.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 public interface ITestResolutionsService {
+    /**
+     * Get all test resolutions
+     *
+     * @param testId
+     * @param page
+     * @param itemsPerPage
+     * @return page with resolutions
+     **/
+    Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage);
+
     /**
      * Creates a test resolution.
      * @param resolution test resolution properties
@@ -47,4 +59,14 @@ public interface ITestResolutionsService {
      * @return list of identifiers of the student's resolution
      **/
     List<String> getStudentTestResolutionsIds(String testId, String studentId);
+
+    /**
+     * Get latest test resolution made by the student
+     *
+     * @param testId
+     * @param studentId
+     * @return latest submission made by the student
+     * @throws NotFoundException if no resolution was found
+     **/
+    TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException;
 }

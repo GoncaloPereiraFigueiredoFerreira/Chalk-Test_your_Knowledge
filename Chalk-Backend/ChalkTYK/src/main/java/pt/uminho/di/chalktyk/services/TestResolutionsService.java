@@ -1,13 +1,17 @@
 package pt.uminho.di.chalktyk.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.relational.Student;
 import pt.uminho.di.chalktyk.models.relational.Test;
@@ -32,6 +36,13 @@ public class TestResolutionsService implements ITestResolutionsService {
         this.resolutionDAO = resolutionDAO;
         this.resolutionSqlDAO = resolutionSqlDAO;
         this.studentsService = studentsService;
+    }
+
+    @Override
+    public Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) {
+        // TODO: not tested
+        // TODO: convert to non relational test resolution
+        return null; //resolutionSqlDAO.getTestResolutions(testId, PageRequest.of(page, itemsPerPage));
     }
 
     @Override
@@ -87,5 +98,30 @@ public class TestResolutionsService implements ITestResolutionsService {
     @Override
     public List<String> getStudentTestResolutionsIds(String testId, String studentId) {
         return resolutionSqlDAO.getStudentTestResolutionsIds(testId, studentId);
+    }
+
+    @Override
+    public TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException {
+        List<String> ids = getStudentTestResolutionsIds(testId, studentId);
+        TestResolution res = null;
+
+        if (ids.size() == 0)
+            throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find any resolution.");
+        else {
+            int k;
+            for (k = 0; res == null && k < ids.size(); k++)
+                res = resolutionDAO.findById(ids.get(k)).orElse(null);
+
+            if (res == null)
+                throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": error finding resolution in non-relational DB.");
+            else {
+                for (int i = k; i < ids.size(); i++){
+                    TestResolution tmp = resolutionDAO.findById(ids.get(i)).orElse(null);
+                    if (tmp != null && res.getSubmissionNr() < tmp.getSubmissionNr())
+                        res = tmp;
+                }
+            }
+        }
+        return res;
     }
 }

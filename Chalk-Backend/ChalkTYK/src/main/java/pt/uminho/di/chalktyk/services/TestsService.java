@@ -27,17 +27,19 @@ public class TestsService implements ITestsService {
     private final TestDAO testDAO;
     private final TestSqlDAO testSqlDAO;
     private final ISpecialistsService specialistsService;
+    private final IStudentsService studentsService;
     //private final IInstitutionsService institutionsService;
     private final ICoursesService coursesService;
     private final ITestResolutionsService resolutionsService;
 
     @Autowired
-    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, ISpecialistsService specialistsService, 
+    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, ISpecialistsService specialistsService, IStudentsService studentsService, 
             /*IInstitutionsService institutionsService,*/ ICoursesService coursesService, ITestResolutionsService resolutionsService){
         this.entityManager = entityManager;
         this.testDAO = testDAO;
         this.testSqlDAO = testSqlDAO;
         this.specialistsService = specialistsService;
+        this.studentsService = studentsService;
         //this.institutionsService = institutionsService;
         this.coursesService = coursesService;
         this.resolutionsService = resolutionsService;
@@ -52,6 +54,8 @@ public class TestsService implements ITestsService {
 
     @Override
     public String createTest(Visibility visibility, Test body) throws BadInputException {
+        // TODO: live tests + resto das classes
+
         if (body == null)
             throw new BadInputException("Cannot create test: test is null.");
 
@@ -96,6 +100,7 @@ public class TestsService implements ITestsService {
         // persists the test in sql database
         // TODO: add institution later
         //Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
+        // TODO: check if course exists
         Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
         Specialist specialist = specialistId != null ? entityManager.getReference(Specialist.class, specialistId) : null;
         // TODO: add institution later
@@ -106,17 +111,12 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public TestResolution getTestResolutionById(String resolutionId) throws NotFoundException{
-        return resolutionsService.getTestResolutionById(resolutionId);
-    }
-
-    @Override
-    public void deleteTestById(String testId) {
+    public void deleteTestById(String testId) throws NotFoundException {
         throw new UnsupportedOperationException("Unimplemented method 'deleteTestById'");
     }
 
     @Override
-    public String duplicateTestById(String testId) {
+    public String duplicateTestById(String testId) throws NotFoundException{
         throw new UnsupportedOperationException("Unimplemented method 'duplicateTestById'");
     }
 
@@ -136,19 +136,30 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) {
-        throw new UnsupportedOperationException("Unimplemented method 'getTestResolutions'");
+    public Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
+        // TODO: not tested
+        return resolutionsService.getTestResolutions(testId, page, itemsPerPage);
     }
 
     @Override
-    public void createTestResolution(String testId, TestResolution body) throws BadInputException {
+    public TestResolution getTestResolutionById(String resolutionId) throws NotFoundException{
+        return resolutionsService.getTestResolutionById(resolutionId);
+    }
+
+    @Override
+    public void createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException {
+        // TODO: é suposto adicionar a resolução de um exercício, não de um teste inteiro
+
         // check test
         if (testId == null)
             throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
         if (!testDAO.existsById(testId))
-            throw new BadInputException("Cannot create test resolution: resolution must belong to a valid test.");
+            throw new NotFoundException("Cannot create test resolution: couldn't find test.");
         body.setTestId(testId);
 
+        // TODO: check if test is ongoing
         // TODO: check visibility
         // TODO: check if student belongs to course
 
@@ -157,21 +168,38 @@ public class TestsService implements ITestsService {
 
     @Override
     public Boolean canStudentSubmitResolution(String testId, String studentId) {
+        // check test
+        //if (testId == null)
+        //    throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
+        //if (!testDAO.existsById(testId))
+        //    throw new BadInputException("Cannot create test resolution: resolution must belong to a valid test.");
         throw new UnsupportedOperationException("Unimplemented method 'canStudentSubmitResolution'");
     }
 
     @Override
-    public Integer countStudentSubmissionsForTest(String testId, String studentId) {
+    public Integer countStudentSubmissionsForTest(String testId, String studentId) throws NotFoundException{
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
+        if (!studentsService.existsStudentById(studentId))
+            throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find student with given id.");
         return resolutionsService.countStudentSubmissionsForTest(testId, studentId);
     }
 
     @Override
-    public List<String> getStudentTestResolutionsIds(String testId, String studentId) {
+    public List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException{
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
+        if (!studentsService.existsStudentById(studentId))
+            throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find student with given id.");
         return resolutionsService.getStudentTestResolutionsIds(testId, studentId);
     }
 
     @Override
-    public TestResolution getStudentLastResolution(String testId, String studentId) {
-        throw new UnsupportedOperationException("Unimplemented method 'getStudentLastResolution'");
-    }    
+    public TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find test with given id.");
+        if (!studentsService.existsStudentById(studentId))
+            throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find student with given id.");
+        return resolutionsService.getStudentLastResolution(testId, studentId);
+    }  
 }
