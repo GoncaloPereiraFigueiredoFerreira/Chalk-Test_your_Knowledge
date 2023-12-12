@@ -45,6 +45,6 @@ public interface CourseSqlDAO extends JpaRepository<CourseSQL, String> {
     @Query(value = "select c from CourseSQL c where c.institution.id = :institutionId")
     Page<CourseSQL> getInstitutionCourses(@Param("institutionId") String institutionId, Pageable pageable);
 
-    @Query(value = "SELECT COUNT(*) FROM specialist_course WHERE courseid = :courseId AND specialistid = :specialistId", nativeQuery = true)
-    int checkSpecialistInCourse(@Param("courseId") String courseId, @Param("specialistId") String specialistId);
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM specialist_course WHERE courseid = :courseId AND specialistid = :specialistId", nativeQuery = true)
+    boolean isCourseSpecialist(@Param("courseId") String courseId, @Param("specialistId") String specialistId);
 }

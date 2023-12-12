@@ -256,7 +256,7 @@ public class CoursesService implements ICoursesService {
     public boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException {
         if(!courseSqlDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        return courseSqlDAO.checkSpecialistInCourse(courseId, specialistId) > 0;
+        return courseSqlDAO.isCourseSpecialist(courseId, specialistId);
     }
 
     /**
