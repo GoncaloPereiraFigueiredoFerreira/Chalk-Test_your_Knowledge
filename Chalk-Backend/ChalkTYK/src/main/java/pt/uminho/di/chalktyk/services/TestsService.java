@@ -13,9 +13,13 @@ import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.relational.CourseSQL;
 import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
+import pt.uminho.di.chalktyk.models.relational.StudentSQL;
+import pt.uminho.di.chalktyk.models.relational.TestResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.TestSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestDAO;
+import pt.uminho.di.chalktyk.repositories.nonrelational.TestResolutionDAO;
+import pt.uminho.di.chalktyk.repositories.relational.TestResolutionSqlDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -27,23 +31,25 @@ public class TestsService implements ITestsService {
     private final EntityManager entityManager;
     private final TestDAO testDAO;
     private final TestSqlDAO testSqlDAO;
+    private final TestResolutionDAO resolutionDAO;
+    private final TestResolutionSqlDAO resolutionSqlDAO;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
     //private final IInstitutionsService institutionsService;
     private final ICoursesService coursesService;
-    private final ITestResolutionsService resolutionsService;
 
     @Autowired
-    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, ISpecialistsService specialistsService, IStudentsService studentsService, 
-            /*IInstitutionsService institutionsService,*/ ICoursesService coursesService, ITestResolutionsService resolutionsService){
+    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, TestResolutionDAO resolutionDAO, TestResolutionSqlDAO resolutionSqlDAO,
+            ISpecialistsService specialistsService, IStudentsService studentsService, /*IInstitutionsService institutionsService,*/ ICoursesService coursesService){
         this.entityManager = entityManager;
         this.testDAO = testDAO;
         this.testSqlDAO = testSqlDAO;
+        this.resolutionDAO = resolutionDAO;
+        this.resolutionSqlDAO = resolutionSqlDAO;
         this.specialistsService = specialistsService;
         this.studentsService = studentsService;
         //this.institutionsService = institutionsService;
         this.coursesService = coursesService;
-        this.resolutionsService = resolutionsService;
     }
 
     @Override
@@ -140,17 +146,20 @@ public class TestsService implements ITestsService {
     public Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
-        // TODO: not tested
-        return resolutionsService.getTestResolutions(testId, page, itemsPerPage);
+        // TODO: not tested and not done
+        return null;
     }
 
     @Override
     public TestResolution getTestResolutionById(String resolutionId) throws NotFoundException{
-        return resolutionsService.getTestResolutionById(resolutionId);
+        TestResolution tr = resolutionDAO.findById(resolutionId).orElse(null);
+        if (tr == null)
+            throw new NotFoundException("Could not get test resolution: there is no resolution with the given identifier.");
+        return tr;
     }
 
     @Override
-    public void createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException {
+    public String createTestResolution(String testId, TestResolution resolution) throws BadInputException, NotFoundException {
         // TODO: é suposto adicionar a resolução de um exercício, não de um teste inteiro
 
         // check test
@@ -158,13 +167,38 @@ public class TestsService implements ITestsService {
             throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot create test resolution: couldn't find test.");
-        body.setTestId(testId);
+
+        if (resolution == null)
+            throw new BadInputException("Cannot create a test resolution with a 'null' body.");
+        resolution.setTestId(testId);
 
         // TODO: check if test is ongoing
         // TODO: check visibility
         // TODO: check if student belongs to course
 
-        resolutionsService.createTestResolution(body);
+        //set the identifier to null to avoid overwrite attacks
+        resolution.setId(null);
+
+        // TODO: check other resolutions made by the student and update the submission nr
+        // check student
+        String studentId = resolution.getStudentId();
+        if (studentId == null)
+            throw new BadInputException("Cannot create test resolution: resolution must belong to a student.");
+        if (!studentsService.existsStudentById(studentId))
+            throw new BadInputException("Cannot create test resolution: resolution must belong to a valid student.");
+
+        // Save resolution in nosql database
+        resolution = resolutionDAO.save(resolution);
+
+        // TODO: check resolution status
+
+        // Persists the test resolution in SQL database
+        TestSQL test = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
+        StudentSQL student = studentId != null ? entityManager.getReference(StudentSQL.class, studentId) : null;
+        var resolutionSql = new TestResolutionSQL(resolution.getId(), test, student);
+        resolutionSqlDAO.save(resolutionSql);
+
+        return resolution.getId();
     }
 
     @Override
@@ -183,7 +217,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find student with given id.");
-        return resolutionsService.countStudentSubmissionsForTest(testId, studentId);
+        return resolutionSqlDAO.countStudentSubmissionsForTest(studentId, testId);
     }
 
     @Override
@@ -192,7 +226,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find student with given id.");
-        return resolutionsService.getStudentTestResolutionsIds(testId, studentId);
+        return resolutionSqlDAO.getStudentTestResolutionsIds(testId, studentId);
     }
 
     @Override
@@ -201,6 +235,27 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find student with given id.");
-        return resolutionsService.getStudentLastResolution(testId, studentId);
+
+        List<String> ids = getStudentTestResolutionsIds(testId, studentId);
+        TestResolution res = null;
+    
+        if (ids.size() == 0)
+            throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find any resolution.");
+        else {
+            int k;
+            for (k = 0; res == null && k < ids.size(); k++)
+                res = resolutionDAO.findById(ids.get(k)).orElse(null);
+
+            if (res == null)
+                throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": error finding resolution in non-relational DB.");
+            else {
+                for (int i = k; i < ids.size(); i++){
+                    TestResolution tmp = resolutionDAO.findById(ids.get(i)).orElse(null);
+                    if (tmp != null && res.getSubmissionNr() < tmp.getSubmissionNr())
+                        res = tmp;
+                }
+            }
+        }
+        return res;
     }  
 }
