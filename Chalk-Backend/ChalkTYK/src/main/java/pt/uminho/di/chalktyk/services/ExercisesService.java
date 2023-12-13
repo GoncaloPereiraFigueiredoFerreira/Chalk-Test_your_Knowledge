@@ -340,12 +340,14 @@ public class ExercisesService implements IExercisesService{
                     throw new BadInputException("There is not tag with id \"" + id + "\".");
 
 
-        // sets identifier of the institution
-        if(institution != null) exercise.setInstitutionId(institution.getName());
+        // Gets the specialist institution
+        pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
+        try { institution = institutionsService.getSpecialistInstitution(exercise.getSpecialistId()); }
+        catch (NotFoundException nfe){ throw new BadInputException("Specialist does not exist."); }
 
         // If the specialist that owns the exercise does not have an institution,
         // then the exercise's visibility cannot be set to institution.
-        if (visibility == VisibilitySQL.INSTITUTION && institution == null)
+        if (visibility!= null && visibility == VisibilitySQL.INSTITUTION && institution == null)
             throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION");
 
         // Check if course is valid
@@ -360,7 +362,7 @@ public class ExercisesService implements IExercisesService{
         // Cannot set visibility to COURSE without a course associated
         if (courseId == null && visibility == VisibilitySQL.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
-
+/*
         // Prevent overrides
         exercise.setId(null);
         exercise.setRubricId(null);
@@ -407,7 +409,7 @@ public class ExercisesService implements IExercisesService{
                         0,
                         tagsSet);
         exerciseSqlDAO.save(relExercise);
-        return exercise.getId();
+        return exercise.getId();*/return;
     }
 
     /**
