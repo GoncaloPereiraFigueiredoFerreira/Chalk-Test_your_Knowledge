@@ -86,10 +86,9 @@ public interface IExercisesService{
      * Retrieves the rubric of an exercise.
      * @param exerciseId exercise identifier
      * @return rubric of the exercise or null if it doesn't exist.
-     * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
-     * @throws NotFoundException if the exercise was not found
+     * @throws NotFoundException     if the exercise was not found
      */
-    ExerciseRubric getExerciseRubric(String userId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    ExerciseRubric getExerciseRubric(String exerciseId) throws NotFoundException;
 
     /**
      * Create an exercise rubric
@@ -98,7 +97,7 @@ public interface IExercisesService{
      * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
      * @throws NotFoundException if the exercise was not found
      */
-    void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws UnauthorizedException, NotFoundException;
+    void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException;
 
     /**
      * Issue the automatic correction of the exercise resolutions.
@@ -189,20 +188,23 @@ public interface IExercisesService{
                                 String visibilityType, String visibilityTarget,
                                 String specialistId);
 
-    Void addCommentToExerciseResolution(String resolutionId, Comment body);
+    void addCommentToExerciseResolution(String resolutionId, Comment body);
 
     ExerciseResolution getExerciseResolution(String resolutionId);
 
-    Void exerciseResolutionManualCorrection(String resolutionId, Float cotation);
+    void exerciseResolutionManualCorrection(String resolutionId, Float cotation);
 
-    Void deleteExerciseRubric(String rubricId);
+    void deleteExerciseRubric(String exerciseId);
 
-    Void updateRubric(String rubricId, ExerciseRubric rubric);
+    void updateExerciseRubric(String exerciseId, ExerciseRubric rubric) throws BadInputException, NotFoundException;
+
+    void createExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
 
     ExerciseSolution getExerciseSolution(String exerciseId);
 
-    void deleteExerciseSolution(String solutionId);
-    void deleteExerciseSolutionByExerciseId(String exerciseId);
+    void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
+
+    void deleteExerciseSolution(String exerciseId);
 
     /**
      * @param exerciseId identifier of the exercise

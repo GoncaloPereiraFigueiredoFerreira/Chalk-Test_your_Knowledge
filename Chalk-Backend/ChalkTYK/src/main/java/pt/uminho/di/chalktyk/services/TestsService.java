@@ -270,7 +270,9 @@ public class TestsService implements ITestsService {
      */
     @Override
     public String deleteExerciseFromTest(String exerciseId) throws NotFoundException {
-        // TODO
+        //TODO
+        // cant be done if after publish date
+        // if there is no publish date, then, resolutions of the exercise must be deleted
         return null;
     }
 
@@ -285,6 +287,8 @@ public class TestsService implements ITestsService {
     @Override
     public String removeExerciseFromTest(String exerciseId) throws NotFoundException{
         //TODO
+        // changes visibility of exercise from TEST to private
+        // cant be done if after publish date
         return null;
     }
 }
