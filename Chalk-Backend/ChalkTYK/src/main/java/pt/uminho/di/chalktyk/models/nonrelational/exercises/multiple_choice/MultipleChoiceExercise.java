@@ -65,40 +65,6 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 		}
 	}
 
-	/**
-	 * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
-	 * @param exercise     new exercise body
-	 */
-	@Override
-	public boolean updateExercise(Exercise exercise) throws UnauthorizedException {
-		if(!(exercise instanceof MultipleChoiceExercise mce))
-			throw new UnauthorizedException("The type of the exercise cannot be changed");
-		boolean updated = super.updateExercise(exercise);
-		List<Item> mceItems = mce.getItems();
-		if(mceItems!=null){
-			if(mceItems.size()!=items.size()){
-				items= mceItems.stream().map(Item::clone).toList();
-				updated=true;
-			}
-			else {
-				for (int i=0;i<items.size();i++){
-					if(mceItems.get(i)!=null){
-						Item item = items.get(i);
-						if(item.updateItem(mceItems.get(i))){
-							updated=true;
-							items.set(i,item);
-						}
-					}
-				}
-			}
-		}
-		if(mce.getMctype()!=null){
-			mctype=mce.getMctype();
-			updated=true;
-		}
-		return updated;
-	}
-
 	private boolean matchesTrueOrFalse(String string){
 		return string.equals("false") || string.equals("true");
 	}

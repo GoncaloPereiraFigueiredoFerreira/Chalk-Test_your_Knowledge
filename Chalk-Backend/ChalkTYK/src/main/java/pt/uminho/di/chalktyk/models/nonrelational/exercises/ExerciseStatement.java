@@ -20,25 +20,4 @@ public class ExerciseStatement {
 		if(imagePosition == null)
 			throw new BadInputException("Cannot create exercise statement: imagePosition cannot be null.");
 	}
-
-	/**
-	 * Updates a statement. If an object is 'null' than it is considered that it should remain the same.
-	 * @param exerciseStatement     new exercise statment
-	 */
-	public boolean updateStatement(ExerciseStatement exerciseStatement) {
-		boolean updated=false;
-		if(exerciseStatement.getText()!=null){
-			this.text= exerciseStatement.getText();
-			updated=true;
-		}
-		if(exerciseStatement.getImagePath()!=null){
-			this.imagePath= exerciseStatement.getImagePath();
-			updated=true;
-		}
-		if(exerciseStatement.getImagePosition()!=null){
-			this.imagePath=exerciseStatement.getImagePosition();
-			updated=true;
-		}
-		return updated;
-	}
 }

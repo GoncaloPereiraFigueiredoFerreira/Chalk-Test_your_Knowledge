@@ -30,15 +30,4 @@ public class OpenAnswerExercise extends ConcreteExercise {
     public String getExerciseType() {
         return "OA";
     }
-
-    /**
-     * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
-     * @param exercise     new exercise body
-     */
-    @Override
-    public boolean updateExercise(Exercise exercise) throws UnauthorizedException {
-        if(!(exercise instanceof OpenAnswerExercise))
-            throw new UnauthorizedException("The type of the exercise cannot be changed");
-        return super.updateExercise(exercise);
-    }
 }

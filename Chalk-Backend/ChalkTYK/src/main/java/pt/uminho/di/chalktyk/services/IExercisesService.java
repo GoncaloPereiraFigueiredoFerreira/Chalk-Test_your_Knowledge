@@ -70,7 +70,6 @@ public interface IExercisesService{
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
-     * @param specialistId identifier of the specialist that owns the exercise
      * @param exerciseId identifier of the exercise to be updated
      * @param exercise new exercise body
      * @param rubric new exercise rubric
@@ -81,7 +80,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      */
     // TODO - criar metodos privados para update individual de cada componente
-    void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException;
+    void updateExercise( String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException;
 
     /**
      * Retrieves the rubric of an exercise.

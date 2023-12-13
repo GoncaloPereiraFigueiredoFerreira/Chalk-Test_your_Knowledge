@@ -17,11 +17,5 @@ public abstract class Item {
 			throw new BadInputException("Multiple choice item id is not null");
 	}
 
-	/**
-	 * Updates an item. If an object is 'null' than it is considered that it should remain the same.
-	 * @param item     new item
-	 */
-	public abstract boolean updateItem(Item item) throws UnauthorizedException;
-
 	public abstract Item clone();
 }

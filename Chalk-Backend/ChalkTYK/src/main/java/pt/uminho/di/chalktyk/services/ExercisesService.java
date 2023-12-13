@@ -316,7 +316,6 @@ public class ExercisesService implements IExercisesService{
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
      *
-     * @param specialistId identifier of the specialist that owns the exercise
      * @param exerciseId   identifier of the exercise to be updated
      * @param exercise     new exercise body
      * @param rubric       new exercise rubric
@@ -327,9 +326,89 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the exercise was not found
      */
     @Override
-    public void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException {
-        SpecialistSQL specialist = verifyOwnershipAuthorization(specialistId, exerciseId);
-        //TODO verify if ids in multiple choice are changed
+    public void updateExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException {
+
+        if(exerciseId==null && exercise==null){
+            throw new BadInputException("Either exerciseId or exercise need to be specified");
+        }
+        if(exercise==null){
+            exercise = getExerciseById(exerciseId);
+        }
+        // Check if tags are valid
+        if(tagsIds!=null)
+            for (String id:tagsIds)
+                if(iTagsService.getTagById(id)==null)
+                    throw new BadInputException("There is not tag with id \"" + id + "\".");
+
+
+        // sets identifier of the institution
+        if(institution != null) exercise.setInstitutionId(institution.getName());
+
+        // If the specialist that owns the exercise does not have an institution,
+        // then the exercise's visibility cannot be set to institution.
+        if (visibility == VisibilitySQL.INSTITUTION && institution == null)
+            throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION");
+
+        // Check if course is valid
+        String courseId = exercise.getCourseId();
+        try {
+            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+                throw new BadInputException("Cannot create exercise: course not found.");
+        } catch (NotFoundException nfe){
+            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
+        }
+
+        // Cannot set visibility to COURSE without a course associated
+        if (courseId == null && visibility == VisibilitySQL.COURSE)
+            throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
+
+        // Prevent overrides
+        exercise.setId(null);
+        exercise.setRubricId(null);
+        exercise.setSolutionId(null);
+
+        // Check exercise properties
+        exercise.verifyProperties();
+
+        // Check solution
+        if (solution != null) {
+            solution.verifyInsertProperties();
+            exercise.verifyResolutionProperties(solution.getData());
+            solution = exerciseSolutionDAO.save(solution);
+            exercise.setSolutionId(solution.getId());
+        }
+
+        // Check rubric
+        if (rubric != null) {
+            exercise.verifyRubricProperties(rubric);
+            rubric = exerciseRubricDAO.save(rubric);
+            exercise.setRubricId(rubric.getId());
+        }
+
+        // persists the exercise in nosql database
+        exercise = exerciseDAO.save(exercise);
+
+        InstitutionSQL institutionSql = exercise.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, exercise.getInstitutionId()) : null;
+        SpecialistSQL specialistSql = exercise.getSpecialistId() != null ? entityManager.getReference(SpecialistSQL.class, exercise.getSpecialistId()) : null;
+        CourseSQL courseSql = exercise.getCourseId() != null ? entityManager.getReference(CourseSQL.class, exercise.getCourseId()) : null;
+        Set<TagSQL> tagsSet = new HashSet<>();
+        for(String tag : tagsIds){
+            tagsSet.add(entityManager.getReference(TagSQL.class, tag));
+        }
+
+        ExerciseSQL relExercise =
+                new ExerciseSQL(
+                        exercise.getId(),
+                        institutionSql,
+                        specialistSql,
+                        courseSql,
+                        exercise.getTitle(),
+                        exercise.getExerciseType(),
+                        visibility,
+                        0,
+                        tagsSet);
+        exerciseSqlDAO.save(relExercise);
+        return exercise.getId();
     }
 
     /**

@@ -54,33 +54,6 @@ public class FillTheBlanksExercise extends ConcreteExercise {
 		super.verifyInsertProperties();
 	}
 
-	/**
-	 * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
-	 * @param exercise     new exercise body
-	 */
-	@Override
-	public boolean updateExercise(Exercise exercise) throws UnauthorizedException {
-		if(!(exercise instanceof FillTheBlanksExercise ftbe))
-			throw new UnauthorizedException("The type of the exercise cannot be changed");
-		boolean updated = super.updateExercise(exercise);
-		List<String> newSegments = ftbe.getTextSegments();
-		if(newSegments!=null){
-			if(newSegments.size()!=textSegments.size()){
-				textSegments= new ArrayList<>(newSegments);
-				updated=true;
-			}
-			else {
-				for (int i=0;i<newSegments.size();i++){
-					if(newSegments.get(i)!=null){
-						textSegments.set(i, newSegments.get(i));
-						updated=true;
-					}
-				}
-			}
-		}
-		return updated;
-	}
-
 	private int numberOfAnswers(){
 		return textSegments.size()-1;
 	}

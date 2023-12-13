@@ -21,17 +21,4 @@ public class ExerciseSolution {
             throw new BadInputException("The solution's exercise resolution data cannot be null");
         data.verifyInsertProperties();
     }
-
-    /**
-     * Updates an exercise solution. If an object is 'null' than it is considered that it should remain the same.
-     * @param exerciseSolution     new exercise solution body
-     */
-    public boolean updateSolution(ExerciseSolution exerciseSolution) throws UnauthorizedException {
-        boolean updated = false;
-        if(exerciseSolution.id!=null)
-            throw new UnauthorizedException("Cannot change exercise id");
-        if(exerciseSolution.getData()!=null)
-            data.updateExerciseResolutionData(exerciseSolution.getData());
-        return updated;
-    }
 }

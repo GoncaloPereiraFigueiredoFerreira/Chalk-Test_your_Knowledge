@@ -39,44 +39,4 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 	public float getMaxCotationSum() {
 		return choiceCotation*justificationsRubrics.size();
 	}
-
-	/**
-	 * Updates an exercise rubric. If an object is 'null' than it is considered that it should remain the same.
-	 *
-	 * @param rubric new exercise rubric
-	 */
-	@Override
-	public boolean updateRubric(ExerciseRubric rubric) throws UnauthorizedException {
-		if(!(rubric instanceof MultipleChoiceRubric mcr))
-			throw new UnauthorizedException("Rubric type cannot be changed");
-		boolean updated = false;
-
-		List<OpenAnswerRubric> mcrJustifications = mcr.getJustificationsRubrics();
-		if(mcrJustifications!=null){
-			if(mcrJustifications.size()!=justificationsRubrics.size()){
-				justificationsRubrics=  mcrJustifications.stream().map(OpenAnswerRubric::clone).toList();
-				updated=true;
-			}
-			else {
-				for (int i=0;i<mcrJustifications.size();i++){
-					if(mcrJustifications.get(i)!=null){
-						OpenAnswerRubric openAnswerRubric = justificationsRubrics.get(i);
-						if(openAnswerRubric.updateRubric(mcrJustifications.get(i))){
-							updated=true;
-							justificationsRubrics.set(i,openAnswerRubric);
-						}
-					}
-				}
-			}
-		}
-		if(mcr.getChoiceCotation()!=null){
-			choiceCotation = mcr.getChoiceCotation();
-			updated = true;
-		}
-		if(mcr.getPenalty()!=null){
-			penalty = mcr.getPenalty();
-			updated = true;
-		}
-		return updated;
-	}
 }
