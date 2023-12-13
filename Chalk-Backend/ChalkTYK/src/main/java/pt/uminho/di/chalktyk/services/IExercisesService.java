@@ -194,7 +194,7 @@ public interface IExercisesService{
 
     void exerciseResolutionManualCorrection(String resolutionId, Float cotation);
 
-    void deleteExerciseRubric(String exerciseId);
+    void deleteExerciseRubric(String exerciseId) throws BadInputException, NotFoundException;
 
     void updateExerciseRubric(String exerciseId, ExerciseRubric rubric) throws BadInputException, NotFoundException;
 
@@ -204,7 +204,7 @@ public interface IExercisesService{
 
     void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
 
-    void deleteExerciseSolution(String exerciseId) throws NotFoundException;
+    void deleteExerciseSolution(String exerciseId) throws NotFoundException, BadInputException;
 
     /**
      * @param exerciseId identifier of the exercise
