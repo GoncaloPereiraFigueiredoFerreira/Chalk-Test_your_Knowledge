@@ -15,9 +15,7 @@ public class ExerciseStatement {
 	public void verifyProperties() throws BadInputException {
 		if(text == null)
 			throw new BadInputException("Cannot create exercise statement: text cannot be null.");
-		if(imagePath == null)
-			throw new BadInputException("Cannot create exercise statement: imagePath cannot be null.");
-		if(imagePosition == null)
-			throw new BadInputException("Cannot create exercise statement: imagePosition cannot be null.");
+		if(imagePath == null ^ imagePosition==null)
+			throw new BadInputException("Cannot create exercise statement: imagePath == null ^ imagePosition==null ");
 	}
 }

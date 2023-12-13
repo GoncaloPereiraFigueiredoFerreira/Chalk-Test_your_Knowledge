@@ -21,13 +21,8 @@ public abstract class ConcreteExercise extends Exercise {
     public void verifyProperties() throws BadInputException {
 		if(title == null || title.isEmpty())
 			throw new BadInputException("Cannot create concrete exercise: A title of a exercise cannot be empty or null.");
-		if(statement==null)
-			throw new BadInputException("Cannot create concrete exercise: Statement cannot be null.");
-		statement.verifyProperties();
-		if(rubricId != null)
-			throw new BadInputException("Cannot create concrete exercise: RubricId must be null.");
-		if(solutionId != null)
-			throw new BadInputException("Cannot create concrete exercise: SolutionId must be null.");
+		if(statement!=null)
+			statement.verifyProperties();
 
 		super.verifyInsertProperties();
     }

@@ -26,6 +26,7 @@ public class FillTheBlanksExercise extends ConcreteExercise {
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
 		if(!(exerciseResolutionData instanceof FillTheBlanksData fillTheBlanksData))
 			throw new BadInputException("Exercise resolution does not match exercise type (fill the blanks).");
+		fillTheBlanksData.verifyInsertProperties();
 		if(numberOfAnswers()!=fillTheBlanksData.getFillings().size())
 			throw new BadInputException("Exercise resolution fillings do not match exercise text segments (fillings size = (text segments size -1)).");
 	}
