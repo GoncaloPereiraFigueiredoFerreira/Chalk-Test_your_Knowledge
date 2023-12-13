@@ -20,4 +20,15 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
 
     @Query(value = "SELECT e.tags FROM ExerciseSQL e WHERE e.id = :exerciseId")
     InstitutionSQL getExerciseTags(@Param("exerciseId") String exerciseId);
+
+    /**
+     * Get the identifier of the specialist that owns the exercise.
+     * @param exerciseId identifier of the exercise
+     * @return identifier of the specialist that owns the exercise.
+     */
+    @Query(value = "SELECT e.specialist.id FROM ExerciseSQL e WHERE e.id = :exerciseId")
+    String getExerciseSpecialistId(@Param("exerciseId") String exerciseId);
+
+    @Query(value = "SELECT COUNT(e) FROM ExerciseCopySQL e WHERE e.original.id = :exerciseId")
+    int countExerciseCopies(@Param("exerciseId") String exerciseId);
 }

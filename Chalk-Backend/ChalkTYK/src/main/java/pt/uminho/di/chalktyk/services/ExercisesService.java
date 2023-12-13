@@ -10,8 +10,11 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.relational.*;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseDAO;
+import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseRubricDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseSolutionDAO;
+import pt.uminho.di.chalktyk.repositories.relational.ExerciseCopySqlDAO;
+import pt.uminho.di.chalktyk.repositories.relational.ExerciseResolutionSqlDAO;
 import pt.uminho.di.chalktyk.repositories.relational.ExerciseSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -31,7 +34,12 @@ public class ExercisesService implements IExercisesService{
     private final ExerciseRubricDAO exerciseRubricDAO;
     @PersistenceContext
     private final EntityManager entityManager;
-    public ExercisesService(ISpecialistsService specialistsService, ExerciseDAO exerciseDAO, ExerciseSqlDAO exerciseSqlDAO, ICoursesService coursesService, IInstitutionsService institutionsService, ITagsService iTagsService, ExerciseSolutionDAO exerciseSolutionDAO, ExerciseRubricDAO exerciseRubricDAO, EntityManager entityManager) {
+    private final ExerciseResolutionSqlDAO exerciseResolutionSqlDAO;
+    private final ExerciseResolutionDAO exerciseResolutionDAO;
+    private final ExerciseCopySqlDAO exerciseCopySqlDAO;
+
+    public ExercisesService(ISpecialistsService specialistsService, ExerciseDAO exerciseDAO, ExerciseSqlDAO exerciseSqlDAO, ICoursesService coursesService, IInstitutionsService institutionsService, ITagsService iTagsService, ExerciseSolutionDAO exerciseSolutionDAO, ExerciseRubricDAO exerciseRubricDAO, EntityManager entityManager,
+                            ExerciseResolutionSqlDAO exerciseResolutionSqlDAO, ExerciseResolutionDAO exerciseResolutionDAO, ExerciseCopySqlDAO exerciseCopySqlDAO) {
         this.specialistsService = specialistsService;
         this.exerciseDAO = exerciseDAO;
         this.exerciseSqlDAO = exerciseSqlDAO;
@@ -41,6 +49,9 @@ public class ExercisesService implements IExercisesService{
         this.exerciseSolutionDAO = exerciseSolutionDAO;
         this.exerciseRubricDAO = exerciseRubricDAO;
         this.entityManager = entityManager;
+        this.exerciseResolutionSqlDAO = exerciseResolutionSqlDAO;
+        this.exerciseResolutionDAO = exerciseResolutionDAO;
+        this.exerciseCopySqlDAO = exerciseCopySqlDAO;
     }
 
     /**
@@ -184,20 +195,76 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Delete exercise by id.
+     * Delete exercise by id. If the exercise has copies, it won't be deleted,
+     * but instead, its visibility will be set to "deleted",
+     * the specialist, course and institution will be set to null.
+     * Calling method should be transactional, to rollback changes in case of
+     * an exception.
      *
-     * @param specialistId identifier of the specialist that wants to delete the exercise
-     * @param exerciseId   identifier of the exercise
-     * @throws UnauthorizedException if the exercise is not owned by the specialist
+     * @param exerciseId identifier of the exercise
      * @throws NotFoundException     if the exercise was not found
      */
     @Override
     @Transactional
-    public void deleteExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException {
-        verifyOwnershipAuthorization(specialistId, exerciseId);
+    public void deleteExerciseById(String exerciseId) throws NotFoundException {
+        // Checks if exercise exists
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        if(exerciseSQL == null)
+            throw new NotFoundException("Could not delete exercise: Exercise does not exist.");
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        assert exercise != null;
 
-        //Success
-        //TODO acho que preciso duas cabeças para fazer este método
+        // Checks existence of resolutions
+        //boolean cannotBeDeleted = exerciseResolutionSqlDAO.countExerciseResolutionSQLByExercise_Id(exerciseId) > 0;
+        deleteExerciseResolutions(exerciseId);
+
+        // Checks existence of copies
+        // If the exercise has copies it cannot be deleted
+        // until all copies seize to exist.
+        boolean cannotBeDeleted = exerciseSqlDAO.countExerciseCopies(exerciseId) > 0;
+
+        // When the exercise cannot not be deleted:
+        if(cannotBeDeleted) {
+            //  visibility is set to "DELETED"
+            exerciseSQL.setVisibility(VisibilitySQL.DELETED);
+
+            // owner is removed
+            exerciseSQL.setSpecialist(null);
+            exercise.setSpecialistId(null);
+
+            // course is removed
+            exerciseSQL.setCourse(null);
+            exercise.setCourseId(null);
+
+            // institution is removed
+            exerciseSQL.setInstitution(null);
+            exercise.setInstitutionId(null);
+
+            //save modifications in both databases
+            exerciseSqlDAO.save(exerciseSQL);
+            exerciseDAO.save(exercise);
+        }
+        else{
+            if(exercise instanceof ConcreteExercise ce){
+                // Delete rubric if exists
+                if(ce.getSolutionId() != null)
+                    exerciseSolutionDAO.deleteById(ce.getSolutionId());
+
+                // Delete solution if exists
+                if(ce.getRubricId() != null)
+                    exerciseRubricDAO.deleteById(ce.getRubricId());
+            }
+
+            // Delete from exercise copy table in sql database
+            if(exerciseCopySqlDAO.existsById(exerciseId))
+                exerciseCopySqlDAO.deleteById(exerciseId);
+
+            // Delete from exercise table in sql database
+            exerciseSqlDAO.deleteById(exerciseId);
+
+            // Delete exercise document in nosql database
+            exerciseDAO.deleteById(exerciseId);
+        }
     }
 
     /**
@@ -243,19 +310,6 @@ public class ExercisesService implements IExercisesService{
                 relExerciseToBeCopied.createShallow(shallowExercise.getId(),relInstitution,specialist,null);
         exerciseSqlDAO.save(shallowRelExercise);
         return shallowExercise.getId();
-    }
-
-    private SpecialistSQL verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
-        if(!exerciseSqlDAO.existsById(exerciseId))
-            throw new NotFoundException("Exercise not found");
-        if(!specialistsService.existsSpecialistById(specialistId))
-            throw new NotFoundException("Specialist not found");
-
-        ExerciseSQL relExerciseToBeCopied = exerciseSqlDAO.getReferenceById(exerciseId);
-        SpecialistSQL specialist = relExerciseToBeCopied.getSpecialist();
-        if(specialist==null || !specialist.getId().equals(specialistId)) //TODO maybe mudar isto
-            throw new UnauthorizedException("The specialist is not the owner of the exercise");
-        return specialist;
     }
 
     /**
@@ -359,7 +413,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public void createExerciseResolution(String studentId, Integer exerciseId, ExerciseResolution resolution) {
-
+        //TODO - se a visibilidade nao permitir, nao deve poder ser criado o exercicio
     }
 
     /**
@@ -436,5 +490,75 @@ public class ExercisesService implements IExercisesService{
     @Override
     public Void updateRubric(String rubricId, ExerciseRubric rubric) {
         return null;
+    }
+
+    @Override
+    public ExerciseSolution getExerciseSolution(String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public void deleteExerciseSolution(String solutionId) {
+
+    }
+
+    @Override
+    public void deleteExerciseSolutionByExerciseId(String exerciseId) {
+
+    }
+
+    /**
+     * @param exerciseId identifier of the exercise
+     * @return visibility of an exercise
+     * @throws NotFoundException if the exercise does not exist
+     */
+    @Override
+    public String getExerciseVisibility(String exerciseId) throws NotFoundException {
+        Optional<ExerciseSQL> exerciseSQL = exerciseSqlDAO.findById(exerciseId);
+        if(exerciseSQL.isPresent())
+            return exerciseSQL.get().getVisibility().toString();
+        else
+            throw new NotFoundException("Exercise does not exist.");
+    }
+
+
+    /* **** Auxiliary methods **** */
+
+    /**
+     * Checks if a specialist is the owner of an exercise.
+     * @param exerciseId identifier of the exercise
+     * @param specialistId identifier of the specialist
+     * @return 'true' if a specialist is the owner of the exercise
+     */
+    private boolean isExerciseOwner(String exerciseId, String specialistId){
+        if(specialistId == null) return false;
+        return specialistId.equals(exerciseSqlDAO.getExerciseSpecialistId(exerciseId));
+    }
+
+    private SpecialistSQL verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
+        if(!exerciseSqlDAO.existsById(exerciseId))
+            throw new NotFoundException("Exercise not found");
+        if(!specialistsService.existsSpecialistById(specialistId))
+            throw new NotFoundException("Specialist not found");
+
+        ExerciseSQL relExerciseToBeCopied = exerciseSqlDAO.getReferenceById(exerciseId);
+        SpecialistSQL specialist = relExerciseToBeCopied.getSpecialist();
+        if(specialist==null || !specialist.getId().equals(specialistId)) //TODO maybe mudar isto
+            throw new UnauthorizedException("The specialist is not the owner of the exercise");
+        return specialist;
+    }
+
+    /**
+     * Delete all resolutions associated with an exercise
+     * @param exerciseId identifier of the exercise
+     */
+    private void deleteExerciseResolutions(String exerciseId){
+        // get all resolutions related to the given exercise
+        List<ExerciseResolutionSQL> resolutionSQLS =
+                exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_Id(exerciseId);
+        // Delete resolutions entries in sql database
+        exerciseResolutionSqlDAO.deleteExerciseResolutionSQLSByExercise_Id(exerciseId);
+        // Delete resolutions documents in nosql database
+        resolutionSQLS.stream().map(ExerciseResolutionSQL::getId).forEach(exerciseResolutionDAO::deleteById);
     }
 }

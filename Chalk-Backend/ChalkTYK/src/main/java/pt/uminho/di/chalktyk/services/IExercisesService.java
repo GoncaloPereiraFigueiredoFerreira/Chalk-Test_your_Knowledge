@@ -48,12 +48,11 @@ public interface IExercisesService{
 
     /**
      * Delete exercise by id.
+     *
      * @param exerciseId identifier of the exercise
-     * @param specialistId identifier of the specialist that wants to delete the exercise
-     * @throws UnauthorizedException if the exercise is not owned by the specialist
-     * @throws NotFoundException if the exercise was not found
+     * @throws NotFoundException     if the exercise was not found
      */
-    void deleteExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    void deleteExerciseById(String exerciseId) throws NotFoundException;
 
     /**
      * Duplicates the exercise that contains the given identifier.
@@ -201,5 +200,15 @@ public interface IExercisesService{
 
     Void updateRubric(String rubricId, ExerciseRubric rubric);
 
-    // todo - existe get exercise solution e get exercise rubric?
+    ExerciseSolution getExerciseSolution(String exerciseId);
+
+    void deleteExerciseSolution(String solutionId);
+    void deleteExerciseSolutionByExerciseId(String exerciseId);
+
+    /**
+     * @param exerciseId identifier of the exercise
+     * @return visibility of an exercise
+     * @throws NotFoundException if the exercise does not exist
+     */
+    String getExerciseVisibility(String exerciseId) throws NotFoundException;
 }
