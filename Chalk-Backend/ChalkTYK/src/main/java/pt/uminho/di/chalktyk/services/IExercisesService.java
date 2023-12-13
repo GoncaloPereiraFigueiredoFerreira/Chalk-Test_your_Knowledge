@@ -200,11 +200,11 @@ public interface IExercisesService{
 
     void createExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
 
-    ExerciseSolution getExerciseSolution(String exerciseId);
+    ExerciseSolution getExerciseSolution(String exerciseId) throws NotFoundException;
 
     void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
 
-    void deleteExerciseSolution(String exerciseId);
+    void deleteExerciseSolution(String exerciseId) throws NotFoundException;
 
     /**
      * @param exerciseId identifier of the exercise
