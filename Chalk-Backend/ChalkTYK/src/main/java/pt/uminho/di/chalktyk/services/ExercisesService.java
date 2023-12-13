@@ -256,8 +256,7 @@ public class ExercisesService implements IExercisesService{
             }
 
             // Delete from exercise copy table in sql database
-            if(exerciseCopySqlDAO.existsById(exerciseId))
-                exerciseCopySqlDAO.deleteById(exerciseId);
+            removeExerciseFromCopiesTable(exerciseId);
 
             // Delete from exercise table in sql database
             exerciseSqlDAO.deleteById(exerciseId);
@@ -334,16 +333,31 @@ public class ExercisesService implements IExercisesService{
 
     /**
      * Retrieves the rubric of an exercise.
-     *
-     * @param userId
      * @param exerciseId exercise identifier
      * @return rubric of the exercise or null if it doesn't exist.
-     * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
-     * @throws NotFoundException     if the exercise was not found
+     * @throws NotFoundException if the exercise was not found
      */
     @Override
-    public ExerciseRubric getExerciseRubric(String userId, String exerciseId) throws UnauthorizedException, NotFoundException {
-        return null;
+    public ExerciseRubric getExerciseRubric(String exerciseId) throws NotFoundException {
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        if(exercise == null)
+            throw new NotFoundException("Cannot get exercise rubric: exercise does not exist.");
+
+        // if exercise is shallow, the rubric needs to be retrieved from the original
+        if(exercise instanceof ShallowExercise se){
+            assert se.getOriginalExerciseId() != null;
+            exercise = exerciseDAO.findById(se.getOriginalExerciseId()).orElse(null);
+        }
+
+        // Retrieves rubric from the exercise
+        if(exercise instanceof ConcreteExercise ce){
+            if(ce.getRubricId() == null)
+                return null;
+            else
+                return exerciseRubricDAO.findById(ce.getRubricId()).orElse(null);
+        }else {
+            throw new AssertionError("Exercise is not a concrete exercise.");
+        }
     }
 
     /**
@@ -351,11 +365,118 @@ public class ExercisesService implements IExercisesService{
      *
      * @param exerciseId exercise identifier
      * @param rubric     new rubric
-     * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
-     * @throws NotFoundException     if the exercise was not found
+     * @throws NotFoundException if the exercise was not found
+     * @throws BadInputException if the rubric is not correctly formulated
      */
     @Override
-    public void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws UnauthorizedException, NotFoundException {
+    @Transactional
+    public void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException {
+        // finds exercise
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        if(exercise == null)
+            throw new NotFoundException("Cannot create exercise rubric: exercise does not exist.");
+
+        // checks if rubric is not null
+        if(rubric == null)
+            throw new BadInputException("Cannot create exercise rubric: rubric is null.");
+        rubric.setId(null); // prevent overwrite attack
+
+        // if exercise is shallow, the exercise needs to be converted to a concrete exercise.
+        // To do this:
+        //  - the exercise is removed from the original exercise copies
+        //  - the solution of the original exercise should be duplicated.
+        if(exercise instanceof ShallowExercise se){
+            // Retrieves original exercise
+            assert se.getOriginalExerciseId() != null;
+            Exercise origExercise = exerciseDAO.findById(se.getOriginalExerciseId()).orElse(null);
+
+            if(origExercise instanceof ConcreteExercise origCE){
+                // checks if rubric is valid
+                origCE.verifyRubricProperties(rubric);
+
+                // Retrieves original exercise solution and duplicates it
+                String solutionId = origCE.getSolutionId();
+                if(solutionId != null) {
+                    ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
+                    assert exerciseSolution != null;
+                    exerciseSolution.setId(null);
+                    exerciseSolution = exerciseSolutionDAO.save(exerciseSolution);
+                    solutionId = exerciseSolution.getId();
+                }
+
+                // copies metadata to the original exercise object, since this object is an
+                // instance of the object we want the exercise to become
+                copyExerciseMetadata(exercise, origCE);
+
+                // sets the identifier of the duplicated solution
+                origCE.setSolutionId(solutionId);
+
+                // persists rubric
+                rubric = exerciseRubricDAO.save(rubric);
+
+                // sets the identifier of the new rubric
+                origCE.setRubricId(rubric.getId());
+
+                // updates the exercise document
+                exerciseDAO.save(origCE);
+            }else {
+                throw new AssertionError("Exercise is not a concrete exercise.");
+            }
+
+            // Removes exercise from the original exercise copies
+            removeExerciseFromCopiesTable(exerciseId);
+
+        }else{
+            assert exercise instanceof ConcreteExercise;
+            ConcreteExercise ce = (ConcreteExercise) exercise;
+
+            // checks if rubric is valid
+            ce.verifyRubricProperties(rubric);
+
+            // if exercise already has rubric, then the rubric document should be overwritten, conserving the identifier.
+            if(ce.getRubricId() != null) {
+                ExerciseRubric oldRubric = exerciseRubricDAO.findById(ce.getRubricId()).orElse(null);
+                assert oldRubric != null;
+                rubric.setId(oldRubric.getId());
+            }
+
+            // persists rubric
+            rubric = exerciseRubricDAO.save(rubric);
+            ce.setRubricId(rubric.getId());
+
+            // updates the exercise document
+            exerciseDAO.save(ce);
+        }
+    }
+
+    @Override
+    public void deleteExerciseRubric(String exerciseId) {
+        return;
+    }
+
+    @Override
+    @Transactional
+    public void updateExerciseRubric(String exerciseId, ExerciseRubric rubric) throws BadInputException, NotFoundException {
+        createExerciseRubric(exerciseId, rubric);
+    }
+
+    @Override
+    public void createExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException {
+
+    }
+
+    @Override
+    public ExerciseSolution getExerciseSolution(String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException {
+
+    }
+
+    @Override
+    public void deleteExerciseSolution(String exerciseId) {
 
     }
 
@@ -468,8 +589,8 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    public Void addCommentToExerciseResolution(String resolutionId, Comment body) {
-        return null;
+    public void addCommentToExerciseResolution(String resolutionId, Comment body) {
+        return;
     }
 
     @Override
@@ -478,33 +599,8 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    public Void exerciseResolutionManualCorrection(String resolutionId, Float cotation) {
-        return null;
-    }
-
-    @Override
-    public Void deleteExerciseRubric(String rubricId) {
-        return null;
-    }
-
-    @Override
-    public Void updateRubric(String rubricId, ExerciseRubric rubric) {
-        return null;
-    }
-
-    @Override
-    public ExerciseSolution getExerciseSolution(String exerciseId) {
-        return null;
-    }
-
-    @Override
-    public void deleteExerciseSolution(String solutionId) {
-
-    }
-
-    @Override
-    public void deleteExerciseSolutionByExerciseId(String exerciseId) {
-
+    public void exerciseResolutionManualCorrection(String resolutionId, Float cotation) {
+        return;
     }
 
     /**
@@ -560,5 +656,86 @@ public class ExercisesService implements IExercisesService{
         exerciseResolutionSqlDAO.deleteExerciseResolutionSQLSByExercise_Id(exerciseId);
         // Delete resolutions documents in nosql database
         resolutionSQLS.stream().map(ExerciseResolutionSQL::getId).forEach(exerciseResolutionDAO::deleteById);
+    }
+
+    /**
+     * Removes exercise from the copies table.
+     * If the original exercise gets to zero copies and has as visibility "deleted",
+     * the original exercise is deleted.
+     * @param exerciseId identifier of the exercise. Expects the identifier to not be null.
+     */
+    private void removeExerciseFromCopiesTable(String exerciseId){
+        //find entry in copies table
+        ExerciseCopySQL exerciseCopySQL = exerciseCopySqlDAO.findById(exerciseId).orElse(null);
+        if(exerciseCopySQL != null) {
+            // get the id of the original exercise, to update the number of copies
+            String originalId = exerciseCopySQL.getOriginalId();
+
+            // deletes entry from copies table
+            exerciseCopySqlDAO.deleteById(exerciseId);
+
+            // Gets original exercise and decrements number of copies by one
+            ExerciseSQL originalExerciseSql = exerciseSqlDAO.findById(originalId).orElse(null);
+            assert originalExerciseSql != null && originalExerciseSql.getNrCopies() > 0;
+            originalExerciseSql.decreaseNrCopies();
+
+            // Deletes original exercise if it does not have any copies and the visibility is set no deleted
+            if(originalExerciseSql.getNrCopies() == 0 && originalExerciseSql.getVisibility() == VisibilitySQL.DELETED) {
+                try {
+                    deleteExerciseById(originalId);
+                } catch (NotFoundException nfe) {
+                    throw new AssertionError(nfe.getMessage());
+                }
+            }else {
+                // update exercise
+                exerciseSqlDAO.save(originalExerciseSql);
+            }
+        }
+    }
+
+    /**
+     * Adds a copy entry of an exercise, and updates
+     * the original exercise number of copies.
+     * Assumes that both exercises exist,
+     * both the sql and non sql version.
+     * @param exerciseId identifier of the exercise that is a copy.
+     * @param originalId identifier of the original exercise.
+     * @throws BadInputException if one of the exercise does not exist,
+     * or if the original exercise is not a concrete exercise.
+     */
+    private void addExerciseToCopiesTable(String exerciseId, String originalId) throws BadInputException{
+        // checks that the exercises do exist, and that the
+        // original exercise is an instance of a concrete exercise
+        boolean existsExercise = exerciseSqlDAO.existsById(exerciseId);
+        Exercise original = exerciseDAO.findById(originalId).orElse(null);
+        if(!existsExercise || original instanceof ConcreteExercise)
+            throw new BadInputException("One exercise does not exist, or the original exercise is not a concrete exercise.");
+
+        // get sql references to the exercises
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.getReferenceById(exerciseId),
+                    originalSQL = exerciseSqlDAO.findById(originalId).orElse(null);
+
+        assert originalSQL != null;
+
+        // creates copy entry
+        ExerciseCopySQL exerciseCopySQL = new ExerciseCopySQL(exerciseSQL, exerciseId, originalSQL, originalId);
+        exerciseCopySqlDAO.save(exerciseCopySQL);
+
+        // increments originalSQL number of copies
+        originalSQL.increaseNrCopies();
+        exerciseSqlDAO.save(originalSQL);
+    }
+
+    /**
+     * Copies exercise metadata from ex1 to ex2
+     * @param from exercise that has the wanted metadata. Assumed not null.
+     * @param to exercise that will have its metadata overwritten. Assumed not null.
+     */
+    private void copyExerciseMetadata(Exercise from, Exercise to){
+        to.setId(from.getId());
+        to.setSpecialistId(from.getSpecialistId());
+        to.setInstitutionId(from.getInstitutionId());
+        to.setCotation(from.getCotation());
+        to.setCourseId(from.getCourseId());
     }
 }

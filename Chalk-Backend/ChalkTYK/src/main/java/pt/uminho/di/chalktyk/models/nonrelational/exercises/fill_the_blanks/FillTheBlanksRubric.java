@@ -22,7 +22,7 @@ public class FillTheBlanksRubric extends ExerciseRubric {
 
 	@Override
 	public void verifyProperties() throws BadInputException {
-		if(penalty == null || fillingCotation == null || penalty < 0 ||  fillingCotation <0)
+		if(penalty == null || fillingCotation == null || penalty < 0 || fillingCotation < 0)
 			throw new BadInputException("Cannot create FillTheBlanksRubric: The cotation or penalty of a rubric cannot be null or negative.");
 	}
 
