@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Rubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
@@ -326,13 +327,18 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public void updateExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException {
-
         if(exerciseId==null && exercise==null){
             throw new BadInputException("Either exerciseId or exercise need to be specified");
         }
-        if(exercise==null){
-            exercise = getExerciseById(exerciseId);
+        Exercise originalExercise;
+        if(exerciseId!=null){
+            originalExercise = getExerciseById(exerciseId);
         }
+        else {
+            originalExercise = getExerciseById(exercise.getId());
+        }
+        if(originalExercise==null)
+            throw new BadInputException("Exercise id not found");
         // Check if tags are valid
         if(tagsIds!=null)
             for (String id:tagsIds)
@@ -342,29 +348,30 @@ public class ExercisesService implements IExercisesService{
 
         // Gets the specialist institution
         pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
-        try { institution = institutionsService.getSpecialistInstitution(exercise.getSpecialistId()); }
+        try { institution = institutionsService.getSpecialistInstitution(originalExercise.getSpecialistId()); }
         catch (NotFoundException nfe){ throw new BadInputException("Specialist does not exist."); }
 
         // If the specialist that owns the exercise does not have an institution,
         // then the exercise's visibility cannot be set to institution.
-        if (visibility!= null && visibility == VisibilitySQL.INSTITUTION && institution == null)
+        if ( visibility == VisibilitySQL.INSTITUTION && institution == null)
             throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION");
 
         // Check if course is valid
-        String courseId = exercise.getCourseId();
-        try {
-            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
-                throw new BadInputException("Cannot create exercise: course not found.");
-        } catch (NotFoundException nfe){
-            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
-        }
+        if(exercise!=null) {
+            String courseId = exercise.getCourseId();
+            try {
+                if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+                    throw new BadInputException("Cannot create exercise: course not found.");
+            } catch (NotFoundException nfe) {
+                throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
+            }
 
-        // Cannot set visibility to COURSE without a course associated
-        if (courseId == null && visibility == VisibilitySQL.COURSE)
-            throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
-/*
+            // Cannot set visibility to COURSE without a course associated
+            if (courseId == null && visibility == VisibilitySQL.COURSE)
+                throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
+        }/*
         // Prevent overrides
-        exercise.setId(null);
+        exercise.setId(originalExercise.getId());
         exercise.setRubricId(null);
         exercise.setSolutionId(null);
 
@@ -409,7 +416,7 @@ public class ExercisesService implements IExercisesService{
                         0,
                         tagsSet);
         exerciseSqlDAO.save(relExercise);
-        return exercise.getId();*/return;
+        return exercise.getId();*/ return;
     }
 
     /**
@@ -441,6 +448,54 @@ public class ExercisesService implements IExercisesService{
         }
     }
 
+    private void convertShallowToConcrete(ShallowExercise se, ExerciseRubric rubric, ExerciseSolution solution) throws BadInputException {
+        // Retrieves original exercise
+        Exercise origExercise = exerciseDAO.findById(se.getOriginalExerciseId()).orElse(null);
+
+        if(origExercise instanceof ConcreteExercise origCE) {
+            if(rubric!=null)
+                origCE.verifyRubricProperties(rubric);
+            if(solution!=null)
+                origCE.verifyResolutionProperties(solution.getData());
+
+            // Retrieves original exercise solution and duplicates it
+            String solutionId = origCE.getSolutionId();
+            if (solutionId != null) {
+                ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
+                assert exerciseSolution != null;
+                exerciseSolution.setId(null);
+                exerciseSolution = exerciseSolutionDAO.save(exerciseSolution);
+                solutionId = exerciseSolution.getId();
+            }
+
+            // copies metadata to the original exercise object, since this object is an
+            // instance of the object we want the exercise to become
+            copyExerciseMetadata(se, origCE);
+
+            if(solution!=null){
+                solution = exerciseSolutionDAO.save(solution);
+                origCE.setSolutionId(solution.getId());
+            }
+            else {
+                // sets the identifier of the duplicated solution
+                origCE.setSolutionId(solutionId);
+            }
+
+            if(rubric!=null){
+                // persists rubric
+                rubric = exerciseRubricDAO.save(rubric);
+                // sets the identifier of the new rubric
+                origCE.setRubricId(rubric.getId());
+            }
+            else {
+                // sets the identifier of the duplicated solution
+                origCE.setRubricId(solutionId);
+            }
+
+            // updates the exercise document
+            exerciseDAO.save(origCE);
+        } else throw new BadInputException("Original exercise is not concrete");
+    }
     /**
      * Create an exercise rubric
      *

@@ -31,8 +31,9 @@ public abstract class ConcreteExercise extends Exercise {
 
 		super.verifyInsertProperties();
     }
-
+//TODO verificar ids
 	public abstract void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException;
+	//TODO verificar ids
 	public abstract void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException;
 
 	public abstract String getExerciseType();
