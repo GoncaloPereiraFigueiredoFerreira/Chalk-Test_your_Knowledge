@@ -80,7 +80,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      */
     // TODO - criar metodos privados para update individual de cada componente
-    void updateExercise( String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException;
+    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility)  throws UnauthorizedException, NotFoundException, BadInputException;
 
     /**
      * Retrieves the rubric of an exercise.

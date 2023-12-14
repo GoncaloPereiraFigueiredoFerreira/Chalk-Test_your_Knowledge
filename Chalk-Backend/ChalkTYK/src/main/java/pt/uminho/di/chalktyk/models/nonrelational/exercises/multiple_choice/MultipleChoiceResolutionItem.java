@@ -41,8 +41,6 @@ public class MultipleChoiceResolutionItem {
 	public void verifyInsertProperties() throws BadInputException {
 		if(cotation!=0.0F)
 			throw new BadInputException("Multiple choice resolution item cotation must be 0");
-		if(id!=null)
-			throw new BadInputException("Multiple choice resolution id cotation must be null");
 	}
 
 	public MultipleChoiceResolutionItem clone(){

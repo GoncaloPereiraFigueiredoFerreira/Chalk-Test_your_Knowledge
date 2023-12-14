@@ -7,6 +7,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pt.uminho.di.chalktyk.models.relational.ExerciseSQL;
 import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
+import pt.uminho.di.chalktyk.models.relational.TagSQL;
+
+import java.util.Set;
 
 @Repository
 public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
@@ -19,7 +22,12 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
     void decreaseExerciseCopies(@Param("exerciseId") String exerciseId);
 
     @Query(value = "SELECT e.tags FROM ExerciseSQL e WHERE e.id = :exerciseId")
-    InstitutionSQL getExerciseTags(@Param("exerciseId") String exerciseId);
+    java.util.Set<TagSQL> getExerciseTags(@Param("exerciseId") String exerciseId);
+
+    @Modifying
+    @Query(value = "UPDATE ExerciseSQL e SET e.tags = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS) WHERE e.id = :exerciseId")
+    void updateExerciseTagsByIds(@Param("exerciseId") String exerciseId, @Param("tagIDS") java.util.Set<String> tagIDS);
+
 
     /**
      * Get the identifier of the specialist that owns the exercise.

@@ -363,98 +363,76 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the exercise was not found
      */
     @Override
-    public void updateExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException {
-        if(exerciseId==null && exercise==null){
-            throw new BadInputException("Either exerciseId or exercise need to be specified");
-        }
-        Exercise originalExercise;
-        if(exerciseId!=null){
-            originalExercise = _getExerciseById(exerciseId);
-        }
-        else {
-            originalExercise = _getExerciseById(exercise.getId());
-        }
-        if(originalExercise==null)
-            throw new BadInputException("Exercise id not found");
-        // Check if tags are valid
+    @Transactional
+    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException {
+        if(rubric!=null)
+            updateExerciseRubric(exerciseId,rubric);
+        if(solution!=null)
+            updateExerciseSolution(exerciseId,solution);
         if(tagsIds!=null)
-            for (String id:tagsIds)
-                if(iTagsService.getTagById(id)==null)
-                    throw new BadInputException("There is not tag with id \"" + id + "\".");
+            updateExerciseTags(exerciseId,tagsIds);
+        if(exercise!=null){
+            if(!Objects.equals(exerciseId, exercise.getId()))
+                throw new BadInputException("ExerciseId must be the same as the one given in the exercise");
+            updateExerciseMetadata(exercise);
+        }
+        if(visibility!=null)
+            updateExerciseVisibility(exerciseId,visibility);
+    }
 
+    private void updateExerciseMetadata(Exercise exercise) throws UnauthorizedException, NotFoundException, BadInputException {
+        Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
+        if(exercise instanceof ShallowExercise shallowExercise){
+            if(!(origExercise instanceof ShallowExercise origSE))
+                throw new BadInputException("Cannot convert concrete exercise to shallow exercise");
+            if(!Objects.equals(shallowExercise.getOriginalExerciseId(), origSE.getOriginalExerciseId()))
+                throw new BadInputException("Cannot change shallow exercise original exercise");
+        }
+        else if (exercise instanceof ConcreteExercise concreteExercise) {
+            if(origExercise instanceof ShallowExercise origSE){
+                convertShallowToConcreteAndUpdate(origSE,false, null, false, null);
+            }
+            //exercise.setRubricId(null);
+            //exercise.setSolutionId(null);
+        }
+        // Check exercise properties
+        exercise.verifyInsertProperties();
+    }
 
-        // Gets the specialist institution
-        Institution institution;
-        try { institution = institutionsService.getSpecialistInstitution(originalExercise.getSpecialistId()); }
-        catch (NotFoundException nfe){ throw new BadInputException("Specialist does not exist."); }
+    private void updateExerciseTags(String exerciseId, List<String> tagsIds) throws UnauthorizedException, NotFoundException, BadInputException {
+        for (String id:tagsIds)
+            if(iTagsService.getTagById(id)==null)
+                throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
+        exerciseSqlDAO.updateExerciseTagsByIds(exerciseId,new HashSet<>(tagsIds));
+    }
+
+    private void updateExerciseVisibility(String exerciseId,VisibilitySQL visibility) throws UnauthorizedException, NotFoundException, BadInputException {
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.getReferenceById(exerciseId);
+
+        // Checks if specialist exists and gets the institution where it belongs
+        pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
+        try { institution = institutionsService.getSpecialistInstitution(exerciseSQL.getSpecialist().getId()); }
+        catch (NotFoundException nfe){ throw new BadInputException("Cannot create exercise: Specialist does not exist."); }
 
         // If the specialist that owns the exercise does not have an institution,
         // then the exercise's visibility cannot be set to institution.
-        if ( visibility == VisibilitySQL.INSTITUTION && institution == null)
-            throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION");
+        if (visibility == VisibilitySQL.INSTITUTION && institution == null)
+            throw new BadInputException("Cannot set visibility to INSTITUTION");
 
         // Check if course is valid
-        if(exercise!=null) {
-            String courseId = exercise.getCourseId();
-            try {
-                if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
-                    throw new BadInputException("Cannot create exercise: course not found.");
-            } catch (NotFoundException nfe) {
-                throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
-            }
-
-            // Cannot set visibility to COURSE without a course associated
-            if (courseId == null && visibility == VisibilitySQL.COURSE)
-                throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
-        }/*
-        // Prevent overrides
-        exercise.setId(originalExercise.getId());
-        exercise.setRubricId(null);
-        exercise.setSolutionId(null);
-
-        // Check exercise properties
-        exercise.verifyProperties();
-
-        // Check solution
-        if (solution != null) {
-            solution.verifyInsertProperties();
-            exercise.verifyResolutionProperties(solution.getData());
-            solution = exerciseSolutionDAO.save(solution);
-            exercise.setSolutionId(solution.getId());
+        String courseId = exerciseSQL.getCourse().getId();
+        try {
+            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exerciseSQL.getSpecialist().getId()))
+                throw new BadInputException("Cannot create exercise: course not found.");
+        } catch (NotFoundException nfe){
+            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
         }
 
-        // Check rubric
-        if (rubric != null) {
-            exercise.verifyRubricProperties(rubric);
-            rubric = exerciseRubricDAO.save(rubric);
-            exercise.setRubricId(rubric.getId());
-        }
-
-        // persists the exercise in nosql database
-        exercise = exerciseDAO.save(exercise);
-
-        InstitutionSQL institutionSql = exercise.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, exercise.getInstitutionId()) : null;
-        SpecialistSQL specialistSql = exercise.getSpecialistId() != null ? entityManager.getReference(SpecialistSQL.class, exercise.getSpecialistId()) : null;
-        CourseSQL courseSql = exercise.getCourseId() != null ? entityManager.getReference(CourseSQL.class, exercise.getCourseId()) : null;
-        Set<TagSQL> tagsSet = new HashSet<>();
-        for(String tag : tagsIds){
-            tagsSet.add(entityManager.getReference(TagSQL.class, tag));
-        }
-
-        ExerciseSQL relExercise =
-                new ExerciseSQL(
-                        exercise.getId(),
-                        institutionSql,
-                        specialistSql,
-                        courseSql,
-                        exercise.getTitle(),
-                        exercise.getExerciseType(),
-                        visibility,
-                        0,
-                        tagsSet);
-        exerciseSqlDAO.save(relExercise);
-        return exercise.getId();*/ return;
+        // Cannot set visibility to COURSE without a course associated
+        if (courseId == null && visibility == VisibilitySQL.COURSE)
+            throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
     }
+
 
     /**
      * Retrieves the rubric of an exercise.

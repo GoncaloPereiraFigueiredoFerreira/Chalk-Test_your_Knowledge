@@ -18,7 +18,6 @@ public class ExerciseSolution {
 	private ExerciseResolutionData data;
 
     public void verifyInsertProperties() throws BadInputException {
-        id=null;
         if(data==null)
             throw new BadInputException("The solution's exercise resolution data cannot be null");
         data.verifyInsertProperties();
