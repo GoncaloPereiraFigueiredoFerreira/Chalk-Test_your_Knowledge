@@ -2,15 +2,24 @@ package pt.uminho.di.chalktyk.services;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
+import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
+import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.relational.*;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseResolutionDAO;
@@ -869,14 +878,41 @@ public class ExercisesService implements IExercisesService{
      * @param matchAllTags     if 'false' an exercise will match if at least one tag of the exercise matches one of the given list.
      *                         if 'true' the exercise must have all the tags present in the list
      * @param visibilityType   type of visibility
-     * @param visibilityTarget target of the visibility, for example, if the visibility is set to course,
-     *                         then this argument is used to specify the course
+     * @param courseId         to search for an exercise from a specific course
+     * @param institutionId    to search for and exercise from a specific institution
      * @param specialistId     to search for the exercises created by a specific specialist
+     * @param title            to search for an exercise title
+     * @param exerciseType     to search for an exercise of a certain type
+     * @param verifyParams     if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
+     *                         'false' does not verify database logic
      * @return list of exercises that match the given filters
      */
     @Override
-    public List<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String visibilityTarget, String specialistId) {
-        return null;
+    public List<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
+        Visibility visibility= null;
+        if (visibilityType != null) {
+            visibility = Visibility.fromValue(visibilityType);
+            if (visibility == null)
+                throw new BadInputException("Visibility type not found");
+        }
+
+        if(verifyParams && courseId!=null) {
+            if(!coursesService.existsCourseById(courseId))
+                throw new NotFoundException("Theres no course with the given id");
+        }
+
+        if(verifyParams && institutionId!=null) {
+            if(!institutionsService.existsInstitutionById(institutionId))
+                throw new NotFoundException("Theres no institution with the given id");
+        }
+
+        if (verifyParams && specialistId != null) {
+            if(!specialistsService.existsSpecialistById(specialistId))
+                throw new NotFoundException("Theres no specialist with the given id");
+        }
+        //TODO maybe add a verification for exercisy type?
+        Page<ExerciseSQL> exerciseSQLS = exerciseSqlDAO.getExercises(PageRequest.of(page, itemsPerPage),tags,matchAllTags,visibility,institutionId,courseId,specialistId,title,exerciseType);
+        return exercisesSqlToNoSql(exerciseSQLS);
     }
 
     /**
@@ -1179,5 +1215,13 @@ public class ExercisesService implements IExercisesService{
 
         // checks the resolution data against the exercise data.
         exercise.verifyResolutionProperties(exerciseResolution.getData());
+    }
+
+
+    private List<Exercise> exercisesSqlToNoSql(Page<ExerciseSQL> exerciseSQLPage) throws NotFoundException {
+        List<Exercise> exerciseList = new ArrayList<>();
+        for(var exercise : exerciseSQLPage)
+            exerciseList.add(this.getExerciseById(exercise.getId()));
+        return exerciseList;
     }
 }
