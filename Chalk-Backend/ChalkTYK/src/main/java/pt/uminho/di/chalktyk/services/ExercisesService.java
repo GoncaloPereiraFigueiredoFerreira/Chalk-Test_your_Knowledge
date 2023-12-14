@@ -165,7 +165,7 @@ public class ExercisesService implements IExercisesService{
         // Check if course is valid
         String courseId = exercise.getCourseId();
         try {
-            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
                 throw new BadInputException("Cannot create exercise: course not found.");
         } catch (NotFoundException nfe){
             throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
@@ -910,7 +910,6 @@ public class ExercisesService implements IExercisesService{
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("Theres no specialist with the given id");
         }
-        //TODO maybe add a verification for exercisy type?
         Page<ExerciseSQL> exerciseSQLS = exerciseSqlDAO.getExercises(PageRequest.of(page, itemsPerPage),tags,matchAllTags,visibility,institutionId,courseId,specialistId,title,exerciseType);
         return exercisesSqlToNoSql(exerciseSQLS);
     }

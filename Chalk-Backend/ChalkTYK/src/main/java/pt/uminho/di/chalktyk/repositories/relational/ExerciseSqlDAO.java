@@ -36,10 +36,11 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
     @Query(value = "UPDATE ExerciseSQL e SET e.course = (SELECT c FROM CourseSQL c WHERE c.id=:courseId) WHERE e.id = :exerciseId")
     void updateExerciseCourseById(@Param("exerciseId") String exerciseId,@Param("courseId") String courseId);
 
-    @Query("SELECT e FROM ExerciseSQL e WHERE" +
-            " CASE WHEN :matchAllTags THEN (:tags is null or e.tags = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS))"+
-            " ELSE (:tags is null or e.tags IN (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS)) END and"+
-            " :visibilityType is null or e.visibility = :visibilityType and" +
+
+
+    @Query("SELECT e FROM ExerciseSQL e JOIN e.tags t WHERE" +
+            " CASE WHEN :matchAllTags = true THEN (t = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS))"+
+            " ELSE (:tags is null or t IN (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS)) END and"+
             " :visibilityType is null or e.visibility = :visibilityType and" +
             " :institutionId is null or e.institution = (SELECT i FROM InstitutionSQL i WHERE i.id=:institutionId) and" +
             " :courseId is null or e.course = (SELECT c FROM CourseSQL c WHERE c.id=:courseId) and" +
@@ -47,13 +48,14 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
             " :title is null or e.title = :title and" +
             " :exerciseType is null or e.exerciseType = :exerciseType")
     Page<ExerciseSQL> getExercises(Pageable pageable,
-                                   @Param("tags") List<String> tags, @Param("matchAllTags")  boolean matchAllTags,
+                                   @Param("tagIDS") java.util.List<String> tagIDS, @Param("matchAllTags")  boolean matchAllTags,
                                    @Param("visibilityType") Visibility visibilityType,
                                    @Param("institutionId") String institutionId,
                                    @Param("courseId") String courseId,
                                    @Param("specialistID") String specialistId,
                                    @Param("title")  String title,
                                    @Param("exerciseType")  String exerciseType);
+
     /**
      * Get the identifier of the specialist that owns the exercise.
      * @param exerciseId identifier of the exercise

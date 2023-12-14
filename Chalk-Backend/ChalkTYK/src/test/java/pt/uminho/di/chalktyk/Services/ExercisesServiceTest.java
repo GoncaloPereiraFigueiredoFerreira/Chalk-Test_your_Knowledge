@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.Services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksData;
@@ -9,6 +10,7 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.Fill
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.*;
+import pt.uminho.di.chalktyk.models.relational.ExerciseSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -28,16 +30,18 @@ public class ExercisesServiceTest {
     private final IExercisesService exercisesService;
     private final IInstitutionsService institutionsService;
     private final IStudentsService studentsService;
+    private final ITagsService iTagsService;
     private final Seed seed;
 
     @Autowired
-    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITestResolutionsService testResolutionsService){
+    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService iTagsService){
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
         this.exercisesService = exercisesService;
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService,testResolutionsService);
+        this.iTagsService = iTagsService;
+        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService);
     }
 
     private OpenAnswerExercise createOAExercise(String specialistId,String courseId){
@@ -136,7 +140,8 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
+
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,Arrays.asList("26c3e51a-bb31-4807-a3d1-b29d566fe7e1"), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
