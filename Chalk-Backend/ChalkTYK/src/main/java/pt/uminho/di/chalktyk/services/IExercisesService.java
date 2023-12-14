@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.data.util.Pair;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
+import pt.uminho.di.chalktyk.models.relational.ExerciseResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -153,22 +154,19 @@ public interface IExercisesService{
     Integer countExerciseResolutionsByStudent(String exerciseId, String studentId);
 
     /**
-     *
      * @param exerciseId identifier of the exercise
-     * @param studentId identifier of the student
-     * @return list of the identifiers of all the resolutions a student has made for an exercise.
+     * @param studentId  identifier of the student
+     * @return list of metadata of all the resolutions a student has made for an exercise.
      * @throws NotFoundException if the exercise does not exist
      */
-    List<String> getStudentListOfExerciseResolutionsIdsByExercise(String exerciseId, String studentId);
+    List<ExerciseResolutionSQL> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException;
 
     /**
-     *
-     * @param userId identifier of the user that made the request. Necessary to check authorization.
      * @param exerciseId identifier of the exercise
-     * @param studentId identifier of the student
-     * @return last resolution made by the student for a given exercise
+     * @param studentId  identifier of the student
+     * @return last resolution made by the student for a given exercise, or 'null' if it does not exist.
      */
-    ExerciseResolution getLastExerciseResolutionByStudent(String userId, String exerciseId, String studentId);
+    ExerciseResolution getLastExerciseResolutionByStudent(String exerciseId, String studentId);
 
     /**
      * @param userId identifier of the user that made the request. Necessary to check authorization.
@@ -188,9 +186,31 @@ public interface IExercisesService{
                                 String visibilityType, String visibilityTarget,
                                 String specialistId);
 
-    void addCommentToExerciseResolution(String resolutionId, Comment body);
+    /**
+     * Adds a comment to an exercise resolution.
+     * If the resolution already has a
+     * comment associated, it will be overwritten.
+     * @param resolutionId identifier of the resolution
+     * @param comment body of the comment
+     * @throws NotFoundException if the resolution does not exist
+     * @throws BadInputException if the comment is malformed or is null.
+     */
+    void addCommentToExerciseResolution(String resolutionId, Comment comment) throws NotFoundException, BadInputException;
 
-    ExerciseResolution getExerciseResolution(String resolutionId);
+    /**
+     * Deletes a comment made to an exercise resolution.
+     * @param resolutionId identifier of the resolution
+     * @throws NotFoundException if the resolution does not exist
+     */
+    void removeCommentFromExerciseResolution(String resolutionId) throws NotFoundException;
+
+    /**
+     * Gets the exercise resolution identified by the given identifier.
+     * @param resolutionId identifier of the resolution
+     * @return the exercise resolution identified by the given identifier.
+     * @throws NotFoundException if the resolution does not exist
+     */
+    ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException;
 
     void exerciseResolutionManualCorrection(String resolutionId, Float cotation);
 

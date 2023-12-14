@@ -808,8 +808,8 @@ public class ExercisesService implements IExercisesService{
         checkResolutionData(resolution);
 
         // sets resolution number
-        Integer submissionNr = exerciseResolutionSqlDAO.getStudentLastResolutionSubmissionNr(studentId,exerciseId);
-        submissionNr = submissionNr != null ? submissionNr + 1 : 1;
+        ExerciseResolutionSQL lastResolutionSQL = exerciseResolutionSqlDAO.getStudentLastResolution(studentId,exerciseId);
+        int submissionNr = lastResolutionSQL != null ? lastResolutionSQL.getSubmissionNr() + 1 : 1;
         resolution.setSubmissionNr(submissionNr);
 
         // persists document
@@ -832,29 +832,33 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public Integer countExerciseResolutionsByStudent(String exerciseId, String studentId) {
-        return null;
+        return exerciseResolutionSqlDAO.countExerciseResolutionSQLSByExercise_IdAndStudent_Id(exerciseId, studentId);
     }
 
     /**
      * @param exerciseId identifier of the exercise
      * @param studentId  identifier of the student
-     * @return list of the identifiers of all the resolutions a student has made for an exercise.
+     * @return list of metadata of all the resolutions a student has made for an exercise.
      * @throws NotFoundException if the exercise does not exist
      */
     @Override
-    public List<String> getStudentListOfExerciseResolutionsIdsByExercise(String exerciseId, String studentId) {
-        return null;
+    public List<ExerciseResolutionSQL> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException {
+        return exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_IdAndStudent_Id(exerciseId, studentId);
     }
 
     /**
-     * @param userId     identifier of the user that made the request. Necessary to check authorization.
      * @param exerciseId identifier of the exercise
      * @param studentId  identifier of the student
-     * @return last resolution made by the student for a given exercise
+     * @return last resolution made by the student for a given exercise, or 'null' if it does not exist.
      */
     @Override
-    public ExerciseResolution getLastExerciseResolutionByStudent(String userId, String exerciseId, String studentId) {
-        return null;
+    public ExerciseResolution getLastExerciseResolutionByStudent(String exerciseId, String studentId) {
+        ExerciseResolutionSQL resolutionSQL = exerciseResolutionSqlDAO.getStudentLastResolution(studentId, exerciseId);
+        try {
+            return resolutionSQL != null ? getExerciseResolution(resolutionSQL.getId()) : null;
+        }catch (NotFoundException nfe){
+            throw new AssertionError(nfe.getMessage());
+        }
     }
 
     /**
@@ -875,14 +879,58 @@ public class ExercisesService implements IExercisesService{
         return null;
     }
 
+    /**
+     * Gets the exercise resolution identified by the given identifier.
+     * @param resolutionId identifier of the resolution
+     * @return the exercise resolution identified by the given identifier.
+     * @throws NotFoundException if the resolution does not exist
+     */
     @Override
-    public void addCommentToExerciseResolution(String resolutionId, Comment body) {
-        return;
+    public ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException {
+        ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
+        if(resolution == null)
+            throw new NotFoundException("Could not get exercise resolution: No resolution with the given id exists.");
+        return resolution;
     }
 
+
+    /**
+     * Adds a comment to an exercise resolution.
+     * If the resolution already has a
+     * comment associated, it will be overwritten.
+     * @param resolutionId identifier of the resolution
+     * @param comment body of the comment
+     * @throws NotFoundException if the resolution does not exist
+     * @throws BadInputException if the comment is malformed or is null.
+     */
     @Override
-    public ExerciseResolution getExerciseResolution(String resolutionId) {
-        return null;
+    public void addCommentToExerciseResolution(String resolutionId, Comment comment) throws NotFoundException, BadInputException {
+        // checks that the comment is valid
+        if(comment == null)
+            throw new BadInputException("Could not add comment to exercise resolution: Comment is null.");
+        String commentError = comment.verifyComment();
+        if (commentError != null)
+            throw new BadInputException("Could not add comment to exercise resolution: " + commentError);
+
+        // adds the comment to the resolution
+        ExerciseResolution resolution = getExerciseResolution(resolutionId);
+        resolution.setComment(comment);
+
+        // updates the document
+        exerciseResolutionDAO.save(resolution);
+    }
+
+    /**
+     * Deletes a comment made to an exercise resolution.
+     *
+     * @param resolutionId identifier of the resolution
+     * @throws NotFoundException if the resolution does not exist
+     */
+    @Override
+    public void removeCommentFromExerciseResolution(String resolutionId) throws NotFoundException {
+        ExerciseResolution resolution = getExerciseResolution(resolutionId);
+        resolution.setComment(null);
+        exerciseResolutionDAO.save(resolution);
     }
 
     @Override

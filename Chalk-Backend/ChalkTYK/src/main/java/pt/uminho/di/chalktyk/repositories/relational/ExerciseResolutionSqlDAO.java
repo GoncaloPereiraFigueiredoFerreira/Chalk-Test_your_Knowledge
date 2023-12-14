@@ -59,7 +59,7 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
      * @param pageable information of the page
      * @return specific page of exercise resolutions for a given exercise
      */
-    @Query("SELECT r FROM ExerciseResolutionSQL r JOIN FETCH r.student s WHERE r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX (r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r.student.id = r2.student.id)")
+    @Query("SELECT r FROM ExerciseResolutionSQL r JOIN FETCH r.student s WHERE r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX (r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r2.exercise.id = :exerciseId AND r.student.id = r2.student.id)")
     Page<ExerciseResolutionSQL> findLatestExerciseResolutionSQLSByExercise_Id(@Param("exerciseId") String exerciseId, Pageable pageable);
     //@Query("SELECT r FROM StudentSQL s JOIN ExerciseResolutionSQL r ON s.id = r.student.id WHERE r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX (r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r.student.id = r2.student.id)")
     //Page<ExerciseResolutionSQL> findLatestExerciseResolutionSQLSByExercise_Id(@Param("exerciseId") String exerciseId, Pageable pageable);
@@ -72,14 +72,17 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
     void deleteExerciseResolutionSQLSByExercise_Id(String exerciseId);
 
     /**
-     * Gets the submission number of the last resolution a specific student
+     * Gets the last resolution a specific student
      * made for a specific exercise.
      * @param studentId identifier of the student
      * @param exerciseId identifier of the exercise
      * @return the submission number of the last resolution a specific student
      *         made for a specific exercise.
      */
-    @Query("SELECT r.submissionNr FROM ExerciseResolutionSQL r WHERE r.student.id = :studentId AND r.submissionNr = (SELECT MAX(r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r.student.id = r2.student.id)")
-    Integer getStudentLastResolutionSubmissionNr(@Param("studentId") String studentId, @Param("exerciseId") String exerciseId);
+    @Query("SELECT r FROM ExerciseResolutionSQL r JOIN FETCH r.student s WHERE r.student.id = :studentId AND r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX(r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r2.exercise.id = :exerciseId AND r.student.id = r2.student.id)")
+    ExerciseResolutionSQL getStudentLastResolution(@Param("studentId") String studentId, @Param("exerciseId") String exerciseId);
 
+    int countExerciseResolutionSQLSByExercise_IdAndStudent_Id(String exerciseId, String studentId);
+
+    List<ExerciseResolutionSQL> findExerciseResolutionSQLSByExercise_IdAndStudent_Id(String exerciseId, String studentId);
 }
