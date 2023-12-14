@@ -29,6 +29,11 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
     @Query("SELECT COUNT(DISTINCT e.student.id) FROM ExerciseResolutionSQL e WHERE e.exercise.id = :exerciseId")
     int countStudentsWithResolutionForExercise(@Param("exerciseId") String exerciseId);
 
+    /**
+     * Lists students that have a resolution for an exercise.
+     * @param exerciseId identifier of the exercise
+     * @return List of students that have a resolution for an exercise.
+     */
     @Query("SELECT e.student FROM ExerciseResolutionSQL e WHERE e.exercise.id = :exerciseId")
     List<StudentSQL> listStudentsWithResolutionForExercise(@Param("exerciseId") String exerciseId);
 
@@ -59,6 +64,22 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
     //@Query("SELECT r FROM StudentSQL s JOIN ExerciseResolutionSQL r ON s.id = r.student.id WHERE r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX (r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r.student.id = r2.student.id)")
     //Page<ExerciseResolutionSQL> findLatestExerciseResolutionSQLSByExercise_Id(@Param("exerciseId") String exerciseId, Pageable pageable);
 
+    /**
+     * Deletes all resolutions of an exercise.
+     * @param exerciseId exercise identifier
+     */
     @Modifying
     void deleteExerciseResolutionSQLSByExercise_Id(String exerciseId);
+
+    /**
+     * Gets the submission number of the last resolution a specific student
+     * made for a specific exercise.
+     * @param studentId identifier of the student
+     * @param exerciseId identifier of the exercise
+     * @return the submission number of the last resolution a specific student
+     *         made for a specific exercise.
+     */
+    @Query("SELECT r.submissionNr FROM ExerciseResolutionSQL r WHERE r.student.id = :studentId AND r.submissionNr = (SELECT MAX(r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r.student.id = r2.student.id)")
+    Integer getStudentLastResolutionSubmissionNr(@Param("studentId") String studentId, @Param("exerciseId") String exerciseId);
+
 }
