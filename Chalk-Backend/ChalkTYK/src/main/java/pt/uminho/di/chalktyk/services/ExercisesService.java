@@ -89,14 +89,8 @@ public class ExercisesService implements IExercisesService{
      **/
     @Override
     public Exercise getExerciseById(String exerciseId) throws NotFoundException {
-        Exercise exercise = _getExerciseById(exerciseId);
-        ConcreteExercise concreteExercise;
-
-        // if the exercise is shallow, converts it to a concrete instance
-        if(exercise instanceof ShallowExercise se)
-            concreteExercise = createConcreteInstanceFromShallowInstance(se);
-        else
-            concreteExercise = (ConcreteExercise) exercise;
+        // gets a concrete instance of the exercise (because it might be a shallow exercise)
+        ConcreteExercise concreteExercise = getExerciseConcreteInstance(exerciseId);
 
         // gets tags
         ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
@@ -773,11 +767,15 @@ public class ExercisesService implements IExercisesService{
     @Override
     public List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest) {
         Page<ExerciseResolutionSQL> resolutionsSQL;
+
+        // gets the page of resolutions to return
         if(latest)
             resolutionsSQL = exerciseResolutionSqlDAO.findLatestExerciseResolutionSQLSByExercise_Id(exerciseId, PageRequest.of(page, itemsPerPage));
         else
             resolutionsSQL = exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_Id(exerciseId,PageRequest.of(page, itemsPerPage));
 
+        // gets the basic student info (StudentSQL) from the ExerciseResolutionSQL instances
+        // and pairs it with the respective ExerciseResolution (NoSQL) instances
         List<Pair<StudentSQL, ExerciseResolution>> list = new ArrayList<>();
         for (ExerciseResolutionSQL resSQL : resolutionsSQL){
             ExerciseResolution res = exerciseResolutionDAO.findById(resSQL.getId()).orElse(null);
@@ -793,15 +791,46 @@ public class ExercisesService implements IExercisesService{
      * @param studentId  identifier of the creator of the resolution.
      * @param exerciseId identifier of the exercise
      * @param resolution new resolution
-     * @throws UnauthorizedException if the student does not have permission to create
-     *                               a resolution for the given exercise.
-     * @throws NotFoundException     if the exercise was not found
-     * @throws BadInputException     if there is some problem regarding the resolution of the exercise,
-     *                               like the type of resolution does not match the type of the exercise
+     * @return updated version of the resolution
+     * @throws NotFoundException if the exercise was not found
+     * @throws BadInputException if there is some problem regarding the resolution of the exercise,
+     *                           like the type of resolution does not match the type of the exercise
      */
     @Override
-    public void createExerciseResolution(String studentId, Integer exerciseId, ExerciseResolution resolution) {
-        //TODO - se a visibilidade nao permitir, nao deve poder ser criado o exercicio
+    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
+        // checks if exercise exists
+        if (!exerciseSqlDAO.existsById(exerciseId))
+            throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
+
+        // checks if resolution is valid
+        if(resolution == null)
+            throw new BadInputException("Could not create exercise resolution: resolution is null.");
+
+        // prepares resolution
+        resolution.setId(null); // prevents overwrite attacks
+        resolution.setStudentId(studentId);
+        resolution.setExerciseId(exerciseId);
+        resolution.setStatus(ExerciseResolutionStatus.NOT_REVISED); // new resolution so cannot be already revised
+        resolution.setCotation(null); // new resolution so it should not have a cotation
+
+        // checks the resolution data against the exercise data
+        checkResolutionData(resolution);
+
+        // sets resolution number
+        Integer submissionNr = exerciseResolutionSqlDAO.getStudentLastResolutionSubmissionNr(studentId,exerciseId);
+        submissionNr = submissionNr != null ? submissionNr + 1 : 1;
+        resolution.setSubmissionNr(submissionNr);
+
+        // persists document
+        resolution = exerciseResolutionDAO.save(resolution);
+
+        // creates sql info and persists it
+        StudentSQL studentSQL = entityManager.getReference(StudentSQL.class, studentId);
+        ExerciseSQL exerciseSQL = entityManager.getReference(ExerciseSQL.class, exerciseId);
+        ExerciseResolutionSQL resolutionSQL = new ExerciseResolutionSQL(resolution.getId(), studentSQL, exerciseSQL, submissionNr);
+        exerciseResolutionSqlDAO.save(resolutionSQL);
+
+        return resolution;
     }
 
     /**
@@ -1100,23 +1129,44 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Creates a concrete exercise instance from a shallow exercise instance.
-     * @param shallowExercise shallow exercise. Assumes that the exercise is not null.
+     * If an exercise is shallow, creates a concrete instance of the exercise. Only an instance is created, the databases are not updated.
+     * @param exerciseId Identifier of the exercise
      * @return a concrete exercise
      * @throws NotFoundException if the original exercise does not exist
      */
-    private ConcreteExercise createConcreteInstanceFromShallowInstance(ShallowExercise shallowExercise) throws NotFoundException {
-        assert shallowExercise != null;
+    private ConcreteExercise getExerciseConcreteInstance(String exerciseId) throws NotFoundException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        ConcreteExercise concreteExercise;
 
-        // gets original concrete exercise
-        Exercise original = _getExerciseById(shallowExercise.getOriginalExerciseId());
-        assert original instanceof ConcreteExercise;
-        ConcreteExercise exercise = (ConcreteExercise) original;
+        // if the exercise is shallow, converts it to a concrete instance
+        if(exercise instanceof ShallowExercise se) {
+            // gets original concrete exercise
+            Exercise original = _getExerciseById(se.getOriginalExerciseId());
+            assert original instanceof ConcreteExercise;
+            concreteExercise = (ConcreteExercise) original;
 
-        // copies the shallow exercise metadata to the concrete exercise
-        copyExerciseMetadata(shallowExercise, exercise);
+            // copies the shallow exercise metadata to the concrete exercise
+            copyExerciseMetadata(se, concreteExercise);
+        }
+        else concreteExercise = (ConcreteExercise) exercise;
 
-        return exercise;
+        return concreteExercise;
+    }
+
+    /**
+     * Checks the resolution data against the exercise data.
+     * @param exerciseResolution resolution
+     * @throws NotFoundException if the exercise does not exist
+     * @throws BadInputException if the resolution data is malformed
+     */
+    private void checkResolutionData(ExerciseResolution exerciseResolution) throws NotFoundException, BadInputException {
+        assert exerciseResolution != null;
+
+        // gets concrete exercise
+        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseResolution.getExerciseId());
+
+        // checks the resolution data against the exercise data.
+        exercise.verifyResolutionProperties(exerciseResolution.getData());
     }
 
 

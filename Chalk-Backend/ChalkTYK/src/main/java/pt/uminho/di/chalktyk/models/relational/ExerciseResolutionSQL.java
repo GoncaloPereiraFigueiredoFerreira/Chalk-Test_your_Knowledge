@@ -16,7 +16,8 @@ public class ExerciseResolutionSQL implements Serializable {
 	@Column(name="ID")
 	@Id	
 	private String id;
-	
+
+	// TODO - remover esta ligacao quando estiver certo que nao é usada
 	@ManyToOne(targetEntity= TestResolutionSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TestResolutionID", referencedColumnName="ID") })
 	private TestResolutionSQL testResolution;
@@ -31,6 +32,14 @@ public class ExerciseResolutionSQL implements Serializable {
 
 	@Column(name = "SubmissionNr")
 	private int submissionNr;
+
+	public ExerciseResolutionSQL(String id, StudentSQL student, ExerciseSQL exercise, int submissionNr) {
+		this.id = id;
+		this.student = student;
+		this.exercise = exercise;
+		this.submissionNr = submissionNr;
+		this.testResolution = null;
+	}
 
 	@Override
 	public String toString() {

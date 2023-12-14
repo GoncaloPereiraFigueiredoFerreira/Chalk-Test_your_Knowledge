@@ -30,7 +30,8 @@ public class ExerciseSQL implements Serializable {
 	@Column(name="ID")
 	@Id	
 	private String id;
-	
+
+	// TODO - remover esta ligacao quando estiver certo que nao é usada
 	@ManyToOne(targetEntity= TestSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TestID", referencedColumnName="ID")})
 	private TestSQL test;
