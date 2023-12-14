@@ -27,7 +27,9 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
     @Modifying
     @Query(value = "UPDATE ExerciseSQL e SET e.tags = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS) WHERE e.id = :exerciseId")
     void updateExerciseTagsByIds(@Param("exerciseId") String exerciseId, @Param("tagIDS") java.util.Set<String> tagIDS);
-
+    @Modifying
+    @Query(value = "UPDATE ExerciseSQL e SET e.course = (SELECT c FROM CourseSQL c WHERE c.id=:courseId) WHERE e.id = :exerciseId")
+    void updateExerciseCourseById(@Param("exerciseId") String exerciseId,@Param("courseId") String courseId);
 
     /**
      * Get the identifier of the specialist that owns the exercise.
