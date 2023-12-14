@@ -1,4 +1,4 @@
-package pt.uminho.di.chalktyk.apis.dtos;
+package pt.uminho.di.chalktyk.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

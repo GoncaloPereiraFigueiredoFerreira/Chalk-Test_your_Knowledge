@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.util.Pair;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
@@ -16,7 +16,7 @@ public interface IExercisesService{
      * Get Exercise by ID
      *
      * @param exerciseId of the exercise
-     * @return exercise from the given ID
+     * @return concrete exercise with the given ID
      **/
     Exercise getExerciseById(String exerciseId) throws NotFoundException;
 
@@ -65,7 +65,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      * @return new exercise identifier
      */
-    String duplicateExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
 
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
@@ -122,13 +122,13 @@ public interface IExercisesService{
     Integer countExerciseResolutions(String exerciseId, boolean total);
 
     /**
-     *
-     * @param exerciseId identifier of the exercise
-     * @param page index of the page
+     * @param exerciseId   identifier of the exercise
+     * @param page         index of the page
      * @param itemsPerPage number of pairs in each page
+     * @param latest
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage);
+    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest);
 
     /**
      * Create a resolution for a specific exercise.

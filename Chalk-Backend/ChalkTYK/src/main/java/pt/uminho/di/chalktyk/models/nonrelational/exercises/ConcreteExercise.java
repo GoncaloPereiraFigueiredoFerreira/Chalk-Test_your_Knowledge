@@ -4,8 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Transient;
+import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +21,8 @@ public abstract class ConcreteExercise extends Exercise {
 	private String title;
 	private String rubricId;
 	private String solutionId;
-
+	@Transient
+	private Set<TagSQL> tags; // TODO - mudar para string e fica só o nome?
     public void verifyProperties() throws BadInputException {
 		if(title == null || title.isEmpty())
 			throw new BadInputException("Cannot create concrete exercise: A title of a exercise cannot be empty or null.");
