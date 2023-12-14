@@ -352,7 +352,10 @@ public class ExercisesService implements IExercisesService{
         }
         else if (exercise instanceof ConcreteExercise concreteExercise) {
             if(origExercise instanceof ShallowExercise origSE){
-                convertShallowToConcrete(origSE,null,null);
+                convertShallowToConcreteAndUpdate(origSE,false,null,false,null);
+                origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
+                assert origExercise instanceof ConcreteExercise;
+                //TODO update this
             }
             //exercise.setRubricId(null);
             //exercise.setSolutionId(null);
@@ -935,5 +938,60 @@ public class ExercisesService implements IExercisesService{
             // Removes exercise from the original exercise copies
             removeExerciseFromCopiesTable(origCE.getId());
         } else throw new AssertionError("Original exercise is not concrete");
+    }
+
+    private void updateConcreteExercise(ConcreteExercise ce) throws BadInputException, UnauthorizedException {
+        // Retrieves original exercise
+        Exercise origExercise = exerciseDAO.findById(ce.getId()).orElse(null);
+
+        if(origExercise instanceof ConcreteExercise origCE) {
+            if()
+            // if the rubric should be updated, check if the rubric is valid and then persist it
+            String rubricId = origCE.getRubricId();
+            if(rubricId != null) {
+                ExerciseRubric exerciseRubric = exerciseRubricDAO.findById(rubricId).orElse(null);
+                assert exerciseRubric != null;
+                exerciseRubric.setId(null);
+                exerciseRubric = exerciseRubricDAO.save(exerciseRubric);
+                origCE.setRubricId(exerciseRubric.getId());
+            }
+
+            // if the solution should be updated, check if the rubric is valid and then persist it
+            if(updateSolution) {
+                if(solution != null) {
+                    origCE.verifyResolutionProperties(solution.getData());
+                    solution.setId(null); //prevent overwrite attacks
+                    solution = exerciseSolutionDAO.save(solution);
+                    origCE.setSolutionId(solution.getId());
+                } else origCE.setSolutionId(null);
+            }
+            // else, copy the original exercise solution
+            else {
+                // Retrieves original exercise solution and duplicates it
+                String solutionId = origCE.getSolutionId();
+                if(solutionId != null) {
+                    ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
+                    assert exerciseSolution != null;
+                    exerciseSolution.setId(null);
+                    exerciseSolution = exerciseSolutionDAO.save(exerciseSolution);
+                    origCE.setSolutionId(exerciseSolution.getId());
+                }
+            }
+
+            // copies metadata to the original exercise object, since this object is an
+            // instance of the object we want the exercise to become
+            copyExerciseMetadata(se, origCE);
+
+            // updates the exercise document
+            exerciseDAO.save(origCE);
+
+            // Removes exercise from the original exercise copies
+            removeExerciseFromCopiesTable(origCE.getId());
+        } else throw new AssertionError("Original exercise is not concrete");
+    }
+
+    private void cuckUpdateExercise(ConcreteExercise oldCe,ConcreteExercise newCe) throws  UnauthorizedException {
+        if(oldCe.getId()!=newCe.getId()||
+                oldCe.getSolutionId()!=newCe.get)
     }
 }
