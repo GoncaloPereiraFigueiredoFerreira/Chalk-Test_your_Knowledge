@@ -28,4 +28,21 @@ public class ExerciseResolutionSQL implements Serializable {
 	@ManyToOne(targetEntity= ExerciseSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="ExerciseID", referencedColumnName="ID", nullable=false) })
 	private ExerciseSQL exercise;
+
+	@Column(name = "SubmissionNr")
+	private int submissionNr;
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("ExerciseResolutionSQL{");
+        sb.append("id='").append(id).append('\'');
+		String testResolutionId = testResolution != null ? testResolution.getId() : null;
+		sb.append(", testResolutionId='").append(testResolutionId).append('\'');
+		String studentId = student != null ? student.getId() : null;
+		sb.append(", studentId='").append(studentId).append('\'');
+		String exerciseId = exercise != null ? exercise.getId() : null;
+		sb.append(", exerciseId='").append(exerciseId).append('\'');
+		sb.append("}");
+		return sb.toString();
+	}
 }

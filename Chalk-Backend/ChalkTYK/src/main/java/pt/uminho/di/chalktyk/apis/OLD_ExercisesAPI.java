@@ -2,7 +2,7 @@ package pt.uminho.di.chalktyk.apis;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pt.uminho.di.chalktyk.apis.dtos.CreateExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
 
 @RestController
 @RequestMapping("/v1/exercises")

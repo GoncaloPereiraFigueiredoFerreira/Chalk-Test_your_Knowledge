@@ -2,7 +2,9 @@ package pt.uminho.di.chalktyk.services;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
@@ -511,6 +513,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
+    @Transactional
     public void deleteExerciseRubric(String exerciseId) throws BadInputException, NotFoundException {
         // finds exercise
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
@@ -546,6 +549,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
+    @Transactional
     public void createExerciseSolution(String exerciseId, ExerciseSolution solution) throws NotFoundException, BadInputException {
         // finds exercise
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
@@ -610,11 +614,13 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
+    @Transactional
     public void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException {
         createExerciseSolution(exerciseId, exerciseSolution);
     }
 
     @Override
+    @Transactional
     public void deleteExerciseSolution(String exerciseId) throws NotFoundException, BadInputException {
         // finds exercise
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
@@ -669,18 +675,37 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public Integer countExerciseResolutions(String exerciseId, boolean total) {
-        return null;
+        if(total)
+            return exerciseResolutionSqlDAO.countExerciseResolutionSQLSByExercise_Id(exerciseId);
+        else
+            return exerciseResolutionSqlDAO.countStudentsWithResolutionForExercise(exerciseId);
     }
 
     /**
      * @param exerciseId   identifier of the exercise
      * @param page         index of the page
      * @param itemsPerPage number of pairs in each page
-     * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
+     * @param latest if 'true' only the latest resolution of a student is returned.
+     *               'false' every resolution can be returned, i.e., can have
+     *               multiple resolutions of a student
+     * @return list of pairs of a student and its latest exercise resolution for the requested exercise.
      */
+    @Transactional
     @Override
-    public List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage) {
-        return null;
+    public List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest) {
+        Page<ExerciseResolutionSQL> resolutionsSQL;
+        if(latest)
+            resolutionsSQL = exerciseResolutionSqlDAO.findLatestExerciseResolutionSQLSByExercise_Id(exerciseId, PageRequest.of(page, itemsPerPage));
+        else
+            resolutionsSQL = exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_Id(exerciseId,PageRequest.of(page, itemsPerPage));
+
+        List<Pair<StudentSQL, ExerciseResolution>> list = new ArrayList<>();
+        for (ExerciseResolutionSQL resSQL : resolutionsSQL){
+            ExerciseResolution res = exerciseResolutionDAO.findById(resSQL.getId()).orElse(null);
+            assert res != null;
+            list.add(Pair.of(resSQL.getStudent(), res));
+        }
+        return list;
     }
 
     /**

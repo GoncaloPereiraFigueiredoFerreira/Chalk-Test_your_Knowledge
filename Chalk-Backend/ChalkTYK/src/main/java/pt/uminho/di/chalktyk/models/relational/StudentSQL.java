@@ -30,4 +30,14 @@ public class StudentSQL implements Serializable {
 	@ManyToMany(targetEntity= CourseSQL.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Student_Course", joinColumns={ @JoinColumn(name="StudentID") }, inverseJoinColumns={ @JoinColumn(name="CourseID") })
 	private java.util.Set<CourseSQL> courses = new java.util.HashSet<>();
+
+	@Override
+	public String toString() {
+		return "StudentSQL{" +
+				"id='" + id + '\'' +
+				", institutionId=" + (institution != null ? institution.getId() : null) +
+				", name='" + name + '\'' +
+				", email='" + email + '\'' +
+				'}';
+	}
 }

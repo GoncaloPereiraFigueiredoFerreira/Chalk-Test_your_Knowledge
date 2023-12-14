@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.util.Pair;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
@@ -122,13 +122,13 @@ public interface IExercisesService{
     Integer countExerciseResolutions(String exerciseId, boolean total);
 
     /**
-     *
-     * @param exerciseId identifier of the exercise
-     * @param page index of the page
+     * @param exerciseId   identifier of the exercise
+     * @param page         index of the page
      * @param itemsPerPage number of pairs in each page
+     * @param latest
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage);
+    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest);
 
     /**
      * Create a resolution for a specific exercise.
