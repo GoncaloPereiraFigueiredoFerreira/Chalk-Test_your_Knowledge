@@ -16,7 +16,7 @@ public interface IExercisesService{
      * Get Exercise by ID
      *
      * @param exerciseId of the exercise
-     * @return exercise from the given ID
+     * @return concrete exercise with the given ID
      **/
     Exercise getExerciseById(String exerciseId) throws NotFoundException;
 
@@ -65,7 +65,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      * @return new exercise identifier
      */
-    String duplicateExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
 
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
