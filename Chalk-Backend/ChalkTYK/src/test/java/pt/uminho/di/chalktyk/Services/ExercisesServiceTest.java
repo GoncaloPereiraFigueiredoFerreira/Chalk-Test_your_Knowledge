@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.Services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksData;
@@ -10,7 +9,6 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.Fill
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.*;
-import pt.uminho.di.chalktyk.models.relational.ExerciseSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -48,7 +46,7 @@ public class ExercisesServiceTest {
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español OA");
-        exercise.setCotation(2.0F);
+        exercise.setPoints(2.0F);
         exercise.setSpecialistId(specialistId);
         exercise.setCourseId(courseId);
         return exercise;
@@ -72,7 +70,7 @@ public class ExercisesServiceTest {
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(items, Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español MC");
-        exercise.setCotation(3.0F);
+        exercise.setPoints(3.0F);
         exercise.setSpecialistId(specialistId);
         exercise.setCourseId(courseId);
         return exercise;
@@ -95,7 +93,7 @@ public class ExercisesServiceTest {
         FillTheBlanksExercise fillTheBlanksExercise = new FillTheBlanksExercise(Arrays.asList("Todos os ", " sabem bem ",""));
         fillTheBlanksExercise.setStatement(new ExerciseStatement("Preenche com a música dos patinhos","",""));
         fillTheBlanksExercise.setTitle("Patinhos sabem nadar FTB");
-        fillTheBlanksExercise.setCotation(2.0F);
+        fillTheBlanksExercise.setPoints(2.0F);
         fillTheBlanksExercise.setSpecialistId(specialistId);
         fillTheBlanksExercise.setCourseId(courseId);
         return fillTheBlanksExercise;

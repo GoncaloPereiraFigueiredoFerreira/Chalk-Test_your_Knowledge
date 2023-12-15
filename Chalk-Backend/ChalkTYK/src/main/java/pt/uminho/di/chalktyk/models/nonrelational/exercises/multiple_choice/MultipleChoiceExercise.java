@@ -6,12 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Document(collection = "exercises")
 @JsonTypeName("MC")
@@ -38,8 +35,8 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 			throw new BadInputException("Exercise rubric does not match exercise type (multiple choice).");
 		if(multipleChoiceRubric.getJustificationsRubrics().size() != items.size())
 			throw new BadInputException("Exercise rubric justification size must be the same as the number of items");
-		if(multipleChoiceRubric.getMaxCotationSum()!=super.getCotation())
-			throw new BadInputException("Exercise rubric maximum cotation (cotation*number of items) must be equals to exercise cotation");
+		if(multipleChoiceRubric.getMaxPointsSum()!=super.getPoints())
+			throw new BadInputException("Exercise rubric maximum points (points*number of items) must be equals to exercise points");
 		multipleChoiceRubric.verifyProperties();
 	}
 

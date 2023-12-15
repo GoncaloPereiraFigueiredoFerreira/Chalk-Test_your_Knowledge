@@ -19,8 +19,8 @@ public class ExerciseResolution extends ExerciseSolution  {
   @JsonProperty("comment")
   private Comment comment = null;
 
-  @JsonProperty("cotation")
-  private Float cotation = null;
+  @JsonProperty("points")
+  private Float points = null;
 
   @JsonProperty("data")
   private ExerciseResolutionData exerciseResolutionData = null;
@@ -87,23 +87,23 @@ public class ExerciseResolution extends ExerciseSolution  {
     this.comment = comment;
   }
 
-  public ExerciseResolution cotation(Float cotation) {
-    this.cotation = cotation;
+  public ExerciseResolution points(Float points) {
+    this.points = points;
     return this;
   }
 
   /**
-   * Get cotation
-   * @return cotation
+   * Get points
+   * @return points
    **/
   @Schema(description = "")
   
-    public Float getCotation() {
-    return cotation;
+    public Float getPoints() {
+    return points;
   }
 
-  public void setCotation(Float cotation) {
-    this.cotation = cotation;
+  public void setPoints(Float points) {
+    this.points = points;
   }
 
   public ExerciseResolution exerciseResolutionData(ExerciseResolutionData exerciseResolutionData) {
@@ -213,7 +213,7 @@ public class ExerciseResolution extends ExerciseSolution  {
     }
     ExerciseResolution exerciseResolution = (ExerciseResolution) o;
     return Objects.equals(this.comment, exerciseResolution.comment) &&
-        Objects.equals(this.cotation, exerciseResolution.cotation) &&
+        Objects.equals(this.points, exerciseResolution.points) &&
         Objects.equals(this.exerciseResolutionData, exerciseResolution.exerciseResolutionData) &&
         Objects.equals(this.exerciseId, exerciseResolution.exerciseId) &&
         Objects.equals(this.status, exerciseResolution.status) &&
@@ -224,7 +224,7 @@ public class ExerciseResolution extends ExerciseSolution  {
 
   @Override
   public int hashCode() {
-    return Objects.hash(comment, cotation, exerciseResolutionData, exerciseId, status, studentId, submissionNr, super.hashCode());
+    return Objects.hash(comment, points, exerciseResolutionData, exerciseId, status, studentId, submissionNr, super.hashCode());
   }
 
   @Override
@@ -233,7 +233,7 @@ public class ExerciseResolution extends ExerciseSolution  {
     sb.append("class ExerciseResolution {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    comment: ").append(toIndentedString(comment)).append("\n");
-    sb.append("    cotation: ").append(toIndentedString(cotation)).append("\n");
+    sb.append("    points: ").append(toIndentedString(points)).append("\n");
     sb.append("    exerciseResolutionData: ").append(toIndentedString(exerciseResolutionData)).append("\n");
     sb.append("    exerciseId: ").append(toIndentedString(exerciseId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");

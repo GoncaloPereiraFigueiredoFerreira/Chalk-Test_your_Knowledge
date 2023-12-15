@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,18 +14,18 @@ public class OAStandard {
 
 	private String title;
 	private String description;
-	private Float cotation;
+	private Float points;
 
 	public void verifyProperties() throws BadInputException {
 		if(title==null)
 			throw new BadInputException("Cannot create exercise: The rubric Standard's title cannot be null.");
 		else if(description==null)
 			throw new BadInputException("Cannot create exercise: The rubric Standard's description cannot be null.");
-		else if(cotation<0)
-			throw new BadInputException("Cannot create exercise: The rubric Standard's cotation cannot be negative.");
+		else if(points <0)
+			throw new BadInputException("Cannot create exercise: The rubric Standard's points cannot be negative.");
 	}
 
 	public OAStandard clone(){
-		return new OAStandard(title,description,cotation);
+		return new OAStandard(title,description, points);
 	}
 }

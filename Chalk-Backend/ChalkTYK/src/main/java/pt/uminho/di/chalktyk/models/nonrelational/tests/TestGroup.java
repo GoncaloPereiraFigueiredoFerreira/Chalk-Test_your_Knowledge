@@ -7,6 +7,6 @@ public class TestGroup {
 
 	private List<Exercise> exercises;
 	private String groupInstructions;
-	private Float groupCotation;
+	private Float groupPoints;
 
 }

@@ -273,7 +273,7 @@ public interface ExercisesApi {
 );
 
 
-    @Operation(summary = "To set the cotation of an exercise resolution manually.", description = "", tags={ "exercises" })
+    @Operation(summary = "To set the points of an exercise resolution manually.", description = "", tags={ "exercises" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Success."),
         
@@ -283,7 +283,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/resolutions/{resolutionId}/manual-correction",
         method = RequestMethod.POST)
     ResponseEntity<Void> exerciseResolutionManualCorrection(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
-, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "cotation", required = true) Float cotation
+, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "points", required = true) Float points
 );
 
 

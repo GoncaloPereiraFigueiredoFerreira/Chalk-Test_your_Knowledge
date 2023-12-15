@@ -2,24 +2,16 @@ package pt.uminho.di.chalktyk.services;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
-import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.relational.*;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseResolutionDAO;
@@ -797,6 +789,7 @@ public class ExercisesService implements IExercisesService{
      *                           like the type of resolution does not match the type of the exercise
      */
     @Override
+    @Transactional
     public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
         // checks if exercise exists
         if (!exerciseSqlDAO.existsById(exerciseId))
@@ -811,7 +804,7 @@ public class ExercisesService implements IExercisesService{
         resolution.setStudentId(studentId);
         resolution.setExerciseId(exerciseId);
         resolution.setStatus(ExerciseResolutionStatus.NOT_REVISED); // new resolution so cannot be already revised
-        resolution.setCotation(null); // new resolution so it should not have a cotation
+        resolution.setPoints(null); // new resolution so it should not have a points
 
         // checks the resolution data against the exercise data
         checkResolutionData(resolution);
@@ -939,6 +932,7 @@ public class ExercisesService implements IExercisesService{
      * @throws BadInputException if the comment is malformed or is null.
      */
     @Override
+    @Transactional
     public void addCommentToExerciseResolution(String resolutionId, Comment comment) throws NotFoundException, BadInputException {
         // checks that the comment is valid
         if(comment == null)
@@ -962,15 +956,40 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the resolution does not exist
      */
     @Override
+    @Transactional
     public void removeCommentFromExerciseResolution(String resolutionId) throws NotFoundException {
         ExerciseResolution resolution = getExerciseResolution(resolutionId);
         resolution.setComment(null);
         exerciseResolutionDAO.save(resolution);
     }
 
+    /**
+     * Used to set the points of an exercise resolution.
+     * @param resolutionId identifier of the resolution
+     * @param points points to set
+     * @throws NotFoundException if the resolution does not exist
+     * @throws BadInputException if the points exceed the max points for the exercise.
+     */
     @Override
-    public void exerciseResolutionManualCorrection(String resolutionId, Float cotation) {
-        return;
+    @Transactional
+    public void setExerciseResolutionPoints(String resolutionId, float points) throws NotFoundException, BadInputException {
+        // checks if the resolution exists
+        ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Could not set resolution points: Resolution does not exist.");
+
+        // finds the max points for the exercise
+        Exercise exercise = exerciseDAO.findById(resolution.getExerciseId()).orElse(null);
+        assert exercise != null;
+        float maxPoints = exercise.getPoints();
+
+        // points cannot be higher than the defined points for the question
+        if (points > maxPoints)
+            throw new BadInputException("Could not set resolution points: Points exceed the max points of the exercise");
+
+        // sets the points and persists the document
+        resolution.setPoints(points);
+        exerciseResolutionDAO.save(resolution);
     }
 
     /**
@@ -1099,7 +1118,7 @@ public class ExercisesService implements IExercisesService{
         to.setId(from.getId());
         to.setSpecialistId(from.getSpecialistId());
         to.setInstitutionId(from.getInstitutionId());
-        to.setCotation(from.getCotation());
+        to.setPoints(from.getPoints());
         to.setCourseId(from.getCourseId());
     }
 

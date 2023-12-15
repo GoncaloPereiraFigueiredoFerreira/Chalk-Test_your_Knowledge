@@ -18,7 +18,7 @@ public class ExerciseResolution {
 	private String id;
 	private String studentId;
 	private String exerciseId;
-	private Float cotation;
+	private Float points;
 	private ExerciseResolutionData data;
 	private ExerciseResolutionStatus status;
 	private Comment comment;

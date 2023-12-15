@@ -14,8 +14,8 @@ import jakarta.validation.constraints.*;
 
 
 public class ExerciseMetadata   {
-  @JsonProperty("cotation")
-  private Float cotation = null;
+  @JsonProperty("points")
+  private Float points = null;
 
   @JsonProperty("courseId")
   private String courseId = null;
@@ -32,23 +32,23 @@ public class ExerciseMetadata   {
   @JsonProperty("type")
   private String type = null;
 
-  public ExerciseMetadata cotation(Float cotation) {
-    this.cotation = cotation;
+  public ExerciseMetadata points(Float points) {
+    this.points = points;
     return this;
   }
 
   /**
-   * Get cotation
-   * @return cotation
+   * Get points
+   * @return points
    **/
   @Schema(description = "")
   
-    public Float getCotation() {
-    return cotation;
+    public Float getPoints() {
+    return points;
   }
 
-  public void setCotation(Float cotation) {
-    this.cotation = cotation;
+  public void setPoints(Float points) {
+    this.points = points;
   }
 
   public ExerciseMetadata courseId(String courseId) {
@@ -160,7 +160,7 @@ public class ExerciseMetadata   {
       return false;
     }
     ExerciseMetadata exerciseMetadata = (ExerciseMetadata) o;
-    return Objects.equals(this.cotation, exerciseMetadata.cotation) &&
+    return Objects.equals(this.points, exerciseMetadata.points) &&
         Objects.equals(this.courseId, exerciseMetadata.courseId) &&
         Objects.equals(this.id, exerciseMetadata.id) &&
         Objects.equals(this.institutionId, exerciseMetadata.institutionId) &&
@@ -170,7 +170,7 @@ public class ExerciseMetadata   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cotation, courseId, id, institutionId, specialistId, type);
+    return Objects.hash(points, courseId, id, institutionId, specialistId, type);
   }
 
   @Override
@@ -178,7 +178,7 @@ public class ExerciseMetadata   {
     StringBuilder sb = new StringBuilder();
     sb.append("class ExerciseMetadata {\n");
     
-    sb.append("    cotation: ").append(toIndentedString(cotation)).append("\n");
+    sb.append("    points: ").append(toIndentedString(points)).append("\n");
     sb.append("    courseId: ").append(toIndentedString(courseId)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    institutionId: ").append(toIndentedString(institutionId)).append("\n");

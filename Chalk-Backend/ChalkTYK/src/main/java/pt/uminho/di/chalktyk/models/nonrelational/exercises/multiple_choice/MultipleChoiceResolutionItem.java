@@ -12,12 +12,10 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Getter
 @Setter
 public class MultipleChoiceResolutionItem {
-	@Id
 	private Integer id;
-	private Float cotation;
+	private Float points;
 	private String justification;
 	private boolean value;
-
 
 	/*
 	mctype syntax:
@@ -39,12 +37,12 @@ public class MultipleChoiceResolutionItem {
 	}
 
 	public void verifyInsertProperties() throws BadInputException {
-		if(cotation!=0.0F)
-			throw new BadInputException("Multiple choice resolution item cotation must be 0");
+		if(points != 0.0F)
+			throw new BadInputException("Multiple choice resolution item points must be 0.");
 	}
 
 	public MultipleChoiceResolutionItem clone(){
-		return new MultipleChoiceResolutionItem(id,cotation,justification,value);
+		return new MultipleChoiceResolutionItem(id, points,justification,value);
 	}
 
 }

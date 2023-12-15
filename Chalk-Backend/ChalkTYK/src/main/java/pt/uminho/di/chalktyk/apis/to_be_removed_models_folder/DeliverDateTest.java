@@ -27,8 +27,8 @@ public class DeliverDateTest  implements Test {
   @JsonProperty("creationDate")
   private LocalDateTime creationDate = null;
 
-  @JsonProperty("globalCotation")
-  private Float globalCotation = null;
+  @JsonProperty("globalPoints")
+  private Float globalPoints = null;
 
   @JsonProperty("globalInstructions")
   private String globalInstructions = null;
@@ -115,24 +115,24 @@ public class DeliverDateTest  implements Test {
     this.creationDate = creationDate;
   }
 
-  public DeliverDateTest globalCotation(Float globalCotation) {
-    this.globalCotation = globalCotation;
+  public DeliverDateTest globalPoints(Float globalPoints) {
+    this.globalPoints = globalPoints;
     return this;
   }
 
   /**
-   * Get globalCotation
-   * @return globalCotation
+   * Get globalPoints
+   * @return globalPoints
    **/
   @Schema(required = true, description = "")
       @NotNull
 
-    public Float getGlobalCotation() {
-    return globalCotation;
+    public Float getGlobalPoints() {
+    return globalPoints;
   }
 
-  public void setGlobalCotation(Float globalCotation) {
-    this.globalCotation = globalCotation;
+  public void setGlobalPoints(Float globalPoints) {
+    this.globalPoints = globalPoints;
   }
 
   public DeliverDateTest globalInstructions(String globalInstructions) {
@@ -312,7 +312,7 @@ public class DeliverDateTest  implements Test {
     return Objects.equals(this.conclusion, deliverDateTest.conclusion) &&
         Objects.equals(this.courseId, deliverDateTest.courseId) &&
         Objects.equals(this.creationDate, deliverDateTest.creationDate) &&
-        Objects.equals(this.globalCotation, deliverDateTest.globalCotation) &&
+        Objects.equals(this.globalPoints, deliverDateTest.globalPoints) &&
         Objects.equals(this.globalInstructions, deliverDateTest.globalInstructions) &&
         Objects.equals(this.groups, deliverDateTest.groups) &&
         Objects.equals(this.id, deliverDateTest.id) &&
@@ -325,7 +325,7 @@ public class DeliverDateTest  implements Test {
 
   @Override
   public int hashCode() {
-    return Objects.hash(conclusion, courseId, creationDate, globalCotation, globalInstructions, groups, id, institutionId, publishDate, specialistId, title, type);
+    return Objects.hash(conclusion, courseId, creationDate, globalPoints, globalInstructions, groups, id, institutionId, publishDate, specialistId, title, type);
   }
 
   @Override
@@ -336,7 +336,7 @@ public class DeliverDateTest  implements Test {
     sb.append("    conclusion: ").append(toIndentedString(conclusion)).append("\n");
     sb.append("    courseId: ").append(toIndentedString(courseId)).append("\n");
     sb.append("    creationDate: ").append(toIndentedString(creationDate)).append("\n");
-    sb.append("    globalCotation: ").append(toIndentedString(globalCotation)).append("\n");
+    sb.append("    globalPoints: ").append(toIndentedString(globalPoints)).append("\n");
     sb.append("    globalInstructions: ").append(toIndentedString(globalInstructions)).append("\n");
     sb.append("    groups: ").append(toIndentedString(groups)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");

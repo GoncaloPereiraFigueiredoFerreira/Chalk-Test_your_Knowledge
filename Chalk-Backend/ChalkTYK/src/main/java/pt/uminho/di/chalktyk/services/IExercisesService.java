@@ -213,7 +213,14 @@ public interface IExercisesService{
      */
     ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException;
 
-    void exerciseResolutionManualCorrection(String resolutionId, Float cotation);
+    /**
+     * Used to set the points of an exercise resolution.
+     * @param resolutionId identifier of the resolution
+     * @param points points to set
+     * @throws NotFoundException if the resolution does not exist
+     * @throws BadInputException if the points exceed the max points for the exercise.
+     */
+    void setExerciseResolutionPoints(String resolutionId, float points) throws NotFoundException, BadInputException;
 
     void deleteExerciseRubric(String exerciseId) throws BadInputException, NotFoundException;
 

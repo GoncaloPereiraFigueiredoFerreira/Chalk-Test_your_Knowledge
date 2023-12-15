@@ -4,15 +4,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceExercise;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceRubric;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "exercises")
@@ -35,8 +30,8 @@ public class FillTheBlanksExercise extends ConcreteExercise {
 		if(!(rubric instanceof FillTheBlanksRubric fillTheBlanksRubric))
 			throw new BadInputException("Exercise rubric does not match exercise type (fill the blanks).");
 
-		if(numberOfAnswers()*fillTheBlanksRubric.getFillingCotation()!=super.getCotation())
-			throw new BadInputException("Exercise rubric maximum cotation (fillingCotation * numberOfAnswers) must match the exercise cotation.");
+		if(numberOfAnswers()*fillTheBlanksRubric.getFillingPoints()!=super.getPoints())
+			throw new BadInputException("Exercise rubric maximum points (fillingPoints * numberOfAnswers) must match the exercise points.");
 		fillTheBlanksRubric.verifyProperties();
 	}
 

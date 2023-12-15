@@ -152,7 +152,7 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     public ResponseEntity<Void> exerciseResolutionManualCorrection(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
-, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "cotation", required = true) Float cotation
+, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "points", required = true) Float points
 ) {
         throw new RuntimeException("Not implemented.");
     }
