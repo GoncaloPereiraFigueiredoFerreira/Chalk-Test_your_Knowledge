@@ -260,6 +260,20 @@ public class CoursesService implements ICoursesService {
     }
 
     /**
+     * Check if studentId belongs to a course
+     *
+     * @param courseId  course identifier
+     * @param studentId student identifier
+     * @return 'true' or 'false' depending on whether the student belongs to a course or not
+     */
+    @Override
+    public boolean checkStudentInCourse(String courseId, String studentId) throws NotFoundException {
+        if(!courseSqlDAO.existsById(courseId))
+            throw new NotFoundException("Could not get course students: the course does not exist.");
+        return courseSqlDAO.isCourseStudent(courseId, studentId);
+    }
+
+    /**
      * Get list of courses that a specific student is associated with
      *
      * @param studentId    identifier of the student
