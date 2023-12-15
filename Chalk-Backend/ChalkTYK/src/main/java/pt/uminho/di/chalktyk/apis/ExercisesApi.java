@@ -274,7 +274,7 @@ public interface ExercisesApi {
 , @CookieValue("chalkauthtoken") String jwt);
 
 
-    @Operation(summary = "To set the cotation of an exercise resolution manually.", description = "", tags={ "exercises" })
+    @Operation(summary = "To set the points of an exercise resolution manually.", description = "", tags={ "exercises" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Success."),
         
@@ -284,8 +284,8 @@ public interface ExercisesApi {
     @RequestMapping(value = "/exercises/resolutions/{resolutionId}/manual-correction",
         method = RequestMethod.POST)
     ResponseEntity<Void> exerciseResolutionManualCorrection(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
-, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "cotation", required = true) Float cotation
-, @CookieValue("chalkauthtoken") String jwt);
+, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "points", required = true) Float points, @CookieValue("chalkauthtoken") String jwt
+);
 
 
     @Operation(summary = "Delete the exercise rubric.", description = "", tags={ "exercises" })

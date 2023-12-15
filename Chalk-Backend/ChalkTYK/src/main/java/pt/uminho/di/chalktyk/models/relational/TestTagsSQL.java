@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.relational;
 
-import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -11,15 +10,15 @@ import java.io.Serializable;
 @Entity
 @Table(name="TestTags")
 //@IdClass(TestTagsPK.class)
-public class TestTags implements Serializable {
-	public TestTags() {
+public class TestTagsSQL implements Serializable {
+	public TestTagsSQL() {
 	}
 	
 	@Column(name="NExercises", nullable=false)
 	private int nExercises;
 
 	@EmbeddedId
-	private TestTagsPK testTagsPK;
+	private TestTagsPkSQL testTagsPK;
 
 	//@PrimaryKeyJoinColumn
 	//@ManyToOne(targetEntity=pt.uminho.di.chalktyk.models.relational.Tag.class, fetch=FetchType.LAZY)

@@ -13,8 +13,8 @@ import jakarta.validation.constraints.*;
 
 
 public class FillTheBlanksRubric extends RubricBasicProperties implements ExerciseIdRubricBody, Rubric {
-  @JsonProperty("fillingCotation")
-  private Float fillingCotation = null;
+  @JsonProperty("fillingPoints")
+  private Float fillingPoints = null;
 
   @JsonProperty("penalty")
   private Float penalty = null;
@@ -22,23 +22,23 @@ public class FillTheBlanksRubric extends RubricBasicProperties implements Exerci
   @JsonProperty("type")
   private String fillTheBlanksRubricType = null;
 
-  public FillTheBlanksRubric fillingCotation(Float fillingCotation) {
-    this.fillingCotation = fillingCotation;
+  public FillTheBlanksRubric fillingPoints(Float fillingPoints) {
+    this.fillingPoints = fillingPoints;
     return this;
   }
 
   /**
-   * Get fillingCotation
-   * @return fillingCotation
+   * Get fillingPoints
+   * @return fillingPoints
    **/
   @Schema(description = "")
   
-    public Float getFillingCotation() {
-    return fillingCotation;
+    public Float getFillingPoints() {
+    return fillingPoints;
   }
 
-  public void setFillingCotation(Float fillingCotation) {
-    this.fillingCotation = fillingCotation;
+  public void setFillingPoints(Float fillingPoints) {
+    this.fillingPoints = fillingPoints;
   }
 
   public FillTheBlanksRubric penalty(Float penalty) {
@@ -90,7 +90,7 @@ public class FillTheBlanksRubric extends RubricBasicProperties implements Exerci
       return false;
     }
     FillTheBlanksRubric fillTheBlanksRubric = (FillTheBlanksRubric) o;
-    return Objects.equals(this.fillingCotation, fillTheBlanksRubric.fillingCotation) &&
+    return Objects.equals(this.fillingPoints, fillTheBlanksRubric.fillingPoints) &&
         Objects.equals(this.penalty, fillTheBlanksRubric.penalty) &&
         Objects.equals(this.fillTheBlanksRubricType, fillTheBlanksRubric.fillTheBlanksRubricType) &&
         super.equals(o);
@@ -98,7 +98,7 @@ public class FillTheBlanksRubric extends RubricBasicProperties implements Exerci
 
   @Override
   public int hashCode() {
-    return Objects.hash(fillingCotation, penalty, fillTheBlanksRubricType, super.hashCode());
+    return Objects.hash(fillingPoints, penalty, fillTheBlanksRubricType, super.hashCode());
   }
 
   @Override
@@ -106,7 +106,7 @@ public class FillTheBlanksRubric extends RubricBasicProperties implements Exerci
     StringBuilder sb = new StringBuilder();
     sb.append("class FillTheBlanksRubric {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    fillingCotation: ").append(toIndentedString(fillingCotation)).append("\n");
+    sb.append("    fillingPoints: ").append(toIndentedString(fillingPoints)).append("\n");
     sb.append("    penalty: ").append(toIndentedString(penalty)).append("\n");
     sb.append("    fillTheBlanksRubricType: ").append(toIndentedString(fillTheBlanksRubricType)).append("\n");
     sb.append("}");

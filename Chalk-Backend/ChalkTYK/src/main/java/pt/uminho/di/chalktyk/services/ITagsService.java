@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
-import pt.uminho.di.chalktyk.models.relational.Tag;
+import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface ITagsService {
      * @return identifier of the tag
      * @throws BadInputException when the name or the path is not valid.
      */
-    Tag createTag(String name, String path) throws BadInputException;
+    TagSQL createTag(String name, String path) throws BadInputException;
 
     /**
      * Deletes a tag.
@@ -26,7 +26,7 @@ public interface ITagsService {
      * @param id identifier of the tag
      * @return the tag that matches the given identifier, or 'null' if no tag exists with the given identifier
      */
-    Tag getTagById(String id);
+    TagSQL getTagById(String id);
 
     /**
      * @param name of the tag
@@ -43,7 +43,7 @@ public interface ITagsService {
      * and with the search starting at the given path
      * @throws BadInputException if 'levels' is not -1 or a positive number, or if there are any invalid paths.
      */
-    List<Tag> listTags(String path, Integer levels) throws BadInputException;
+    List<TagSQL> listTags(String path, Integer levels) throws BadInputException;
 
     /**
      * List tags starting at the given paths.
@@ -53,5 +53,5 @@ public interface ITagsService {
      * and with the search starting at the given paths
      * @throws BadInputException if 'levels' is not -1 or a positive number, or if there are any invalid paths.
      */
-    List<Tag> listTags(List<String> paths, Integer levels) throws BadInputException;
+    List<TagSQL> listTags(List<String> paths, Integer levels) throws BadInputException;
 }

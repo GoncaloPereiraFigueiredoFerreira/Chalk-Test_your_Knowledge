@@ -10,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
+import pt.uminho.di.chalktyk.models.relational.CourseSQL;
+import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
+import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
+import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.CourseDAO;
 import pt.uminho.di.chalktyk.repositories.relational.CourseSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -68,9 +72,7 @@ public class CoursesService implements ICoursesService {
         if(!specialistsService.existsSpecialistById(ownerId))
             throw new BadInputException("Cannot create course: A course must have a valid owner.");
 
-        // TODO: add institution later
         // get owner's institution id
-        /* 
         String institutionId = null;
         try {
             var inst = institutionsService.getSpecialistInstitution(ownerId);
@@ -78,17 +80,14 @@ public class CoursesService implements ICoursesService {
                 institutionId = inst.getName();
         }catch (NotFoundException ignored){}
         course.setInstituitionId(institutionId);
-        */
 
         // persist the course in nosql database
         course = courseDAO.save(course);
 
         // persists the course in sql database
-        // TODO: add institution later
-        //Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
-        var spec = entityManager.getReference(pt.uminho.di.chalktyk.models.relational.Specialist.class, ownerId);
-        // TODO: add institution later
-        var courseSQL = new pt.uminho.di.chalktyk.models.relational.Course(course.getId(), null, course.getName(), Set.of(spec));
+        InstitutionSQL inst = institutionId != null ? entityManager.getReference(InstitutionSQL.class, institutionId) : null;
+        var spec = entityManager.getReference(SpecialistSQL.class, ownerId);
+        var courseSQL = new CourseSQL(course.getId(), inst, course.getName(), Set.of(spec));
         courseSqlDAO.save(courseSQL);
 
         return course.getId();
@@ -257,10 +256,7 @@ public class CoursesService implements ICoursesService {
     public boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException {
         if(!courseSqlDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        if(courseSqlDAO.checkSpecialistInCourse(courseId, specialistId) > 0)
-            return true;
-        else
-            return false;
+        return courseSqlDAO.isCourseSpecialist(courseId, specialistId);
     }
 
     /**
@@ -310,21 +306,21 @@ public class CoursesService implements ICoursesService {
 
     /* **** Auxiliary methods **** */
 
-    private List<Student> studentsSqlToNoSql(Page<pt.uminho.di.chalktyk.models.relational.Student> studentPage) throws NotFoundException {
+    private List<Student> studentsSqlToNoSql(Page<StudentSQL> studentPage) throws NotFoundException {
         List<Student> studentList = new ArrayList<>();
         for(var student : studentPage)
             studentList.add(studentsService.getStudentById(student.getId()));
         return studentList;
     }
 
-    private List<Specialist> specialistsSqlToNoSql(Page<pt.uminho.di.chalktyk.models.relational.Specialist> specialistPage) throws NotFoundException {
+    private List<Specialist> specialistsSqlToNoSql(Page<SpecialistSQL> specialistPage) throws NotFoundException {
         List<Specialist> specialistList = new ArrayList<>();
         for(var specialist : specialistPage)
             specialistList.add(specialistsService.getSpecialistById(specialist.getId()));
         return specialistList;
     }
 
-    private List<Course> coursesSqlToNoSql(Page<pt.uminho.di.chalktyk.models.relational.Course> coursePage) throws NotFoundException {
+    private List<Course> coursesSqlToNoSql(Page<CourseSQL> coursePage) throws NotFoundException {
         List<Course> courseList = new ArrayList<>();
         for(var course : coursePage)
             courseList.add(this.getCourseById(course.getId()));

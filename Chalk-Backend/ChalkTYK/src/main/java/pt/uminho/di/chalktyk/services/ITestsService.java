@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -33,39 +33,34 @@ public interface ITestsService {
      * @return test identifier
      * @throws BadInputException if any property of the test is not valid.
      **/
-    String createTest(Visibility visibility, Test body) throws BadInputException;
-
-    /**
-     * Get test resolution using its id
-     *
-     * @param resolutionId
-     * @return test resolution
-     * @throws NotFoundException if no test resolution was found with the given id
-     **/
-    TestResolution getTestResolutionById(String resolutionId) throws NotFoundException;
+    String createTest(VisibilitySQL visibility, Test body) throws BadInputException;
 
     /**
      * Delete test by its id
      *
      * @param testId
+     * @throws NotFoundException if no test was found with the given id
      **/
-    void deleteTestById(String testId);
+    void deleteTestById(String testId) throws NotFoundException;
 
     /**
      * Duplicates the test using its identifier
      *
      * @param testId
      * @return duplicate identifier
+     * @throws NotFoundException if no test was found with the given id
      **/
-    String duplicateTestById(String testId);
+    String duplicateTestById(String testId) throws NotFoundException;
 
     /**
      * Update a test
      *
      * @param testId
      * @param body
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
      **/
-    void updateTest(String testId, Test body);
+    void updateTest(String testId, Test body) throws BadInputException, NotFoundException;
 
     /**
      * Issue the automatic correction of the test resolutions
@@ -91,17 +86,29 @@ public interface ITestsService {
      * @param page
      * @param itemsPerPage
      * @return page with resolutions
+     * @throws NotFoundException if no test was found with the given id
      **/
-    Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage);
+    Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException;
+
+    /**
+     * Get test resolution using its id
+     *
+     * @param resolutionId
+     * @return test resolution
+     * @throws NotFoundException if no test resolution was found with the given id
+     **/
+    TestResolution getTestResolutionById(String resolutionId) throws NotFoundException;
 
     /**
      * Create a test resolution
      *
      * @param testId
      * @param studentId
+     * @return test resolution identifier
      * @throws BadInputException if any property of the test resolution is not valid.
+     * @throws NotFoundException if no test was found with the given id
      **/
-    void createTestResolution(String testId, TestResolution body) throws BadInputException;
+    String createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException;
 
     /**
      * Allows to check if the student can submit a resolution for the test
@@ -118,8 +125,9 @@ public interface ITestsService {
      * @param testId
      * @param studentId
      * @return number of submissions the student made
+     * @throws NotFoundException if no test or student was found with the given ids
      **/
-    Integer countStudentSubmissionsForTest(String testId, String studentId);
+    Integer countStudentSubmissionsForTest(String testId, String studentId) throws NotFoundException;
 
     /**
      * Get the list of identifiers of the student's resolutions for the given test
@@ -127,8 +135,9 @@ public interface ITestsService {
      * @param testId
      * @param studentId
      * @return list of identifiers of the student's resolution
+     * @throws NotFoundException if no test or student was found with the given ids
      **/
-    List<String> getStudentTestResolutionsIds(String testId, String studentId);
+    List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException;
 
     /**
      * Get latest test resolution made by the student
@@ -136,6 +145,32 @@ public interface ITestsService {
      * @param testId
      * @param studentId
      * @return latest submission made by the student
+     * @throws NotFoundException if no test or student was found with the given ids
      **/
-    TestResolution getStudentLastResolution(String testId, String studentId);
+    TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException;
+
+    // TODO: start solving test ->     tests/{testId}/startTest.yml
+    // TODO: tests/resolutions/{testResolutionId}/{exerciseResolutionId}/manual-correction.yml
+    // TODO: tests/resolutions/{testResolutionId}/{exerciseId}/uploadResolution.yml
+
+    /**
+     * If an exercise belongs to a test removes it from the test,
+     * and deletes it.
+     *
+     * @param exerciseId exercise identifier
+     * @return identifier of the exercise from where it was removed, or
+     * 'null' if it does not belong to any test.
+     * @throws NotFoundException if the exercise does not exist
+     */
+    String deleteExerciseFromTest(String exerciseId) throws NotFoundException;
+
+    /**
+     * If an exercise belongs to a test removes it from the test.
+     * The exercise is not deleted. Its visibility is changed to "private".
+     * @param exerciseId exercise identifier
+     * @return identifier of the exercise from where it was removed, or
+     * 'null' if it does not belong to any test.
+     * @throws NotFoundException if the exercise does not exist
+     */
+    String removeExerciseFromTest(String exerciseId) throws NotFoundException;
 }

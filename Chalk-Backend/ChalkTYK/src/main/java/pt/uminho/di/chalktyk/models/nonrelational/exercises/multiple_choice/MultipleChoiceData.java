@@ -31,36 +31,4 @@ public class MultipleChoiceData extends ExerciseResolutionData {
 			item.verifyInsertProperties();
 		}
 	}
-
-	/**
-	 * Updates an exercise resolution. If an object is 'null' than it is considered that it should remain the same.
-	 *
-	 * @param exerciseResolutionData new exercise resolution body
-	 */
-	@Override
-	public boolean updateExerciseResolutionData(ExerciseResolutionData exerciseResolutionData) throws UnauthorizedException {
-		if(!(exerciseResolutionData instanceof MultipleChoiceData multipleChoiceData))
-			throw new UnauthorizedException("Exercise resolution type cannot be changed");
-
-		boolean updated = false;
-		List<MultipleChoiceResolutionItem> newItemResolutions = multipleChoiceData.getItemResolutions();
-		if(newItemResolutions!=null){
-			if(newItemResolutions.size()!=itemResolutions.size()){
-				itemResolutions=  newItemResolutions.stream().map(MultipleChoiceResolutionItem::clone).toList();
-				updated=true;
-			}/*
-			else {
-				for (int i=0;i<newItemResolutions.size();i++){
-					if(newItemResolutions.get(i)!=null){
-						OACriterion oaCriterion = itemResolutions.get(i);
-						if(oaCriterion.updateOACriterion(newItemResolutions.get(i))){
-							updated=true;
-							itemResolutions.set(i,oaCriterion);
-						}
-					}
-				}
-			}*/
-		}
-		return updated;
-	}
 }

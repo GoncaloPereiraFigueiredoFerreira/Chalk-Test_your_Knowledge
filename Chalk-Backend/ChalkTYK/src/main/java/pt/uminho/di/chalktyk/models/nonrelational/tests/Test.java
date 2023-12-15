@@ -29,11 +29,11 @@ public class Test {
 	@Id
 	private String id;
 	private String specialistId;
-	private String instituitionId;
+	private String institutionId;
 	private String courseId;
 	private String title;
 	private String globalInstructions;
-	private Float globalCotation;
+	private Float globalPoints;
 	private String conclusion;
 	private LocalDateTime creationDate;
 	private LocalDateTime publishDate;
@@ -48,8 +48,8 @@ public class Test {
 		if (publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
             throw new BadInputException("Cannot create test: Publish date is outdated.");
 
-		// check global cotation
-		if (globalCotation < 0)
-			throw new BadInputException("Cannot create test: Global cotation can't be negative.");
+		// check global points
+		if (globalPoints < 0)
+			throw new BadInputException("Cannot create test: Global points can't be negative.");
     }
 }

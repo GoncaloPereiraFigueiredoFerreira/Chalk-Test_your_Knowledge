@@ -21,8 +21,8 @@ public class TestGroup   {
   @Valid
   private List<OneOfTestGroupExercisesItems> exercises = new ArrayList<OneOfTestGroupExercisesItems>();
 
-  @JsonProperty("groupCotation")
-  private Float groupCotation = null;
+  @JsonProperty("groupPoints")
+  private Float groupPoints = null;
 
   @JsonProperty("groupInstructions")
   private String groupInstructions = null;
@@ -52,24 +52,24 @@ public class TestGroup   {
     this.exercises = exercises;
   }
 
-  public TestGroup groupCotation(Float groupCotation) {
-    this.groupCotation = groupCotation;
+  public TestGroup groupPoints(Float groupPoints) {
+    this.groupPoints = groupPoints;
     return this;
   }
 
   /**
-   * Get groupCotation
-   * @return groupCotation
+   * Get groupPoints
+   * @return groupPoints
    **/
   @Schema(required = true, description = "")
       @NotNull
 
-    public Float getGroupCotation() {
-    return groupCotation;
+    public Float getGroupPoints() {
+    return groupPoints;
   }
 
-  public void setGroupCotation(Float groupCotation) {
-    this.groupCotation = groupCotation;
+  public void setGroupPoints(Float groupPoints) {
+    this.groupPoints = groupPoints;
   }
 
   public TestGroup groupInstructions(String groupInstructions) {
@@ -102,13 +102,13 @@ public class TestGroup   {
     }
     TestGroup testGroup = (TestGroup) o;
     return Objects.equals(this.exercises, testGroup.exercises) &&
-        Objects.equals(this.groupCotation, testGroup.groupCotation) &&
+        Objects.equals(this.groupPoints, testGroup.groupPoints) &&
         Objects.equals(this.groupInstructions, testGroup.groupInstructions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(exercises, groupCotation, groupInstructions);
+    return Objects.hash(exercises, groupPoints, groupInstructions);
   }
 
   @Override
@@ -117,7 +117,7 @@ public class TestGroup   {
     sb.append("class TestGroup {\n");
     
     sb.append("    exercises: ").append(toIndentedString(exercises)).append("\n");
-    sb.append("    groupCotation: ").append(toIndentedString(groupCotation)).append("\n");
+    sb.append("    groupPoints: ").append(toIndentedString(groupPoints)).append("\n");
     sb.append("    groupInstructions: ").append(toIndentedString(groupInstructions)).append("\n");
     sb.append("}");
     return sb.toString();

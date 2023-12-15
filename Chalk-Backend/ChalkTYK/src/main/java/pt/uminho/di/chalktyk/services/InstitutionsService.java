@@ -1,13 +1,9 @@
 package pt.uminho.di.chalktyk.services;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,13 +18,14 @@ import pt.uminho.di.chalktyk.models.nonrelational.users.InstitutionManager;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
 import pt.uminho.di.chalktyk.models.nonrelational.users.User;
+import pt.uminho.di.chalktyk.models.relational.InstitutionManagerSQL;
+import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.InstitutionDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
 import pt.uminho.di.chalktyk.repositories.relational.InstitutionManagerSqlDAO;
 import pt.uminho.di.chalktyk.repositories.relational.InstitutionSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Service("institutionsService")
 public class InstitutionsService implements IInstitutionsService {
@@ -101,7 +98,7 @@ public class InstitutionsService implements IInstitutionsService {
             if (!idao.existsById(institution.getName())){
                 // TODO - verificar a parte da subscricao
                 idao.save(institution);
-                pt.uminho.di.chalktyk.models.relational.Institution sqlInst = new pt.uminho.di.chalktyk.models.relational.Institution(institution.getName());
+                InstitutionSQL sqlInst = new InstitutionSQL(institution.getName());
                 isqldao.save(sqlInst);
             }
             else
@@ -187,7 +184,7 @@ public class InstitutionsService implements IInstitutionsService {
         if(!isqldao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
 
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionByStudentId(studentId);
+        InstitutionSQL institution = isqldao.getInstitutionByStudentId(studentId);
 
         if(institution==null)
             return false;
@@ -207,7 +204,7 @@ public class InstitutionsService implements IInstitutionsService {
         if(!isqldao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
 
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionBySpecialistId(specialistId);
+        InstitutionSQL institution = isqldao.getInstitutionBySpecialistId(specialistId);
 
         if(institution==null)
             return false;
@@ -227,7 +224,7 @@ public class InstitutionsService implements IInstitutionsService {
         if(!isqldao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
 
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionByInstitutionManagerId(managerId);
+        InstitutionSQL institution = isqldao.getInstitutionByInstitutionManagerId(managerId);
 
         if(institution==null)
             return false;
@@ -310,7 +307,7 @@ public class InstitutionsService implements IInstitutionsService {
     public Institution getStudentInstitution(String studentId) throws NotFoundException { //TODO test
         if(!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Student not found");
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionByStudentId(studentId);
+        InstitutionSQL institution = isqldao.getInstitutionByStudentId(studentId);
         return idao.findById(institution.getId()).orElse(null);
     }
 
@@ -319,12 +316,13 @@ public class InstitutionsService implements IInstitutionsService {
      *
      * @param specialistId identifier of the specialist
      * @return institution associated with a specific specialist or null if not found
+     * @throws NotFoundException if the specialist does not exist
      */
     @Override
     public Institution getSpecialistInstitution(String specialistId) throws NotFoundException { //TODO test
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Specialist not found");
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionBySpecialistId(specialistId);
+        InstitutionSQL institution = isqldao.getInstitutionBySpecialistId(specialistId);
         return institution == null ? null : idao.findById(institution.getId()).orElse(null);
     }
 
@@ -338,7 +336,7 @@ public class InstitutionsService implements IInstitutionsService {
     public Institution getManagerInstitution(String managerId) throws NotFoundException { //TODO test
         if(!this.existsInstitutionManagerById(managerId))
             throw new NotFoundException("Institution manager not found");
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.getInstitutionByInstitutionManagerId(managerId);
+        InstitutionSQL institution = isqldao.getInstitutionByInstitutionManagerId(managerId);
         if(institution==null)
             throw new NotFoundException("Institution manager is not in an institution");
         return idao.findById(institution.getId()).orElse(null);
@@ -393,10 +391,10 @@ public class InstitutionsService implements IInstitutionsService {
      * @param manager entity after input verification
      * @param institution reference to the sql table
      */
-    private void createInstitutionManagerAux(InstitutionManager manager, pt.uminho.di.chalktyk.models.relational.Institution institution) { //TODO test
+    private void createInstitutionManagerAux(InstitutionManager manager, InstitutionSQL institution) { //TODO test
         manager = userDAO.save(manager);
 
-        var managerSql = new pt.uminho.di.chalktyk.models.relational.InstitutionManager(manager.getId(), manager.getName(), manager.getEmail(),institution);
+        var managerSql = new InstitutionManagerSQL(manager.getId(), manager.getName(), manager.getEmail(),institution);
         institutionManagerSqlDAO.save(managerSql);
     }
 
@@ -410,7 +408,7 @@ public class InstitutionsService implements IInstitutionsService {
     @Override
     @Transactional(rollbackFor = {BadInputException.class})
     public String createInstitutionManager(InstitutionManager manager, String institutionId) throws BadInputException, NotFoundException { //TODO test
-        pt.uminho.di.chalktyk.models.relational.Institution institution = isqldao.findById(institutionId).orElse(null);
+        InstitutionSQL institution = isqldao.findById(institutionId).orElse(null);
         
         if(institution == null)
             throw new NotFoundException("Could not create institution manager: The institution was not found");

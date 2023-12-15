@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.relational;
 
-import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -10,17 +9,17 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="Student")
-public class Student implements Serializable {
-	public Student() {
+public class StudentSQL implements Serializable {
+	public StudentSQL() {
 	}
 
 	@Column(name="ID")
 	@Id	
 	private String id;
 	
-	@ManyToOne(targetEntity=Institution.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= InstitutionSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
-	private Institution institution;
+	private InstitutionSQL institution;
 	
 	@Column(name="Name")
 	private String name;
@@ -28,7 +27,17 @@ public class Student implements Serializable {
 	@Column(name="Email")
 	private String email;
 	
-	@ManyToMany(targetEntity=Course.class, fetch = FetchType.LAZY)
+	@ManyToMany(targetEntity= CourseSQL.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Student_Course", joinColumns={ @JoinColumn(name="StudentID") }, inverseJoinColumns={ @JoinColumn(name="CourseID") })
-	private java.util.Set<Course> courses = new java.util.HashSet<>();
+	private java.util.Set<CourseSQL> courses = new java.util.HashSet<>();
+
+	@Override
+	public String toString() {
+		return "StudentSQL{" +
+				"id='" + id + '\'' +
+				", institutionId=" + (institution != null ? institution.getId() : null) +
+				", name='" + name + '\'' +
+				", email='" + email + '\'' +
+				'}';
+	}
 }

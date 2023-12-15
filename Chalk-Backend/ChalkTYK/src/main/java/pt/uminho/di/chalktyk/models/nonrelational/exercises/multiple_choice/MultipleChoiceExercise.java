@@ -6,12 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Document(collection = "exercises")
 @JsonTypeName("MC")
@@ -38,8 +35,8 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 			throw new BadInputException("Exercise rubric does not match exercise type (multiple choice).");
 		if(multipleChoiceRubric.getJustificationsRubrics().size() != items.size())
 			throw new BadInputException("Exercise rubric justification size must be the same as the number of items");
-		if(multipleChoiceRubric.getMaxCotationSum()!=super.getCotation())
-			throw new BadInputException("Exercise rubric maximum cotation (cotation*number of items) must be equals to exercise cotation");
+		if(multipleChoiceRubric.getMaxPointsSum()!=super.getPoints())
+			throw new BadInputException("Exercise rubric maximum points (points*number of items) must be equals to exercise points");
 		multipleChoiceRubric.verifyProperties();
 	}
 
@@ -63,40 +60,6 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 			item.setId(ids.get(i));
 			items.set(i,item);
 		}
-	}
-
-	/**
-	 * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
-	 * @param exercise     new exercise body
-	 */
-	@Override
-	public boolean updateExercise(Exercise exercise) throws UnauthorizedException {
-		if(!(exercise instanceof MultipleChoiceExercise mce))
-			throw new UnauthorizedException("The type of the exercise cannot be changed");
-		boolean updated = super.updateExercise(exercise);
-		List<Item> mceItems = mce.getItems();
-		if(mceItems!=null){
-			if(mceItems.size()!=items.size()){
-				items= mceItems.stream().map(Item::clone).toList();
-				updated=true;
-			}
-			else {
-				for (int i=0;i<items.size();i++){
-					if(mceItems.get(i)!=null){
-						Item item = items.get(i);
-						if(item.updateItem(mceItems.get(i))){
-							updated=true;
-							items.set(i,item);
-						}
-					}
-				}
-			}
-		}
-		if(mce.getMctype()!=null){
-			mctype=mce.getMctype();
-			updated=true;
-		}
-		return updated;
 	}
 
 	private boolean matchesTrueOrFalse(String string){

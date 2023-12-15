@@ -12,13 +12,8 @@ import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
-import pt.uminho.di.chalktyk.services.ICoursesService;
-import pt.uminho.di.chalktyk.services.IInstitutionsService;
-import pt.uminho.di.chalktyk.services.ISpecialistsService;
-import pt.uminho.di.chalktyk.services.IStudentsService;
-import pt.uminho.di.chalktyk.services.ITestResolutionsService;
-import pt.uminho.di.chalktyk.services.ITestsService;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
+import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 @SpringBootTest
@@ -28,21 +23,22 @@ public class Seed {
     private final ISpecialistsService specialistsService;
     private final ICoursesService coursesService;
     private final ITestsService testsService;
-    private final ITestResolutionsService resolutionsService;
+    private final ITagsService tagsService;
 
     @Autowired
     public Seed(IInstitutionsService institutionsService, IStudentsService studentsService, ISpecialistsService specialistsService, ICoursesService coursesService,
-            ITestsService testsService, ITestResolutionsService resolutionsService){
+                ITestsService testsService, ITagsService tagsService){
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.specialistsService = specialistsService;
         this.coursesService = coursesService;
         this.testsService = testsService;
-        this.resolutionsService = resolutionsService;
+        this.tagsService = tagsService;
     }
 
     @Test 
     public void seed() throws BadInputException{
+        tagsService.createTag("Espanol/","/");
         addInstitution();
         Student st1 = new Student(null, "Jeff Winger", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "jwinger@gmail.com", 
                 "none #1", null);
@@ -78,18 +74,18 @@ public class Seed {
         pt.uminho.di.chalktyk.models.nonrelational.tests.Test t3 = new pt.uminho.di.chalktyk.models.nonrelational.tests.Test(null, specialist3,
                         null, course3, "TEST #3", null, Float.valueOf(5), 
                         "?", LocalDateTime.now(), LocalDateTime.now().plusHours(1), null);
-        String test1 = testsService.createTest(Visibility.PUBLIC, t1);
-        String test2 = testsService.createTest(Visibility.PRIVATE, t2);
-        String test3 = testsService.createTest(Visibility.NOT_LISTED, t3);
+        String test1 = testsService.createTest(VisibilitySQL.PUBLIC, t1);
+        String test2 = testsService.createTest(VisibilitySQL.PRIVATE, t2);
+        String test3 = testsService.createTest(VisibilitySQL.NOT_LISTED, t3);
 
 
         // test resolutions
         TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null);
         TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null);
         TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null);
-        resolutionsService.createTestResolution(tr1);
-        resolutionsService.createTestResolution(tr2);
-        resolutionsService.createTestResolution(tr3);
+        //resolutionsService.createTestResolution(tr1);
+        //resolutionsService.createTestResolution(tr2);
+        //resolutionsService.createTestResolution(tr3); //TODO update this
     }
 
     @Test

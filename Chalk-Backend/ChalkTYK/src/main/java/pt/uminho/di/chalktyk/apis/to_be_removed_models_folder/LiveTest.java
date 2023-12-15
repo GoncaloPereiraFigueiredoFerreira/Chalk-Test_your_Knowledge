@@ -27,8 +27,8 @@ public class LiveTest  implements Test {
   @JsonProperty("creationDate")
   private LocalDateTime creationDate = null;
 
-  @JsonProperty("globalCotation")
-  private Float globalCotation = null;
+  @JsonProperty("globalPoints")
+  private Float globalPoints = null;
 
   @JsonProperty("globalInstructions")
   private String globalInstructions = null;
@@ -115,24 +115,24 @@ public class LiveTest  implements Test {
     this.creationDate = creationDate;
   }
 
-  public LiveTest globalCotation(Float globalCotation) {
-    this.globalCotation = globalCotation;
+  public LiveTest globalPoints(Float globalPoints) {
+    this.globalPoints = globalPoints;
     return this;
   }
 
   /**
-   * Get globalCotation
-   * @return globalCotation
+   * Get globalPoints
+   * @return globalPoints
    **/
   @Schema(required = true, description = "")
       @NotNull
 
-    public Float getGlobalCotation() {
-    return globalCotation;
+    public Float getGlobalPoints() {
+    return globalPoints;
   }
 
-  public void setGlobalCotation(Float globalCotation) {
-    this.globalCotation = globalCotation;
+  public void setGlobalPoints(Float globalPoints) {
+    this.globalPoints = globalPoints;
   }
 
   public LiveTest globalInstructions(String globalInstructions) {
@@ -312,7 +312,7 @@ public class LiveTest  implements Test {
     return Objects.equals(this.conclusion, liveTest.conclusion) &&
         Objects.equals(this.courseId, liveTest.courseId) &&
         Objects.equals(this.creationDate, liveTest.creationDate) &&
-        Objects.equals(this.globalCotation, liveTest.globalCotation) &&
+        Objects.equals(this.globalPoints, liveTest.globalPoints) &&
         Objects.equals(this.globalInstructions, liveTest.globalInstructions) &&
         Objects.equals(this.groups, liveTest.groups) &&
         Objects.equals(this.id, liveTest.id) &&
@@ -325,7 +325,7 @@ public class LiveTest  implements Test {
 
   @Override
   public int hashCode() {
-    return Objects.hash(conclusion, courseId, creationDate, globalCotation, globalInstructions, groups, id, institutionId, publishDate, specialistId, title, type);
+    return Objects.hash(conclusion, courseId, creationDate, globalPoints, globalInstructions, groups, id, institutionId, publishDate, specialistId, title, type);
   }
 
   @Override
@@ -336,7 +336,7 @@ public class LiveTest  implements Test {
     sb.append("    conclusion: ").append(toIndentedString(conclusion)).append("\n");
     sb.append("    courseId: ").append(toIndentedString(courseId)).append("\n");
     sb.append("    creationDate: ").append(toIndentedString(creationDate)).append("\n");
-    sb.append("    globalCotation: ").append(toIndentedString(globalCotation)).append("\n");
+    sb.append("    globalPoints: ").append(toIndentedString(globalPoints)).append("\n");
     sb.append("    globalInstructions: ").append(toIndentedString(globalInstructions)).append("\n");
     sb.append("    groups: ").append(toIndentedString(groups)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");

@@ -17,31 +17,31 @@ import jakarta.validation.constraints.*;
 
 
 public class TestResolutionGroup   {
-  @JsonProperty("groupCotation")
-  private Float groupCotation = null;
+  @JsonProperty("groupPoints")
+  private Float groupPoints = null;
 
   @JsonProperty("resolutions")
   @Valid
   private List<ExerciseResolution> resolutions = null;
 
-  public TestResolutionGroup groupCotation(Float groupCotation) {
-    this.groupCotation = groupCotation;
+  public TestResolutionGroup groupPoints(Float groupPoints) {
+    this.groupPoints = groupPoints;
     return this;
   }
 
   /**
-   * Get groupCotation
-   * @return groupCotation
+   * Get groupPoints
+   * @return groupPoints
    **/
   @Schema(required = true, description = "")
       @NotNull
 
-    public Float getGroupCotation() {
-    return groupCotation;
+    public Float getGroupPoints() {
+    return groupPoints;
   }
 
-  public void setGroupCotation(Float groupCotation) {
-    this.groupCotation = groupCotation;
+  public void setGroupPoints(Float groupPoints) {
+    this.groupPoints = groupPoints;
   }
 
   public TestResolutionGroup resolutions(List<ExerciseResolution> resolutions) {
@@ -81,13 +81,13 @@ public class TestResolutionGroup   {
       return false;
     }
     TestResolutionGroup testResolutionGroup = (TestResolutionGroup) o;
-    return Objects.equals(this.groupCotation, testResolutionGroup.groupCotation) &&
+    return Objects.equals(this.groupPoints, testResolutionGroup.groupPoints) &&
         Objects.equals(this.resolutions, testResolutionGroup.resolutions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(groupCotation, resolutions);
+    return Objects.hash(groupPoints, resolutions);
   }
 
   @Override
@@ -95,7 +95,7 @@ public class TestResolutionGroup   {
     StringBuilder sb = new StringBuilder();
     sb.append("class TestResolutionGroup {\n");
     
-    sb.append("    groupCotation: ").append(toIndentedString(groupCotation)).append("\n");
+    sb.append("    groupPoints: ").append(toIndentedString(groupPoints)).append("\n");
     sb.append("    resolutions: ").append(toIndentedString(resolutions)).append("\n");
     sb.append("}");
     return sb.toString();

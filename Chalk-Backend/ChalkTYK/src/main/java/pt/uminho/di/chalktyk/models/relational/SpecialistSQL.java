@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.relational;
 
-import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -10,17 +9,17 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="Specialist")
-public class Specialist implements Serializable {
-	public Specialist() {
+public class SpecialistSQL implements Serializable {
+	public SpecialistSQL() {
 	}
 	
 	@Column(name="ID")
 	@Id	
 	private String id;
 	
-	@ManyToOne(targetEntity=Institution.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= InstitutionSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
-	private Institution institution;
+	private InstitutionSQL institution;
 	
 	@Column(name="Name")
 	private String name;

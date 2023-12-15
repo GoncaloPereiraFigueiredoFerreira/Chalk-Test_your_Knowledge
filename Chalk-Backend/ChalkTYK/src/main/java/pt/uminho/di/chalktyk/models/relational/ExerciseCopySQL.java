@@ -9,22 +9,22 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name="ExerciseCopy")
-public class ExerciseCopy implements Serializable {
-	public ExerciseCopy() {
+public class ExerciseCopySQL implements Serializable {
+	public ExerciseCopySQL() {
 	}
 	
 	@PrimaryKeyJoinColumn	
-	@ManyToOne(targetEntity=Exercise.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= ExerciseSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="copyID", referencedColumnName="ID", nullable=false) })
-	private Exercise copy;
+	private ExerciseSQL copy;
 	
 	@Column(name="copyID", nullable=false, insertable=false, updatable=false)	
 	@Id	
 	private String copyId;
 
-	@ManyToOne(targetEntity=Exercise.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= ExerciseSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="originalID", referencedColumnName="ID", nullable=false) })
-	private Exercise original;
+	private ExerciseSQL original;
 
 	@Column(name="originalID", nullable=false, insertable=false, updatable=false)
 	private String originalId;

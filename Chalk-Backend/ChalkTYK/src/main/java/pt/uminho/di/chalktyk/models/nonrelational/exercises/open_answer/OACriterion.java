@@ -31,34 +31,6 @@ public class OACriterion {
 			else standard.verifyProperties();
 		}
 	}
-
-	/**
-	 * Updates an exercise rubric criterion. If an object is 'null' than it is considered that it should remain the same.
-	 *
-	 * @param oaCriterion new criterion body
-	 */
-	public boolean updateOACriterion(OACriterion oaCriterion) throws UnauthorizedException {
-		boolean updated = false;
-		List<OAStandard> newStandards = oaCriterion.getStandards();
-		if(newStandards!=null){
-			if(newStandards.size()!=standards.size()){
-				standards=  newStandards.stream().map(OAStandard::clone).toList();
-				updated=true;
-			}
-			else {
-				for (int i=0;i<newStandards.size();i++){
-					if(newStandards.get(i)!=null){
-						OAStandard oaStandard = standards.get(i);
-						if(oaStandard.updateOAStandard(newStandards.get(i))){
-							updated=true;
-							standards.set(i,oaStandard);
-						}
-					}
-				}
-			}
-		}
-		return updated;
-	}
 	public OACriterion clone(){
 		return new OACriterion(standards.stream().map(OAStandard::clone).toList(),title);
 	}

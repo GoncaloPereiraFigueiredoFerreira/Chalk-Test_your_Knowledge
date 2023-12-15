@@ -13,8 +13,8 @@ import jakarta.validation.constraints.*;
 
 
 public class MultipleChoiceRubric extends RubricBasicProperties implements ExerciseIdRubricBody, Rubric {
-  @JsonProperty("choiceCotation")
-  private Float choiceCotation = null;
+  @JsonProperty("choicePoints")
+  private Float choicePoints = null;
 
   @JsonProperty("penalty")
   private Float penalty = null;
@@ -22,24 +22,24 @@ public class MultipleChoiceRubric extends RubricBasicProperties implements Exerc
   @JsonProperty("type")
   private String multipleChoiceRubricType = null;
 
-  public MultipleChoiceRubric choiceCotation(Float choiceCotation) {
-    this.choiceCotation = choiceCotation;
+  public MultipleChoiceRubric choicePoints(Float choicePoints) {
+    this.choicePoints = choicePoints;
     return this;
   }
 
   /**
-   * Get choiceCotation
-   * @return choiceCotation
+   * Get choicePoints
+   * @return choicePoints
    **/
   @Schema(required = true, description = "")
       @NotNull
 
-    public Float getChoiceCotation() {
-    return choiceCotation;
+    public Float getChoicePoints() {
+    return choicePoints;
   }
 
-  public void setChoiceCotation(Float choiceCotation) {
-    this.choiceCotation = choiceCotation;
+  public void setChoicePoints(Float choicePoints) {
+    this.choicePoints = choicePoints;
   }
 
   public MultipleChoiceRubric penalty(Float penalty) {
@@ -91,7 +91,7 @@ public class MultipleChoiceRubric extends RubricBasicProperties implements Exerc
       return false;
     }
     MultipleChoiceRubric multipleChoiceRubric = (MultipleChoiceRubric) o;
-    return Objects.equals(this.choiceCotation, multipleChoiceRubric.choiceCotation) &&
+    return Objects.equals(this.choicePoints, multipleChoiceRubric.choicePoints) &&
         Objects.equals(this.penalty, multipleChoiceRubric.penalty) &&
         Objects.equals(this.multipleChoiceRubricType, multipleChoiceRubric.multipleChoiceRubricType) &&
         super.equals(o);
@@ -99,7 +99,7 @@ public class MultipleChoiceRubric extends RubricBasicProperties implements Exerc
 
   @Override
   public int hashCode() {
-    return Objects.hash(choiceCotation, penalty, multipleChoiceRubricType, super.hashCode());
+    return Objects.hash(choicePoints, penalty, multipleChoiceRubricType, super.hashCode());
   }
 
   @Override
@@ -107,7 +107,7 @@ public class MultipleChoiceRubric extends RubricBasicProperties implements Exerc
     StringBuilder sb = new StringBuilder();
     sb.append("class MultipleChoiceRubric {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    choiceCotation: ").append(toIndentedString(choiceCotation)).append("\n");
+    sb.append("    choicePoints: ").append(toIndentedString(choicePoints)).append("\n");
     sb.append("    penalty: ").append(toIndentedString(penalty)).append("\n");
     sb.append("    multipleChoiceRubricType: ").append(toIndentedString(multipleChoiceRubricType)).append("\n");
     sb.append("}");

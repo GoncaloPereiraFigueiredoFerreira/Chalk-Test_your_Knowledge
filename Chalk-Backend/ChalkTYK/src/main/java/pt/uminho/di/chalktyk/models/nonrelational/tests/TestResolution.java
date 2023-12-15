@@ -26,4 +26,5 @@ public class TestResolution {
 	private LocalDateTime submissionDate;
 	private int submissionNr;
 	private List<TestResolutionGroup> groups;
+	private Float totalPoints;
 }

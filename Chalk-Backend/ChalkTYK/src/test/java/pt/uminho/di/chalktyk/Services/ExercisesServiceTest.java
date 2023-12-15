@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.Services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksData;
@@ -10,10 +9,7 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.Fill
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.*;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.relational.Exercise;
-import pt.uminho.di.chalktyk.models.relational.Visibility;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -21,7 +17,6 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,23 +28,25 @@ public class ExercisesServiceTest {
     private final IExercisesService exercisesService;
     private final IInstitutionsService institutionsService;
     private final IStudentsService studentsService;
+    private final ITagsService iTagsService;
     private final Seed seed;
 
     @Autowired
-    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITestResolutionsService testResolutionsService){
+    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService iTagsService){
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
         this.exercisesService = exercisesService;
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService,testResolutionsService);
+        this.iTagsService = iTagsService;
+        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService);
     }
 
     private OpenAnswerExercise createOAExercise(String specialistId,String courseId){
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español OA");
-        exercise.setCotation(2.0F);
+        exercise.setPoints(2.0F);
         exercise.setSpecialistId(specialistId);
         exercise.setCourseId(courseId);
         return exercise;
@@ -73,7 +70,7 @@ public class ExercisesServiceTest {
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(items, Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español MC");
-        exercise.setCotation(3.0F);
+        exercise.setPoints(3.0F);
         exercise.setSpecialistId(specialistId);
         exercise.setCourseId(courseId);
         return exercise;
@@ -96,7 +93,7 @@ public class ExercisesServiceTest {
         FillTheBlanksExercise fillTheBlanksExercise = new FillTheBlanksExercise(Arrays.asList("Todos os ", " sabem bem ",""));
         fillTheBlanksExercise.setStatement(new ExerciseStatement("Preenche com a música dos patinhos","",""));
         fillTheBlanksExercise.setTitle("Patinhos sabem nadar FTB");
-        fillTheBlanksExercise.setCotation(2.0F);
+        fillTheBlanksExercise.setPoints(2.0F);
         fillTheBlanksExercise.setSpecialistId(specialistId);
         fillTheBlanksExercise.setCourseId(courseId);
         return fillTheBlanksExercise;
@@ -119,7 +116,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createOASolution();
         ExerciseRubric exerciseRubric = createOARubric();
         ConcreteExercise exercise = createOAExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -130,7 +127,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         ConcreteExercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -141,7 +138,8 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,Arrays.asList("26c3e51a-bb31-4807-a3d1-b29d566fe7e1"), VisibilitySQL.PUBLIC);
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -152,7 +150,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(),Visibility.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertFalse(exercisesService.exerciseIsShallow(exerciseId));
         assertTrue(exercisesService.exerciseIsShallow(shallowId));
