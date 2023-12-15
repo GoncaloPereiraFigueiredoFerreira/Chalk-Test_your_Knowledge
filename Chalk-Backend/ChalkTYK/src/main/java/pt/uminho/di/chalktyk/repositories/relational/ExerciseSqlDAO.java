@@ -36,6 +36,13 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
     @Query(value = "UPDATE ExerciseSQL e SET e.course = (SELECT c FROM CourseSQL c WHERE c.id=:courseId) WHERE e.id = :exerciseId")
     void updateExerciseCourseById(@Param("exerciseId") String exerciseId,@Param("courseId") String courseId);
 
+    @Modifying
+    @Query(value = "UPDATE ExerciseSQL e SET e.title = :title WHERE e.id = :exerciseId")
+    void updateExerciseTitle(@Param("exerciseId") String exerciseId,@Param("title") String title);
+
+    @Modifying
+    @Query(value = "UPDATE ExerciseSQL e SET e.exerciseType = :exerciseType WHERE e.id = :exerciseId")
+    void updateExerciseType(@Param("exerciseId") String exerciseId,@Param("exerciseType") String exerciseType);
 
 
     @Query("SELECT e FROM ExerciseSQL e JOIN e.tags t WHERE" +

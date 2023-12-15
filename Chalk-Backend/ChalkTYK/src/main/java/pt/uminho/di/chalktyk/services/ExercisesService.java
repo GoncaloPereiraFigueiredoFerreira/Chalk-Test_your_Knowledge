@@ -386,6 +386,7 @@ public class ExercisesService implements IExercisesService{
      * course was not found,
      * the rubric or solution don't belong to the new exercise body
      */
+    @Transactional
     private void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
         Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
         assert origExercise != null;
@@ -449,6 +450,14 @@ public class ExercisesService implements IExercisesService{
                     concreteExercise.verifyResolutionProperties(exerciseSolution.getData());
                 }
             }
+
+            //If type changed then modify it on sql
+            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType()))
+                exerciseSqlDAO.updateExerciseType(concreteExercise.getId(),concreteExercise.getExerciseType());
+
+            //If title changed then modify it on sql
+            if(!Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle()))
+                exerciseSqlDAO.updateExerciseTitle(concreteExercise.getId(),concreteExercise.getTitle());
         }
         exerciseDAO.save(exercise);
         if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId()))
