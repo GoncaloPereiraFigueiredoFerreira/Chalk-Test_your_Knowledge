@@ -1,4 +1,5 @@
 package pt.uminho.di.chalktyk.Services;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +43,14 @@ public class ExercisesServiceTest {
         this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService);
     }
 
+
+    private String specialistId,courseId;
+
+    @BeforeEach
+    public void setup() throws BadInputException {
+        this.specialistId = seed.addSpecialistChang();
+        this.courseId = seed.addCourse(specialistId);
+    }
     private OpenAnswerExercise createOAExercise(String specialistId,String courseId){
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
@@ -111,8 +120,6 @@ public class ExercisesServiceTest {
     
     @Test
     public void createOAExercise() throws BadInputException {
-        String specialistId = seed.addSpecialistChang();
-        String courseId = seed.addCourse(specialistId);
         ExerciseSolution exerciseSolution = createOASolution();
         ExerciseRubric exerciseRubric = createOARubric();
         ConcreteExercise exercise = createOAExercise(specialistId,courseId);
@@ -122,8 +129,6 @@ public class ExercisesServiceTest {
 
     @Test
     public void createMCExercise() throws BadInputException {
-        String specialistId = seed.addSpecialistChang();
-        String courseId = seed.addCourse(specialistId);
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         ConcreteExercise exercise = createMCExercise(specialistId,courseId);
@@ -133,8 +138,6 @@ public class ExercisesServiceTest {
 
     @Test
     public void createFTBExercise() throws BadInputException {
-        String specialistId = seed.addSpecialistChang();
-        String courseId = seed.addCourse(specialistId);
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
@@ -144,9 +147,7 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createShallowCopy() throws BadInputException, UnauthorizedException, NotFoundException {
-        String specialistId = seed.addSpecialistChang();
-        String courseId = seed.addCourse(specialistId);
+    public void createShallowCopy() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
@@ -154,5 +155,48 @@ public class ExercisesServiceTest {
         String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertFalse(exercisesService.exerciseIsShallow(exerciseId));
         assertTrue(exercisesService.exerciseIsShallow(shallowId));
+    }
+
+    @Test
+    public void deleteConcreteExercise() throws BadInputException, NotFoundException {
+        ExerciseSolution exerciseSolution = createFTBSolution();
+        ExerciseRubric exerciseRubric = createFTBRubric();
+        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
+
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,Arrays.asList("26c3e51a-bb31-4807-a3d1-b29d566fe7e1"), VisibilitySQL.PUBLIC);
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+
+        exercisesService.deleteExerciseById(exerciseId);
+        assertFalse(exercisesService.exerciseExists(exerciseId));
+    }
+
+    @Test
+    public void deleteShallowExercise() throws BadInputException, NotFoundException {
+        ExerciseSolution exerciseSolution = createFTBSolution();
+        ExerciseRubric exerciseRubric = createFTBRubric();
+        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
+        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
+
+        assertTrue(exercisesService.exerciseExists(shallowId));
+
+        exercisesService.deleteExerciseById(shallowId);
+        assertFalse(exercisesService.exerciseExists(shallowId));
+    }
+
+    @Test
+    public void deleteConcreteExerciseWithCopies() throws BadInputException, NotFoundException {
+        ExerciseSolution exerciseSolution = createFTBSolution();
+        ExerciseRubric exerciseRubric = createFTBRubric();
+        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
+        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
+
+        assertTrue(exercisesService.exerciseExists(shallowId));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+
+        exercisesService.deleteExerciseById(exerciseId);
+        assertFalse(exercisesService.exerciseExists(exerciseId));
+        assertTrue(exercisesService.exerciseExists(shallowId));
     }
 }
