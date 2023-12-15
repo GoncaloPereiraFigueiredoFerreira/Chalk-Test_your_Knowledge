@@ -1,37 +1,46 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.apache.tomcat.util.json.ParseException;
+import org.hibernate.mapping.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.JwtException;
+import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
+import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
-import pt.uminho.di.chalktyk.models.relational.ExerciseSQL;
-import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
-import pt.uminho.di.chalktyk.repositories.relational.ExerciseSqlDAO;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Service("securatyService") 
 public class SecurityService {
     private final IUsersService usersService;
     private final IStudentsService studentsService;
     private final ISpecialistsService specialistsService;
-    private final ExerciseSqlDAO exerciseSqlDAO;
+    private final IExercisesService exercisesService;
+    private final ICoursesService coursesService;
+    private final IInstitutionsService institutionsService;
 
-    public SecurityService(IUsersService usersService, IStudentsService studentsService, ISpecialistsService specialistsService, ExerciseSqlDAO exerciseSqlDAO){
+    
+    public SecurityService(IUsersService usersService, IStudentsService studentsService,
+            ISpecialistsService specialistsService, IExercisesService exercisesService, ICoursesService coursesService,
+            IInstitutionsService institutionsService) {
         this.usersService = usersService;
         this.studentsService = studentsService;
         this.specialistsService = specialistsService;
-        this.exerciseSqlDAO = exerciseSqlDAO;
+        this.exercisesService = exercisesService;
+        this.coursesService = coursesService;
+        this.institutionsService = institutionsService;
     }
-    
+
     public Boolean userIsSpecialist(String jwtToken) throws NotFoundException, BadInputException{
         JWT jwt;
         try {
             jwt = new JWT(jwtToken);
         } catch (JwtException | ParseException e) {
-           throw new BadInputException("Bad formatted JWT token");
+            throw new BadInputException("Bad formatted JWT token");
         }
         String role = (String) jwt.getPayloadParam("role");
         String userId = (String) jwt.getPayloadParam("username");
@@ -92,27 +101,92 @@ public class SecurityService {
         return ret;
     }
 
-    public SpecialistSQL specialistOwnesExercise(string specialistId, string exerciseId){
-        Boolean ret = true;
+    public Boolean specialistOwnesExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException{
         
-        if(!exerciseSqlDAO.existsById(exerciseId)){
+        if(!exercisesService.exerciseExists(exerciseId)){
             throw new NotFoundException("Exercise not found");
         } 
         if(!specialistsService.existsSpecialistById(specialistId)){
             throw new NotFoundException("Specialist not found");
         }
 
-        ExerciseSQL exercise = exerciseSqlDAO.getReferenceById(exerciseId);
-        SpecialistSQL specialist = exercise.getSpecialist();
+        Exercise exercise = exercisesService.getExerciseById(exerciseId);
 
-        if(specialist != null || specialist.getId().equals(specialistId)){
+        if(exercise.getSpecialistId().equals(specialistId)){
             throw new UnauthorizedException("The specilist is not the owner of the exercise");
         }
 
-        return specialist;
+        return true;
     } 
+
+    public Boolean studentCanSeeExercise(String studentId, String exerciseId) throws NotFoundException, UnauthorizedException{
+        Boolean ret = false;
+        String vis = exercisesService.getExerciseVisibility(exerciseId);
+
+        switch (vis) {
+            case "public":
+                ret = true;
+                break;
+            case "course":
+                String courseId = exercisesService.getExerciseCourse(exerciseId);
+                if(courseId != null && coursesService.checkStudentInCourse(courseId, studentId)){
+                    ret = true;
+                }else{
+                    throw new UnauthorizedException("The student can not see the course's exercise");
+                }
+                break;
+            case "institution":
+                Institution institution = institutionsService.getStudentInstitution(studentId);
+                String institutionId = exercisesService.getExerciseInstitution(exerciseId);
+                if(institutionId != null && institutionsService.getInstitutionById(institutionId).equals(institution)){
+                    ret = true;
+                }else{
+                  throw new UnauthorizedException("The student can not see the institution's exercise");  
+                }
+                break;
+            default:
+                throw new UnauthorizedException("The student can not see the exercise");
+                //break;
+        }
+
+        return ret;
+    }  
+
+    public Boolean specialistCanSeeExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException{
+        Boolean ret = false;
+        String vis = exercisesService.getExerciseVisibility(exerciseId);
+
+        switch (vis) {
+            case "public":
+                ret = true;
+                break;
+            case "course":
+                String courseId = exercisesService.getExerciseCourse(exerciseId);
+                if(courseId != null && coursesService.checkSpecialistInCourse(courseId, specialistId)){
+                    ret = true;
+                }else{
+                    throw new UnauthorizedException("The specialist can not see the course's exercise");
+                }
+                break;
+            case "institution":
+                Institution institution = institutionsService.getSpecialistInstitution(specialistId);
+                String institutionId = exercisesService.getExerciseInstitution(exerciseId);
+                if(institutionId != null && institutionsService.getInstitutionById(institutionId).equals(institution)){
+                    ret = true;
+                }else{
+                  throw new UnauthorizedException("The specialist can not see the institution's exercise");  
+                }
+                break;
+            default:
+                throw new UnauthorizedException("The specialist can not see the exercise");
+                //break;
+        }
+
+        return ret;
+    }  
+
     //specilist owner exercicio
-    //consegue ver (dividir para tipo)
-    //Dono curso
+    //consegue ver exercicio(dividir para tipo)
+    //Dono curso(A instituição ja tem uma função igual)
 
 }

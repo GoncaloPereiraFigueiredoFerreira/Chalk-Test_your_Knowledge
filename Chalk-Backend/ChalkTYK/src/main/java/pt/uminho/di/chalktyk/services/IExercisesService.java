@@ -234,6 +234,10 @@ public interface IExercisesService{
 
     void deleteExerciseSolution(String exerciseId) throws NotFoundException, BadInputException;
 
+    String getExerciseCourse(String exerciseId) throws NotFoundException; // TODO implementar (Bronze) 
+    
+    String getExerciseInstitution(String exerciseId) throws NotFoundException; // TODO implementar (Bronze)
+
     /**
      * @param exerciseId identifier of the exercise
      * @return visibility of an exercise
