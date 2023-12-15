@@ -387,7 +387,7 @@ public class ExercisesService implements IExercisesService{
      * the rubric or solution don't belong to the new exercise body
      */
     @Transactional
-    private void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
+    protected void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
         Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
         assert origExercise != null;
 
