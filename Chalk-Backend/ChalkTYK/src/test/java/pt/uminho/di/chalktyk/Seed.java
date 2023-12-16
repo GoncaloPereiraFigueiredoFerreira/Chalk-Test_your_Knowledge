@@ -38,16 +38,14 @@ public class Seed {
 
     @Test 
     public void seed() throws BadInputException{
-        tagsService.createTag("Espanol/","/");
+        tagsService.createTag("Espanol","/");
         addInstitution();
         Student st1 = new Student(null, "Jeff Winger", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "jwinger@gmail.com", 
                 "none #1", null);
-        Student st2 = new Student(null, "Annie Edison", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "annie_edison@gmail.com", 
-                "none #2", null);
         Student st3 = new Student(null, "Abed Nadir", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "coolabedfilms@gmail.com", 
                 "none #3", null);
         String student1 = studentsService.createStudent(st1);
-        String student2 = studentsService.createStudent(st2);
+        String student2 = addStudentAnnie();
         String student3 = studentsService.createStudent(st3);
 
         // specialists
@@ -99,6 +97,12 @@ public class Seed {
         return specialistsService.createSpecialist(s);
     }
 
+    public String addStudentAnnie() throws BadInputException {
+        Student st = new Student(null, "Annie Edison", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "annie_edison@gmail.com",
+                "none #2", null);
+       return studentsService.createStudent(st);
+    }
+
     public String addSpecialistWhitman() throws BadInputException {
         Specialist s = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
                 "whitman@yahoo.com", "#3", null);
@@ -111,5 +115,6 @@ public class Seed {
     }
 
     @Test void test() throws BadInputException{
+
     }
 }

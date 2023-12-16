@@ -33,6 +33,23 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 		}
 	}
 
+	@Override
+	public boolean equals(ExerciseRubric exerciseRubric) {
+		if(!(exerciseRubric instanceof MultipleChoiceRubric multipleChoiceRubric))
+			return false;
+		if(multipleChoiceRubric.getJustificationsRubrics().size()!=justificationsRubrics.size())
+			return false;
+		for (int i=0;i<justificationsRubrics.size();i++){
+			if(!justificationsRubrics.get(i).equals(multipleChoiceRubric.getJustificationsRubrics().get(i)))
+				return false;
+		}
+		if(!(multipleChoiceRubric.getChoicePoints().equals(choicePoints)))
+			return false;
+		if(!(multipleChoiceRubric.getPenalty().equals(penalty)))
+			return false;
+		return true;
+	}
+
 	public float getMaxPointsSum() {
 		return choicePoints * justificationsRubrics.size();
 	}

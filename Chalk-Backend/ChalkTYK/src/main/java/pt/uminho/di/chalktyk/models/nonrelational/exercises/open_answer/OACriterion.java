@@ -31,6 +31,17 @@ public class OACriterion {
 			else standard.verifyProperties();
 		}
 	}
+	public boolean equals(OACriterion oaCriterion){
+		if(!Objects.equals(oaCriterion.getTitle(), title))
+			return false;
+		if(oaCriterion.getStandards().size()!=standards.size())
+			return false;
+		for (int i=0;i<standards.size();i++){
+			if(!standards.get(i).equals(oaCriterion.getStandards().get(i)))
+				return false;
+		}
+		return true;
+	}
 	public OACriterion clone(){
 		return new OACriterion(standards.stream().map(OAStandard::clone).toList(),title);
 	}

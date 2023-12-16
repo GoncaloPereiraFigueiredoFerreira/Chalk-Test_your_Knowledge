@@ -1,9 +1,6 @@
 package pt.uminho.di.chalktyk.models.nonrelational.exercises;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Transient;
 import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;

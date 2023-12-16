@@ -37,7 +37,7 @@ public class TagsService implements ITagsService {
      *   name = "Geometry"
      * @param name Tag's name
      * @param path Tag's path. Must follow the following regular expression "^(\/[^\/\n]*)*\/$"
-     * @return identifier of the tag
+     * @return the tag
      */
     @Override
     public TagSQL createTag(String name, String path) throws BadInputException {

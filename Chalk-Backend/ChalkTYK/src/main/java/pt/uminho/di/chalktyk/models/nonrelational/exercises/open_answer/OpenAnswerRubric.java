@@ -33,6 +33,19 @@ public class OpenAnswerRubric extends ExerciseRubric {
 		}
 	}
 
+	@Override
+	public boolean equals(ExerciseRubric exerciseRubric) {
+		if(!(exerciseRubric instanceof OpenAnswerRubric openAnswerRubric))
+			return false;
+		if(openAnswerRubric.getCriteria().size()!=criteria.size())
+			return false;
+		for (int i=0;i<criteria.size();i++){
+			if(!criteria.get(i).equals(openAnswerRubric.getCriteria().get(i)))
+				return false;
+		}
+		return true;
+	}
+
 
 	public OpenAnswerRubric clone(){
 		return new OpenAnswerRubric(criteria.stream().map(OACriterion::clone).toList());

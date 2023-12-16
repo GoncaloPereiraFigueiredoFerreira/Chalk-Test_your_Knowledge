@@ -25,6 +25,7 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("exercisesService")
 public class ExercisesService implements IExercisesService{
@@ -303,7 +304,7 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     public String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException {
         // checks if the specialist exists
-        if(specialistsService.existsSpecialistById(specialistId))
+        if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Could not duplicate exercise: specialist does not exist.");
 
         // gets specialists institution
@@ -361,7 +362,11 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws NotFoundException, BadInputException {
+        if(!exerciseExists(exerciseId))
+            throw new NotFoundException("ExerciseId does not correspond to any exercise");
         if(exercise!=null) {
+            if(exercise.getId()==null)
+                exercise.setId(exerciseId);
             if (!Objects.equals(exerciseId, exercise.getId()))
                 throw new BadInputException("ExerciseId must be the same as the one given in the exercise");
             updateExerciseBody(exercise, rubric == null, solution == null); //if rubric or solution are not null, then they will verify exercise
@@ -380,21 +385,21 @@ public class ExercisesService implements IExercisesService{
      * Updates an exercise body.
      *
      * @param exercise     new exercise body
-     * @param verifySolution if true then method verify if current solution corresponds to the exercise
-     * @param verifyRubric if true then method verify if current rubric corresponds to the exercise
+     * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
+     * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
      * course was not found,
      * the rubric or solution don't belong to the new exercise body
      */
     @Transactional
-    protected void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
+    protected void updateExerciseBody(Exercise exercise, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
         Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
         assert origExercise != null;
 
 
         String courseId = exercise.getCourseId();
         try {
-            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
                 throw new BadInputException("Cannot create exercise: course not found.");
         } catch (NotFoundException nfe){
             throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
@@ -403,7 +408,7 @@ public class ExercisesService implements IExercisesService{
         //Exercise specialist and institutions cannot be changed
         if(!Objects.equals(exercise.getSpecialistId(), origExercise.getSpecialistId()))
             throw new BadInputException("Cannot change exercise specialist");
-        if(!Objects.equals(exercise.getInstitutionId(), origExercise.getSpecialistId()))
+        if(!Objects.equals(exercise.getInstitutionId(), origExercise.getInstitutionId()))
             throw new BadInputException("Cannot change exercise institution");
 
 
@@ -421,8 +426,12 @@ public class ExercisesService implements IExercisesService{
             }
             if(origExercise instanceof ConcreteExercise origCE) {
                 //Ids from rubric and solution cannot be changed
+                if(concreteExercise.getRubricId()==null)
+                    concreteExercise.setRubricId(origCE.getRubricId());
                 if(!Objects.equals(concreteExercise.getRubricId(), origCE.getRubricId()))
                     throw new BadInputException("Cannot change exercise rubric id");
+                if(concreteExercise.getSolutionId()==null)
+                    concreteExercise.setSolutionId(origCE.getSolutionId());
                 if(!Objects.equals(concreteExercise.getSolutionId(), origCE.getSolutionId()))
                     throw new BadInputException("Cannot change exercise solution id");
             } else throw new AssertionError("Exercise is not concrete after conversion");
@@ -433,7 +442,7 @@ public class ExercisesService implements IExercisesService{
 
         //Verify that the exercise rubric and solution and still correct after exercise changes
         if(exercise instanceof ConcreteExercise concreteExercise){
-            if(verifyRubric) {
+            if(hasNewRubric) {
                 String rubricId = concreteExercise.getRubricId();
                 if (rubricId != null) {
                     ExerciseRubric exerciseRubric = exerciseRubricDAO.findById(rubricId).orElse(null);
@@ -442,7 +451,7 @@ public class ExercisesService implements IExercisesService{
                 }
             }
 
-            if(verifySolution) {
+            if(hasNewSolution) {
                 String solutionId = concreteExercise.getSolutionId();
                 if (solutionId != null) {
                     ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
@@ -452,38 +461,68 @@ public class ExercisesService implements IExercisesService{
             }
 
             //If type changed then modify it on sql
-            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType()))
-                exerciseSqlDAO.updateExerciseType(concreteExercise.getId(),concreteExercise.getExerciseType());
-
-            //If title changed then modify it on sql
-            if(!Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle()))
-                exerciseSqlDAO.updateExerciseTitle(concreteExercise.getId(),concreteExercise.getTitle());
+            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType())||
+                    !Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle())){
+                ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(concreteExercise.getId()).orElse(null);
+                assert exerciseSQL != null;
+                exerciseSQL.setTitle(concreteExercise.getTitle());
+                exerciseSQL.setExerciseType(concreteExercise.getExerciseType());
+                if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){
+                    if(exercise.getCourseId()==null){
+                        exerciseSQL.setCourse(null);
+                    }
+                    else exerciseSQL.setCourse(entityManager.getReference(CourseSQL.class,exercise.getCourseId()));
+                }
+                exerciseSqlDAO.save(exerciseSQL);
+            }
+        } else if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){ //If new exercise is shallow verify if course needs to be updated
+                ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exercise.getId()).orElse(null);
+                assert exerciseSQL != null;
+                if(exercise.getCourseId()==null){
+                    exerciseSQL.setCourse(null);
+                }
+                else exerciseSQL.setCourse(entityManager.getReference(CourseSQL.class,exercise.getCourseId()));
+                exerciseSqlDAO.save(exerciseSQL);
         }
+
+
         exerciseDAO.save(exercise);
-        if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId()))
-            exerciseSqlDAO.updateExerciseCourseById(exercise.getId(), courseId); //Only course can be changed further on sql
     }
 
     /**
-     * Updates an exercise tags.
+     * Updates an exercise tags. Assumes exercise exists
      *
      * @param exerciseId   identifier of the exercise to be updated
      * @param tagsIds      new list of tags
      */
-    private void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException {
+    @Transactional
+    protected void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
         for (String id:tagsIds)
             if(iTagsService.getTagById(id)==null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
-        exerciseSqlDAO.updateExerciseTagsByIds(exerciseId,new HashSet<>(tagsIds));
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        assert exerciseSQL!=null;
+
+        Set<String> setTagsIds = new HashSet<>(tagsIds);
+        Set<TagSQL> tags = new HashSet<>();
+        for (String tagId:setTagsIds){
+            TagSQL tag = iTagsService.getTagById(tagId);
+            if(tag==null)
+                throw new NotFoundException("Tag with id "+tagId+" was not found");
+            tags.add(tag);
+        }
+        exerciseSQL.setTags(tags);
+
     }
     /**
-     * Updates and exercise visibility
+     * Updates and exercise visibility, Assumes exercise exists
      *
      * @param exerciseId   identifier of the exercise to be updated
      * @param visibility   new visibility
      */
     private void updateExerciseVisibility(String exerciseId,VisibilitySQL visibility) throws BadInputException {
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.getReferenceById(exerciseId);
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        assert exerciseSQL!=null;
 
         // Checks if specialist exists and gets the institution where it belongs
         pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
@@ -498,7 +537,7 @@ public class ExercisesService implements IExercisesService{
         // Check if course is valid
         String courseId = exerciseSQL.getCourse().getId();
         try {
-            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exerciseSQL.getSpecialist().getId()))
+            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exerciseSQL.getSpecialist().getId()))
                 throw new BadInputException("Cannot create exercise: course not found.");
         } catch (NotFoundException nfe){
             throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
@@ -507,6 +546,8 @@ public class ExercisesService implements IExercisesService{
         // Cannot set visibility to COURSE without a course associated
         if (courseId == null && visibility == VisibilitySQL.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
+        exerciseSQL.setVisibility(visibility);
+        exerciseSqlDAO.save(exerciseSQL);
     }
 
 
