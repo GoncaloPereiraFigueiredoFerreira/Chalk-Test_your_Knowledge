@@ -40,10 +40,18 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
         className="edit-btn"
         value="Add"
         onClick={() => {
-          dispatch({
-            type: EditActionKind.ADD_ITEM,
-            data: { id: Object.keys(state.items!).length.toString() },
-          });
+          for (
+            let newID = 0;
+            newID < Object.keys(state.items!).length;
+            newID++
+          ) {
+            if (state.items![newID.toString()] === undefined) {
+              dispatch({
+                type: EditActionKind.ADD_ITEM,
+                data: { id: newID.toString() },
+              });
+            }
+          }
         }}
       ></input>
       <div className="flex flex-col">

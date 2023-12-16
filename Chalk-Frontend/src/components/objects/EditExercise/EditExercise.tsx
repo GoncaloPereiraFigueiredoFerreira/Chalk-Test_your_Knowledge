@@ -114,25 +114,43 @@ function EditReducer(state: Exercise, action: EditAction) {
             };
             return newState as Exercise;
           }
-        } else throw new Error("Invalid state");
+        }
       }
       throw new Error("Invalid action");
 
     case EditActionKind.CHANGE_ITEM_TEXT:
-      if (action.data != undefined && state.items != undefined)
-        if (typeof action.data != "string" && action.data.text != undefined) {
+      if (
+        action.data != undefined &&
+        state.items != undefined &&
+        state.solution != undefined
+      )
+        if (
+          typeof action.data != "string" &&
+          action.data.text != undefined &&
+          (state.solution.data.type === ExerciseType.TRUE_OR_FALSE ||
+            state.solution.data.type === ExerciseType.MULTIPLE_CHOICE)
+        ) {
           let newItems = { ...state.items };
+          let newSolutionItems = { ...state.solution.data.items };
 
           newItems[action.data.id].text = action.data.text;
+          newSolutionItems[action.data.id].text = action.data.text;
           return {
             ...state,
             items: newItems,
+            solution: {
+              data: {
+                ...state.solution.data,
+                items: newSolutionItems,
+              },
+            },
           } as Exercise;
         }
       throw new Error("Invalid action");
 
     case EditActionKind.CHANGE_ITEM_TF:
       console.log(action);
+      console.log(state.solution);
       if (
         action.data != undefined &&
         state.solution != undefined &&
@@ -144,10 +162,16 @@ function EditReducer(state: Exercise, action: EditAction) {
           state.solution.data.items != undefined
         ) {
           let newItems = { ...state.solution.data.items };
-          if (state.type) newItems[action.data.id].value = action.data.value;
+          newItems[action.data.id].value = action.data.value;
           return {
             ...state,
-            solution: { data: { items: newItems } },
+            solution: {
+              ...state.solution,
+              data: {
+                ...state.solution.data,
+                items: newItems,
+              },
+            },
           } as Exercise;
         }
       throw new Error("Invalid action");

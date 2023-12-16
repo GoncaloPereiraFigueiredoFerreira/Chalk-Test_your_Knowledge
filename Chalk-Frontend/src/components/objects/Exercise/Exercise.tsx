@@ -69,13 +69,16 @@ export function createNewExercise(newExercisetype: ExerciseType) {
 
 export function createNewResolution(exercise: Exercise) {
   // colocar aqui as chamadas para criação dos exercicios
+  let newResolution: Resolution;
   switch (exercise.type) {
     case ExerciseType.OPEN_ANSWER:
-      return { text: "" };
-
-    case ExerciseType.FILL_IN_THE_BLANK:
-    case ExerciseType.CODE:
-      return {};
+      newResolution = {
+        data: {
+          type: exercise.type,
+          text: "",
+        },
+      };
+      return newResolution as Resolution;
 
     case ExerciseType.MULTIPLE_CHOICE:
     case ExerciseType.TRUE_OR_FALSE:
@@ -84,21 +87,19 @@ export function createNewResolution(exercise: Exercise) {
         items: {},
       };
 
-      if (newResolutionData.items != undefined && exercise.items != undefined)
-        for (let key in exercise.items) {
+      if (newResolutionData.items != undefined && exercise.items != undefined) {
+        Object.entries(exercise.items).forEach(([key, value]) => {
           newResolutionData.items[key] = {
             value: false,
-            text: "",
+            text: value.text,
             justification: "",
           };
-        }
-      else throw new Error("Invalid State");
-
-      let newResolution: Resolution = {
-        data: newResolutionData,
-      };
-
-      return newResolution;
+        });
+        newResolution = {
+          data: newResolutionData,
+        };
+      } else throw new Error("Invalid State");
+      return newResolution as Resolution;
   }
 }
 
@@ -112,18 +113,18 @@ export enum ResolutionStatus {
   PENDING = "pending",
 }
 
+export interface Resolution {
+  id?: string;
+  cotation?: number;
+  studentID?: string;
+  status?: ResolutionStatus;
+  data: ResolutionData;
+}
+
 export type ResolutionData =
   | TFResolutionData
   | MCResolutionData
   | OAResolutionData;
-
-export interface ResolutionItems {
-  [id: string]: {
-    text: string;
-    justification: string;
-    value?: boolean;
-  };
-}
 
 export interface TFResolutionData {
   type: ExerciseType.TRUE_OR_FALSE;
@@ -140,12 +141,12 @@ export interface OAResolutionData {
   text: string;
 }
 
-export interface Resolution {
-  id?: string;
-  cotation?: number;
-  studentID?: string;
-  status?: ResolutionStatus;
-  data: ResolutionData;
+export interface ResolutionItems {
+  [id: string]: {
+    text: string;
+    justification: string;
+    value?: boolean;
+  };
 }
 
 //------------------------------------//
