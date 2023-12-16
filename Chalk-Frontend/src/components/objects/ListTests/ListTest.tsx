@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Badge, Dropdown, Pagination } from "flowbite-react";
-import { GridIcon, ListIcon } from "../SVGImages/SVGImages";
 import { Link } from "react-router-dom";
 
 const exampleData = [
@@ -36,10 +35,13 @@ const exampleData = [
   },
 ];
 
-function ShowTestList(test: Test) {
+function ShowTestList(test: Test, index: number) {
   return (
     <>
-      <div className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden">
+      <div
+        key={index}
+        className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
+      >
         <div className="p-4 flex justify-between w-full">
           <div className="flex-col">
             <h5 className="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -52,9 +54,9 @@ function ShowTestList(test: Test) {
           </div>
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
             <strong>Tags:</strong>
-            {test.tags.map((tag) => {
+            {test.tags.map((tag, index) => {
               return (
-                <Badge color={"blue"} className=" h-10  ">
+                <Badge key={index} color={"blue"} className=" h-10  ">
                   {tag}
                 </Badge>
               );
@@ -68,7 +70,7 @@ function ShowTestList(test: Test) {
               Edit
             </Link>
             <Link
-              to="solve" // /solve/id
+              to="/webapp/tests/solve"
               className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Solve
@@ -80,9 +82,12 @@ function ShowTestList(test: Test) {
   );
 }
 
-function ShowTestGrid(test: Test) {
+function ShowTestGrid(test: Test, index: number) {
   return (
-    <div className=" max-w-lg  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+    <div
+      key={index}
+      className=" max-w-lg  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
+    >
       <a href="#">
         <img
           className="rounded-t-lg"
@@ -101,9 +106,9 @@ function ShowTestGrid(test: Test) {
         </p>
         <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
           <strong>Tags:</strong>
-          {test.tags.map((tag) => {
+          {test.tags.map((tag, index) => {
             return (
-              <Badge color={"blue"} className=" h-12  ">
+              <Badge key={index} color={"blue"} className=" h-12  ">
                 {tag}
               </Badge>
             );
@@ -117,7 +122,7 @@ function ShowTestGrid(test: Test) {
             Edit
           </Link>
           <Link
-            to="solve"
+            to="/webapp/tests/solve"
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           >
             Solve
@@ -138,15 +143,14 @@ interface Test {
 
 type TestList = Test[];
 
-enum ViewType {
+export enum ViewType {
   LIST = "LIST",
   GRID = "GRID",
 }
 
-export function ListTests() {
+export function ListTests({ view }: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
-  const [viewType, setViewType] = useState(ViewType.GRID);
   const [testList, setTesList] = useState<TestList>([]);
 
   useEffect(() => {
@@ -157,54 +161,17 @@ export function ListTests() {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-          <label className="flex text-title-1">Testes</label>
-          <div className="flex space-x-4">
-            <Dropdown
-              label=""
-              dismissOnClick={false}
-              renderTrigger={() => (
-                <button className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2">
-                  {viewType === ViewType.GRID ? "Grelha" : "Lista"}
-                </button>
-              )}
-            >
-              <Dropdown.Item
-                as="a"
-                className="flex space-x-2"
-                onClick={() => setViewType(ViewType.LIST)}
-              >
-                <ListIcon />
-                <p>Lista</p>
-              </Dropdown.Item>
-              <Dropdown.Item
-                as="a"
-                className="flex space-x-2"
-                onClick={() => setViewType(ViewType.GRID)}
-              >
-                <GridIcon />
-                <p>Grelha</p>
-              </Dropdown.Item>
-            </Dropdown>
-            <button
-              className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-              onClick={() => {}}
-            >
-              Criar Teste
-            </button>
-          </div>
-        </div>
-        {viewType == ViewType.GRID ? (
+      <div className="flex flex-col w-full gap-4 min-h-max pb-8">
+        {view == ViewType.GRID ? (
           <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 md:grid-cols-3 md:gaps-4">
-            {testList.map((test) => {
-              return ShowTestGrid(test);
+            {testList.map((test, index) => {
+              return ShowTestGrid(test, index);
             })}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-2">
-            {testList.map((test) => {
-              return ShowTestList(test);
+            {testList.map((test, index) => {
+              return ShowTestList(test, index);
             })}
           </div>
         )}

@@ -33,9 +33,11 @@ interface SidebarProps {
 
 import { Dropdown } from "flowbite-react";
 import { Course, UserContext } from "../../../UserContext.tsx";
+import { CreateGroupModal } from "../../pages/Groups/CreateGroup.tsx";
 
 export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [showGroup, setShowGroup] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Course>({
     id: "all",
     name: "Grupos",
@@ -226,26 +228,6 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </button>
 
             <ul className={`${showGroup ? "" : "hidden"} sidebar-dropdown`}>
-              <li>
-                <button
-                  onClick={() => {
-                    setShowGroup(false);
-                    setSelectedGroup({
-                      id: "all",
-                      name: "Grupos",
-                    });
-                    navigate(`groups`);
-                  }}
-                  className={`sidebar-item ${
-                    "all" === selectedGroup.id
-                      ? "bg-btn-1-selected"
-                      : "bg-btn-1"
-                  } group`}
-                >
-                  <GroupIcon style={"group-gray-icon"} />
-                  <span className={isOpen ? "" : "hidden"}>Geral</span>
-                </button>
-              </li>
               {user.user?.courses.map((item, index) => (
                 <li key={index}>
                   <button
@@ -263,16 +245,41 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   </button>
                 </li>
               ))}
+              <li>
+                <button
+                  onClick={() => {
+                    setShowGroup(false);
+                    setSelectedGroup({
+                      id: "all",
+                      name: "Grupos",
+                    });
+                    navigate(`groups`);
+                  }}
+                  className={`sidebar-item ${
+                    "all" === selectedGroup.id
+                      ? "bg-btn-1-selected"
+                      : "bg-btn-1"
+                  } group`}
+                >
+                  <GroupIcon style={"group-gray-icon"} />
+                  <span className={isOpen ? "" : "hidden"}>Outros Grupos</span>
+                </button>
+              </li>
             </ul>
             {showGrupOptions()}
           </li>
           <li>
-            <Link to={""}>
-              <button className="sidebar-item bg-btn-1 group">
-                <WorldIcon style={"group-gray-icon"} />
-                <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
-              </button>
-            </Link>
+            <button
+              className="sidebar-item bg-btn-1 group"
+              onClick={() => setOpenCreateModal(true)}
+            >
+              <WorldIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
+            </button>
+            <CreateGroupModal
+              open={openCreateModal}
+              close={() => setOpenCreateModal(false)}
+            />
           </li>
         </ul>
 
