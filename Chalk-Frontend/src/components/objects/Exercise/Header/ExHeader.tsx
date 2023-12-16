@@ -27,8 +27,10 @@ export function ExerciseHeader({ header }: HeaderProps) {
 
     switch (header.imagePosition) {
       case ImgPos.BOT:
-      case ImgPos.TOP: {
         style = "flex flex-col justify-center ";
+        break;
+      case ImgPos.TOP: {
+        style = "flex flex-col-reverse justify-center ";
         break;
       }
       default: {
@@ -44,6 +46,6 @@ export function ExerciseHeader({ header }: HeaderProps) {
       </div>
     );
   } else {
-    return <div className={"mx-12 mb-6 " + style}>{header.text}</div>;
+    return <div className={"mx-12 mb-6"}>{header.text}</div>;
   }
 }

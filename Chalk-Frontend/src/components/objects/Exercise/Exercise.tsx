@@ -24,34 +24,68 @@ export function createNewExercise(newExercisetype: ExerciseType) {
   };
 
   switch (newExercisetype) {
+    case ExerciseType.TRUE_OR_FALSE:
     case ExerciseType.MULTIPLE_CHOICE:
       return {
         ...newExercise,
         justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {},
-      };
+        items: {
+          "0": {
+            text: "",
+            type: "string",
+          },
+        },
+        solution: {
+          items: {
+            "0": {
+              value: false,
+              justification: "",
+            },
+          },
+        },
+      } as Exercise;
     case ExerciseType.OPEN_ANSWER:
       return {
         ...newExercise,
-      };
-    case ExerciseType.TRUE_OR_FALSE:
-      return {
-        ...newExercise,
-        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {},
-      };
+        solution: { text: "" },
+      } as Exercise;
     case ExerciseType.FILL_IN_THE_BLANK:
       return {
         ...newExercise,
         justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
-      };
+      } as Exercise;
     case ExerciseType.CODE:
       return {
         ...newExercise,
         justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
+      } as Exercise;
+  }
+}
+
+export function createNewResolution(exercise: Exercise) {
+  // colocar aqui as chamadas para criação dos exercicios
+  switch (exercise.type) {
+    case ExerciseType.OPEN_ANSWER:
+      return { text: "" };
+
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.TRUE_OR_FALSE:
+    case ExerciseType.FILL_IN_THE_BLANK:
+    case ExerciseType.CODE:
+      let newResolution: Resolution = {
+        items: {},
       };
+      if (newResolution.items != undefined && exercise.items != undefined)
+        for (let key in exercise.items) {
+          newResolution.items[key] = {
+            value: false,
+            justification: "",
+          };
+        }
+      else throw new Error("Invalid State");
+      return newResolution;
   }
 }
 
@@ -61,25 +95,14 @@ export function createNewExercise(newExercisetype: ExerciseType) {
 //                                    //
 //------------------------------------//
 
-enum ResolutionStatus {
-  PENDING = "pending",
-}
-
 export interface Resolution {
-  id: string;
-  cotation: number;
-  studentID: string;
-  status: ResolutionStatus;
-  data:
-    | string
-    | {
-        [id: string]: {
-          text: string;
-          justification: string;
-          type: string;
-          value: boolean;
-        };
-      };
+  text?: string;
+  items?: {
+    [id: string]: {
+      justification: string;
+      value: boolean;
+    };
+  };
 }
 
 //------------------------------------//
@@ -97,12 +120,12 @@ export enum ExerciseType {
 }
 
 export enum ExerciseJustificationKind {
-  JUSTIFY_ALL = "X1",
-  JUSTIFY_FALSE = "X2",
-  JUSTIFY_UNMARKED = "X2",
-  JUSTIFY_TRUE = "X3",
-  JUSTIFY_MARKED = "X3",
-  NO_JUSTIFICATION = "X0",
+  JUSTIFY_ALL = "Todas",
+  JUSTIFY_FALSE = "Apenas Falsas",
+  JUSTIFY_UNMARKED = "Apenas Não Selecionadas",
+  JUSTIFY_TRUE = "Apenas Verdadeiras",
+  JUSTIFY_MARKED = "Apenas Selecionadas",
+  NO_JUSTIFICATION = "Nenhuma",
 }
 
 export interface Exercise {

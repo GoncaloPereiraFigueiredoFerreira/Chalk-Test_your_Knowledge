@@ -12,7 +12,7 @@ import {
 import {
   ListExerciseActionKind,
   useListExerciseContext,
-} from "../../pages/ExerciseBankPage/ListExerciseContext";
+} from "./ListExerciseContext";
 
 const userExercises: Exercise[] = [
   {
@@ -42,13 +42,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
+      "0": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
         type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
+      "2": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": {
         text: "Existem mais canetas castanhas que amarelas",
         type: "string",
       },
@@ -68,13 +68,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_TRUE,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
+      "0": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
         type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
+      "2": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": {
         text: "Existem mais canetas castanhas que amarelas",
         type: "string",
       },
@@ -94,13 +94,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
+      "0": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
         type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
+      "2": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": {
         text: "Existem mais canetas castanhas que amarelas",
         type: "string",
       },
@@ -117,13 +117,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_MARKED,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
+      "0": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
         type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
+      "2": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": {
         text: "Existem mais canetas castanhas que amarelas",
         type: "string",
       },
@@ -156,8 +156,8 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
+      "0": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": {
         text: "Existem mais canetas castanhas que amarelas",
         type: "string",
       },
@@ -166,8 +166,8 @@ const userExercises: Exercise[] = [
 ];
 
 interface ListExercisesProps {
-  editMenuIsOpen: boolean;
-  setEditMenuIsOpen: (value: boolean) => void;
+  editMenuIsOpen: string;
+  setEditMenuIsOpen: (value: string) => void;
 }
 
 export function ListExercises({
@@ -203,17 +203,16 @@ export function ListExercises({
             position={"1"}
             exercise={listExerciseState.listExercises["-1"]}
             setEditMenuIsOpen={setEditMenuIsOpen}
+            editMenuIsOpen={editMenuIsOpen}
             selectedExercise={listExerciseState.selectedExercise}
-            setSelectedExercise={(value) => {
-              editMenuIsOpen
-                ? {}
-                : dispatch({
-                    type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
-                    payload: {
-                      selectedExercise: value,
-                    },
-                  });
-            }}
+            setSelectedExercise={(value) =>
+              dispatch({
+                type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                payload: {
+                  selectedExercise: value,
+                },
+              })
+            }
           ></ShowExercise>
         ) : null}
         {Object.entries(listExerciseState.listExercises).map(
@@ -224,17 +223,16 @@ export function ListExercises({
                 position={key}
                 exercise={exercise}
                 setEditMenuIsOpen={setEditMenuIsOpen}
+                editMenuIsOpen={editMenuIsOpen}
                 selectedExercise={listExerciseState.selectedExercise}
-                setSelectedExercise={(value) => {
-                  editMenuIsOpen
-                    ? {}
-                    : dispatch({
-                        type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
-                        payload: {
-                          selectedExercise: value,
-                        },
-                      });
-                }}
+                setSelectedExercise={(value) =>
+                  dispatch({
+                    type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                    payload: {
+                      selectedExercise: value,
+                    },
+                  })
+                }
               ></ShowExercise>
             )
         )}
@@ -246,12 +244,12 @@ export function ListExercises({
           <CreateNewExercisePopUp
             createNewExercise={(newExerciseType: ExerciseType) => {
               dispatch({
-                type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                type: ListExerciseActionKind.ADD_NEW_EXERCISE,
                 payload: {
-                  newExercise: newExerciseType,
+                  newExerciseType: newExerciseType,
                 },
               });
-              setEditMenuIsOpen(true);
+              if (editMenuIsOpen === "") setEditMenuIsOpen("-1");
               setNewExercisePopUp(false);
             }}
           />
