@@ -25,7 +25,6 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service("exercisesService")
 public class ExercisesService implements IExercisesService{
@@ -910,9 +909,9 @@ public class ExercisesService implements IExercisesService{
     /**
      * Create a resolution for a specific exercise.
      *
-     * @param studentId  identifier of the creator of the resolution.
-     * @param exerciseId identifier of the exercise
-     * @param resolution new resolution
+     * @param studentId      identifier of the creator of the resolution.
+     * @param exerciseId     identifier of the exercise
+     * @param resolutionData new resolution
      * @return updated version of the resolution
      * @throws NotFoundException if the exercise was not found
      * @throws BadInputException if there is some problem regarding the resolution of the exercise,
@@ -920,21 +919,24 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     @Transactional
-    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
+    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
         // checks if exercise exists
         if (!exerciseSqlDAO.existsById(exerciseId))
             throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
 
         // checks if resolution is valid
-        if(resolution == null)
-            throw new BadInputException("Could not create exercise resolution: resolution is null.");
+        if(resolutionData == null)
+            throw new BadInputException("Could not create exercise resolution: resolution data is null.");
+
 
         // prepares resolution
-        resolution.setId(null); // prevents overwrite attacks
-        resolution.setStudentId(studentId);
-        resolution.setExerciseId(exerciseId);
-        resolution.setStatus(ExerciseResolutionStatus.NOT_REVISED); // new resolution so cannot be already revised
-        resolution.setPoints(null); // new resolution so it should not have a points
+        ExerciseResolution resolution = new ExerciseResolution(null, // prevents overwrite attacks
+                studentId,exerciseId,
+                null, // new resolution so it should not have a points
+                resolutionData,
+                ExerciseResolutionStatus.NOT_REVISED, // new resolution so cannot be already revised
+                null,
+                null);
 
         // checks the resolution data against the exercise data
         checkResolutionData(resolution);

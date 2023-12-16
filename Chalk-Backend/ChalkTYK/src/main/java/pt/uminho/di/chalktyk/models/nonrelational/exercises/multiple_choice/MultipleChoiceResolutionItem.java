@@ -45,10 +45,9 @@ public class MultipleChoiceResolutionItem {
 	}
 
 	public boolean equals(MultipleChoiceResolutionItem multipleChoiceResolutionItem){
-        return  multipleChoiceResolutionItem.getId().equals(id) &&
-                multipleChoiceResolutionItem.getJustification().equals(justification) &&
+        return  multipleChoiceResolutionItem.getJustification().equals(justification) &&
                 multipleChoiceResolutionItem.getPoints().equals(points) &&
-                multipleChoiceResolutionItem.isValue() == value;
+                multipleChoiceResolutionItem.getValue() == value;
 	}
 
 }

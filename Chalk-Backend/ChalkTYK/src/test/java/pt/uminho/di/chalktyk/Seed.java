@@ -39,7 +39,7 @@ public class Seed {
     @Test 
     public void seed() throws BadInputException{
         tagsService.createTag("Espanol","/");
-        addInstitution();
+        //addInstitution();
         Student st1 = new Student(null, "Jeff Winger", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "jwinger@gmail.com", 
                 "none #1", null);
         Student st3 = new Student(null, "Abed Nadir", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "coolabedfilms@gmail.com", 
@@ -78,12 +78,12 @@ public class Seed {
 
 
         // test resolutions
-        TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null, Float.valueOf(0));
-        TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null, Float.valueOf(0));
-        TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null, Float.valueOf(0));
-        testsService.createTestResolution(test1, tr1);
-        testsService.createTestResolution(test2, tr2);
-        testsService.createTestResolution(test3, tr3);
+        //TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null, Float.valueOf(0));
+        //TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null, Float.valueOf(0));
+        //TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null, Float.valueOf(0));
+        //testsService.createTestResolution(test1, tr1);
+        //testsService.createTestResolution(test2, tr2);
+        //testsService.createTestResolution(test3, tr3);
     }
 
     public String addSpecialistChang() throws BadInputException {

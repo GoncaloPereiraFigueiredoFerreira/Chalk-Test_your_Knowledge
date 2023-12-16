@@ -149,15 +149,15 @@ public interface IExercisesService{
     /**
      * Create a resolution for a specific exercise.
      *
-     * @param exerciseId identifier of the exercise
-     * @param resolution new resolution
-     * @param studentId  identifier of the creator of the resolution.
+     * @param studentId      identifier of the creator of the resolution.
+     * @param exerciseId     identifier of the exercise
+     * @param resolutionData new resolution
      * @return
      * @throws NotFoundException if the exercise was not found
      * @throws BadInputException if there is some problem regarding the resolution of the exercise,
      *                           like the type of resolution does not match the type of the exercise
      */
-    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
+    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
 
     /**
      *

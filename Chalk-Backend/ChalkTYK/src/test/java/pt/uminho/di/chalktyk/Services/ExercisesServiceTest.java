@@ -18,10 +18,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -88,8 +85,15 @@ public class ExercisesServiceTest {
 
 
     private MultipleChoiceExercise createMCExercise(String specialistId, String courseId){
-        List<Item> items = Arrays.asList(new StringItem("Là"),new StringItem("Ali"),new StringItem("There"));
-        MultipleChoiceExercise exercise = new MultipleChoiceExercise(items, Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION);
+        HashMap<Integer,Item> itemResolutions = new HashMap<>();
+        itemResolutions.put(1,new StringItem("Là"));
+        itemResolutions.put(2,new StringItem("Ali"));
+        itemResolutions.put(3,new StringItem("There"));
+
+
+
+
+        MultipleChoiceExercise exercise = new MultipleChoiceExercise(itemResolutions, Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español MC");
         exercise.setPoints(3.0F);
@@ -99,40 +103,56 @@ public class ExercisesServiceTest {
     }
 
     private ExerciseSolution createMCSolution(){
-        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(null,0.0F,null,true);
-        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        List<MultipleChoiceResolutionItem> itemResolutions = Arrays.asList(option1,option2,option3);
+        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put(1,option1);
+        itemResolutions.put(2,option2);
+        itemResolutions.put(3,option3);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutions);
         return new ExerciseSolution(null,multipleChoiceData);
     }
 
     private ExerciseResolutionData createRightMCResolution(){
-        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(null,0.0F,null,true);
-        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        List<MultipleChoiceResolutionItem> itemResolutions = Arrays.asList(option1,option2,option3);
+        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put(1,option1);
+        itemResolutions.put(2,option2);
+        itemResolutions.put(3,option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
     private ExerciseResolutionData createWrongMCResolution(){
-        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(null,0.0F,null,true);
-        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        List<MultipleChoiceResolutionItem> itemResolutions = Arrays.asList(option1,option2,option3);
+        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put(1,option1);
+        itemResolutions.put(2,option2);
+        itemResolutions.put(3,option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
     private ExerciseResolutionData createHalfWrongMCResolution(){
-        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(null,0.0F,null,true);
-        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(null,0.0F,null,true);
-        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(null,0.0F,null,false);
-        List<MultipleChoiceResolutionItem> itemResolutions = Arrays.asList(option1,option2,option3);
+        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put(1,option1);
+        itemResolutions.put(2,option2);
+        itemResolutions.put(3,option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
     private ExerciseRubric createMCRubric(){
-        return new MultipleChoiceRubric(Arrays.asList(createOARubric(),createOARubric(),createOARubric()),1.0F,0.0F);
+        HashMap<Integer,OpenAnswerRubric> mcRubricMap = new HashMap<>();
+        mcRubricMap.put(1,createOARubric());
+        mcRubricMap.put(2,createOARubric());
+        mcRubricMap.put(3,createOARubric());
+        return new MultipleChoiceRubric(mcRubricMap,1.0F,0.0F);
     }
 
     private FillTheBlanksExercise createFTBExercise(String specialistId, String courseId){

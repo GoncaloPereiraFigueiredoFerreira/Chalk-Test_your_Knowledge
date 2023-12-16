@@ -35,10 +35,10 @@ public class MultipleChoiceData extends ExerciseResolutionData {
 	public boolean equals(ExerciseResolutionData exerciseResolutionData) {
 		if(!(exerciseResolutionData instanceof MultipleChoiceData multipleChoiceData))
 			return false;
-		if(multipleChoiceData.getItemResolutions().size()!=itemResolutions.size())
+		if(multipleChoiceData.getItems().size()!=items.size())
 			return false;
-		for (int i=0;i<itemResolutions.size();i++){
-			if(!itemResolutions.get(i).equals(multipleChoiceData.getItemResolutions().get(i)))
+		for (Integer key:items.keySet()){
+			if(!items.get(key).equals(multipleChoiceData.getItems().get(key)))
 				return false;
 		}
 		return true;
