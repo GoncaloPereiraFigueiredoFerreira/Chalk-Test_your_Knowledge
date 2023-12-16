@@ -723,6 +723,28 @@ public class ExercisesService implements IExercisesService{
         }
     }
 
+    @Override
+    @Transactional
+    public String getExerciseCourse(String exerciseId) throws NotFoundException {
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        if(exerciseSQL==null)
+            throw new NotFoundException("There is no exercise for the given id");
+        if(exerciseSQL.getCourse()==null)
+            return null;
+        return exerciseSQL.getCourse().getId();
+    }
+
+    @Override
+    @Transactional
+    public String getExerciseInstitution(String exerciseId) throws NotFoundException {
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        if(exerciseSQL==null)
+            throw new NotFoundException("There is no exercise for the given id");
+        if(exerciseSQL.getInstitution()==null)
+            return null;
+        return exerciseSQL.getInstitution().getId();
+    }
+
     /**
      * Issue the automatic correction of the exercise resolutions.
      * The correction can either be automatic or done by AI.
