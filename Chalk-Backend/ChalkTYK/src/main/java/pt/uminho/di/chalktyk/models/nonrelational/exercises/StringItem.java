@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Getter
 @Setter
@@ -14,9 +13,9 @@ public class StringItem extends Item {
 	private String text;
 
 	@Override
-	public void VerifyProperties() throws BadInputException {
+	public void verifyProperties() throws BadInputException {
 		if(text!=null)
-			throw new BadInputException("Multiple choice string item text cannot be null");
+			throw new BadInputException("The text of a string item cannot be null.");
 	}
 
 	@Override

@@ -104,13 +104,28 @@ public interface IExercisesService{
      * Issue the automatic correction of the exercise resolutions.
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
-     * @param userId identifier of the user that has permission to issue the correction,
-     *               such as the owner of the exercise, or another specialist that belongs
-     *               to the course that is associated with the exercise.
-     * @param exerciseId identifier of the exercise
-     * @param correctionType type of correction
+     *
+     * @param exerciseId     identifier of the exercise
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
      */
-    void issueExerciseResolutionsCorrection(String userId, String exerciseId, String correctionType);
+    void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
+
+    /**
+     * Issue the automatic correction of the exercise resolutions.
+     * The correction can either be automatic or done by AI.
+     * For a given exercise, it may support either, both, or none of the correction types.
+     *
+     * @param resolutionId   identifier of the exercise resolution
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @return
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     */
+    float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
 
     /**
      * @param exerciseId identifier of an exercise

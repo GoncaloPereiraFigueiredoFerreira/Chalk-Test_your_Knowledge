@@ -12,10 +12,9 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Getter
 @Setter
 public class MultipleChoiceResolutionItem {
-	private Integer id;
 	private Float points;
 	private String justification;
-	private boolean value;
+	private Boolean value;
 
 	/*
 	mctype syntax:
@@ -42,7 +41,7 @@ public class MultipleChoiceResolutionItem {
 	}
 
 	public MultipleChoiceResolutionItem clone(){
-		return new MultipleChoiceResolutionItem(id, points,justification,value);
+		return new MultipleChoiceResolutionItem(points,justification,value);
 	}
 
 }
