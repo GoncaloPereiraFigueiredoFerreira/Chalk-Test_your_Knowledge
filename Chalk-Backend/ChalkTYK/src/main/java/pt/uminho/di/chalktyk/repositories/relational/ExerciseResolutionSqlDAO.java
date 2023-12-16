@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolutionStatus;
 import pt.uminho.di.chalktyk.models.relational.ExerciseResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 
@@ -82,7 +83,19 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
     @Query("SELECT r FROM ExerciseResolutionSQL r JOIN FETCH r.student s WHERE r.student.id = :studentId AND r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX(r2.submissionNr) FROM ExerciseResolutionSQL r2 WHERE r2.exercise.id = :exerciseId AND r.student.id = r2.student.id)")
     ExerciseResolutionSQL getStudentLastResolution(@Param("studentId") String studentId, @Param("exerciseId") String exerciseId);
 
+    /**
+     * Counts the number of resolutions made by a student for a specific exercise.
+     * @param exerciseId identifier of the exercise
+     * @param studentId identifier of the student
+     * @return the number of resolutions made by a student for a specific exercise.
+     */
     int countExerciseResolutionSQLSByExercise_IdAndStudent_Id(String exerciseId, String studentId);
 
+    /**
+     * Finds the resolutions made by a student for a specific exercise.
+     * @param exerciseId identifier of the exercise
+     * @param studentId identifier of the student
+     * @return the resolutions made by a student for a specific exercise.
+     */
     List<ExerciseResolutionSQL> findExerciseResolutionSQLSByExercise_IdAndStudent_Id(String exerciseId, String studentId);
 }

@@ -791,15 +791,73 @@ public class ExercisesService implements IExercisesService{
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
      *
-     * @param userId         identifier of the user that has permission to issue the correction,
-     *                       such as the owner of the exercise, or another specialist that belongs
-     *                       to the course that is associated with the exercise.
      * @param exerciseId     identifier of the exercise
-     * @param correctionType type of correction
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
      */
+    @Transactional
     @Override
-    public void issueExerciseResolutionsCorrection(String userId, String exerciseId, String correctionType) {
+    public void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException {
+        if(!correctionType.equalsIgnoreCase("auto") && !correctionType.equalsIgnoreCase("ai"))
+            throw new BadInputException("Could not correct exercise resolutions: Correction type must be 'auto' or 'ai'.");
 
+        // gets a concrete instance of the exercise and it's rubric
+        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);
+
+        // checks existence of a rubric, which is required
+        // for the automatic correction of the exercise
+        ExerciseRubric rubric = getExerciseRubric(exerciseId);
+
+        // checks existence of a solution, which is required
+        // for the automatic correction of the exercise
+        ExerciseSolution solution = getExerciseSolution(exerciseId);
+
+        if(correctionType.equalsIgnoreCase("auto"))
+            automaticExerciseResolutionsCorrection(exercise, rubric, solution);
+        else if (correctionType.equalsIgnoreCase("ai")) {
+            // TODO - add the AI part
+        }
+    }
+
+    /**
+     * Issue the automatic correction of the exercise resolutions.
+     * The correction can either be automatic or done by AI.
+     * For a given exercise, it may support either, both, or none of the correction types.
+     *
+     * @param resolutionId   identifier of the exercise resolution
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @return points attributed to the resolution
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     */
+    @Transactional
+    @Override
+    public float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException{
+        // gets the identifier of the exercise
+        ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
+        if(resolution == null)
+            throw new NotFoundException("Could not correct exercise: resolution does not exist.");
+
+        // if the exercise is already revised, then returns the points attributed to the resolution
+        if(resolution.getStatus() == ExerciseResolutionStatus.REVISED)
+            return resolution.getPoints();
+        String exerciseId = resolution.getId();
+
+        // gets a concrete instance of the exercise and it's rubric
+        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);
+
+        // checks existence of a rubric, which is required
+        // for the automatic correction of the exercise
+        ExerciseRubric rubric = getExerciseRubric(exerciseId);
+
+        // checks existence of a solution, which is required
+        // for the automatic correction of the exercise
+        ExerciseSolution solution = getExerciseSolution(exerciseId);
+
+        return automaticExerciseResolutionCorrection(resolution, exercise, rubric, solution);
     }
 
     /**
@@ -1307,11 +1365,62 @@ public class ExercisesService implements IExercisesService{
         exercise.verifyResolutionProperties(exerciseResolution.getData());
     }
 
-
+    /**
+     * Converts a page of ExerciseSQL to a list of Exercise(NoSQL)s
+     * @param exerciseSQLPage page of exercises
+     * @return a list of Exercise(NoSQL)s
+     * @throws NotFoundException if one of the exercises, on the page, was not found
+     */
     private List<Exercise> exercisesSqlToNoSql(Page<ExerciseSQL> exerciseSQLPage) throws NotFoundException {
         List<Exercise> exerciseList = new ArrayList<>();
         for(var exercise : exerciseSQLPage)
             exerciseList.add(this.getExerciseById(exercise.getId()));
         return exerciseList;
+    }
+
+    // TODO - meter a rubrica e a solucao como transient no concrete exercise?
+    /**
+     * Automatically corrects the not revised resolutions of an exercise.
+     * @param exercise concrete exercise
+     * @param rubric rubric of the exercise
+     * @param solution solution of the exercise
+     * @throws NotFoundException if the exercise, or its rubric, or its solution were not found
+     * @throws UnauthorizedException if the resolutions cannot be corrected automatically
+     */
+    private void automaticExerciseResolutionsCorrection(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws NotFoundException, UnauthorizedException {
+        String exerciseId = exercise.getId();
+
+        // Get number of resolutions not revised
+        long resolutionsCount = exerciseResolutionDAO.countByExerciseIdAndStatus(exerciseId, ExerciseResolutionStatus.NOT_REVISED);
+
+        // Iterates over all resolutions that are not revised, and corrects them
+        // Corrects a portion at a time, to avoid a great memory consumption
+        for(int pageIndex = 0, i = 0; i < resolutionsCount; pageIndex++, i += 5){
+            // gets page
+            Page<ExerciseResolution> page =
+                    exerciseResolutionDAO.findByExerciseIdAndStatus(exerciseId,
+                                                                    ExerciseResolutionStatus.NOT_REVISED,
+                                                                    PageRequest.of(pageIndex, 5));
+
+            // corrects each exercise of the page
+            for (ExerciseResolution res : page)
+                automaticExerciseResolutionCorrection(res, exercise, rubric, solution);
+        }
+    }
+
+    /**
+     * Automatically corrects a specific resolution of an exercise.
+     * @param resolution resolution to be corrected
+     * @param exercise concrete exercise
+     * @param rubric rubric of the exercise
+     * @param solution solution of the exercise
+     * @return points attributed to the resolution
+     * @throws UnauthorizedException if the resolution cannot be corrected automatically
+     */
+    private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws UnauthorizedException {
+        assert resolution != null && exercise != null && rubric != null && solution != null;
+        resolution = exercise.automaticEvaluation(resolution, solution, rubric);
+        exerciseResolutionDAO.save(resolution);
+        return resolution.getPoints();
     }
 }

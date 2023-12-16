@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
 
@@ -16,7 +17,7 @@ import java.util.*;
 @NoArgsConstructor
 @Getter
 public class MultipleChoiceExercise extends ConcreteExercise {
-	private List<Item> items;
+	private Map<Integer,Item> items;
 	private Mctype mctype;
 
 
@@ -24,9 +25,10 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
 		if(!(exerciseResolutionData instanceof MultipleChoiceData multipleChoiceData))
 			throw new BadInputException("Exercise resolution does not match exercise type (multiple choice).");
-		if(multipleChoiceData.getItemResolutions().size()!=items.size())
-			throw new BadInputException("Exercise resolution items size do not match exercise total options.");
-		multipleChoiceData.verifyProperties(mctype);
+		// checks if the resolution answers to a subset of the items. Cannot have answers to not existent items.
+		if(items.keySet().containsAll(((MultipleChoiceData) exerciseResolutionData).getIds()))
+			throw new BadInputException("Exercise resolution has items that do not refer to any question.");
+		multipleChoiceData.verifyInsertProperties();
 	}
 
 	@Override
@@ -45,20 +47,76 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 		return "MC";
 	}
 
+	/**
+	 * Evaluates the resolution of an exercise. Updates resolution status, points and resolution data.
+	 *
+	 * @param resolution resolution data that will be evaluated
+	 * @param solution   solution of the exercise
+	 * @param rubric     rubric of the exercise
+	 * @return updated resolution
+	 * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+	 */
 	@Override
-	public void verifyProperties() throws BadInputException {
-		for (Item item:items)
-			item.VerifyProperties();
-		super.verifyInsertProperties();
+	public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
+		if(resolution == null || resolution.getData() == null)
+			throw new UnauthorizedException("Cannot evaluate a null resolution.");
+
+		if(solution == null)
+			throw new UnauthorizedException("Cannot evaluate the resolution if the solution is null.");
+
+		if(rubric == null)
+			throw new UnauthorizedException("Cannot evaluate the resolution if the rubric is null");
+
+		// casts objects to MultipleChoice...
+		MultipleChoiceData resolutionData = (MultipleChoiceData) resolution.getData(),
+						   solutionData = (MultipleChoiceData) solution.getData();
+		MultipleChoiceRubric mcRubric = (MultipleChoiceRubric) rubric;
+
+		// only the variations that do not require
+		// justification can be automatically corrected
+		if(mctype != Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION
+				&& mctype != Mctype.TRUE_FALSE_NO_JUSTIFICATION)
+			throw new UnauthorizedException("Justifications cannot be corrected automatically.");
+
+		float points = 0;
+
+		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry : solutionData.getItems().entrySet()){
+			Integer id = entry.getKey();
+			MultipleChoiceResolutionItem solutionItem = entry.getValue();
+			MultipleChoiceResolutionItem resolutionItem = resolutionData.getItemById(id);
+
+			// if there is not a resolution item, then no answer was given by the student.
+			// The student should not receive a penalty
+			if(resolutionItem == null)
+				resolutionData.putItem(id, new MultipleChoiceResolutionItem(0f, null, null));
+			// else if the resolution value does not match the solution value, then
+			// The student should receive a penalty
+			else if(resolutionItem.getValue() != solutionItem.getValue()) {
+				points -= mcRubric.getPenalty();
+				resolutionItem.setPoints(-mcRubric.getPenalty());
+			}
+			// else the student's resolution value matches the solution value
+			else{
+				points += mcRubric.getChoicePoints();
+				resolutionItem.setPoints(mcRubric.getChoicePoints());
+			}
+		}
+
+		// update resolution fields
+		resolution.setStatus(ExerciseResolutionStatus.REVISED);
+		resolution.setPoints(points);
+
+		return resolution;
 	}
 
-	public void updateIdsBySolution(List<Integer> ids) throws BadInputException {
-		if(items.size()!=ids.size())
-			throw new BadInputException("");
-		for (int i=0;i<items.size();i++){
-			Item item = items.get(i);
-			item.setId(ids.get(i));
-			items.set(i,item);
+	@Override
+	public void verifyProperties() throws BadInputException {
+		super.verifyInsertProperties();
+		for (Map.Entry<Integer, Item> entry : items.entrySet()) {
+			Item item = entry.getValue();
+			if(item == null)
+				throw new BadInputException("Multiple choice cannot have null items.");
+			item.verifyProperties();
 		}
 	}
 

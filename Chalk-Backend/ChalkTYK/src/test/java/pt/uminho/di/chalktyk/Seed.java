@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
@@ -15,6 +14,7 @@ import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @SpringBootTest
 public class Seed {
@@ -78,19 +78,14 @@ public class Seed {
 
 
         // test resolutions
-        //TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null);
-        //TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null);
-        //TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null);
-        //resolutionsService.createTestResolution(tr1);
-        //resolutionsService.createTestResolution(tr2);
-        //resolutionsService.createTestResolution(tr3); //TODO update this
+        TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null, Float.valueOf(0));
+        TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null, Float.valueOf(0));
+        TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null, Float.valueOf(0));
+        testsService.createTestResolution(test1, tr1);
+        testsService.createTestResolution(test2, tr2);
+        testsService.createTestResolution(test3, tr3);
     }
 
-    @Test
-    public void addInstitution() throws BadInputException {
-        Institution inst = new Institution("Greendale Community College", "não quero", "some_image.jpg", null);
-        institutionsService.createInstitution(inst);
-    }
     public String addSpecialistChang() throws BadInputException {
         Specialist s = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
                 "senor@chang.com", "#1", null);
