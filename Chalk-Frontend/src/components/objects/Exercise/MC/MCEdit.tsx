@@ -1,143 +1,152 @@
-// enum MCEditActionKind {
-//   ADDSTATEMENT = "ADDSTATEMENT",
-//   CHANGESTATEMENT = "CHANGESTATEMENT",
-//   CHANGEHEADER = "CHANGEHEADER",
-//   REMOVESTATE = "REMOVESTATE",
-//   RIGHTSTATEMENT = "RIGHTSTATEMENT",
-// }
+import { useState } from "react";
+import { Exercise, ExerciseJustificationKind, ExerciseType } from "../Exercise";
+import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
+import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
-// type MCEditState = {
-//   header: string;
-//   statements: string[];
-//   correct: string;
-// };
+interface MCEditProps {
+  dispatch: React.Dispatch<EditAction>;
+  state: Exercise;
+}
+export function MCEdit({ dispatch, state }: MCEditProps) {
+  const [openJustificationkind, setOpenJustificationkind] = useState(
+    state.justifyKind != ExerciseJustificationKind.NO_JUSTIFICATION
+  );
 
-// type MCEditAction = {
-//   type: MCEditActionKind;
-//   payload: { id?: number; value?: string };
-// };
+  return (
+    <>
+      <p className="block mb-2 text-sm text-gray-900 dark:text-white">
+        Adicione as afirmações e escolha a opção correta.
+      </p>
+      <ul>
+        {Object.keys(state.items!).map((value, index) => (
+          <MCStatementEdit
+            key={index}
+            id={value}
+            state={state}
+            dispatch={dispatch}
+          ></MCStatementEdit>
+        ))}
+      </ul>
+      <input
+        type="button"
+        className="edit-btn"
+        value="Add"
+        onClick={() => {
+          for (
+            let newID = 0;
+            newID < Object.keys(state.items!).length + 1;
+            newID++
+          ) {
+            if (state.items![newID.toString()] === undefined) {
+              dispatch({
+                type: EditActionKind.ADD_ITEM,
+                data: { id: newID.toString() },
+              });
+              break;
+            }
+          }
+        }}
+      ></input>
+      <div className="flex flex-col">
+        <div className="mt-5 flex items-center">
+          <input
+            id="bordered-checkbox"
+            type="checkbox"
+            className="p-2 rounded outline-0 bg-input-2"
+            onChange={() => {
+              setOpenJustificationkind(!openJustificationkind);
+            }}
+            checked={openJustificationkind}
+          />
+          <label
+            htmlFor="bordered-checkbox"
+            className="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            Pedir a justificação?
+          </label>
+        </div>
+        <div
+          className={`${
+            openJustificationkind ? "max-h-96" : "max-h-0 overflow-hidden"
+          } transition-[max-height] ml-3 h-12`}
+        >
+          <DropdownBlock
+            options={[
+              ExerciseJustificationKind.JUSTIFY_ALL,
+              ExerciseJustificationKind.JUSTIFY_FALSE,
+              ExerciseJustificationKind.JUSTIFY_TRUE,
+              ExerciseJustificationKind.NO_JUSTIFICATION,
+            ]}
+            text="Posição"
+            chosenOption={state.justifyKind}
+            setChosenOption={(justifyKind) =>
+              dispatch({
+                type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                justifyKind: justifyKind,
+              })
+            }
+            style="rounded-lg h-full"
+            placement="top"
+          ></DropdownBlock>
+        </div>
+      </div>
+    </>
+  );
+}
 
-// const MCEditStateContext = createContext<{ state: MCEditState; dispatch: any }>(
-//   {
-//     state: { header: "", statements: [], correct: "" },
-//     dispatch: undefined,
-//   }
-// );
-
-// function EditReducer(state: MCEditState, action: MCEditAction): MCEditState {
-//   switch (action.type) {
-//     case MCEditActionKind.ADDSTATEMENT:
-//       let temp1 = [...state.statements];
-//       temp1.push("");
-//       let addState = { ...state, statements: temp1 };
-//       return addState;
-
-//     case MCEditActionKind.RIGHTSTATEMENT:
-//       let correctstate = { ...state, correct: action.payload.value ?? "" };
-//       return correctstate;
-
-//     case MCEditActionKind.CHANGEHEADER:
-//       let headerState = { ...state };
-//       headerState.header = action.payload.value ?? "";
-//       return headerState;
-
-//     case MCEditActionKind.CHANGESTATEMENT:
-//       let changed = [...state.statements];
-//       changed[action.payload.id!] = action.payload.value ?? "";
-//       let statementState = { ...state, statements: changed };
-//       return statementState;
-
-//     case MCEditActionKind.REMOVESTATE:
-//       let removed = [...state.statements];
-//       let correct = state.correct;
-//       if (state.correct === state.statements[action.payload.id!]) {
-//         correct = "";
-//       }
-//       removed.splice(action.payload.id!, 1);
-//       let removeState = { ...state, statements: removed, correct: correct };
-//       return removeState;
-
-//     default:
-//       throw new Error();
-//   }
-// }
-
-// export function MCEdit(props: any) {
-//   let initState: MCEditState = { header: "", statements: [], correct: "" };
-//   initState.header = props.enunciado.text;
-//   props.problem.statements.map((text: any) => initState.statements.push(text));
-//   const [state, dispatch] = useReducer(EditReducer, initState);
-
-//   return (
-//     <>
-//       <form>
-//         <p className="block mb-2 text-sm text-gray-900 dark:text-white">
-//           Adicione as afirmações e escolha a opção correta.
-//         </p>
-//         <ul>
-//           <MCEditStateContext.Provider value={{ state, dispatch }}>
-//             {state.statements.map((_item, counter) => {
-//               return (
-//                 <MCStatementEdit id={counter} key={counter}></MCStatementEdit>
-//               );
-//             })}
-//           </MCEditStateContext.Provider>
-//         </ul>
-//         <input
-//           type="button"
-//           className="edit-btn mt-4"
-//           value="Add"
-//           onClick={() => {
-//             dispatch({ type: MCEditActionKind.ADDSTATEMENT, payload: {} });
-//           }}
-//         ></input>
-//       </form>
-//     </>
-//   );
-// }
-
-// function MCStatementEdit(props: any) {
-//   let name = "mc";
-//   const { state, dispatch } = useContext(MCEditStateContext);
-//   return (
-//     <>
-//       <li className="flex items-center">
-//         <input
-//           className="radio-blue mr-3"
-//           type="radio"
-//           name={name}
-//           checked={state.correct === state.statements[props.id]}
-//           onChange={() =>
-//             dispatch({
-//               type: MCEditActionKind.RIGHTSTATEMENT,
-//               payload: { id: props.id, value: state.statements[props.id] },
-//             })
-//           }
-//         ></input>
-//         <input
-//           type="text"
-//           className="basic-input-text mr-3"
-//           onChange={(e) =>
-//             dispatch({
-//               type: MCEditActionKind.CHANGESTATEMENT,
-//               payload: { id: props.id, value: e.target.value },
-//             })
-//           }
-//           value={state.statements[props.id]}
-//         ></input>
-
-//         <input
-//           className="edit-btn"
-//           type="button"
-//           onClick={() =>
-//             dispatch({
-//               type: MCEditActionKind.REMOVESTATE,
-//               payload: { id: props.id },
-//             })
-//           }
-//           value="Remove"
-//         ></input>
-//       </li>
-//     </>
-//   );
-// }
+interface TFStatementEditProps {
+  dispatch: React.Dispatch<EditAction>;
+  state: Exercise;
+  id: string;
+}
+function MCStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
+  let name = "mc";
+  if (
+    state.solution != undefined &&
+    state.solution.data != undefined &&
+    state.solution.data.type === ExerciseType.TRUE_OR_FALSE
+  ) {
+    let solutionItem = state.solution.data.items[id];
+    return (
+      <>
+        <li className="flex items-center">
+          <input
+            className="radio-blue mr-3"
+            type="radio"
+            name={name}
+            onChange={() => {
+              dispatch({
+                type: EditActionKind.CHANGE_ITEM_MC,
+                data: { id: id },
+              });
+              console.log("select" + id);
+            }}
+            checked={!solutionItem.value}
+          ></input>
+          <input
+            type="text"
+            className="basic-input-text"
+            onChange={(e) =>
+              dispatch({
+                type: EditActionKind.CHANGE_ITEM_TEXT,
+                data: { id: id, text: e.target.value },
+              })
+            }
+            value={solutionItem.text}
+          ></input>
+          <input
+            className="edit-btn"
+            type="button"
+            onClick={() =>
+              dispatch({
+                type: EditActionKind.REMOVE_ITEM,
+                data: { id: id },
+              })
+            }
+            value="Remove"
+          ></input>
+        </li>
+      </>
+    );
+  } else <></>;
+}

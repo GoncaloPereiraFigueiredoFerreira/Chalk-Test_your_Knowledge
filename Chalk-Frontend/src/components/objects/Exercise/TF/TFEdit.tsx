@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Exercise, ExerciseJustificationKind } from "../Exercise";
+import { Exercise, ExerciseJustificationKind, ExerciseType } from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
@@ -25,6 +25,10 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
           </tr>
         </thead>
         <tbody>
+          {(() => {
+            console.log(state);
+            return <></>;
+          })()}
           {Object.keys(state.items!).map((value, index) => (
             <TFStatementEdit
               key={index}
@@ -42,7 +46,7 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
         onClick={() => {
           for (
             let newID = 0;
-            newID < Object.keys(state.items!).length;
+            newID < Object.keys(state.items!).length + 1;
             newID++
           ) {
             if (state.items![newID.toString()] === undefined) {
@@ -50,6 +54,7 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
                 type: EditActionKind.ADD_ITEM,
                 data: { id: newID.toString() },
               });
+              break;
             }
           }
         }}
@@ -101,69 +106,80 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
   );
 }
 
-function TFStatementEdit(props: any) {
-  let name = "radio-button-" + props.id;
+interface TFStatementEditProps {
+  dispatch: React.Dispatch<EditAction>;
+  state: Exercise;
+  id: string;
+}
+function TFStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
+  let name = "radio-button-" + id;
+  if (
+    state.solution != undefined &&
+    state.solution.data != undefined &&
+    state.solution.data.type === ExerciseType.TRUE_OR_FALSE
+  ) {
+    let solutionItem = state.solution.data.items[id];
+    console.log(id + " -> value= " + solutionItem.value);
 
-  return (
-    <>
-      <tr>
-        <td className="p-3">
-          <input
-            className="radio-green"
-            type="radio"
-            name={name}
-            onChange={() => {
-              props.dispatch({
-                type: EditActionKind.CHANGE_ITEM_TF,
-                data: { id: props.id, value: true },
-              });
-              console.log("green");
-            }}
-            checked={props.state.solution.value}
-          ></input>
-        </td>
-        <td className="p-3">
-          <input
-            className="radio-red"
-            type="radio"
-            name={name}
-            onChange={() => {
-              props.dispatch({
-                type: EditActionKind.CHANGE_ITEM_TF,
-                data: { id: props.id, value: false },
-              });
-              console.log("red");
-            }}
-            checked={!props.state.solution.value}
-          ></input>
-        </td>
-        <td>
-          <input
-            type="text"
-            className="basic-input-text"
-            onChange={(e) =>
-              props.dispatch({
-                type: EditActionKind.CHANGE_ITEM_TEXT,
-                data: { id: props.id, text: e.target.value },
-              })
-            }
-            value={props.state.items[props.id].text}
-          ></input>
-        </td>
-        <td>
-          <input
-            className="edit-btn"
-            type="button"
-            onClick={() =>
-              props.dispatch({
-                type: EditActionKind.REMOVE_ITEM,
-                data: { id: props.id },
-              })
-            }
-            value="Remove"
-          ></input>
-        </td>
-      </tr>
-    </>
-  );
+    return (
+      <>
+        <tr>
+          <td className="p-3">
+            <input
+              className="radio-green"
+              type="radio"
+              name={name}
+              onChange={() => {
+                dispatch({
+                  type: EditActionKind.CHANGE_ITEM_TF,
+                  data: { id: id, value: true },
+                });
+              }}
+              checked={"value" in solutionItem && solutionItem.value}
+            ></input>
+          </td>
+          <td className="p-3">
+            <input
+              className="radio-red"
+              type="radio"
+              name={name}
+              onChange={() => {
+                dispatch({
+                  type: EditActionKind.CHANGE_ITEM_TF,
+                  data: { id: id, value: false },
+                });
+              }}
+              checked={"value" in solutionItem && !solutionItem.value}
+            ></input>
+          </td>
+          <td>
+            <input
+              type="text"
+              className="basic-input-text"
+              onChange={(e) =>
+                dispatch({
+                  type: EditActionKind.CHANGE_ITEM_TEXT,
+                  data: { id: id, text: e.target.value },
+                })
+              }
+              value={solutionItem.text}
+            ></input>
+          </td>
+          <td>
+            <input
+              className="edit-btn"
+              type="button"
+              onClick={() =>
+                dispatch({
+                  type: EditActionKind.REMOVE_ITEM,
+                  data: { id: id },
+                })
+              }
+              value="Remove"
+            ></input>
+          </td>
+        </tr>
+      </>
+    );
+  } else <></>;
 }

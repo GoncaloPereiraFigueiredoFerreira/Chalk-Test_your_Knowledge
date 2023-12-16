@@ -14,6 +14,7 @@ import {
   ExerciseComponent,
   ExerciseContext,
 } from "../Exercise/Exercise";
+import { MCEdit } from "../Exercise/MC/MCEdit";
 
 //------------------------------------//
 //                                    //
@@ -31,6 +32,7 @@ export enum EditActionKind {
   ADD_ITEM = "ADD_ITEM",
   REMOVE_ITEM = "REMOVE_ITEM",
   CHANGE_ITEM_TF = "CHANGE_ITEM_TF",
+  CHANGE_ITEM_MC = "CHANGE_ITEM_MC",
   CHANGE_ITEM_TEXT = "CHANGE_ITEM_TEXT",
   CHANGE_JUSTIFY_KIND = "CHANGE_JUSTIFY_KIND",
 }
@@ -97,7 +99,6 @@ function EditReducer(state: Exercise, action: EditAction) {
           state.type === ExerciseType.TRUE_OR_FALSE)
       ) {
         let newState: Exercise = { ...state };
-        console.log(action.data);
 
         if (
           newState.solution != undefined &&
@@ -149,20 +150,46 @@ function EditReducer(state: Exercise, action: EditAction) {
       throw new Error("Invalid action");
 
     case EditActionKind.CHANGE_ITEM_TF:
-      console.log(action);
-      console.log(state.solution);
       if (
         action.data != undefined &&
-        state.solution != undefined &&
-        typeof action.data != "string"
+        typeof action.data != "string" &&
+        state.solution != undefined
       )
         if (
-          state.solution.data.type === ExerciseType.TRUE_OR_FALSE &&
           action.data.value != undefined &&
+          state.solution.data.type === ExerciseType.TRUE_OR_FALSE &&
           state.solution.data.items != undefined
         ) {
           let newItems = { ...state.solution.data.items };
           newItems[action.data.id].value = action.data.value;
+          return {
+            ...state,
+            solution: {
+              ...state.solution,
+              data: {
+                ...state.solution.data,
+                items: newItems,
+              },
+            },
+          } as Exercise;
+        }
+      throw new Error("Invalid action");
+
+    case EditActionKind.CHANGE_ITEM_MC:
+      if (
+        action.data != undefined &&
+        typeof action.data != "string" &&
+        state.solution != undefined
+      )
+        if (
+          state.solution.data.type === ExerciseType.MULTIPLE_CHOICE &&
+          state.solution.data.items != undefined
+        ) {
+          let newItems = { ...state.solution.data.items };
+          let selectedID = action.data.id;
+          Object.keys(newItems).map((key) => {
+            newItems[key].value = key === selectedID;
+          });
           return {
             ...state,
             solution: {
@@ -194,7 +221,12 @@ function EditReducer(state: Exercise, action: EditAction) {
           return {
             ...state,
             items: newItems,
-            solution: { data: { items: newSolutionItems } },
+            solution: {
+              data: {
+                ...state.solution.data,
+                items: newSolutionItems,
+              },
+            },
           } as Exercise;
         }
       throw new Error("Invalid action");
@@ -259,7 +291,7 @@ export function EditExercise({
     function editExerciseContent() {
       switch (exercise.type) {
         case ExerciseType.MULTIPLE_CHOICE:
-          return <></>;
+          return <MCEdit dispatch={editDispatch} state={state} />;
 
         case ExerciseType.OPEN_ANSWER:
           return <></>;
