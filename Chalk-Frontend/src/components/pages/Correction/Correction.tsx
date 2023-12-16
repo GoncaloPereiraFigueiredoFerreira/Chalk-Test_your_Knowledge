@@ -6,272 +6,239 @@ import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
+  Item,
+  Resolution,
+  ResolutionStatus,
 } from "../../objects/Exercise/Exercise";
 import { ShowExerciseSimple } from "../../objects/ListExercises/ShowExerciseSimple";
-import { Answer, AnswerProps } from "../../objects/Answer/Answer";
+import { Answer } from "../../objects/Answer/Answer";
+import { ShowExerciseResolutionSimple } from "../../objects/ListExercises/ShowExerciseResolutionSimple";
+import axios from "axios";
 
-export interface AnswerGroup {
-  question_id: string;
-  resolutions: AnswerProps[];
+import { userExercises } from "./example";
+
+export interface ExerciseRaw {
+  id: string;
+  title: string;
+  cotation?: number;
+  specialistId: string;
+  visibility: string;
+  type: ExerciseType;
+  statement: {
+    imagePath?: string;
+    imagePosition?: ImgPos;
+    text: string;
+  };
+  justifyKind?: ExerciseJustificationKind;
+  items?: { [id: string]: { text: string; type: string } };
+
+  solution?: Resolution;
+  resolutions?: Resolution[];
+  comments: string[];
 }
 
-const testResolutions: AnswerGroup[] = [
-  {
-    question_id: "1",
-    resolutions: [
-      {
-        id: "3432",
-        name: "Joana das Roscas",
-        email: "sds",
-        answer: {
-          type: ExerciseType.OPEN_ANSWER,
-          answers: ["fnesnfnfhn ufhewiugern erife"],
-          correction: [""],
-        },
-      },
-      {
-        id: "332",
-        name: "Joana das Roscas",
-        email: "sds",
-        answer: {
-          type: ExerciseType.OPEN_ANSWER,
-          answers: ["fnesnfnfhn erife"],
-          correction: [""],
-        },
-      },
-    ],
-  },
-  {
-    question_id: "2",
-    resolutions: [
-      {
-        id: "111",
-        name: "Joana das Roscas",
-        email: "sds",
-        answer: {
-          type: ExerciseType.OPEN_ANSWER,
-          answers: ["fnesnfnfhn erife"],
-          correction: [""],
-        },
-      },
-    ],
-  },
-];
-
-const userExercises: Exercise[] = [
-  {
-    id: "1",
-    title: "Quantas canetas",
-    visibility: "public",
-    type: ExerciseType.OPEN_ANSWER,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.RIGHT,
-    },
-  },
-  {
-    id: "2",
-    title: "Quantas canetas",
-    visibility: "public",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.RIGHT,
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
-      },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
-      },
-    },
-  },
-  {
-    id: "6",
-    title: "Quantas canetas",
-    visibility: "private",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.RIGHT,
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_TRUE,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
-      },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
-      },
-    },
-  },
-  {
-    id: "3",
-    title: "Quantas canetas",
-    visibility: "public",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.BOT,
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
-      },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
-      },
-    },
-  },
-  {
-    id: "4",
-    title: "Quantas canetas",
-    visibility: "not-listed",
-    type: ExerciseType.MULTIPLE_CHOICE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_MARKED,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
-      },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
-      },
-    },
-  },
-  {
-    id: "5",
-    title: "Quantas canetas",
-    visibility: "course",
-    type: ExerciseType.OPEN_ANSWER,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.LEFT,
-    },
-  },
-  {
-    id: "7",
-    title: "Quantas canetas",
-    visibility: "institutional",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.TOP,
-    },
-    justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
-      "2": {
-        text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
-      },
-    },
-  },
-];
+export interface Student {
+  id: string;
+  email: string;
+  name: string;
+}
 
 interface ExerciseList {
-  [key: string]: Exercise;
-}
-
-interface ResolutionList {
-  [key: string]: AnswerGroup;
+  [key: string]: ExerciseRaw;
 }
 
 export function Correction() {
   const [exerciseList, setExerciseList] = useState<{
-    [key: string]: Exercise;
+    [key: string]: ExerciseRaw;
   }>();
-  const [resolutionList, setResolutionList] = useState<{
-    [key: string]: AnswerGroup;
-  }>();
-
   const [selectedExercise, setSelectedExercise] = useState("");
+  const [optionalMenuIsOpen, setOptionalMenuIsOpen] = useState(false);
+  const [optionSeparatedInterface, setOptionSeparatedInterface] =
+    useState(true);
+  const [solution, setSolution] = useState(<></>);
 
   useEffect(() => {
+    if (selectedExercise !== "") {
+      const tempType: string = exerciseList![selectedExercise]["type"];
+
+      switch (tempType) {
+        case ExerciseType.MULTIPLE_CHOICE:
+          setSolution(
+            <>
+              <div className="text-md">
+                {Object.entries(
+                  exerciseList![selectedExercise]["solution"]?.data.items!
+                ).map(([key, item]: [string, Item]) =>
+                  item.value ? (
+                    <div className="mb-2">
+                      <div>{key + ": " + item.text}</div>
+                      {item.justification ? (
+                        <div>{item.justification}</div>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                )}
+              </div>
+            </>
+          );
+          break;
+        case ExerciseType.OPEN_ANSWER:
+          setSolution(
+            <>
+              <div className="text-md">
+                {exerciseList![selectedExercise]["solution"]?.data.text}
+              </div>
+            </>
+          );
+          break;
+        case ExerciseType.TRUE_OR_FALSE:
+          setSolution(
+            <>
+              <div className="text-md">
+                {Object.entries(
+                  exerciseList![selectedExercise]["solution"]?.data.items!
+                ).map(([key, item]: [string, Item]) => (
+                  <div className="mb-2">
+                    <div>{key + ": " + item.text}</div>
+                    {item.justification ? (
+                      <div>{item.justification}</div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          );
+          break;
+      }
+    }
+  }, [selectedExercise]);
+
+  useEffect(() => {
+    /*     axios
+      .get("http://localhost:5173/tests/" + testId + "/resolutions")
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error)); */
+
     let tempListEx: ExerciseList = {};
-    userExercises.forEach((ex: Exercise) => (tempListEx[ex.id] = ex));
+    userExercises.forEach((ex: ExerciseRaw) => (tempListEx[ex.id] = ex));
     setExerciseList(tempListEx);
+  }, []);
 
-    let tempListRes: ResolutionList = {};
-    testResolutions.forEach((an) => (tempListRes[an.question_id] = an));
-    setResolutionList(tempListRes);
-  }, [userExercises, testResolutions]);
+  //handles change in view type
+  useEffect(() => {
+    setOptionalMenuIsOpen(selectedExercise === "" ? false : true);
+  }, [selectedExercise]);
 
-  if (exerciseList != undefined && resolutionList != undefined)
+  if (exerciseList != undefined)
     return (
       <>
         <div className="h-screen overflow-auto">
           <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 ">
             <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-              <label className="flex text-title-1">Teste_Turma9C </label>
+              <label className="flex text-title-1 float-left text-black dark:text-white">
+                Teste_Turma9C
+              </label>
+              <button
+                className="flex float-right text-black dark:text-white
+                "
+                onClick={(e) =>
+                  setOptionSeparatedInterface(
+                    optionSeparatedInterface ? false : true
+                  )
+                }
+              >
+                {optionSeparatedInterface
+                  ? "Change to Full Page"
+                  : "Change to Separated Page"}
+              </button>
             </div>
-            <div className="grid grid-cols-2">
-              <div className=" mr-4">
-                {Object.entries(exerciseList).map(([key, exercise]) => (
-                  <ShowExerciseSimple
-                    key={key}
-                    position={key}
-                    exercise={exercise}
-                    selectedExercise={selectedExercise}
-                    setSelectedExercise={(value) => setSelectedExercise(value)}
-                  ></ShowExerciseSimple>
-                ))}
+            <div className="flex flex-row divide-x-2 border-gray-2-2">
+              {/* 
+              Lista de exercicios esquerda 
+              */}
+              <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
+                <div className=" mr-4">
+                  {optionSeparatedInterface
+                    ? Object.entries(exerciseList).map(([key, exercise]) => (
+                        <ShowExerciseSimple
+                          key={key}
+                          position={key}
+                          exercise={exercise}
+                          selectedExercise={selectedExercise}
+                          setSelectedExercise={(value) =>
+                            setSelectedExercise(value)
+                          }
+                        ></ShowExerciseSimple>
+                      ))
+                    : Object.entries(exerciseList).map(([key, exercise]) => (
+                        <ShowExerciseResolutionSimple
+                          key={key}
+                          position={key}
+                          exercise={exercise}
+                          selectedExercise={selectedExercise}
+                          setSelectedExercise={(value) =>
+                            setSelectedExercise(value)
+                          }
+                        ></ShowExerciseResolutionSimple>
+                      ))}
+                </div>
               </div>
+              {/*
+               Lista de exercicios direita 
+              */}
 
-              <div>
-                {selectedExercise
-                  ? resolutionList[selectedExercise].resolutions.map(
-                      (resolution) => (
+              <div
+                className={`${
+                  optionalMenuIsOpen && optionSeparatedInterface
+                    ? "w-full"
+                    : "w-0"
+                } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
+              >
+                <div className="pl-5">
+                  {/* Solução se houver */}
+
+                  {selectedExercise &&
+                  exerciseList[selectedExercise]["solution"] ? (
+                    <div className="bg-white text-black p-4 mb-4">
+                      {solution}
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+
+                  {/* Resoluçoes */}
+
+                  {selectedExercise && exerciseList[selectedExercise]
+                    ? Object.entries(
+                        exerciseList[selectedExercise]!.resolutions!
+                      ).map(([key, res]: [String, Resolution]) => (
                         <Answer
-                          key={resolution.id}
-                          id={resolution.id}
-                          email={resolution.email}
-                          name={resolution.name}
-                          answer={resolution.answer}
+                          key={res.id}
+                          id={res.id}
+                          title={exerciseList[selectedExercise].title}
+                          specialistId={
+                            exerciseList[selectedExercise].specialistId
+                          }
+                          statement={exerciseList[selectedExercise].statement}
+                          visibility={exerciseList[selectedExercise].visibility}
+                          cotation={res.cotation}
+                          type={exerciseList[selectedExercise].type}
+                          justifyKind={
+                            exerciseList[selectedExercise].justifyKind
+                          }
+                          resolution={res}
+                          solution={exerciseList[selectedExercise].solution}
+                          comments={exerciseList[selectedExercise].comments}
                         ></Answer>
-                      )
-                    )
-                  : null}
+                      ))
+                    : null}
+                </div>
               </div>
             </div>
           </div>

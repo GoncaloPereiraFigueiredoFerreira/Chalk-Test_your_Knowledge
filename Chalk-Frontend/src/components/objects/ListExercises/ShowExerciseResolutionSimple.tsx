@@ -6,7 +6,6 @@ import {
   InputIcon,
   PageIcon,
   TextIcon,
-  UpArrowIcon,
 } from "../SVGImages/SVGImages";
 // import { FillBlankExercise } from "./FillBlank/FillBlankExercise";
 // import { CodeExercise } from "./Code/CodeExercise";
@@ -16,18 +15,21 @@ import {
   ExerciseComponent,
   ExerciseComponentProps,
   ExerciseContext,
+  Resolution,
 } from "../Exercise/Exercise";
 import "./ShowExercise.css";
+import { ExerciseRaw } from "../../pages/Correction/Correction";
+import { Answer } from "../Answer/Answer";
 import { Comments } from "../Comments/Comments";
 
 interface ExerciseSimpleProps {
   position: string;
-  exercise: Exercise;
+  exercise: ExerciseRaw;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
 }
 
-export function ShowExerciseSimple({
+export function ShowExerciseResolutionSimple({
   position,
   exercise,
   selectedExercise,
@@ -35,11 +37,13 @@ export function ShowExerciseSimple({
 }: ExerciseSimpleProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
+
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
     position: position,
     context: { context: ExerciseContext.PREVIEW },
   };
+
   const [commentsDisplaying, setCommentsDisplaying] = useState(false);
   const [commentsDisplay, setCommentsDisplay] = useState(<></>);
 
@@ -173,21 +177,60 @@ export function ShowExerciseSimple({
         <div
           className={`${
             exercise.id != selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 `}
+          } flex flex-col mx-4 mb-4 border rounded-lg ex-1  `}
         >
           {preview}
         </div>
-        <div className="flex-row ">
+        <div className="flex justify-center">
+          <button className="float-right w-fit m-4 border-blue-700 bg-blue-400 text-lg text-black p-4 bold rounded-md shadow-sm">
+            Correct all answers with AI
+          </button>
+        </div>
+
+        <div className="flex-row">
           <button
-            className="float-right text-black "
+            className="float-right text-black"
             onClick={(e) =>
               setCommentsDisplaying(commentsDisplaying ? false : true)
             }
           >
-            {commentsDisplaying ? <UpArrowIcon /> : <CommentBalloon />}
+            {commentsDisplaying ? (
+              <PageIcon style=" float-right" />
+            ) : (
+              <CommentBalloon />
+            )}
           </button>
         </div>
-        {commentsDisplaying ? commentsDisplay : <></>}
+        {commentsDisplaying ? (
+          commentsDisplay
+        ) : (
+          <div
+            className={`${
+              exercise.id != selectedExercise ? "scale-y-0" : ""
+            } flex flex-col mx-1 mb-4 ex-1 shadow-2xl rounded-md`}
+          >
+            {exercise.resolutions
+              ? Object.entries(exercise.resolutions!).map(
+                  ([key, res]: [String, Resolution]) => (
+                    <Answer
+                      key={res.id}
+                      id={res.id}
+                      title={exercise.title}
+                      specialistId={exercise.specialistId}
+                      statement={exercise.statement}
+                      visibility={exercise.visibility}
+                      cotation={res.cotation}
+                      type={exercise.type}
+                      justifyKind={exercise.justifyKind}
+                      resolution={res}
+                      solution={exercise.solution}
+                      comments={exercise.comments}
+                    ></Answer>
+                  )
+                )
+              : null}
+          </div>
+        )}
       </div>
     </div>
   );

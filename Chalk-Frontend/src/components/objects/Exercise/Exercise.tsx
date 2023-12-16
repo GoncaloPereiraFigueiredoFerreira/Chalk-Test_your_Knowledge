@@ -61,7 +61,7 @@ export function createNewExercise(newExercisetype: ExerciseType) {
 //                                    //
 //------------------------------------//
 
-enum ResolutionStatus {
+export enum ResolutionStatus {
   PENDING = "pending",
 }
 
@@ -70,16 +70,18 @@ export interface Resolution {
   cotation: number;
   studentID: string;
   status: ResolutionStatus;
-  data:
-    | string
-    | {
-        [id: string]: {
-          text: string;
-          justification: string;
-          type: string;
-          value: boolean;
-        };
-      };
+  data: {
+    text?: string;
+    items?: {
+      [id: string]: Item;
+    };
+  };
+}
+
+export interface Item {
+  text: string;
+  justification: string;
+  value: boolean;
 }
 
 //------------------------------------//
@@ -122,6 +124,7 @@ export interface Exercise {
 
   solution?: Resolution;
   resolution?: Resolution;
+  comments: string[];
 }
 
 //------------------------------------//
