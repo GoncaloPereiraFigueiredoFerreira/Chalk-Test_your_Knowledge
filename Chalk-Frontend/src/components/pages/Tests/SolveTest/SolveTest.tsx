@@ -10,7 +10,7 @@ import {
   ResolutionItems,
   ResolutionStatus,
   SolveProps,
-} from "../../objects/Exercise/Exercise";
+} from "../../../objects/Exercise/Exercise";
 
 export interface Test {
   type: string;

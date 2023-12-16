@@ -1,8 +1,8 @@
 import { Dropdown } from "flowbite-react";
-import { ListTests, ViewType } from "../../objects/ListTests/ListTest.tsx";
-import { Searchbar } from "../../objects/Searchbar/Searchbar.tsx";
+import { ListTests, ViewType } from "../../../objects/ListTests/ListTest.tsx";
+import { Searchbar } from "../../../objects/Searchbar/Searchbar.tsx";
 import { useState } from "react";
-import { GridIcon, ListIcon } from "../../objects/SVGImages/SVGImages.tsx";
+import { GridIcon, ListIcon } from "../../../objects/SVGImages/SVGImages.tsx";
 
 export function TestPage() {
   const [view, setViewType] = useState(ViewType.GRID);

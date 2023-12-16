@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Footer } from "../../objects/Footer/Footer";
-import { NavBar } from "../../objects/NavBar/NavBar";
+import { Footer } from "../../../objects/Footer/Footer";
+import { NavBar } from "../../../objects/NavBar/NavBar";
 import "./Subscription.css";
 
 export function Subscription() {

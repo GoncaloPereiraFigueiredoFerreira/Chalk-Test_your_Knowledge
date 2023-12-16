@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Badge, Dropdown, Pagination } from "flowbite-react";
+import { Badge, Pagination } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 const exampleData = [
@@ -38,7 +38,8 @@ const exampleData = [
 function ShowTestList(test: Test, index: number) {
   return (
     <>
-      <div
+      <Link
+        to="/webapp/tests/preview"
         key={index}
         className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
       >
@@ -77,30 +78,29 @@ function ShowTestList(test: Test, index: number) {
             </Link>
           </div>
         </div>
-      </div>
+      </Link>
     </>
   );
 }
 
 function ShowTestGrid(test: Test, index: number) {
   return (
-    <div
+    <Link
+      to="/webapp/tests/preview"
       key={index}
       className=" max-w-lg  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
     >
-      <a href="#">
-        <img
-          className="rounded-t-lg"
-          src="https://flowbite.com/docs/images/carousel/carousel-1.svg"
-          alt=""
-        />
-      </a>
+      <img
+        className="rounded-t-lg"
+        src="https://flowbite.com/docs/images/carousel/carousel-1.svg"
+        alt=""
+      />
+
       <div className="p-5">
-        <a href="#">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {test.title}
-          </h5>
-        </a>
+        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {test.title}
+        </h5>
+
         <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
           <strong>Author:</strong> {test.author}
         </p>
@@ -129,7 +129,7 @@ function ShowTestGrid(test: Test, index: number) {
           </Link>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
