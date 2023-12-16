@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -45,8 +47,8 @@ public class MultipleChoiceResolutionItem {
 	}
 
 	public boolean equals(MultipleChoiceResolutionItem multipleChoiceResolutionItem){
-        return  multipleChoiceResolutionItem.getJustification().equals(justification) &&
-                multipleChoiceResolutionItem.getPoints().equals(points) &&
+        return Objects.equals(multipleChoiceResolutionItem.getJustification(), justification) &&
+                Objects.equals(multipleChoiceResolutionItem.getPoints(), points) &&
                 multipleChoiceResolutionItem.getValue() == value;
 	}
 

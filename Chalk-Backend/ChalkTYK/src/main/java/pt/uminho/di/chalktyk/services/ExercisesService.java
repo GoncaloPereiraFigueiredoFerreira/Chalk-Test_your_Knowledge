@@ -843,7 +843,7 @@ public class ExercisesService implements IExercisesService{
         // if the exercise is already revised, then returns the points attributed to the resolution
         if(resolution.getStatus() == ExerciseResolutionStatus.REVISED)
             return resolution.getPoints();
-        String exerciseId = resolution.getId();
+        String exerciseId = resolution.getExerciseId();
 
         // gets a concrete instance of the exercise and it's rubric
         ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);

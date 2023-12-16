@@ -360,14 +360,31 @@ public class ExercisesServiceTest {
 
     @Test
     @Transactional
-    public void createResolutionAndCorrectForFTBShallow() throws BadInputException, NotFoundException {
-        ExerciseSolution exerciseSolution = createFTBSolution();
-        ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
+    public void createResolutionAndCorrectForMCShallow() throws BadInputException, NotFoundException, UnauthorizedException {
+        ExerciseSolution exerciseSolution = createMCSolution();
+        ExerciseRubric exerciseRubric = createMCRubric();
+        ConcreteExercise exercise = createMCExercise(specialistId,courseId);
         String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
         String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
 
-        exercisesService.createExerciseResolution(studentId,shallowId,createRightFTBResolution());
+        exercisesService.createExerciseResolution(studentId,shallowId,createHalfWrongMCResolution());
+        ExerciseResolutionData rightMC = createRightMCResolution();
+        exercisesService.createExerciseResolution(studentId,shallowId,rightMC);
+        assertEquals(2,exercisesService.countExerciseResolutions(shallowId,true));
+        assertEquals(1,exercisesService.countExerciseResolutions(shallowId,false));
+
+        ExerciseResolution exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(shallowId,studentId);
+        assertTrue(rightMC.equals(exerciseResolution.getData()));
+        assertNull(exerciseResolution.getPoints());
+        assertEquals(2,exerciseResolution.getSubmissionNr());
+        assertEquals(ExerciseResolutionStatus.NOT_REVISED,exerciseResolution.getStatus());
+
+        exercisesService.issueExerciseResolutionCorrection(exerciseResolution.getId(),"auto");
+        exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(shallowId,studentId);
+        assertFalse(rightMC.equals(exerciseResolution.getData()));
+        assertEquals(3.0F,exerciseResolution.getPoints());
+        assertEquals(2,exerciseResolution.getSubmissionNr());
+        assertEquals(ExerciseResolutionStatus.REVISED,exerciseResolution.getStatus());
     }
 
     @Test

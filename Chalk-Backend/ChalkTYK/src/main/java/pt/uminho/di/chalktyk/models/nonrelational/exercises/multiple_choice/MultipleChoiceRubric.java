@@ -43,9 +43,9 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 			if(!justificationsRubrics.get(i).equals(multipleChoiceRubric.getJustificationsRubrics().get(i)))
 				return false;
 		}
-		if(!(multipleChoiceRubric.getChoicePoints().equals(choicePoints)))
+		if(!(Objects.equals(multipleChoiceRubric.getChoicePoints(), choicePoints)))
 			return false;
-		if(!(multipleChoiceRubric.getPenalty().equals(penalty)))
+		if(!(Objects.equals(multipleChoiceRubric.getPenalty(), penalty)))
 			return false;
 		return true;
 	}

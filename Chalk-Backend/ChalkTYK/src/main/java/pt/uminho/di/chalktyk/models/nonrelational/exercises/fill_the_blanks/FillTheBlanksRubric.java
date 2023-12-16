@@ -10,6 +10,8 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceRubric;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.util.Objects;
+
 @Document(collection = "exercises_rubrics")
 @JsonTypeName("FTB")
 @AllArgsConstructor
@@ -30,9 +32,9 @@ public class FillTheBlanksRubric extends ExerciseRubric {
 	public boolean equals(ExerciseRubric exerciseRubric) {
 		if(!(exerciseRubric instanceof FillTheBlanksRubric fillTheBlanksRubric))
 			return false;
-		if(!(fillTheBlanksRubric.getFillingPoints().equals(fillingPoints)))
+		if(!(Objects.equals(fillTheBlanksRubric.getFillingPoints(), fillingPoints)))
 			return false;
-		if(!(fillTheBlanksRubric.getPenalty().equals(penalty)))
+		if(!(Objects.equals(fillTheBlanksRubric.getPenalty(), penalty)))
 			return false;
 		return true;
 	}

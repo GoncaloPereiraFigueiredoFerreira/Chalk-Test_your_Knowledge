@@ -26,7 +26,7 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 		if(!(exerciseResolutionData instanceof MultipleChoiceData multipleChoiceData))
 			throw new BadInputException("Exercise resolution does not match exercise type (multiple choice).");
 		// checks if the resolution answers to a subset of the items. Cannot have answers to not existent items.
-		if(items.keySet().containsAll(((MultipleChoiceData) exerciseResolutionData).getIds()))
+		if(!items.keySet().containsAll(((MultipleChoiceData) exerciseResolutionData).getIds()))
 			throw new BadInputException("Exercise resolution has items that do not refer to any question.");
 		multipleChoiceData.verifyInsertProperties();
 	}

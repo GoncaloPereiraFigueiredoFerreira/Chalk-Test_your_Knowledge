@@ -14,7 +14,7 @@ public class StringItem extends Item {
 
 	@Override
 	public void verifyProperties() throws BadInputException {
-		if(text!=null)
+		if(text==null)
 			throw new BadInputException("The text of a string item cannot be null.");
 	}
 
