@@ -17,9 +17,9 @@ import pt.uminho.di.chalktyk.services.ICoursesService;
 import pt.uminho.di.chalktyk.services.IInstitutionsService;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
 import pt.uminho.di.chalktyk.services.IStudentsService;
-import pt.uminho.di.chalktyk.services.ITestResolutionsService;
 import pt.uminho.di.chalktyk.services.ITestsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @SpringBootTest
 public class Seed {
@@ -28,21 +28,19 @@ public class Seed {
     private final ISpecialistsService specialistsService;
     private final ICoursesService coursesService;
     private final ITestsService testsService;
-    private final ITestResolutionsService resolutionsService;
 
     @Autowired
     public Seed(IInstitutionsService institutionsService, IStudentsService studentsService, ISpecialistsService specialistsService, ICoursesService coursesService,
-            ITestsService testsService, ITestResolutionsService resolutionsService){
+            ITestsService testsService){
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.specialistsService = specialistsService;
         this.coursesService = coursesService;
         this.testsService = testsService;
-        this.resolutionsService = resolutionsService;
     }
 
     @Test 
-    public void seed() throws BadInputException{
+    public void seed() throws BadInputException, NotFoundException {
         addInstitution();
         Student st1 = new Student(null, "Jeff Winger", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "jwinger@gmail.com", 
                 "none #1", null);
@@ -87,9 +85,9 @@ public class Seed {
         TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null);
         TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null);
         TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null);
-        resolutionsService.createTestResolution(tr1);
-        resolutionsService.createTestResolution(tr2);
-        resolutionsService.createTestResolution(tr3);
+        testsService.createTestResolution(test1, tr1);
+        testsService.createTestResolution(test2, tr2);
+        testsService.createTestResolution(test3, tr3);
     }
 
     @Test

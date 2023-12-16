@@ -88,7 +88,7 @@ public interface ITestsService {
      * @return page with resolutions
      * @throws NotFoundException if no test was found with the given id
      **/
-    Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException;
+    List<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException;
 
     /**
      * Get test resolution using its id
