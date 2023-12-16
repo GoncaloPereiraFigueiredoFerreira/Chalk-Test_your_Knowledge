@@ -2,10 +2,10 @@ import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
 import { useState } from "react";
-import { ListExerciseProvider } from "./ListExerciseContext";
+import { ListExerciseProvider } from "../../objects/ListExercises/ListExerciseContext";
 
 export function ExerciseBankPage() {
-  const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
+  const [editMenuIsOpen, setEditMenuIsOpen] = useState("");
 
   return (
     <ListExerciseProvider>
@@ -22,8 +22,9 @@ export function ExerciseBankPage() {
             editMenuIsOpen ? "w-full" : "w-0"
           } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
         >
-          {editMenuIsOpen ? (
+          {editMenuIsOpen != "" ? (
             <EditExercise
+              editMenuIsOpen={editMenuIsOpen}
               setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
             ></EditExercise>
           ) : null}

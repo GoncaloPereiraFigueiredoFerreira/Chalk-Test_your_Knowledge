@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dropdown } from "../../interactiveElements/Dropdown";
+import { DropdownBlock } from "../../interactiveElements/DropdownBlock";
 import "./Searchbar.css";
 import { SearchIcon } from "../SVGImages/SVGImages";
 
@@ -10,17 +10,18 @@ export function Searchbar() {
   const [searchText, setSearchText] = useState("");
   return (
     <>
-      <form className="flex w-full justify-center py-8">
+      <div className="flex w-full justify-center py-8">
         <div className="flex w-full max-w-xl">
-          <Dropdown
+          <DropdownBlock
             options={options}
             text="Categoria"
             chosenOption={chosenOption}
             setChosenOption={setChosenOption}
             clearOption="Todas as categorias"
-            className="rounded-l-lg"
-          ></Dropdown>
-          <div className="relative w-full justify-center">
+            style="rounded-l-lg"
+            placement="bottom"
+          ></DropdownBlock>
+          <form className="relative w-full justify-center">
             <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1 pointer-events-none">
               <SearchIcon style="text-gray-400" size="size-4"></SearchIcon>
               <button
@@ -38,9 +39,9 @@ export function Searchbar() {
               onChange={(text) => setSearchText(text.target.value)}
               required
             />
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </>
   );
 }

@@ -12,7 +12,7 @@ import {
 import {
   ListExerciseActionKind,
   useListExerciseContext,
-} from "../../pages/ExerciseBankPage/ListExerciseContext";
+} from "./ListExerciseContext";
 
 const userExercises: Exercise[] = [
   {
@@ -157,8 +157,8 @@ const userExercises: Exercise[] = [
 ];
 
 interface ListExercisesProps {
-  editMenuIsOpen: boolean;
-  setEditMenuIsOpen: (value: boolean) => void;
+  editMenuIsOpen: string;
+  setEditMenuIsOpen: (value: string) => void;
 }
 
 export function ListExercises({
@@ -194,17 +194,16 @@ export function ListExercises({
             position={"1"}
             exercise={listExerciseState.listExercises["-1"]}
             setEditMenuIsOpen={setEditMenuIsOpen}
+            editMenuIsOpen={editMenuIsOpen}
             selectedExercise={listExerciseState.selectedExercise}
-            setSelectedExercise={(value) => {
-              editMenuIsOpen
-                ? {}
-                : dispatch({
-                    type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
-                    payload: {
-                      selectedExercise: value,
-                    },
-                  });
-            }}
+            setSelectedExercise={(value) =>
+              dispatch({
+                type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                payload: {
+                  selectedExercise: value,
+                },
+              })
+            }
           ></ShowExercise>
         ) : null}
         {Object.entries(listExerciseState.listExercises).map(
@@ -215,17 +214,16 @@ export function ListExercises({
                 position={key}
                 exercise={exercise}
                 setEditMenuIsOpen={setEditMenuIsOpen}
+                editMenuIsOpen={editMenuIsOpen}
                 selectedExercise={listExerciseState.selectedExercise}
-                setSelectedExercise={(value) => {
-                  editMenuIsOpen
-                    ? {}
-                    : dispatch({
-                        type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
-                        payload: {
-                          selectedExercise: value,
-                        },
-                      });
-                }}
+                setSelectedExercise={(value) =>
+                  dispatch({
+                    type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                    payload: {
+                      selectedExercise: value,
+                    },
+                  })
+                }
               ></ShowExercise>
             )
         )}
@@ -237,12 +235,12 @@ export function ListExercises({
           <CreateNewExercisePopUp
             createNewExercise={(newExerciseType: ExerciseType) => {
               dispatch({
-                type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                type: ListExerciseActionKind.ADD_NEW_EXERCISE,
                 payload: {
-                  newExercise: newExerciseType,
+                  newExerciseType: newExerciseType,
                 },
               });
-              setEditMenuIsOpen(true);
+              if (editMenuIsOpen === "") setEditMenuIsOpen("-1");
               setNewExercisePopUp(false);
             }}
           />
