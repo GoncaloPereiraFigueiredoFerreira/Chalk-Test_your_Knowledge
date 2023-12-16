@@ -278,4 +278,37 @@ public class TestsService implements ITestsService {
 
         return resList;
     }
+
+    /**
+     * If an exercise belongs to a test removes it from the test,
+     * and deletes it.
+     *
+     * @param exerciseId exercise identifier
+     * @return identifier of the exercise from where it was removed, or
+     * 'null' if it does not belong to any test.
+     * @throws NotFoundException if the exercise does not exist
+     */
+    @Override
+    public String deleteExerciseFromTest(String exerciseId) throws NotFoundException {
+        //TODO
+        // cant be done if after publish date
+        // if there is no publish date, then, resolutions of the exercise must be deleted
+        return null;
+    }
+
+    /**
+     * If an exercise belongs to a test removes it from the test.
+     * The exercise is not deleted. Its visibility is changed to "private".
+     * @param exerciseId exercise identifier
+     * @return identifier of the exercise from where it was removed, or
+     * 'null' if it does not belong to any test.
+     * @throws NotFoundException if the exercise does not exist
+     */
+    @Override
+    public String removeExerciseFromTest(String exerciseId) throws NotFoundException{
+        //TODO
+        // changes visibility of exercise from TEST to private
+        // cant be done if after publish date
+        return null;
+    }
 }

@@ -153,4 +153,24 @@ public interface ITestsService {
     // TODO: tests/resolutions/{testResolutionId}/{exerciseResolutionId}/manual-correction.yml
     // TODO: tests/resolutions/{testResolutionId}/{exerciseId}/uploadResolution.yml
 
+    /**
+     * If an exercise belongs to a test removes it from the test,
+     * and deletes it.
+     *
+     * @param exerciseId exercise identifier
+     * @return identifier of the exercise from where it was removed, or
+     * 'null' if it does not belong to any test.
+     * @throws NotFoundException if the exercise does not exist
+     */
+    String deleteExerciseFromTest(String exerciseId) throws NotFoundException;
+
+    /**
+     * If an exercise belongs to a test removes it from the test.
+     * The exercise is not deleted. Its visibility is changed to "private".
+     * @param exerciseId exercise identifier
+     * @return identifier of the exercise from where it was removed, or
+     * 'null' if it does not belong to any test.
+     * @throws NotFoundException if the exercise does not exist
+     */
+    String removeExerciseFromTest(String exerciseId) throws NotFoundException;
 }

@@ -11,7 +11,9 @@ public enum VisibilitySQL {
 	NOT_LISTED("not_listed"),
 	PRIVATE("private"),
 	COURSE("course"),
-	INSTITUTION("institution");
+	INSTITUTION("institution"),
+	DELETED("deleted"),
+	TEST("test");
 
 	private String value;
 

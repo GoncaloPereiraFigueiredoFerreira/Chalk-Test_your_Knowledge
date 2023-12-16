@@ -6,8 +6,8 @@ import lombok.Getter;
 public class ShallowExercise extends Exercise {
 	private String originalExerciseId;
 
-	public ShallowExercise(String originalExerciseId,String specialistId, String institutionId, String courseId, Float cotation){
-		super(null,specialistId,institutionId,courseId,cotation);
+	public ShallowExercise(String originalExerciseId,String specialistId, String institutionId, String courseId, Float points){
+		super(null,specialistId,institutionId,courseId,points);
 		this.originalExerciseId=originalExerciseId;
 	}
 }

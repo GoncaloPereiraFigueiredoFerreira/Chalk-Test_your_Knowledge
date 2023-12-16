@@ -12,8 +12,8 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class OpenAnswerRubricStandards   {
-  @JsonProperty("cotation")
-  private Float cotation = null;
+  @JsonProperty("points")
+  private Float points = null;
 
   @JsonProperty("description")
   private String description = null;
@@ -21,23 +21,23 @@ public class OpenAnswerRubricStandards   {
   @JsonProperty("title")
   private String title = null;
 
-  public OpenAnswerRubricStandards cotation(Float cotation) {
-    this.cotation = cotation;
+  public OpenAnswerRubricStandards points(Float points) {
+    this.points = points;
     return this;
   }
 
   /**
-   * Get cotation
-   * @return cotation
+   * Get points
+   * @return points
    **/
   @Schema(description = "")
   
-    public Float getCotation() {
-    return cotation;
+    public Float getPoints() {
+    return points;
   }
 
-  public void setCotation(Float cotation) {
-    this.cotation = cotation;
+  public void setPoints(Float points) {
+    this.points = points;
   }
 
   public OpenAnswerRubricStandards description(String description) {
@@ -88,14 +88,14 @@ public class OpenAnswerRubricStandards   {
       return false;
     }
     OpenAnswerRubricStandards openAnswerRubricStandards = (OpenAnswerRubricStandards) o;
-    return Objects.equals(this.cotation, openAnswerRubricStandards.cotation) &&
+    return Objects.equals(this.points, openAnswerRubricStandards.points) &&
         Objects.equals(this.description, openAnswerRubricStandards.description) &&
         Objects.equals(this.title, openAnswerRubricStandards.title);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cotation, description, title);
+    return Objects.hash(points, description, title);
   }
 
   @Override
@@ -103,7 +103,7 @@ public class OpenAnswerRubricStandards   {
     StringBuilder sb = new StringBuilder();
     sb.append("class OpenAnswerRubricStandards {\n");
     
-    sb.append("    cotation: ").append(toIndentedString(cotation)).append("\n");
+    sb.append("    points: ").append(toIndentedString(points)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("}");

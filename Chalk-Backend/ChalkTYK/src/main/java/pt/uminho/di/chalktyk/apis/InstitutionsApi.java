@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public interface InstitutionsApi {
     ResponseEntity<List<Institution>> getInstitutions(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
 , @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
 )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Delete institution", description = "", tags={ "institution" })
@@ -56,7 +57,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions/{institutionId}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get institution by institution id", description = "", tags={ "institution" })
@@ -72,7 +73,7 @@ public interface InstitutionsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<InstitutionWithoutId> getInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update Institution", description = "Update an existent institution in the store", tags={ "institution" })
@@ -89,7 +90,7 @@ public interface InstitutionsApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> updateInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsInstitutionIdBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Create institution", description = "This method is used to create an institution", tags={ "institution" })
@@ -101,7 +102,7 @@ public interface InstitutionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> createInstitution(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 }
 

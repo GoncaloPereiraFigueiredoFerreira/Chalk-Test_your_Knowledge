@@ -1,7 +1,8 @@
 package pt.uminho.di.chalktyk.services;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.util.Pair;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
+import pt.uminho.di.chalktyk.models.relational.ExerciseResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -16,7 +17,7 @@ public interface IExercisesService{
      * Get Exercise by ID
      *
      * @param exerciseId of the exercise
-     * @return exercise from the given ID
+     * @return concrete exercise with the given ID
      **/
     Exercise getExerciseById(String exerciseId) throws NotFoundException;
 
@@ -48,12 +49,11 @@ public interface IExercisesService{
 
     /**
      * Delete exercise by id.
+     *
      * @param exerciseId identifier of the exercise
-     * @param specialistId identifier of the specialist that wants to delete the exercise
-     * @throws UnauthorizedException if the exercise is not owned by the specialist
-     * @throws NotFoundException if the exercise was not found
+     * @throws NotFoundException     if the exercise was not found
      */
-    void deleteExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    void deleteExerciseById(String exerciseId) throws NotFoundException;
 
     /**
      * Duplicates the exercise that contains the given identifier.
@@ -66,12 +66,11 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      * @return new exercise identifier
      */
-    String duplicateExerciseById(String specialistId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
 
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
-     * @param specialistId identifier of the specialist that owns the exercise
      * @param exerciseId identifier of the exercise to be updated
      * @param exercise new exercise body
      * @param rubric new exercise rubric
@@ -82,16 +81,15 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      */
     // TODO - criar metodos privados para update individual de cada componente
-    void updateExercise(String specialistId, String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws UnauthorizedException, NotFoundException;
+    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility)  throws UnauthorizedException, NotFoundException, BadInputException;
 
     /**
      * Retrieves the rubric of an exercise.
      * @param exerciseId exercise identifier
      * @return rubric of the exercise or null if it doesn't exist.
-     * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
-     * @throws NotFoundException if the exercise was not found
+     * @throws NotFoundException     if the exercise was not found
      */
-    ExerciseRubric getExerciseRubric(String userId, String exerciseId) throws UnauthorizedException, NotFoundException;
+    ExerciseRubric getExerciseRubric(String exerciseId) throws NotFoundException;
 
     /**
      * Create an exercise rubric
@@ -100,7 +98,7 @@ public interface IExercisesService{
      * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
      * @throws NotFoundException if the exercise was not found
      */
-    void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws UnauthorizedException, NotFoundException;
+    void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException;
 
     /**
      * Issue the automatic correction of the exercise resolutions.
@@ -125,26 +123,26 @@ public interface IExercisesService{
     Integer countExerciseResolutions(String exerciseId, boolean total);
 
     /**
-     *
-     * @param exerciseId identifier of the exercise
-     * @param page index of the page
+     * @param exerciseId   identifier of the exercise
+     * @param page         index of the page
      * @param itemsPerPage number of pairs in each page
+     * @param latest
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage);
+    List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest);
 
     /**
      * Create a resolution for a specific exercise.
+     *
      * @param exerciseId identifier of the exercise
      * @param resolution new resolution
-     * @param studentId identifier of the creator of the resolution.
-     * @throws UnauthorizedException if the student does not have permission to create
-     *                               a resolution for the given exercise.
+     * @param studentId  identifier of the creator of the resolution.
+     * @return
      * @throws NotFoundException if the exercise was not found
      * @throws BadInputException if there is some problem regarding the resolution of the exercise,
      *                           like the type of resolution does not match the type of the exercise
      */
-    void createExerciseResolution(String studentId, Integer exerciseId, ExerciseResolution resolution);
+    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
 
     /**
      *
@@ -156,50 +154,94 @@ public interface IExercisesService{
     Integer countExerciseResolutionsByStudent(String exerciseId, String studentId);
 
     /**
-     *
      * @param exerciseId identifier of the exercise
-     * @param studentId identifier of the student
-     * @return list of the identifiers of all the resolutions a student has made for an exercise.
+     * @param studentId  identifier of the student
+     * @return list of metadata of all the resolutions a student has made for an exercise.
      * @throws NotFoundException if the exercise does not exist
      */
-    List<String> getStudentListOfExerciseResolutionsIdsByExercise(String exerciseId, String studentId);
+    List<ExerciseResolutionSQL> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException;
 
     /**
-     *
-     * @param userId identifier of the user that made the request. Necessary to check authorization.
      * @param exerciseId identifier of the exercise
-     * @param studentId identifier of the student
-     * @return last resolution made by the student for a given exercise
+     * @param studentId  identifier of the student
+     * @return last resolution made by the student for a given exercise, or 'null' if it does not exist.
      */
-    ExerciseResolution getLastExerciseResolutionByStudent(String userId, String exerciseId, String studentId);
+    ExerciseResolution getLastExerciseResolutionByStudent(String exerciseId, String studentId);
 
     /**
-     * @param userId identifier of the user that made the request. Necessary to check authorization.
-     * @param page index of the page
-     * @param itemsPerPage number of items per page
-     * @param tags list of tags to filter exercises
-     * @param matchAllTags if 'false' an exercise will match if at least one tag of the exercise matches one of the given list.
-     *                     if 'true' the exercise must have all the tags present in the list
-     * @param visibilityType type of visibility
-     * @param visibilityTarget target of the visibility, for example, if the visibility is set to course,
-     *                         then this argument is used to specify the course
-     * @param specialistId to search for the exercises created by a specific specialist
+     * @param userId           identifier of the user that made the request. Necessary to check authorization.
+     * @param page             index of the page
+     * @param itemsPerPage     number of items per page
+     * @param tags             list of tags to filter exercises
+     * @param matchAllTags     if 'false' an exercise will match if at least one tag of the exercise matches one of the given list.
+     *                         if 'true' the exercise must have all the tags present in the list
+     * @param visibilityType   type of visibility
+     * @param courseId         to search for an exercise from a specific course
+     * @param institutionId    to search for and exercise from a specific institution
+     * @param specialistId     to search for the exercises created by a specific specialist
+     * @param title            to search for an exercise title
+     * @param exerciseType     to search for an exercise of a certain type
+     * @param verifyParams     if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
+     *                         'false' does not verify database logic
      * @return list of exercises that match the given filters
      */
-    List<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage,
-                                List<String> tags, boolean matchAllTags,
-                                String visibilityType, String visibilityTarget,
-                                String specialistId);
+    List<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
 
-    Void addCommentToExerciseResolution(String resolutionId, Comment body);
+    /**
+     * Adds a comment to an exercise resolution.
+     * If the resolution already has a
+     * comment associated, it will be overwritten.
+     * @param resolutionId identifier of the resolution
+     * @param comment body of the comment
+     * @throws NotFoundException if the resolution does not exist
+     * @throws BadInputException if the comment is malformed or is null.
+     */
+    void addCommentToExerciseResolution(String resolutionId, Comment comment) throws NotFoundException, BadInputException;
 
-    ExerciseResolution getExerciseResolution(String resolutionId);
+    /**
+     * Deletes a comment made to an exercise resolution.
+     * @param resolutionId identifier of the resolution
+     * @throws NotFoundException if the resolution does not exist
+     */
+    void removeCommentFromExerciseResolution(String resolutionId) throws NotFoundException;
 
-    Void exerciseResolutionManualCorrection(String resolutionId, Float cotation);
+    /**
+     * Gets the exercise resolution identified by the given identifier.
+     * @param resolutionId identifier of the resolution
+     * @return the exercise resolution identified by the given identifier.
+     * @throws NotFoundException if the resolution does not exist
+     */
+    ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException;
 
-    Void deleteExerciseRubric(String rubricId);
+    /**
+     * Used to set the points of an exercise resolution.
+     * @param resolutionId identifier of the resolution
+     * @param points points to set
+     * @throws NotFoundException if the resolution does not exist
+     * @throws BadInputException if the points exceed the max points for the exercise.
+     */
+    void setExerciseResolutionPoints(String resolutionId, float points) throws NotFoundException, BadInputException;
 
-    Void updateRubric(String rubricId, ExerciseRubric rubric);
+    void deleteExerciseRubric(String exerciseId) throws BadInputException, NotFoundException;
 
-    // todo - existe get exercise solution e get exercise rubric?
+    void updateExerciseRubric(String exerciseId, ExerciseRubric rubric) throws BadInputException, NotFoundException;
+
+    void createExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
+
+    ExerciseSolution getExerciseSolution(String exerciseId) throws NotFoundException;
+
+    void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
+
+    void deleteExerciseSolution(String exerciseId) throws NotFoundException, BadInputException;
+
+    String getExerciseCourse(String exerciseId) throws NotFoundException; // TODO implementar (Bronze) 
+    
+    String getExerciseInstitution(String exerciseId) throws NotFoundException; // TODO implementar (Bronze)
+
+    /**
+     * @param exerciseId identifier of the exercise
+     * @return visibility of an exercise
+     * @throws NotFoundException if the exercise does not exist
+     */
+    String getExerciseVisibility(String exerciseId) throws NotFoundException;
 }

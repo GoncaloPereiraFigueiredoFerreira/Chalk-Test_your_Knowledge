@@ -95,10 +95,19 @@ public interface ICoursesService {
      * Check if specialist belongs to a course
      *
      * @param courseId     course identifier
-     * @param specalistId  specialist identifier
+     * @param specialistId  specialist identifier
      * @return 'true' or 'false' depending on whether the specialist belongs to a course or not 
      */
     boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException;
+
+    /**
+     * Check if studentId belongs to a course
+     *
+     * @param courseId     course identifier
+     * @param studentId  student identifier
+     * @return 'true' or 'false' depending on whether the student belongs to a course or not
+     */
+    boolean checkStudentInCourse(String courseId, String studentId) throws NotFoundException;
 
     /**
      * Get list of courses that a specific student is associated with

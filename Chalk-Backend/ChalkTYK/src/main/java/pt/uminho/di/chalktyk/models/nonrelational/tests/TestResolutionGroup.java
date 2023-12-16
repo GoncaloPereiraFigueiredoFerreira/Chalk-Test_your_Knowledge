@@ -6,6 +6,6 @@ import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 public class TestResolutionGroup {
 
 	private List<ExerciseResolution> resolutions;
-	private Float groupCotation;
+	private Float groupPoints;
 
 }
