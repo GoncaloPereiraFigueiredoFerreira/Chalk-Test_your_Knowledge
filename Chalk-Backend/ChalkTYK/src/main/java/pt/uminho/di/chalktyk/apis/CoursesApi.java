@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +40,7 @@ public interface CoursesApi {
     @RequestMapping(value = "/courses/{courseId}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> coursesCourseIdDelete(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get course by course id", description = "", tags={ "course" })
@@ -55,7 +56,7 @@ public interface CoursesApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<CourseWithoutId> coursesCourseIdGet(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update course", description = "Update an existent course in the store", tags={ "course" })
@@ -72,7 +73,7 @@ public interface CoursesApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> coursesCourseIdPut(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody CoursesCourseIdBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "", description = "", tags={ "course" })
@@ -91,7 +92,7 @@ public interface CoursesApi {
 , @Parameter(in = ParameterIn.QUERY, description = "Find the courses this student belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "studentId", required = false) String studentId
 , @Parameter(in = ParameterIn.QUERY, description = "Find the courses this specialist belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
 , @Parameter(in = ParameterIn.QUERY, description = "Find the courses of this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Create course", description = "This method is used to create an course", tags={ "course" })
@@ -103,7 +104,7 @@ public interface CoursesApi {
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> coursesPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody CoursesBody body
-);
+, @CookieValue("chalkauthtoken") String jwt);
 
 }
 

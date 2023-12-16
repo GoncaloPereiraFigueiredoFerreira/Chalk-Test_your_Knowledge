@@ -47,4 +47,7 @@ public interface CourseSqlDAO extends JpaRepository<CourseSQL, String> {
 
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM specialist_course WHERE courseid = :courseId AND specialistid = :specialistId", nativeQuery = true)
     boolean isCourseSpecialist(@Param("courseId") String courseId, @Param("specialistId") String specialistId);
+
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM student_course WHERE courseid = :courseId AND specialistid = :studentId", nativeQuery = true)
+    boolean isCourseStudent(@Param("courseId") String courseId, @Param("studentId") String studentId);
 }

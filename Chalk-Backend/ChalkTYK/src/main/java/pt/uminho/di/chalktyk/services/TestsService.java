@@ -1,10 +1,12 @@
 package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
@@ -139,15 +141,20 @@ public class TestsService implements ITestsService {
 
     @Override
     public Integer countStudentsTestResolutions(String testId, Boolean total) {
+        if (total)
+            return resolutionSqlDAO.countTotalSubmissionsForTest(testId);
+        //else
+    // select count(*) from (select distinct studentid from test_resolution where testid = '') ;
+
         throw new UnsupportedOperationException("Unimplemented method 'countStudentsTestResolutions'");
     }
 
     @Override
-    public Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
+    public List<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
-        // TODO: not tested and not done
-        return null;
+        // TODO: not tested
+        return resolutionsSQLtoNoSQL(resolutionSqlDAO.getTestResolutions(testId, PageRequest.of(page, itemsPerPage)));
     }
 
     @Override
@@ -212,7 +219,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public Integer countStudentSubmissionsForTest(String testId, String studentId) throws NotFoundException{
+    public Integer countStudentSubmissionsForTest(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
@@ -221,7 +228,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException{
+    public List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
@@ -256,7 +263,20 @@ public class TestsService implements ITestsService {
                 }
             }
         }
+
         return res;
+    }  
+
+    
+    /* **** Auxiliary methods **** */
+
+    private List<TestResolution> resolutionsSQLtoNoSQL(Page<TestResolutionSQL> resPage) throws NotFoundException {
+        List<TestResolution> resList = new ArrayList<>();
+
+        for(var res : resPage)
+            resList.add(getTestResolutionById(res.getId()));
+
+        return resList;
     }
 
     /**

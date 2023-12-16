@@ -13,9 +13,13 @@ import pt.uminho.di.chalktyk.models.relational.TestResolutionSQL;
 
 @Repository
 public interface TestResolutionSqlDAO extends JpaRepository<TestResolutionSQL, String> {
-    // TODO: not tested
+    // select count(*) from (select distinct studentid from test_resolution where testid = '') ;
+
     @Query(value = "select tr from TestResolutionSQL tr where tr.test.id = :testId")
     Page<TestResolutionSQL> getTestResolutions(@Param("testId") String testId, Pageable pageable);
+
+    @Query(value = "SELECT COUNT(*) FROM test_resolution WHERE testid = :testId", nativeQuery = true)
+    int countTotalSubmissionsForTest(@Param("testId") String testId);
 
     @Query(value = "SELECT COUNT(*) FROM test_resolution WHERE studentid = :studentId AND testid = :testId", nativeQuery = true)
     int countStudentSubmissionsForTest(@Param("studentId") String studentId, @Param("testId") String testId);

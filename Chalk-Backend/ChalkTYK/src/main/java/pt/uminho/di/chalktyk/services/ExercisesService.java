@@ -386,7 +386,8 @@ public class ExercisesService implements IExercisesService{
      * course was not found,
      * the rubric or solution don't belong to the new exercise body
      */
-    private void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
+    @Transactional
+    protected void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
         Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
         assert origExercise != null;
 
@@ -449,6 +450,14 @@ public class ExercisesService implements IExercisesService{
                     concreteExercise.verifyResolutionProperties(exerciseSolution.getData());
                 }
             }
+
+            //If type changed then modify it on sql
+            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType()))
+                exerciseSqlDAO.updateExerciseType(concreteExercise.getId(),concreteExercise.getExerciseType());
+
+            //If title changed then modify it on sql
+            if(!Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle()))
+                exerciseSqlDAO.updateExerciseTitle(concreteExercise.getId(),concreteExercise.getTitle());
         }
         exerciseDAO.save(exercise);
         if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId()))
@@ -712,6 +721,28 @@ public class ExercisesService implements IExercisesService{
             // saves the exercise
             exerciseDAO.save(ce);
         }
+    }
+
+    @Override
+    @Transactional
+    public String getExerciseCourse(String exerciseId) throws NotFoundException {
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        if(exerciseSQL==null)
+            throw new NotFoundException("There is no exercise for the given id");
+        if(exerciseSQL.getCourse()==null)
+            return null;
+        return exerciseSQL.getCourse().getId();
+    }
+
+    @Override
+    @Transactional
+    public String getExerciseInstitution(String exerciseId) throws NotFoundException {
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        if(exerciseSQL==null)
+            throw new NotFoundException("There is no exercise for the given id");
+        if(exerciseSQL.getInstitution()==null)
+            return null;
+        return exerciseSQL.getInstitution().getId();
     }
 
     /**

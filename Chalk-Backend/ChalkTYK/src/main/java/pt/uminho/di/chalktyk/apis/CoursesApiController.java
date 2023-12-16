@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,7 @@ import java.util.List;
 public class CoursesApiController implements CoursesApi {
 
     public ResponseEntity<Void> coursesCourseIdDelete(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
 
         throw new RuntimeException("Not implemented");
         //jwt.verify if is specialist
@@ -37,13 +38,13 @@ public class CoursesApiController implements CoursesApi {
     }
 
     public ResponseEntity<CourseWithoutId> coursesCourseIdGet(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
     public ResponseEntity<Void> coursesCourseIdPut(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
 ,@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody CoursesCourseIdBody body
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
@@ -53,12 +54,12 @@ public class CoursesApiController implements CoursesApi {
 ,@Parameter(in = ParameterIn.QUERY, description = "Find the courses this student belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "studentId", required = false) String studentId
 ,@Parameter(in = ParameterIn.QUERY, description = "Find the courses this specialist belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
 ,@Parameter(in = ParameterIn.QUERY, description = "Find the courses of this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
     public ResponseEntity<Void> coursesPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody CoursesBody body
-) {
+, @CookieValue("chalkauthtoken") String jwt) {
         throw new RuntimeException("Not implemented");
     }
 
