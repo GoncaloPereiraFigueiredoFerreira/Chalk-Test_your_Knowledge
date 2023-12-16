@@ -1,13 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DownloadIcon,
   FileUploadIcon,
   ListIcon,
 } from "../../SVGImages/SVGImages";
 import { ExerciseHeader } from "../Header/ExHeader";
+import { ExerciseType, OAResolutionData } from "../Exercise";
 
 export function OASolve(props: any) {
-  const [_state, setState] = useState("");
+  const [state, setState] = useState<OAResolutionData>({
+    type: ExerciseType.OPEN_ANSWER,
+    text: props.resolution.text,
+  });
+
+  const setText = (text: string) => {
+    setState({
+      type: ExerciseType.OPEN_ANSWER,
+      text: text,
+    });
+  };
+
+  useEffect(() => {
+    setText(props.resolution.text);
+  }, [props.statement]);
+
+  useEffect(() => {
+    props.setResolution(state);
+  }, [state]);
 
   return (
     <>
@@ -51,7 +70,8 @@ export function OASolve(props: any) {
               rows={8}
               className="block w-full px-0 border-0 focus:ring-0"
               placeholder="Write your answer..."
-              onChange={(e) => setState(e.target.value)}
+              value={state.text}
+              onChange={(e) => setText(e.target.value)}
               required
             ></textarea>
           </div>

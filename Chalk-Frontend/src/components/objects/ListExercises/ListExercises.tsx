@@ -42,15 +42,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
       "2": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": { text: "Existem 8 canetas pretas" },
       "4": {
         text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
       },
     },
   },
@@ -68,15 +66,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_TRUE,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
       "2": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": { text: "Existem 8 canetas pretas" },
       "4": {
         text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
       },
     },
   },
@@ -94,15 +90,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
       "2": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": { text: "Existem 8 canetas pretas" },
       "4": {
         text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
       },
     },
   },
@@ -117,15 +111,13 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.JUSTIFY_MARKED,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
       "2": {
         text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-        type: "string",
       },
-      "3": { text: "Existem 8 canetas pretas", type: "string" },
+      "3": { text: "Existem 8 canetas pretas" },
       "4": {
         text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
       },
     },
   },
@@ -156,10 +148,9 @@ const userExercises: Exercise[] = [
     },
     justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
     items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas", type: "string" },
+      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
       "2": {
         text: "Existem mais canetas castanhas que amarelas",
-        type: "string",
       },
     },
   },

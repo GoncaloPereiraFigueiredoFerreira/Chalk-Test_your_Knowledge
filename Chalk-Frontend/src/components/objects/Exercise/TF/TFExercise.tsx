@@ -18,6 +18,8 @@ export function TFExercise({
             items={exercise.items}
             statement={exercise.statement}
             justifyKind={exercise.justifyKind}
+            resolution={context.resolutionData}
+            setResolution={context.setExerciseSolution}
           />
         );
         break;

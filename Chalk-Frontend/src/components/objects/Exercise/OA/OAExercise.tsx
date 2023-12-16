@@ -9,11 +9,17 @@ export function OAExercise({
   let exerciseDisplay = <></>;
   switch (context.context) {
     case ExerciseContext.SOLVE:
-      exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
+      exerciseDisplay = (
+        <OASolve
+          statement={exercise.statement}
+          resolution={context.resolutionData}
+          setResolution={context.setExerciseSolution}
+        ></OASolve>
+      );
       break;
 
     case ExerciseContext.PREVIEW:
-      exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
+      exerciseDisplay = <></>;
       break;
 
     case ExerciseContext.EDIT:

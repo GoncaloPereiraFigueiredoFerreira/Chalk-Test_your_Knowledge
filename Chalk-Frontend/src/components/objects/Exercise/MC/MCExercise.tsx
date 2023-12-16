@@ -18,6 +18,8 @@ export function MCExercise({
             items={exercise.items}
             statement={exercise.statement}
             justifyKind={exercise.justifyKind}
+            resolution={context.resolutionData}
+            setResolution={context.setExerciseSolution}
           ></MCSolve>
         );
         break;

@@ -61,8 +61,36 @@ export function createNewExercise(newExercisetype: ExerciseType) {
 //                                    //
 //------------------------------------//
 
-enum ResolutionStatus {
+export enum ResolutionStatus {
   PENDING = "pending",
+}
+
+export type ResolutionData =
+  | TFResolutionData
+  | MCResolutionData
+  | OAResolutionData;
+
+export interface ResolutionItems {
+  [id: string]: {
+    text: string;
+    justification: string;
+    value?: boolean;
+  };
+}
+
+export interface TFResolutionData {
+  type: ExerciseType.TRUE_OR_FALSE;
+  items: ResolutionItems;
+}
+
+export interface MCResolutionData {
+  type: ExerciseType.MULTIPLE_CHOICE;
+  items: ResolutionItems;
+}
+
+export interface OAResolutionData {
+  type: ExerciseType.OPEN_ANSWER;
+  text: string;
 }
 
 export interface Resolution {
@@ -70,16 +98,7 @@ export interface Resolution {
   cotation: number;
   studentID: string;
   status: ResolutionStatus;
-  data:
-    | string
-    | {
-        [id: string]: {
-          text: string;
-          justification: string;
-          type: string;
-          value: boolean;
-        };
-      };
+  data: ResolutionData;
 }
 
 //------------------------------------//
@@ -118,7 +137,7 @@ export interface Exercise {
     text: string;
   };
   justifyKind?: ExerciseJustificationKind;
-  items?: { [id: string]: { text: string; type: string } };
+  items?: { [id: string]: { text: string } };
 
   solution?: Resolution;
   resolution?: Resolution;
@@ -133,7 +152,7 @@ export interface Exercise {
 export interface ExerciseGroup {
   exercises: Exercise[];
   groupInstructions: string;
-  groupCotations: number;
+  groupCotation: number;
 }
 
 //------------------------------------//
@@ -169,6 +188,7 @@ export interface PreviewProps {
 
 export interface SolveProps {
   context: ExerciseContext.SOLVE;
+  resolutionData: ResolutionData;
   setExerciseSolution: Function;
 }
 

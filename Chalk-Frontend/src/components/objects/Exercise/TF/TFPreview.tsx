@@ -1,7 +1,22 @@
 import { ExerciseJustificationKind } from "../Exercise";
 import { useState } from "react";
-import { ExerciseHeader } from "../Header/ExHeader";
-import { TFSolveProps } from "./TFSolve";
+import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
+
+export interface TFPreviewProps {
+  id: string;
+  position: string;
+  statement: {
+    imagePath?: string;
+    imagePosition?: ImgPos;
+    text: string;
+  };
+  justifyKind: ExerciseJustificationKind;
+  items: {
+    [id: string]: {
+      text: string;
+    };
+  };
+}
 
 export function TFPreview({
   id,
@@ -9,7 +24,7 @@ export function TFPreview({
   items,
   statement,
   justifyKind,
-}: TFSolveProps) {
+}: TFPreviewProps) {
   return (
     <>
       <ExerciseHeader header={statement} />
@@ -28,7 +43,6 @@ export function TFPreview({
       </div>
     </>
   );
-  return <></>;
 }
 
 function TFShowStatement(props: any) {

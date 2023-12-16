@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ExerciseJustificationKind } from "../Exercise";
 import { ExerciseHeader } from "../Header/ExHeader";
-import { TFSolveProps } from "../TF/TFSolve";
+import { TFPreviewProps } from "../TF/TFPreview";
 
 export function MCPreview({
   id,
@@ -9,7 +9,7 @@ export function MCPreview({
   position,
   statement,
   justifyKind,
-}: TFSolveProps) {
+}: TFPreviewProps) {
   const [chosenOption, setChosenOption] = useState("");
   return (
     <>
