@@ -91,7 +91,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             } sidebar-dropdown transition-all`}
           >
             <li>
-              <Link to={""}>
+              <Link to={`groups/${selectedGroup.name}/alunos`}>
                 <button className="sidebar-item bg-btn-1 group">
                   <GraduateIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Alunos</span>
@@ -99,7 +99,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               </Link>
             </li>
             <li>
-              <Link to={""}>
+              <Link to={`groups/${selectedGroup.name}/testes`}>
                 <button className="sidebar-item bg-btn-1 group">
                   <WorldIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>
@@ -109,7 +109,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               </Link>
             </li>
             <li>
-              <Link to={""}>
+              <Link to={`groups/${selectedGroup.name}/avaliacoes`}>
                 <button className="sidebar-item bg-btn-1 group">
                   <CircularGraficIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Avaliações</span>
@@ -234,6 +234,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                       id: "all",
                       name: "Grupos",
                     });
+                    navigate(`groups`);
                   }}
                   className={`sidebar-item ${
                     "all" === selectedGroup.id
@@ -251,6 +252,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                     onClick={() => {
                       setShowGroup(false);
                       setSelectedGroup(item);
+                      navigate(`groups/${item.name}/alunos`);
                     }}
                     className={`sidebar-item ${
                       item === selectedGroup ? "bg-btn-1-selected" : "bg-btn-1"

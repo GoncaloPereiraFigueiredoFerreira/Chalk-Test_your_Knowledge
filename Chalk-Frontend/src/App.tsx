@@ -14,7 +14,11 @@ import { Subscription } from "./components/pages/Subscription/Subscription";
 //import { CreateTest } from "./components/pages/CreateTest/CreateTest";
 import { SearchList } from "./components/pages/SearchList/SearchList";
 import { SolveTest } from "./components/pages/SolveTest/SolveTest";
-
+import { GroupsPage } from "./components/pages/Groups/GroupsPage";
+import { AvaliacoesPage } from "./components/pages/Groups/AvaliacoesPage";
+import { TestesPartilhadosPage } from "./components/pages/Groups/TestesPartilhadosPage";
+import { AlunosPage } from "./components/pages/Groups/AlunosPage";
+import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
 function App() {
   const { user } = useContext(UserContext);
   return (
@@ -40,7 +44,12 @@ function App() {
             <Route path="group/:id" />
           </Route>
           <Route path="profile" element={<Settings />} />
-
+          <Route path="groups" element={<GroupsPage />} />
+          <Route path="groups/:id" element={<GroupNavBar />}>
+            <Route path="alunos" element={<AlunosPage />} />
+            <Route path="testes" element={<TestesPartilhadosPage />} />
+            <Route path="avaliacoes" element={<AvaliacoesPage />} />
+          </Route>
           {/*<Route path="correction" element={<Correction />} />*/}
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
           {/*<Route path="catalog" element={<Catalog />} />*/}
