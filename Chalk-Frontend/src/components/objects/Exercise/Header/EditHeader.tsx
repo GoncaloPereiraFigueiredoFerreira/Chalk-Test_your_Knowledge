@@ -40,8 +40,18 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
             id="putImg"
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
+            onChange={() => {
+              if (addImg)
+                dispatch({
+                  type: EditActionKind.REMOVE_IMG,
+                });
+              else
+                dispatch({
+                  type: EditActionKind.ADD_IMG,
+                });
+              setAddImg(!addImg);
+            }}
             checked={addImg}
-            onChange={() => setAddImg(!addImg)}
           ></input>
           <label
             htmlFor="putImg"

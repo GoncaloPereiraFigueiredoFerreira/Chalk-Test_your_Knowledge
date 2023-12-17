@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Exercise,
-  ExerciseJustificationKind,
-  ExerciseType,
-  TFResolutionData,
-} from "../Exercise";
+import { Exercise, ExerciseJustificationKind, ExerciseType } from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
@@ -68,6 +63,16 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
             onChange={() => {
+              if (openJustificationkind)
+                dispatch({
+                  type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                  justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+                });
+              else
+                dispatch({
+                  type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                  justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
+                });
               setOpenJustificationkind(!openJustificationkind);
             }}
             checked={openJustificationkind}
@@ -89,7 +94,6 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
               ExerciseJustificationKind.JUSTIFY_ALL,
               ExerciseJustificationKind.JUSTIFY_FALSE,
               ExerciseJustificationKind.JUSTIFY_TRUE,
-              ExerciseJustificationKind.NO_JUSTIFICATION,
             ]}
             text="Posição"
             chosenOption={state.justifyKind}

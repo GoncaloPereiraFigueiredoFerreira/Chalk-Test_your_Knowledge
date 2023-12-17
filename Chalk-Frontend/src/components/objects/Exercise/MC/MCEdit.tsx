@@ -56,6 +56,16 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
             onChange={() => {
+              if (openJustificationkind)
+                dispatch({
+                  type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                  justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+                });
+              else
+                dispatch({
+                  type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                  justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
+                });
               setOpenJustificationkind(!openJustificationkind);
             }}
             checked={openJustificationkind}
@@ -77,7 +87,6 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
               ExerciseJustificationKind.JUSTIFY_ALL,
               ExerciseJustificationKind.JUSTIFY_FALSE,
               ExerciseJustificationKind.JUSTIFY_TRUE,
-              ExerciseJustificationKind.NO_JUSTIFICATION,
             ]}
             text="Posição"
             chosenOption={state.justifyKind}

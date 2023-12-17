@@ -24,8 +24,8 @@ import { MCEdit } from "../Exercise/MC/MCEdit";
 
 export enum EditActionKind {
   CHANGE_STATEMENT = "CHANGE_STATEMENT",
-  // ADD_IMG = "ADD_IMG",
-  // REMOVE_IMG = "REMOVE_IMG",
+  ADD_IMG = "ADD_IMG",
+  REMOVE_IMG = "REMOVE_IMG",
   CHANGE_IMG_URL = "CHANGE_IMG_URL",
   CHANGE_IMG_POS = "CHANGE_IMG_POS",
   CHANGE_SOLUTION_TEXT = "CHANGE_SOLUTION_TEXT",
@@ -61,7 +61,7 @@ function EditReducer(state: Exercise, action: EditAction) {
     case EditActionKind.CHANGE_STATEMENT:
       if (action.statement != undefined)
         if (action.statement.text != undefined) {
-          let newStatement = {
+          let newStatement: Exercise["statement"] = {
             ...state.statement,
             text: action.statement.text,
           };
@@ -69,10 +69,30 @@ function EditReducer(state: Exercise, action: EditAction) {
         }
       throw new Error("Invalid action");
 
+    case EditActionKind.ADD_IMG:
+      if (state.statement.imagePath === undefined) {
+        let newStatement: Exercise["statement"] = {
+          ...state.statement,
+          imagePath: "",
+          imagePosition: ImgPos.BOT,
+        };
+        return { ...state, statement: newStatement } as Exercise;
+      }
+      throw new Error("Invalid action");
+
+    case EditActionKind.REMOVE_IMG:
+      if (state.statement.imagePath != undefined) {
+        let newStatement: Exercise["statement"] = {
+          text: state.statement.text,
+        };
+        return { ...state, statement: newStatement } as Exercise;
+      }
+      throw new Error("Invalid action");
+
     case EditActionKind.CHANGE_IMG_URL:
       if (action.statement != undefined)
         if (action.statement.imagePath != undefined) {
-          let newStatement = {
+          let newStatement: Exercise["statement"] = {
             ...state.statement,
             imagePath: action.statement.imagePath,
           };
@@ -83,7 +103,7 @@ function EditReducer(state: Exercise, action: EditAction) {
     case EditActionKind.CHANGE_IMG_POS:
       if (action.statement != undefined)
         if (action.statement.imagePosition != undefined) {
-          let newStatement = {
+          let newStatement: Exercise["statement"] = {
             ...state.statement,
             imagePosition: action.statement.imagePosition,
           };
