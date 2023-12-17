@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Exercise, ExerciseJustificationKind } from "../Exercise/Exercise";
+import {
+  Exercise,
+  ExerciseJustificationKind,
+  ExerciseType,
+  Resolution,
+} from "../Exercise/Exercise";
 import axios from "axios";
 
 interface Standards {
@@ -18,15 +23,21 @@ interface OARubric {
   };
 }
 
-export function OAAnswer({ cotation, resolution }: Exercise) {
+export function OAAnswer(
+  resolution: Resolution,
+  cotation: number,
+  justifyKind: ExerciseJustificationKind,
+  solution: Resolution
+) {
   const [exeCotation, setCotation] = useState(cotation);
   const [rubric, setRubric] = useState<OARubric>();
 
-  function handleSubmit() {
+  function handleSubmit(e) {
+    e.preventDefault();
     axios
       .post(
         "http://localhost:5173/exercises/resolutions/" +
-          resolution?.id +
+          resolution!.id +
           "/manual-correction",
         { cotation: exeCotation }
       )
@@ -48,7 +59,12 @@ export function OAAnswer({ cotation, resolution }: Exercise) {
   return (
     <div className="flex flex-col">
       <div className=" border-b-2"></div>
-      {resolution!.data.text ? <div>{resolution!.data.text}</div> : <></>}
+      {resolution!.data.type === ExerciseType.OPEN_ANSWER &&
+      resolution!.data.text ? (
+        <div>{resolution!.data.text}</div>
+      ) : (
+        <></>
+      )}
       <form onSubmit={handleSubmit} className="flex ">
         <label className=" mb-2 text-md font-medium text-gray-900 dark:text-white"></label>
         <input

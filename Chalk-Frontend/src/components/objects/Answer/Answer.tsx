@@ -2,121 +2,57 @@ import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
+  Resolution,
 } from "../Exercise/Exercise";
 import { useState, useEffect } from "react";
 import { TFAnswer } from "./TFAnswer";
 import { OAAnswer } from "./OAAnswer";
 import { MCAnswer } from "./MCAnswer";
-//import { students } from "../../pages/Correction/example";
-import { Student } from "../../pages/Correction/Correction";
+import { students } from "../../pages/Tests/Correction/example";
 
-interface StudentList {
-  [key: string]: Student;
-}
-
-export const students: Student[] = [
-  { id: "student1", email: "sdam@msam.com", name: "Luis caneca" },
-  { id: "student2", email: "sdam@msam.com", name: "Maria caneca" },
-
-  { id: "student16", email: "sdam@msam.com", name: "Goncalo caneca" },
-
-  { id: "student3", email: "sdam@msam.com", name: "Alex caneca" },
-
-  { id: "student4", email: "sdam@msam.com", name: "Rui caneca" },
-
-  { id: "student5", email: "sdam@msam.com", name: "Hugo caneca" },
-
-  { id: "student6", email: "sdam@msam.com", name: "Diogo caneca" },
-  { id: "student12", email: "sdam@msam.com", name: "Manuel caneca" },
-  { id: "student15", email: "sdam@msam.com", name: "Francisco caneca" },
-  { id: "student13", email: "sdam@msam.com", name: "Bronze caneca" },
-];
-
-export function Answer({
-  id,
-  cotation,
-  title,
-  specialistId,
-  statement,
-  visibility,
-  type,
-  justifyKind,
-  resolution,
-  solution,
-  comments,
-}: Exercise) {
+export function Answer(
+  solution: Resolution,
+  cotation: number,
+  justifyKind: ExerciseJustificationKind,
+  resolution: Resolution
+) {
   const [preview, setPreview] = useState(<></>);
 
   const [selectedAnswer, setSelectedAnswer] = useState(false);
-  const [studentList, setStudentList] = useState<{
-    [key: string]: Student;
-  }>({});
 
   useEffect(() => {
-    let tempList: StudentList = {};
-    students.forEach((student: Student) => (tempList[student.id] = student));
-    setStudentList(tempList);
-  }, [id]);
-
-  console.log(studentList);
-
-  useEffect(() => {
-    switch (type) {
-      case "multiple-choice":
+    switch (resolution.data.type) {
+      case ExerciseType.MULTIPLE_CHOICE:
         setPreview(
           <MCAnswer
-            key={id}
-            id={id}
-            cotation={cotation}
-            title={title}
-            specialistId={specialistId}
-            statement={statement}
-            visibility={visibility}
-            type={type}
-            resolution={resolution}
-            justifyKind={justifyKind}
             solution={solution}
-            comments={comments}
+            cotation={cotation}
+            justifyKind={justifyKind}
+            resolution={resolution}
           ></MCAnswer>
         );
         break;
-      case "open-answer":
+      case ExerciseType.OPEN_ANSWER:
         setPreview(
           <OAAnswer
-            key={id}
-            id={id}
-            cotation={cotation}
-            title={title}
-            specialistId={specialistId}
-            statement={statement}
-            visibility={visibility}
-            type={type}
-            resolution={resolution}
-            justifyKind={justifyKind}
             solution={solution}
-            comments={comments}
+            cotation={cotation}
+            justifyKind={justifyKind}
+            resolution={resolution}
           ></OAAnswer>
         );
         break;
-      case "true-or-false":
+      case ExerciseType.TRUE_OR_FALSE:
         setPreview(
           <TFAnswer
-            key={id}
-            id={id}
-            cotation={cotation}
-            title={title}
-            specialistId={specialistId}
-            statement={statement}
-            visibility={visibility}
-            type={type}
-            resolution={resolution}
-            justifyKind={justifyKind}
             solution={solution}
-            comments={comments}
+            cotation={cotation}
+            justifyKind={justifyKind}
+            resolution={resolution}
           ></TFAnswer>
         );
         break;
-      case "fill-in-the-blank":
+      case ExerciseType.FILL_IN_THE_BLANK:
         setPreview(
           <></>
           // <FillBlankExercise
@@ -127,7 +63,7 @@ export function Answer({
           // ></FillBlankExercise>
         );
         break;
-      case "code":
+      case ExerciseType.CODE:
         setPreview(
           <></>
           // <CodeExercise
@@ -141,35 +77,5 @@ export function Answer({
     }
   }, []);
 
-  return (
-    <div
-      className={` ${
-        selectedAnswer ? "max-h-full" : "max-h-[70px]"
-      } transition-[max-height] bg-white text-black duration-300 rounded-lg mb-4`}
-    >
-      <div
-        className=" items-center text-md font-medium cursor-pointer p-4"
-        onClick={() =>
-          selectedAnswer ? setSelectedAnswer(false) : setSelectedAnswer(true)
-        }
-      >
-        {
-          /* 
-        {studentList[resolution!.studentID].name +
-          " <" +
-          studentList[resolution!.studentID].email +
-          ">"} */
-          resolution!.studentID
-        }
-        <div>email@hello.lo</div>
-      </div>
-      <div
-        className={`${
-          selectedAnswer ? "" : "scale-y-0"
-        } flex flex-col px-4 rounded-lg ex-1 transition-transform duration-50`}
-      >
-        {preview}
-      </div>
-    </div>
-  );
+  return <div>{preview}</div>;
 }

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-  Exercise,
-  Item,
   ExerciseJustificationKind,
+  ExerciseType,
+  Resolution,
+  ResolutionItems,
 } from "../Exercise/Exercise";
 import axios from "axios";
+import { students } from "../../pages/Tests/Correction/example";
 
 interface MCRubric {
   description: string;
@@ -14,13 +16,12 @@ interface MCRubric {
   penalty: number;
 }
 
-export function MCAnswer({
-  id,
-  cotation,
-  solution,
-  resolution,
-  justifyKind,
-}: Exercise) {
+export function MCAnswer(
+  resolution: Resolution,
+  cotation: number,
+  justifyKind: ExerciseJustificationKind,
+  solution: Resolution
+) {
   const [preview, setPreview] = useState(<></>);
   const [blank, setBlank] = useState(true);
   const [exeCotation, setCotation] = useState(cotation);
@@ -52,16 +53,15 @@ export function MCAnswer({
       .get("http://localhost:5173/exercises/" + id + "/rubric")
       .then((response) => console.log(response))
       .catch((error) => console.log(error)); */
-
-    if (solution)
-      switch (justifyKind) {
-        case ExerciseJustificationKind.JUSTIFY_MARKED:
-          setPreview(
-            <>
-              <div className="pt-2">
-                {resolution ? (
-                  Object.entries(resolution!.data.items!).map(
-                    ([key, item]: [string, Item]) =>
+    if (resolution!.data.type === ExerciseType.MULTIPLE_CHOICE)
+      if (solution)
+        switch (justifyKind) {
+          case ExerciseJustificationKind.JUSTIFY_MARKED:
+            setPreview(
+              <>
+                <div className="pt-2">
+                  {resolution ? (
+                    Object.entries(resolution!.data.items!).map(([key, item]) =>
                       item.value ? (
                         <form className="flex">
                           <label
@@ -108,19 +108,18 @@ export function MCAnswer({
                       ) : (
                         <></>
                       )
-                  )
-                ) : (
-                  <></>
-                )}
-              </div>
-            </>
-          );
-          break;
-        case ExerciseJustificationKind.NO_JUSTIFICATION:
-          setPreview(
-            <>
-              {Object.entries(resolution!.data.items!).map(
-                ([key, item]: [string, Item]) =>
+                    )
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </>
+            );
+            break;
+          case ExerciseJustificationKind.NO_JUSTIFICATION:
+            setPreview(
+              <>
+                {Object.entries(resolution!.data.items!).map(([key, item]) =>
                   item.value ? (
                     <div className="pt-2">
                       <form className="flex flex-col">
@@ -169,20 +168,19 @@ export function MCAnswer({
                   ) : (
                     <></>
                   )
-              )}
-            </>
-          );
-          break;
-      }
-    else
-      switch (justifyKind) {
-        case ExerciseJustificationKind.JUSTIFY_MARKED:
-          setPreview(
-            <>
-              <div className="pt-2">
-                {resolution ? (
-                  Object.entries(resolution!.data.items!).map(
-                    ([key, item]: [string, Item]) =>
+                )}
+              </>
+            );
+            break;
+        }
+      else
+        switch (justifyKind) {
+          case ExerciseJustificationKind.JUSTIFY_MARKED:
+            setPreview(
+              <>
+                <div className="pt-2">
+                  {resolution ? (
+                    Object.entries(resolution!.data.items!).map(([key, item]) =>
                       item.value ? (
                         <form className="flex">
                           <label
@@ -214,19 +212,18 @@ export function MCAnswer({
                       ) : (
                         <></>
                       )
-                  )
-                ) : (
-                  <></>
-                )}
-              </div>
-            </>
-          );
-          break;
-        case ExerciseJustificationKind.NO_JUSTIFICATION:
-          setPreview(
-            <>
-              {Object.entries(resolution!.data.items!).map(
-                ([key, item]: [string, Item]) =>
+                    )
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </>
+            );
+            break;
+          case ExerciseJustificationKind.NO_JUSTIFICATION:
+            setPreview(
+              <>
+                {Object.entries(resolution!.data.items!).map(([key, item]) =>
                   item.value ? (
                     <div className="pt-2">
                       <form className="flex flex-col">
@@ -261,11 +258,11 @@ export function MCAnswer({
                   ) : (
                     <></>
                   )
-              )}
-            </>
-          );
-          break;
-      }
+                )}
+              </>
+            );
+            break;
+        }
   }, []);
 
   return (

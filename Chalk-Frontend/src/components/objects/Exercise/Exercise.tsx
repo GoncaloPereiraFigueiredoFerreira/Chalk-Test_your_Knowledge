@@ -66,15 +66,42 @@ export enum ResolutionStatus {
 }
 
 export interface Resolution {
-  id: string;
-  cotation: number;
-  studentID: string;
-  status: ResolutionStatus;
-  data: {
-    text?: string;
-    items?: {
-      [id: string]: Item;
-    };
+  id?: string;
+  cotation?: number;
+  student?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  status?: ResolutionStatus;
+  data: ResolutionData;
+}
+
+export type ResolutionData =
+  | TFResolutionData
+  | MCResolutionData
+  | OAResolutionData;
+
+export interface TFResolutionData {
+  type: ExerciseType.TRUE_OR_FALSE;
+  items: ResolutionItems;
+}
+
+export interface MCResolutionData {
+  type: ExerciseType.MULTIPLE_CHOICE;
+  items: ResolutionItems;
+}
+
+export interface OAResolutionData {
+  type: ExerciseType.OPEN_ANSWER;
+  text: string;
+}
+
+export interface ResolutionItems {
+  [id: string]: {
+    text: string;
+    justification: string;
+    value?: boolean;
   };
 }
 
@@ -124,7 +151,7 @@ export interface Exercise {
 
   solution?: Resolution;
   resolution?: Resolution;
-  comments: string[];
+  comments?: string[];
 }
 
 //------------------------------------//

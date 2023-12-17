@@ -2,8 +2,8 @@ import {
   ExerciseJustificationKind,
   ExerciseType,
   ResolutionStatus,
-} from "../../objects/Exercise/Exercise";
-import { ImgPos } from "../../objects/Exercise/Header/ExHeader";
+} from "../../../objects/Exercise/Exercise";
+import { ImgPos } from "../../../objects/Exercise/Header/ExHeader";
 import { ExerciseRaw, Student } from "./Correction";
 
 export const students: Student[] = [

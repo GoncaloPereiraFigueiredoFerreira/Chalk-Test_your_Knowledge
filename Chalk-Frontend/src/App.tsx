@@ -14,7 +14,7 @@ import { Subscription } from "./components/pages/Subscription/Subscription";
 import { Correction } from "./components/pages/Correction/Correction";
 //import { CreateTest } from "./components/pages/CreateTest/CreateTest";
 import { SearchList } from "./components/pages/SearchList/SearchList";
-import { SolveTest } from "./components/pages/SolveTest/SolveTest";
+import { SolveTest } from "./components/pages/Tests/SolveTest/SolveTest";
 
 function App() {
   const { user } = useContext(UserContext);
