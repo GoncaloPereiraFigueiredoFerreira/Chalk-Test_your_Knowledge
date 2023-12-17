@@ -20,6 +20,8 @@ import { TestesPartilhadosPage } from "./components/pages/Groups/TestesPartilhad
 import { AlunosPage } from "./components/pages/Groups/AlunosPage";
 import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
 import { TestPreview } from "./components/pages/Tests/TestPreview";
+import { Correction } from "./components/pages/Tests/Correction/Correction";
+import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -34,7 +36,7 @@ function App() {
         <Route path="/pricing" element={<Subscription />} />
         <Route
           path="/webapp"
-          element={user.authenticated ? <WebApp /> : <Login />}
+          element={user.authenticated ? <WebApp /> : <WebApp />}
         >
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
@@ -42,8 +44,9 @@ function App() {
           {/*<Route path="create-test" element={<CreateTest />} />*/}
           <Route path="tests">
             <Route index path="" element={<TestPage />} />
-            <Route path="preview" element={<TestPreview />} />
+            <Route path="preview" element={<PreviewTest />} />
             <Route path="solve" element={<SolveTest />} />
+            <Route path="correction" element={<Correction />} />
             <Route path="group/:id" />
           </Route>
           <Route path="profile" element={<Settings />} />
@@ -54,6 +57,7 @@ function App() {
             <Route path="avaliacoes" element={<AvaliacoesPage />} />
           </Route>
           {/*<Route path="correction" element={<Correction />} />*/}
+
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
           {/*<Route path="catalog" element={<Catalog />} />*/}
           {/*<Route path="test"  element={<TestCreator />} />*/}
