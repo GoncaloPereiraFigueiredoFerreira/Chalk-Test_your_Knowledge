@@ -105,13 +105,13 @@ function EditReducer(state: Exercise, action: EditAction) {
           newState.solution.data.type !== ExerciseType.OPEN_ANSWER
         ) {
           if (newState.items && newState.solution.data.items) {
+            newState.items[action.data.id] = {
+              text: "",
+            };
             newState.solution.data.items[action.data.id] = {
               text: "",
               justification: "",
               value: false,
-            };
-            newState.items[action.data.id] = {
-              text: "",
             };
             return newState as Exercise;
           }

@@ -18,14 +18,16 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
         Adicione as afirmações e escolha a opção correta.
       </p>
       <ul>
-        {Object.keys(state.items!).map((value, index) => (
-          <MCStatementEdit
-            key={index}
-            id={value}
-            state={state}
-            dispatch={dispatch}
-          ></MCStatementEdit>
-        ))}
+        {Object.keys(state.items!).map((value, index) => {
+          return (
+            <MCStatementEdit
+              key={index}
+              id={value}
+              state={state}
+              dispatch={dispatch}
+            ></MCStatementEdit>
+          );
+        })}
       </ul>
       <input
         type="button"
@@ -94,19 +96,20 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
   );
 }
 
-interface TFStatementEditProps {
+interface MCStatementEditProps {
   dispatch: React.Dispatch<EditAction>;
   state: Exercise;
   id: string;
 }
-function MCStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
+function MCStatementEdit({ dispatch, state, id }: MCStatementEditProps) {
   let name = "mc";
   if (
     state.solution != undefined &&
     state.solution.data != undefined &&
-    state.solution.data.type === ExerciseType.TRUE_OR_FALSE
+    state.solution.data.type === ExerciseType.MULTIPLE_CHOICE
   ) {
     let solutionItem = state.solution.data.items[id];
+
     return (
       <>
         <li className="flex items-center">
@@ -119,9 +122,8 @@ function MCStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
                 type: EditActionKind.CHANGE_ITEM_MC,
                 data: { id: id },
               });
-              console.log("select" + id);
             }}
-            checked={!solutionItem.value}
+            checked={solutionItem.value}
           ></input>
           <input
             type="text"

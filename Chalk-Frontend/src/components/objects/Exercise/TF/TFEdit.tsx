@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Exercise, ExerciseJustificationKind, ExerciseType } from "../Exercise";
+import {
+  Exercise,
+  ExerciseJustificationKind,
+  ExerciseType,
+  TFResolutionData,
+} from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
@@ -25,13 +30,10 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
           </tr>
         </thead>
         <tbody>
-          {(() => {
-            console.log(state);
-            return <></>;
-          })()}
           {Object.keys(state.items!).map((value, index) => (
             <TFStatementEdit
               key={index}
+              position={index}
               id={value}
               state={state}
               dispatch={dispatch}
@@ -110,17 +112,22 @@ interface TFStatementEditProps {
   dispatch: React.Dispatch<EditAction>;
   state: Exercise;
   id: string;
+  position: number;
 }
-function TFStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
-  let name = "radio-button-" + id;
+function TFStatementEdit({
+  dispatch,
+  state,
+  id,
+  position,
+}: TFStatementEditProps) {
+  const name = "radio-button-" + position;
   if (
     state.solution != undefined &&
     state.solution.data != undefined &&
     state.solution.data.type === ExerciseType.TRUE_OR_FALSE
   ) {
-    let solutionItem = state.solution.data.items[id];
-    console.log(id + " -> value= " + solutionItem.value);
-
+    const solutionItem = state.solution.data.items[id];
+    console.log(solutionItem.value);
     return (
       <>
         <tr>
@@ -135,7 +142,7 @@ function TFStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
                   data: { id: id, value: true },
                 });
               }}
-              checked={"value" in solutionItem && solutionItem.value}
+              checked={solutionItem.value}
             ></input>
           </td>
           <td className="p-3">
@@ -149,7 +156,7 @@ function TFStatementEdit({ dispatch, state, id }: TFStatementEditProps) {
                   data: { id: id, value: false },
                 });
               }}
-              checked={"value" in solutionItem && !solutionItem.value}
+              checked={!solutionItem.value}
             ></input>
           </td>
           <td>
