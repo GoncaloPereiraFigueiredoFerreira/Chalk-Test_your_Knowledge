@@ -3,9 +3,10 @@ from openai import OpenAI
 import tiktoken
 import json 
 
+import os
 from functools import singledispatch
 
-client = OpenAI(api_key = "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")
+client = OpenAI(api_key = os.getenv("API_KEY"))
 model = "gpt-3.5-turbo"
 
 def send_request(message,temperature = 0,presence = 0,frequency = 0):
