@@ -13,9 +13,22 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
+import jakarta.transaction.Transactional;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.ConcreteExercise;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.ShallowExercise;
+import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
+import pt.uminho.di.chalktyk.models.nonrelational.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.relational.*;
+import pt.uminho.di.chalktyk.models.relational.CourseSQL;
+import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
+import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
+import pt.uminho.di.chalktyk.models.relational.StudentSQL;
+import pt.uminho.di.chalktyk.models.relational.TestResolutionSQL;
+import pt.uminho.di.chalktyk.models.relational.TestSQL;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestResolutionSqlDAO;
@@ -35,21 +48,19 @@ public class TestsService implements ITestsService {
     private final IInstitutionsService institutionsService;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
-    //private final IInstitutionsService institutionsService;
     private final ICoursesService coursesService;
 
     @Autowired
-    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, TestResolutionDAO resolutionDAO, TestResolutionSqlDAO resolutionSqlDAO, IInstitutionsService institutionsService,
-                        ISpecialistsService specialistsService, IStudentsService studentsService, /*IInstitutionsService institutionsService,*/ ICoursesService coursesService){
+    public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, TestResolutionDAO resolutionDAO, TestResolutionSqlDAO resolutionSqlDAO,
+            ISpecialistsService specialistsService, IStudentsService studentsService, IInstitutionsService institutionsService, ICoursesService coursesService){
         this.entityManager = entityManager;
         this.testDAO = testDAO;
         this.testSqlDAO = testSqlDAO;
         this.resolutionDAO = resolutionDAO;
         this.resolutionSqlDAO = resolutionSqlDAO;
-        this.institutionsService = institutionsService;
         this.specialistsService = specialistsService;
         this.studentsService = studentsService;
-        //this.institutionsService = institutionsService;
+        this.institutionsService = institutionsService;
         this.coursesService = coursesService;
     }
 
@@ -111,9 +122,16 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public String createTest(VisibilitySQL visibility, Test body) throws BadInputException {
-        // TODO: live tests + resto das classes
+    public Test getTestById(String testId) throws NotFoundException{
+        Test t = testDAO.findById(testId).orElse(null);
+        if (t == null)
+            throw new NotFoundException("Could not get test: there is no test with the given identifier.");
+        return t;
+    }
 
+    @Override
+    @Transactional
+    public String createTest(VisibilitySQL visibility, Test body) throws BadInputException {
         if (body == null)
             throw new BadInputException("Cannot create test: test is null.");
 
@@ -121,48 +139,72 @@ public class TestsService implements ITestsService {
         body.setId(null);                       // to prevent overwrite attacks
         body.setCreationDate(LocalDateTime.now()); // set creation date
 
+        // check visibility
+        if (visibility == null)
+            throw new BadInputException("Can't create test: Visibility can't be null");
+        if (!visibility.isValid())
+            throw new BadInputException("Can't create test: Visibility is invalid");
+
         // check owner (specialist) id
         String specialistId = body.getSpecialistId();
         if (specialistId == null)
-            throw new BadInputException("Cannot create test: A test must have an owner.");
+            throw new BadInputException("Can't create test: A test must have an owner.");
         if (!specialistsService.existsSpecialistById(specialistId))
-            throw new BadInputException("Cannot create test: A test must have a valid specialist.");
+            throw new BadInputException("Can't create test: A test must have a valid specialist.");
 
-        // TODO: add institution later
         // get owner's institution id
-        /*
-        String institutionId = null;
         try {
-            var inst = institutionsService.getSpecialistInstitution(specialistId);
+            Institution inst = institutionsService.getSpecialistInstitution(specialistId);
+            // sets identifier of the institution
             if (inst != null)
-                institutionId = inst.getName();
+                body.setInstitutionId(inst.getName());
+            else
+                body.setInstitutionId(null);
         }
         catch (NotFoundException ignored){}
-        body.setInstituitionId(institutionId);
-        */
 
         // check course
         String courseId = body.getCourseId();
         if (courseId != null){
             if (!coursesService.existsCourseById(courseId))
-                throw new BadInputException("Cannot create test: A test must belong to a valid course.");
+                throw new BadInputException("Can't create test: A test must belong to a valid course.");
 
             // check if specialist belongs to course
             try{ coursesService.checkSpecialistInCourse(courseId, specialistId); }
-            catch (NotFoundException nfe){ throw new BadInputException("Cannot create test: The test's owner must belong to the course given."); } 
+            catch (NotFoundException nfe){ throw new BadInputException("Can't create test: The test's owner must belong to the course specified."); } 
         }
+
+        // check visibility constraints
+        if (body.getInstitutionId() == null && visibility.equals(VisibilitySQL.INSTITUTION))
+            throw new BadInputException("Can't create test: can't set visibility to INSTITUTION");
+        if (body.getCourseId() == null && visibility.equals(VisibilitySQL.COURSE))
+            throw new BadInputException("Can't create test: can't set visibility to COURSE");
+        
+        // TODO: test group + tags + exercícios ... whatever
+        for(TestGroup tg: body.getGroups()){
+            tg.verifyProperties();
+        }
+        for (TestGroup tg: body.getGroups()){
+            List<Exercise> exeList = tg.getExercises();
+            //for (Exercise exe: exeList){
+            //    			if (e instanceof ConcreteExercise ce)
+			//	ce.verifyProperties();
+			//if (e instanceof ShallowExercise se)
+			//	se.verifyInsertProperties();
+            //}
+        }
+        //for (String id:tagsIds)
+        //if(iTagsService.getTagById(id)==null)
+        //    throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
 
         // persist the test in nosql database
         body = testDAO.save(body);
 
         // persists the test in sql database
-        // TODO: add institution later
-        //Institution inst = institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
-        // TODO: check if course exists
+        InstitutionSQL inst = body.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, body.getInstitutionId()) : null;
         CourseSQL course = courseId != null ? entityManager.getReference(CourseSQL.class, courseId) : null;
         SpecialistSQL specialist = specialistId != null ? entityManager.getReference(SpecialistSQL.class, specialistId) : null;
-        // TODO: add institution later
-        var bodySQL = new TestSQL(body.getId(), null, course, visibility, specialist, body.getTitle(), body.getPublishDate());
+        var bodySQL = new TestSQL(body.getId(), inst, course, visibility, specialist, body.getTitle(), body.getPublishDate());
         testSqlDAO.save(bodySQL);
 
         return body.getId();
@@ -174,8 +216,13 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public String duplicateTestById(String testId) throws NotFoundException{
-        throw new UnsupportedOperationException("Unimplemented method 'duplicateTestById'");
+    public String duplicateTestById(String testId) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Can't duplicate test: couldn't find test with id" + testId + " .");
+        Test og = getTestById(testId);
+        TestSQL ogSQL = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
+        
+        return "";
     }
 
     @Override
@@ -189,20 +236,20 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public Integer countStudentsTestResolutions(String testId, Boolean total) {
+    public Integer countStudentsTestResolutions(String testId, Boolean total) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
         if (total)
             return resolutionSqlDAO.countTotalSubmissionsForTest(testId);
-        //else
-    // select count(*) from (select distinct studentid from test_resolution where testid = '') ;
-
-        throw new UnsupportedOperationException("Unimplemented method 'countStudentsTestResolutions'");
+        else
+            return resolutionSqlDAO.countDistinctSubmissionsForTest(testId);
     }
 
     @Override
     public List<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
-        // TODO: not tested
+
         return resolutionsSQLtoNoSQL(resolutionSqlDAO.getTestResolutions(testId, PageRequest.of(page, itemsPerPage)));
     }
 
@@ -230,6 +277,7 @@ public class TestsService implements ITestsService {
 
         // TODO: check if test is ongoing
         // TODO: check visibility
+        // TODO: check course and visibility
         // TODO: check if student belongs to course
 
         //set the identifier to null to avoid overwrite attacks
@@ -258,13 +306,41 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public Boolean canStudentSubmitResolution(String testId, String studentId) {
-        // check test
-        //if (testId == null)
-        //    throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
-        //if (!testDAO.existsById(testId))
-        //    throw new BadInputException("Cannot create test resolution: resolution must belong to a valid test.");
-        throw new UnsupportedOperationException("Unimplemented method 'canStudentSubmitResolution'");
+    @Transactional
+    public Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't find test with given id.");
+        if (!studentsService.existsStudentById(studentId))
+            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't find student with given id.");
+
+        // TODO: check course and visibility
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't fetch non relational test with given id.");
+        TestSQL testSQL = entityManager.getReference(TestSQL.class, testId);
+        if (testSQL == null)
+            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't fetch relational test with given id.");
+
+        VisibilitySQL vis = testSQL.getVisibility();
+        if (vis.equals(VisibilitySQL.PRIVATE)){ return false; }
+        else if (vis.equals(VisibilitySQL.COURSE)){
+            if (!coursesService.checkStudentInCourse(test.getCourseId(), studentId))
+                return false;
+        }
+        else if (vis.equals(VisibilitySQL.INSTITUTION)){
+            // TODO: wait for institutions service to work
+            /*
+            StudentSQL studentSQL = entityManager.getReference(StudentSQL.class, studentId);
+            if (!testSQL.getInstitution().getId().equals(studentSQL.getInstitution().getId()))
+                return false;
+             */
+        }
+        // TODO: the fuck is "TEST" visibility
+
+
+        // TODO: check if submission time is in limits
+
+        return true;
     }
 
     @Override
@@ -314,7 +390,23 @@ public class TestsService implements ITestsService {
         }
 
         return res;
-    }  
+    }
+
+    @Override
+    public String deleteExerciseFromTest(String exerciseId) throws NotFoundException {
+        //TODO
+        // cant be done if after publish date
+        // if there is no publish date, then, resolutions of the exercise must be deleted
+        return null;
+    }
+
+    @Override
+    public String removeExerciseFromTest(String exerciseId) throws NotFoundException{
+        //TODO
+        // changes visibility of exercise from TEST to private
+        // cant be done if after publish date
+        return null;
+    }
 
     
     /* **** Auxiliary methods **** */
@@ -326,38 +418,5 @@ public class TestsService implements ITestsService {
             resList.add(getTestResolutionById(res.getId()));
 
         return resList;
-    }
-
-    /**
-     * If an exercise belongs to a test removes it from the test,
-     * and deletes it.
-     *
-     * @param exerciseId exercise identifier
-     * @return identifier of the exercise from where it was removed, or
-     * 'null' if it does not belong to any test.
-     * @throws NotFoundException if the exercise does not exist
-     */
-    @Override
-    public String deleteExerciseFromTest(String exerciseId) throws NotFoundException {
-        //TODO
-        // cant be done if after publish date
-        // if there is no publish date, then, resolutions of the exercise must be deleted
-        return null;
-    }
-
-    /**
-     * If an exercise belongs to a test removes it from the test.
-     * The exercise is not deleted. Its visibility is changed to "private".
-     * @param exerciseId exercise identifier
-     * @return identifier of the exercise from where it was removed, or
-     * 'null' if it does not belong to any test.
-     * @throws NotFoundException if the exercise does not exist
-     */
-    @Override
-    public String removeExerciseFromTest(String exerciseId) throws NotFoundException{
-        //TODO
-        // changes visibility of exercise from TEST to private
-        // cant be done if after publish date
-        return null;
     }
 }
