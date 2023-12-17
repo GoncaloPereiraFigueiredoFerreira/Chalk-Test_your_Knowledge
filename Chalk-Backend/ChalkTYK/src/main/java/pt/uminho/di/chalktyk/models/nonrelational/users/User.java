@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.subscriptions.Subscription;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 public abstract class User {
 	@Id
 	private String id;
+	@Indexed(unique = true)
 	private String name;
 	private String photoPath;
 	private String email;
@@ -33,7 +35,7 @@ public abstract class User {
 	 * Checks basic user properties.
 	 * @return 'null' if all properties are valid, or a string mentioning the criteria that was not passed.
 	 */
-	public String checkProperties(){
+	public String checkInsertProperties(){
 		if(name == null || name.isEmpty())
 			return "Not a valid name.";
 
@@ -44,7 +46,7 @@ public abstract class User {
 		if (!validEmail)
 			return "Not a valid email format.";
 
-        return checkSubscription();
+        return null;
     }
 
 	/**

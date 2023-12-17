@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -25,6 +27,15 @@ public class OAStandard {
 			throw new BadInputException("Cannot create exercise: The rubric Standard's points cannot be negative.");
 	}
 
+	public boolean equals(OAStandard oaStandard){
+		if(!Objects.equals(oaStandard.getTitle(), title))
+			return false;
+		if(!Objects.equals(oaStandard.getDescription(), description))
+			return false;
+		if(!Objects.equals(oaStandard.getPoints(), points))
+			return false;
+		return true;
+	}
 	public OAStandard clone(){
 		return new OAStandard(title,description, points);
 	}

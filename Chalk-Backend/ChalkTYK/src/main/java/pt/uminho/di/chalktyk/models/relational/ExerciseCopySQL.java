@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class ExerciseCopySQL implements Serializable {
 	public ExerciseCopySQL() {
 	}
-	
+	@MapsId
 	@PrimaryKeyJoinColumn	
 	@ManyToOne(targetEntity= ExerciseSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="copyID", referencedColumnName="ID", nullable=false) })

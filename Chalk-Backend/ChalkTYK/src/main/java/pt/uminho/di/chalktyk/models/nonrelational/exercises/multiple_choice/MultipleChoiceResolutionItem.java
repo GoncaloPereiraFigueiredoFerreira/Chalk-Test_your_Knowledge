@@ -7,15 +7,16 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class MultipleChoiceResolutionItem {
-	private Integer id;
 	private Float points;
 	private String justification;
-	private boolean value;
+	private Boolean value;
 
 	/*
 	mctype syntax:
@@ -42,7 +43,13 @@ public class MultipleChoiceResolutionItem {
 	}
 
 	public MultipleChoiceResolutionItem clone(){
-		return new MultipleChoiceResolutionItem(id, points,justification,value);
+		return new MultipleChoiceResolutionItem(points,justification,value);
+	}
+
+	public boolean equals(MultipleChoiceResolutionItem multipleChoiceResolutionItem){
+        return Objects.equals(multipleChoiceResolutionItem.getJustification(), justification) &&
+                Objects.equals(multipleChoiceResolutionItem.getPoints(), points) &&
+                multipleChoiceResolutionItem.getValue() == value;
 	}
 
 }

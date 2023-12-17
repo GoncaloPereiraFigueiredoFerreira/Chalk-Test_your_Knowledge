@@ -303,7 +303,7 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     public String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException {
         // checks if the specialist exists
-        if(specialistsService.existsSpecialistById(specialistId))
+        if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Could not duplicate exercise: specialist does not exist.");
 
         // gets specialists institution
@@ -361,7 +361,11 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws NotFoundException, BadInputException {
+        if(!exerciseExists(exerciseId))
+            throw new NotFoundException("ExerciseId does not correspond to any exercise");
         if(exercise!=null) {
+            if(exercise.getId()==null)
+                exercise.setId(exerciseId);
             if (!Objects.equals(exerciseId, exercise.getId()))
                 throw new BadInputException("ExerciseId must be the same as the one given in the exercise");
             updateExerciseBody(exercise, rubric == null, solution == null); //if rubric or solution are not null, then they will verify exercise
@@ -380,21 +384,21 @@ public class ExercisesService implements IExercisesService{
      * Updates an exercise body.
      *
      * @param exercise     new exercise body
-     * @param verifySolution if true then method verify if current solution corresponds to the exercise
-     * @param verifyRubric if true then method verify if current rubric corresponds to the exercise
+     * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
+     * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
      * course was not found,
      * the rubric or solution don't belong to the new exercise body
      */
     @Transactional
-    protected void updateExerciseBody(Exercise exercise, Boolean verifyRubric, Boolean verifySolution) throws BadInputException {
+    public void updateExerciseBody(Exercise exercise, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
         Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
         assert origExercise != null;
 
 
         String courseId = exercise.getCourseId();
         try {
-            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
                 throw new BadInputException("Cannot create exercise: course not found.");
         } catch (NotFoundException nfe){
             throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
@@ -403,7 +407,7 @@ public class ExercisesService implements IExercisesService{
         //Exercise specialist and institutions cannot be changed
         if(!Objects.equals(exercise.getSpecialistId(), origExercise.getSpecialistId()))
             throw new BadInputException("Cannot change exercise specialist");
-        if(!Objects.equals(exercise.getInstitutionId(), origExercise.getSpecialistId()))
+        if(!Objects.equals(exercise.getInstitutionId(), origExercise.getInstitutionId()))
             throw new BadInputException("Cannot change exercise institution");
 
 
@@ -421,8 +425,12 @@ public class ExercisesService implements IExercisesService{
             }
             if(origExercise instanceof ConcreteExercise origCE) {
                 //Ids from rubric and solution cannot be changed
+                if(concreteExercise.getRubricId()==null)
+                    concreteExercise.setRubricId(origCE.getRubricId());
                 if(!Objects.equals(concreteExercise.getRubricId(), origCE.getRubricId()))
                     throw new BadInputException("Cannot change exercise rubric id");
+                if(concreteExercise.getSolutionId()==null)
+                    concreteExercise.setSolutionId(origCE.getSolutionId());
                 if(!Objects.equals(concreteExercise.getSolutionId(), origCE.getSolutionId()))
                     throw new BadInputException("Cannot change exercise solution id");
             } else throw new AssertionError("Exercise is not concrete after conversion");
@@ -433,7 +441,7 @@ public class ExercisesService implements IExercisesService{
 
         //Verify that the exercise rubric and solution and still correct after exercise changes
         if(exercise instanceof ConcreteExercise concreteExercise){
-            if(verifyRubric) {
+            if(hasNewRubric) {
                 String rubricId = concreteExercise.getRubricId();
                 if (rubricId != null) {
                     ExerciseRubric exerciseRubric = exerciseRubricDAO.findById(rubricId).orElse(null);
@@ -442,7 +450,7 @@ public class ExercisesService implements IExercisesService{
                 }
             }
 
-            if(verifySolution) {
+            if(hasNewSolution) {
                 String solutionId = concreteExercise.getSolutionId();
                 if (solutionId != null) {
                     ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
@@ -452,38 +460,69 @@ public class ExercisesService implements IExercisesService{
             }
 
             //If type changed then modify it on sql
-            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType()))
-                exerciseSqlDAO.updateExerciseType(concreteExercise.getId(),concreteExercise.getExerciseType());
-
-            //If title changed then modify it on sql
-            if(!Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle()))
-                exerciseSqlDAO.updateExerciseTitle(concreteExercise.getId(),concreteExercise.getTitle());
+            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType())||
+                    !Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle())){
+                ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(concreteExercise.getId()).orElse(null);
+                assert exerciseSQL != null;
+                exerciseSQL.setTitle(concreteExercise.getTitle());
+                exerciseSQL.setExerciseType(concreteExercise.getExerciseType());
+                if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){
+                    if(exercise.getCourseId()==null){
+                        exerciseSQL.setCourse(null);
+                    }
+                    else exerciseSQL.setCourse(entityManager.getReference(CourseSQL.class,exercise.getCourseId()));
+                }
+                exerciseSqlDAO.save(exerciseSQL);
+            }
+        } else if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){ //If new exercise is shallow verify if course needs to be updated
+                ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exercise.getId()).orElse(null);
+                assert exerciseSQL != null;
+                if(exercise.getCourseId()==null){
+                    exerciseSQL.setCourse(null);
+                }
+                else exerciseSQL.setCourse(entityManager.getReference(CourseSQL.class,exercise.getCourseId()));
+                exerciseSqlDAO.save(exerciseSQL);
         }
+
+
         exerciseDAO.save(exercise);
-        if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId()))
-            exerciseSqlDAO.updateExerciseCourseById(exercise.getId(), courseId); //Only course can be changed further on sql
     }
 
     /**
-     * Updates an exercise tags.
+     * Updates an exercise tags. Assumes exercise exists
      *
      * @param exerciseId   identifier of the exercise to be updated
      * @param tagsIds      new list of tags
      */
-    private void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException {
+    @Transactional
+    public void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
         for (String id:tagsIds)
             if(iTagsService.getTagById(id)==null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
-        exerciseSqlDAO.updateExerciseTagsByIds(exerciseId,new HashSet<>(tagsIds));
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        assert exerciseSQL!=null;
+
+        Set<String> setTagsIds = new HashSet<>(tagsIds);
+        Set<TagSQL> tags = new HashSet<>();
+        for (String tagId:setTagsIds){
+            TagSQL tag = iTagsService.getTagById(tagId);
+            if(tag==null)
+                throw new NotFoundException("Tag with id "+tagId+" was not found");
+            tags.add(tag);
+        }
+        exerciseSQL.setTags(tags);
+        exerciseSqlDAO.save(exerciseSQL);
     }
+
     /**
-     * Updates and exercise visibility
+     * Updates and exercise visibility, Assumes exercise exists
      *
      * @param exerciseId   identifier of the exercise to be updated
      * @param visibility   new visibility
      */
     private void updateExerciseVisibility(String exerciseId,VisibilitySQL visibility) throws BadInputException {
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.getReferenceById(exerciseId);
+        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
+        assert exerciseSQL!=null;
 
         // Checks if specialist exists and gets the institution where it belongs
         pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
@@ -498,7 +537,7 @@ public class ExercisesService implements IExercisesService{
         // Check if course is valid
         String courseId = exerciseSQL.getCourse().getId();
         try {
-            if (courseId != null && coursesService.checkSpecialistInCourse(courseId, exerciseSQL.getSpecialist().getId()))
+            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exerciseSQL.getSpecialist().getId()))
                 throw new BadInputException("Cannot create exercise: course not found.");
         } catch (NotFoundException nfe){
             throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
@@ -507,6 +546,8 @@ public class ExercisesService implements IExercisesService{
         // Cannot set visibility to COURSE without a course associated
         if (courseId == null && visibility == VisibilitySQL.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
+        exerciseSQL.setVisibility(visibility);
+        exerciseSqlDAO.save(exerciseSQL);
     }
 
 
@@ -750,15 +791,73 @@ public class ExercisesService implements IExercisesService{
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
      *
-     * @param userId         identifier of the user that has permission to issue the correction,
-     *                       such as the owner of the exercise, or another specialist that belongs
-     *                       to the course that is associated with the exercise.
      * @param exerciseId     identifier of the exercise
-     * @param correctionType type of correction
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
      */
+    @Transactional
     @Override
-    public void issueExerciseResolutionsCorrection(String userId, String exerciseId, String correctionType) {
+    public void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException {
+        if(!correctionType.equalsIgnoreCase("auto") && !correctionType.equalsIgnoreCase("ai"))
+            throw new BadInputException("Could not correct exercise resolutions: Correction type must be 'auto' or 'ai'.");
 
+        // gets a concrete instance of the exercise and it's rubric
+        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);
+
+        // checks existence of a rubric, which is required
+        // for the automatic correction of the exercise
+        ExerciseRubric rubric = getExerciseRubric(exerciseId);
+
+        // checks existence of a solution, which is required
+        // for the automatic correction of the exercise
+        ExerciseSolution solution = getExerciseSolution(exerciseId);
+
+        if(correctionType.equalsIgnoreCase("auto"))
+            automaticExerciseResolutionsCorrection(exercise, rubric, solution);
+        else if (correctionType.equalsIgnoreCase("ai")) {
+            // TODO - add the AI part
+        }
+    }
+
+    /**
+     * Issue the automatic correction of the exercise resolutions.
+     * The correction can either be automatic or done by AI.
+     * For a given exercise, it may support either, both, or none of the correction types.
+     *
+     * @param resolutionId   identifier of the exercise resolution
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @return points attributed to the resolution
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     */
+    @Transactional
+    @Override
+    public float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException{
+        // gets the identifier of the exercise
+        ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
+        if(resolution == null)
+            throw new NotFoundException("Could not correct exercise: resolution does not exist.");
+
+        // if the exercise is already revised, then returns the points attributed to the resolution
+        if(resolution.getStatus() == ExerciseResolutionStatus.REVISED)
+            return resolution.getPoints();
+        String exerciseId = resolution.getExerciseId();
+
+        // gets a concrete instance of the exercise and it's rubric
+        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);
+
+        // checks existence of a rubric, which is required
+        // for the automatic correction of the exercise
+        ExerciseRubric rubric = getExerciseRubric(exerciseId);
+
+        // checks existence of a solution, which is required
+        // for the automatic correction of the exercise
+        ExerciseSolution solution = getExerciseSolution(exerciseId);
+
+        return automaticExerciseResolutionCorrection(resolution, exercise, rubric, solution);
     }
 
     /**
@@ -811,9 +910,9 @@ public class ExercisesService implements IExercisesService{
     /**
      * Create a resolution for a specific exercise.
      *
-     * @param studentId  identifier of the creator of the resolution.
-     * @param exerciseId identifier of the exercise
-     * @param resolution new resolution
+     * @param studentId      identifier of the creator of the resolution.
+     * @param exerciseId     identifier of the exercise
+     * @param resolutionData new resolution
      * @return updated version of the resolution
      * @throws NotFoundException if the exercise was not found
      * @throws BadInputException if there is some problem regarding the resolution of the exercise,
@@ -821,21 +920,24 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     @Transactional
-    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
+    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
         // checks if exercise exists
         if (!exerciseSqlDAO.existsById(exerciseId))
             throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
 
         // checks if resolution is valid
-        if(resolution == null)
-            throw new BadInputException("Could not create exercise resolution: resolution is null.");
+        if(resolutionData == null)
+            throw new BadInputException("Could not create exercise resolution: resolution data is null.");
+
 
         // prepares resolution
-        resolution.setId(null); // prevents overwrite attacks
-        resolution.setStudentId(studentId);
-        resolution.setExerciseId(exerciseId);
-        resolution.setStatus(ExerciseResolutionStatus.NOT_REVISED); // new resolution so cannot be already revised
-        resolution.setPoints(null); // new resolution so it should not have a points
+        ExerciseResolution resolution = new ExerciseResolution(null, // prevents overwrite attacks
+                studentId,exerciseId,
+                null, // new resolution so it should not have a points
+                resolutionData,
+                ExerciseResolutionStatus.NOT_REVISED, // new resolution so cannot be already revised
+                null,
+                null);
 
         // checks the resolution data against the exercise data
         checkResolutionData(resolution);
@@ -1266,11 +1368,62 @@ public class ExercisesService implements IExercisesService{
         exercise.verifyResolutionProperties(exerciseResolution.getData());
     }
 
-
+    /**
+     * Converts a page of ExerciseSQL to a list of Exercise(NoSQL)s
+     * @param exerciseSQLPage page of exercises
+     * @return a list of Exercise(NoSQL)s
+     * @throws NotFoundException if one of the exercises, on the page, was not found
+     */
     private List<Exercise> exercisesSqlToNoSql(Page<ExerciseSQL> exerciseSQLPage) throws NotFoundException {
         List<Exercise> exerciseList = new ArrayList<>();
         for(var exercise : exerciseSQLPage)
             exerciseList.add(this.getExerciseById(exercise.getId()));
         return exerciseList;
+    }
+
+    // TODO - meter a rubrica e a solucao como transient no concrete exercise?
+    /**
+     * Automatically corrects the not revised resolutions of an exercise.
+     * @param exercise concrete exercise
+     * @param rubric rubric of the exercise
+     * @param solution solution of the exercise
+     * @throws NotFoundException if the exercise, or its rubric, or its solution were not found
+     * @throws UnauthorizedException if the resolutions cannot be corrected automatically
+     */
+    private void automaticExerciseResolutionsCorrection(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws NotFoundException, UnauthorizedException {
+        String exerciseId = exercise.getId();
+
+        // Get number of resolutions not revised
+        long resolutionsCount = exerciseResolutionDAO.countByExerciseIdAndStatus(exerciseId, ExerciseResolutionStatus.NOT_REVISED);
+
+        // Iterates over all resolutions that are not revised, and corrects them
+        // Corrects a portion at a time, to avoid a great memory consumption
+        for(int pageIndex = 0, i = 0; i < resolutionsCount; pageIndex++, i += 5){
+            // gets page
+            Page<ExerciseResolution> page =
+                    exerciseResolutionDAO.findByExerciseIdAndStatus(exerciseId,
+                                                                    ExerciseResolutionStatus.NOT_REVISED,
+                                                                    PageRequest.of(pageIndex, 5));
+
+            // corrects each exercise of the page
+            for (ExerciseResolution res : page)
+                automaticExerciseResolutionCorrection(res, exercise, rubric, solution);
+        }
+    }
+
+    /**
+     * Automatically corrects a specific resolution of an exercise.
+     * @param resolution resolution to be corrected
+     * @param exercise concrete exercise
+     * @param rubric rubric of the exercise
+     * @param solution solution of the exercise
+     * @return points attributed to the resolution
+     * @throws UnauthorizedException if the resolution cannot be corrected automatically
+     */
+    private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws UnauthorizedException {
+        assert resolution != null && exercise != null && rubric != null && solution != null;
+        resolution = exercise.automaticEvaluation(resolution, solution, rubric);
+        exerciseResolutionDAO.save(resolution);
+        return resolution.getPoints();
     }
 }

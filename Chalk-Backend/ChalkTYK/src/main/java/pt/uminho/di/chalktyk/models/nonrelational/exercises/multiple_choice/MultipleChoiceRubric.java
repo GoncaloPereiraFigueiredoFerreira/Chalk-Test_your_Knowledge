@@ -19,7 +19,7 @@ import java.util.*;
 @Getter
 @Setter
 public class MultipleChoiceRubric extends ExerciseRubric {
-	private List<OpenAnswerRubric> justificationsRubrics;
+	private Map<Integer,OpenAnswerRubric> justificationsRubrics;
 	private Float choicePoints;
 	private Float penalty;
 
@@ -28,9 +28,26 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 		if (penalty == null || choicePoints == null || penalty < 0 || choicePoints < 0)
 			throw new BadInputException("Cannot create MultipleChoiceRubric: The points or penalty of a rubric cannot be null or negative.");
 		if(justificationsRubrics!=null){
-			for (OpenAnswerRubric openAnswerRubric:justificationsRubrics)
+			for (OpenAnswerRubric openAnswerRubric : justificationsRubrics.values())
 				openAnswerRubric.verifyProperties();
 		}
+	}
+
+	@Override
+	public boolean equals(ExerciseRubric exerciseRubric) {
+		if(!(exerciseRubric instanceof MultipleChoiceRubric multipleChoiceRubric))
+			return false;
+		if(multipleChoiceRubric.getJustificationsRubrics().size()!=justificationsRubrics.size())
+			return false;
+		for (int i=0;i<justificationsRubrics.size();i++){
+			if(!justificationsRubrics.get(i).equals(multipleChoiceRubric.getJustificationsRubrics().get(i)))
+				return false;
+		}
+		if(!(Objects.equals(multipleChoiceRubric.getChoicePoints(), choicePoints)))
+			return false;
+		if(!(Objects.equals(multipleChoiceRubric.getPenalty(), penalty)))
+			return false;
+		return true;
 	}
 
 	public float getMaxPointsSum() {

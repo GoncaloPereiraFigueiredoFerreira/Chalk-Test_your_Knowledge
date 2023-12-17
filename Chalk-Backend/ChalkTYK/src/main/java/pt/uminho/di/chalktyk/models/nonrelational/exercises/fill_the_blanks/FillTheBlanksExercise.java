@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.List;
 
@@ -38,6 +39,21 @@ public class FillTheBlanksExercise extends ConcreteExercise {
 	@Override
 	public String getExerciseType() {
 		return "FTB";
+	}
+
+	/**
+     * Evaluates the resolution of an exercise.
+     *
+     * @param resolution resolution data that will be evaluated
+     * @param solution   solution of the exercise
+     * @param rubric     rubric of the exercise
+     * @return points to be attributed to the resolution
+     * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+     */
+	@Override
+	public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
+		// TODO - future work
+		throw new UnauthorizedException("Automatic evaluation for fill the blanks exercises is not implemented yet.");
 	}
 
 

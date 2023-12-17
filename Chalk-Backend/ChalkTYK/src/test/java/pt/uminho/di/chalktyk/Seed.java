@@ -48,14 +48,14 @@ public class Seed {
         Institution inst = new Institution("Greendale");
         institutionsService.createInstitution(inst);
 
+        tagsService.createTag("Espanol","/");
+        //addInstitution();
         Student st1 = new Student(null, "Jeff Winger", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "jwinger@gmail.com", 
                 "none #1", null);
-        Student st2 = new Student(null, "Annie Edison", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "annie_edison@gmail.com", 
-                "none #2", null);
         Student st3 = new Student(null, "Abed Nadir", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "coolabedfilms@gmail.com", 
                 "none #3", null);
         String student1 = studentsService.createStudent(st1);
-        String student2 = studentsService.createStudent(st2);
+        String student2 = addStudentAnnie();
         String student3 = studentsService.createStudent(st3);
         List<String> l1 = new ArrayList<>(); l1.add(student1);
         List<String> l2 = new ArrayList<>(); l2.add(student2);
@@ -79,7 +79,7 @@ public class Seed {
         coursesService.addStudentsToCourse(course3, l2);
 
         // tests
-        /* 
+        /*
         pt.uminho.di.chalktyk.models.nonrelational.tests.Test t1 = new pt.uminho.di.chalktyk.models.nonrelational.tests.Test(null, specialist1,
                         null, course1, "TEST #1", null, Float.valueOf(20), 
                         "?", LocalDateTime.now(), LocalDateTime.now().plusHours(1), null);
@@ -92,22 +92,28 @@ public class Seed {
         String test1 = testsService.createTest(VisibilitySQL.PUBLIC, t1);
         String test2 = testsService.createTest(VisibilitySQL.PRIVATE, t2);
         String test3 = testsService.createTest(VisibilitySQL.NOT_LISTED, t3);
+         */
 
 
         // test resolutions
-        TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null, Float.valueOf(0));
-        TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null, Float.valueOf(0));
-        TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null, Float.valueOf(0));
-        testsService.createTestResolution(test1, tr1);
-        testsService.createTestResolution(test2, tr2);
-        testsService.createTestResolution(test3, tr3);
-        */
+        //TestResolution tr1 = new TestResolution(null, student1, test1, TestResolutionStatus.ONGOING, LocalDateTime.now(), null, 0, null, Float.valueOf(0));
+        //TestResolution tr2 = new TestResolution(null, student2, test2, TestResolutionStatus.REVISED, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null, Float.valueOf(0));
+        //TestResolution tr3 = new TestResolution(null, student3, test3, TestResolutionStatus.NOT_REVISED, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null, Float.valueOf(0));
+        //testsService.createTestResolution(test1, tr1);
+        //testsService.createTestResolution(test2, tr2);
+        //testsService.createTestResolution(test3, tr3);
     }
 
     public String addSpecialistChang() throws BadInputException {
         Specialist s = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
                 "senor@chang.com", "#1", null);
         return specialistsService.createSpecialist(s);
+    }
+
+    public String addStudentAnnie() throws BadInputException {
+        Student st = new Student(null, "Annie Edison", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "annie_edison@gmail.com",
+                "none #2", null);
+       return studentsService.createStudent(st);
     }
 
     public String addSpecialistWhitman() throws BadInputException {

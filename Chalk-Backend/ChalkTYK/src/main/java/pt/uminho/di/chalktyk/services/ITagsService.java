@@ -10,7 +10,7 @@ public interface ITagsService {
      * Creates a tag. If the tags on the path do not exist, they are also created.
      * @param name Tag's name. Cannot contain the "/" character.
      * @param path Tag's path. Must follow the following regex expression "^(\/[^\/\n]*)*\/$"
-     * @return identifier of the tag
+     * @return the tag
      * @throws BadInputException when the name or the path is not valid.
      */
     TagSQL createTag(String name, String path) throws BadInputException;

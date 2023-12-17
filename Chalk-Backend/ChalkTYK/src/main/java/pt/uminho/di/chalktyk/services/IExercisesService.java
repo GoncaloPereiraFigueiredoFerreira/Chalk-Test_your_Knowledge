@@ -81,7 +81,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise was not found
      */
     // TODO - criar metodos privados para update individual de cada componente
-    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility)  throws UnauthorizedException, NotFoundException, BadInputException;
+    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility)  throws NotFoundException, BadInputException;
 
     /**
      * Retrieves the rubric of an exercise.
@@ -104,13 +104,28 @@ public interface IExercisesService{
      * Issue the automatic correction of the exercise resolutions.
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
-     * @param userId identifier of the user that has permission to issue the correction,
-     *               such as the owner of the exercise, or another specialist that belongs
-     *               to the course that is associated with the exercise.
-     * @param exerciseId identifier of the exercise
-     * @param correctionType type of correction
+     *
+     * @param exerciseId     identifier of the exercise
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
      */
-    void issueExerciseResolutionsCorrection(String userId, String exerciseId, String correctionType);
+    void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
+
+    /**
+     * Issue the automatic correction of the exercise resolutions.
+     * The correction can either be automatic or done by AI.
+     * For a given exercise, it may support either, both, or none of the correction types.
+     *
+     * @param resolutionId   identifier of the exercise resolution
+     * @param correctionType type of correction. Can be 'auto' or 'ai'.
+     * @return
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
+     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     */
+    float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
 
     /**
      * @param exerciseId identifier of an exercise
@@ -134,15 +149,15 @@ public interface IExercisesService{
     /**
      * Create a resolution for a specific exercise.
      *
-     * @param exerciseId identifier of the exercise
-     * @param resolution new resolution
-     * @param studentId  identifier of the creator of the resolution.
+     * @param studentId      identifier of the creator of the resolution.
+     * @param exerciseId     identifier of the exercise
+     * @param resolutionData new resolution
      * @return
      * @throws NotFoundException if the exercise was not found
      * @throws BadInputException if there is some problem regarding the resolution of the exercise,
      *                           like the type of resolution does not match the type of the exercise
      */
-    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
+    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
 
     /**
      *

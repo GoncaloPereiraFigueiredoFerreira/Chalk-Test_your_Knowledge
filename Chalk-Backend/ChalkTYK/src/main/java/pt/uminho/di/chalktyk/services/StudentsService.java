@@ -44,9 +44,14 @@ public class StudentsService implements IStudentsService{
         //set the identifier to null to avoid overwrite attacks
         student.setId(null);
 
-        String inputErrors = student.checkProperties();
+        // check for any property format errors
+        String inputErrors = student.checkInsertProperties();
         if(inputErrors != null)
             throw new BadInputException(inputErrors);
+
+        // check if email is not owned by another user
+        if(userDAO.existsByEmail(student.getEmail()))
+            throw new BadInputException("Could not create student: Email is already used by another user.");
 
         // Save user in nosql database
         student = userDAO.save(student);
@@ -76,5 +81,31 @@ public class StudentsService implements IStudentsService{
     @Override
     public boolean existsStudentById(String studentId) {
         return studentSqlDAO.existsById(studentId);
+    }
+
+    @Override
+    public void updateBasicStudentInformation(String studentId, Student newStudent) throws NotFoundException, BadInputException {
+        if(newStudent == null)
+            throw new BadInputException("Cannot updated student information: Null student was given.");
+
+        Student student = getStudentById(studentId);
+        String newEmail = newStudent.getEmail(),
+               newName  = newStudent.getName();
+
+        // check for any property format errors
+        String insertErrors = newStudent.checkInsertProperties();
+        if(insertErrors != null)
+            throw new BadInputException("Could not update student information:" + insertErrors);
+
+        // if the email is to be changed, it cannot belong to any other user
+        if(!student.getEmail().equals(newEmail) && userDAO.existsByEmail(newEmail))
+            throw new BadInputException("Could not update student information: Email is already used by another user.");
+
+        student.setName(newName);
+        student.setEmail(newEmail);
+        student.setDescription(newStudent.getDescription());
+        student.setPhotoPath(newStudent.getPhotoPath());
+
+        userDAO.save(student);
     }
 }

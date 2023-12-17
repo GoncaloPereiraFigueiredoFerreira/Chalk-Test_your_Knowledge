@@ -7,4 +7,5 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public abstract class ExerciseResolutionData {
     public abstract void verifyInsertProperties() throws BadInputException;
+    public abstract boolean equals(ExerciseResolutionData exerciseResolutionData);
 }

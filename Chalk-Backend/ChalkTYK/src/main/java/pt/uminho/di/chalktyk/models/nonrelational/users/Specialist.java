@@ -20,6 +20,10 @@ public class Specialist extends User {
         super(id, name, photoPath, email, description, subscription);
     }
 
+    public Specialist(String id, String name, String photoPath, String email, String description) {
+        super(id, name, photoPath, email, description, null);
+    }
+
     /**
      * Check if the subscription is valid.
      *

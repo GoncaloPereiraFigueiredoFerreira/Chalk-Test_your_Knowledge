@@ -18,32 +18,8 @@ import java.util.Set;
 
 @Repository
 public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
-    @Modifying
-    @Query(value = "UPDATE ExerciseSQL e SET e.nrCopies=e.nrCopies+1 WHERE e.id = :exerciseId")
-    void increaseExerciseCopies(@Param("exerciseId") String exerciseId);
-
-    @Modifying
-    @Query(value = "UPDATE ExerciseSQL e SET e.nrCopies=e.nrCopies-1 WHERE e.id = :exerciseId")
-    void decreaseExerciseCopies(@Param("exerciseId") String exerciseId);
-
     @Query(value = "SELECT e.tags FROM ExerciseSQL e WHERE e.id = :exerciseId")
     java.util.Set<TagSQL> getExerciseTags(@Param("exerciseId") String exerciseId);
-
-    @Modifying
-    @Query(value = "UPDATE ExerciseSQL e SET e.tags = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS) WHERE e.id = :exerciseId")
-    void updateExerciseTagsByIds(@Param("exerciseId") String exerciseId, @Param("tagIDS") java.util.Set<String> tagIDS);
-    @Modifying
-    @Query(value = "UPDATE ExerciseSQL e SET e.course = (SELECT c FROM CourseSQL c WHERE c.id=:courseId) WHERE e.id = :exerciseId")
-    void updateExerciseCourseById(@Param("exerciseId") String exerciseId,@Param("courseId") String courseId);
-
-    @Modifying
-    @Query(value = "UPDATE ExerciseSQL e SET e.title = :title WHERE e.id = :exerciseId")
-    void updateExerciseTitle(@Param("exerciseId") String exerciseId,@Param("title") String title);
-
-    @Modifying
-    @Query(value = "UPDATE ExerciseSQL e SET e.exerciseType = :exerciseType WHERE e.id = :exerciseId")
-    void updateExerciseType(@Param("exerciseId") String exerciseId,@Param("exerciseType") String exerciseType);
-
 
     @Query("SELECT e FROM ExerciseSQL e JOIN e.tags t WHERE" +
             " CASE WHEN :matchAllTags = true THEN (t = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS))"+

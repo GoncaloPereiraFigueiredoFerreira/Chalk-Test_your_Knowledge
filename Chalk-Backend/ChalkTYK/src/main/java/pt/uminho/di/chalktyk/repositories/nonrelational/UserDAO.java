@@ -6,4 +6,5 @@ import pt.uminho.di.chalktyk.models.nonrelational.users.User;
 
 @Repository
 public interface UserDAO extends MongoRepository<User, String> {
+    boolean existsByEmail(String email);
 }

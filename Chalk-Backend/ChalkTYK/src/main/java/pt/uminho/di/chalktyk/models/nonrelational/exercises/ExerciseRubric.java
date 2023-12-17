@@ -22,4 +22,6 @@ public abstract class ExerciseRubric {
 
 
 	public abstract void verifyProperties() throws BadInputException;
+
+	public abstract boolean equals(ExerciseRubric exerciseRubric);
 }

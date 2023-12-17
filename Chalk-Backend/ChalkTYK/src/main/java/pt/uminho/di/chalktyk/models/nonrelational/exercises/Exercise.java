@@ -1,10 +1,7 @@
 package pt.uminho.di.chalktyk.models.nonrelational.exercises;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;

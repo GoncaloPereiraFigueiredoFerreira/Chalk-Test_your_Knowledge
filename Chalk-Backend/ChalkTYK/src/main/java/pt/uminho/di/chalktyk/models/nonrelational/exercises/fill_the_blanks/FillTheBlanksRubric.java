@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseRubric;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.MultipleChoiceRubric;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+
+import java.util.Objects;
 
 @Document(collection = "exercises_rubrics")
 @JsonTypeName("FTB")
@@ -23,5 +26,16 @@ public class FillTheBlanksRubric extends ExerciseRubric {
 	public void verifyProperties() throws BadInputException {
 		if(penalty == null || fillingPoints == null || penalty < 0 || fillingPoints < 0)
 			throw new BadInputException("Cannot create FillTheBlanksRubric: The points or penalty of a rubric cannot be null or negative.");
+	}
+
+	@Override
+	public boolean equals(ExerciseRubric exerciseRubric) {
+		if(!(exerciseRubric instanceof FillTheBlanksRubric fillTheBlanksRubric))
+			return false;
+		if(!(Objects.equals(fillTheBlanksRubric.getFillingPoints(), fillingPoints)))
+			return false;
+		if(!(Objects.equals(fillTheBlanksRubric.getPenalty(), penalty)))
+			return false;
+		return true;
 	}
 }

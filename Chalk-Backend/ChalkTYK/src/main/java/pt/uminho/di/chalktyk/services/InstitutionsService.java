@@ -381,7 +381,7 @@ public class InstitutionsService implements IInstitutionsService {
         //set the identifier to null to avoid overwrite attacks
         manager.setId(null);
 
-        String inputErrors = manager.checkProperties();
+        String inputErrors = manager.checkInsertProperties();
         if(inputErrors != null)
             throw new BadInputException(inputErrors);
     }

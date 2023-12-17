@@ -18,6 +18,10 @@ public class Student extends User {
         super(id, name, photoPath, email, description, subscription);
     }
 
+    public Student(String id, String name, String photoPath, String email, String description) {
+        super(id, name, photoPath, email, description, null);
+    }
+
     /**
      * Check if the subscription is valid.
      *
