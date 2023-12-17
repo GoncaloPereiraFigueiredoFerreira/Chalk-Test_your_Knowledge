@@ -13,16 +13,7 @@ public interface IUsersService {
      */
     User getUserById(String userId) throws NotFoundException;
 
-    /**
-     * Update the basic information of a user
-     * @param userId identifier of a user
-     * @param user body of the basic properties of a user
-     */
-    void updateBasicUserInformation(String userId, User user);
-
-    //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
     boolean login(String userId);
 
-    //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
     boolean logout(String userId);
 }

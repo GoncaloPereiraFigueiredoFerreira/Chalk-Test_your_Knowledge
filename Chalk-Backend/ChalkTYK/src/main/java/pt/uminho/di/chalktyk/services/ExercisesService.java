@@ -391,7 +391,7 @@ public class ExercisesService implements IExercisesService{
      * the rubric or solution don't belong to the new exercise body
      */
     @Transactional
-    protected void updateExerciseBody(Exercise exercise, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
+    public void updateExerciseBody(Exercise exercise, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
         Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
         assert origExercise != null;
 
@@ -495,7 +495,7 @@ public class ExercisesService implements IExercisesService{
      * @param tagsIds      new list of tags
      */
     @Transactional
-    protected void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
+    public void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
         for (String id:tagsIds)
             if(iTagsService.getTagById(id)==null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
@@ -511,8 +511,9 @@ public class ExercisesService implements IExercisesService{
             tags.add(tag);
         }
         exerciseSQL.setTags(tags);
-
+        exerciseSqlDAO.save(exerciseSQL);
     }
+
     /**
      * Updates and exercise visibility, Assumes exercise exists
      *

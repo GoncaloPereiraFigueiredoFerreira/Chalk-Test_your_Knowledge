@@ -16,6 +16,12 @@ public class UsersService implements IUsersService{
         this.userDAO = userDAO;
     }
 
+    /**
+     * Gets user
+     * @param userId identifier of the user
+     * @return user
+     * @throws NotFoundException if no user was found with the given id
+     */
     @Override
     public User getUserById(String userId) throws NotFoundException {
         User u = userDAO.findById(userId).orElse(null);
@@ -25,24 +31,15 @@ public class UsersService implements IUsersService{
             throw new NotFoundException("No user with the given id was found.");
     }
 
-    /**
-     * Update the basic information of a user
-     *
-     * @param userId identifier of a user
-     * @param user   body of the basic properties of a user
-     */
-    @Override
-    public void updateBasicUserInformation(String userId, User user) {
-
-    }
-
     @Override
     public boolean login(String userId) {
+        //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
         return false;
     }
 
     @Override
     public boolean logout(String userId) {
+        //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
         return false;
     }
 }
