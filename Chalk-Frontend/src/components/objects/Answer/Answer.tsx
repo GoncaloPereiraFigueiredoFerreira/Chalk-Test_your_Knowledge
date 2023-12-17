@@ -10,12 +10,18 @@ import { OAAnswer } from "./OAAnswer";
 import { MCAnswer } from "./MCAnswer";
 import { students } from "../../pages/Tests/Correction/example";
 
-export function Answer(
-  solution: Resolution,
-  cotation: number,
-  justifyKind: ExerciseJustificationKind,
-  resolution: Resolution
-) {
+export interface AnswerProps {
+  resolution: Resolution;
+  cotation: number;
+  justifyKind: ExerciseJustificationKind;
+  solution: Resolution;
+}
+export function Answer({
+  resolution,
+  cotation,
+  justifyKind,
+  solution,
+}: AnswerProps) {
   const [preview, setPreview] = useState(<></>);
 
   useEffect(() => {
@@ -48,28 +54,6 @@ export function Answer(
             justifyKind={justifyKind}
             resolution={resolution}
           ></TFAnswer>
-        );
-        break;
-      case ExerciseType.FILL_IN_THE_BLANK:
-        setPreview(
-          <></>
-          // <FillBlankExercise
-          //   statement={exercise.statement}
-          //   problem={exercise.problem}
-          //   contexto="solve"
-          //   name={name}
-          // ></FillBlankExercise>
-        );
-        break;
-      case ExerciseType.CODE:
-        setPreview(
-          <></>
-          // <CodeExercise
-          //   statement={statement}
-          //   problem={problem}
-          //   contexto="solve"
-          //   name={name}
-          // ></CodeExercise>
         );
         break;
     }

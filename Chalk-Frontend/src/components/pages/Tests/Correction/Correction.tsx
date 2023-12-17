@@ -11,37 +11,59 @@ import {
 } from "../../../objects/Exercise/Exercise";
 import { basictest } from "../Preview/PreviewTest";
 import axios from "axios";
-import { students } from "./example";
 import { Answer } from "../../../objects/Answer/Answer";
 
-function renderSolution(solution: Resolution) {
-  const [solPreview, setSolPreview] = useState(<></>);
+function renderSolution(exID: string, resolutions: Resolutions) {
+  // const [solPreview, setSolPreview] = useState(<></>);
+  let solPreview = <></>;
+  if (exID !== "")
+    switch (resolutions[exID].solution.data.type) {
+      case ExerciseType.MULTIPLE_CHOICE:
+        solPreview = <></>;
+        break;
+      case ExerciseType.TRUE_OR_FALSE:
+        solPreview = <></>;
+        break;
+      case ExerciseType.OPEN_ANSWER:
+        solPreview = <></>;
+        break;
+    }
+  else solPreview = <></>;
 
-  switch (solution.data.type) {
-    case ExerciseType.MULTIPLE_CHOICE:
-      setSolPreview(<></>);
-      break;
-    case ExerciseType.TRUE_OR_FALSE:
-      setSolPreview(<></>);
-      break;
-    case ExerciseType.OPEN_ANSWER:
-      setSolPreview(<></>);
-      break;
-  }
-
-  return <div>{solPreview}</div>;
+  return (
+    <div>
+      {exID === "" ? (
+        <p>Escolha um Exercicio para ver a sua solução</p>
+      ) : (
+        <>
+          <div>
+            {exID !== "" ? (
+              <>
+                <p>Solução do exercício: {exID}</p>
+                {solPreview}
+              </>
+            ) : (
+              <p>
+                Selecione um exercicio ou resolução para visualizar a solução
+              </p>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 function renderResolutions(
   exerciseID: string,
   resolutions: Resolutions,
-  setResolutions: Function
+  setResolutionByID: Function
 ) {
   const [resID, setResID] = useState<string>("");
-  const [resInt, setResInt] = useState(<></>);
-
+  //const [resInt, setResInt] = useState(<></>);
+  let resInt = <></>;
   useEffect(() => {
-    setResInt(
+    resInt = (
       <>
         {resID !== "" ? (
           <>
@@ -112,11 +134,10 @@ export interface Resolutions {
 export function Correction() {
   const [test, setTest] = useState<Test>(basictest);
   const [resolutions, setResolutions] = useState<Resolutions>();
-  const [corrected, setCorrected] = useState<Resolutions>();
+  //para mais tarde fazer uma aba de por corregir e corrigidas
+  //const [corrected, setCorrected] = useState<Resolutions>();
   const [exID, setExID] = useState<string>("");
   const [showSideMenu, setshowSideMenu] = useState(true);
-  const [resolutionMenu, setResolutionMenu] = useState(<></>);
-  const [solution, setSolution] = useState(<></>);
 
   function getExResByID(exerciseID: string): {
     [resolutionID: string]: Resolution;
@@ -146,10 +167,9 @@ export function Correction() {
     setResolutions(temp);
   }, []);
 
-  useEffect(() => {
-    setSolution(renderSolution(resolutions![exID].solution));
-    setResolutionMenu(renderResolutions(exID, resolutions!, setResolutions));
-  }, [exID]);
+  console.log(test);
+
+  console.log(resolutions);
 
   return (
     <>
@@ -181,23 +201,7 @@ export function Correction() {
                   <div className="bg-3-1 w-full h-1/3 rounded-lg p-4">
                     <h3 className="text-xl font-medium">Solução</h3>
                     {/*Render de uma solução*/}
-                    {exID === "" ? (
-                      <p>Escolha um Exercicio para ver a sua solução</p>
-                    ) : (
-                      <>
-                        <p>Solução do exercício: {exID}</p>
-                        <div>
-                          {exID !== "" ? (
-                            solution
-                          ) : (
-                            <p>
-                              Selecione um exercicio ou resolução para
-                              visualizar a solução
-                            </p>
-                          )}
-                        </div>
-                      </>
-                    )}
+                    {renderSolution(exID, resolutions!)}
                   </div>
                   {/* Resoluçoes */}
                   <div className="bg-3-1 w-full h-full rounded-lg p-4">
@@ -205,7 +209,7 @@ export function Correction() {
                       Resoluções por corrigir
                     </h3>
 
-                    {resolutionMenu}
+                    {renderResolutions(exID, resolutions!, setResolutions)}
 
                     {/*
                     <div className="flex h-full items-center justify-center">
