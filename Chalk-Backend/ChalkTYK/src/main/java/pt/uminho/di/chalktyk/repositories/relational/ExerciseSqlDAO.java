@@ -22,8 +22,8 @@ public interface ExerciseSqlDAO extends JpaRepository<ExerciseSQL, String> {
     java.util.Set<TagSQL> getExerciseTags(@Param("exerciseId") String exerciseId);
 
     @Query("SELECT e FROM ExerciseSQL e JOIN e.tags t WHERE" +
-            " CASE WHEN :matchAllTags = true THEN (t = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS))"+
-            " ELSE (:tags is null or t IN (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS)) END and"+
+            " CASE WHEN :matchAllTags = true THEN (:tagIDS is null or t = (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS))"+
+            " ELSE (:tagIDS is null or t IN (SELECT t FROM TagSQL t WHERE t.id IN :tagIDS)) END and"+
             " :visibilityType is null or e.visibility = :visibilityType and" +
             " :institutionId is null or e.institution = (SELECT i FROM InstitutionSQL i WHERE i.id=:institutionId) and" +
             " :courseId is null or e.course = (SELECT c FROM CourseSQL c WHERE c.id=:courseId) and" +
