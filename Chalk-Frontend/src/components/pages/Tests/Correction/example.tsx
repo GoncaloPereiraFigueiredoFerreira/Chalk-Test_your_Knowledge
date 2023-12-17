@@ -4,9 +4,8 @@ import {
   ResolutionStatus,
 } from "../../../objects/Exercise/Exercise";
 import { ImgPos } from "../../../objects/Exercise/Header/ExHeader";
-import { ExerciseRaw, Student } from "./Correction";
 
-export const students: Student[] = [
+export const students = [
   { id: "student1", email: "sdam@msam.com", name: "Luis caneca" },
   { id: "student2", email: "sdam@msam.com", name: "Maria caneca" },
 
@@ -24,7 +23,7 @@ export const students: Student[] = [
   { id: "student13", email: "sdam@msam.com", name: "Bronze caneca" },
 ];
 
-export const userExercises: ExerciseRaw[] = [
+export const userExercises = [
   {
     id: "11",
     title: "Multiple Choice Exercise",

@@ -18,8 +18,6 @@ export function Answer(
 ) {
   const [preview, setPreview] = useState(<></>);
 
-  const [selectedAnswer, setSelectedAnswer] = useState(false);
-
   useEffect(() => {
     switch (resolution.data.type) {
       case ExerciseType.MULTIPLE_CHOICE:
