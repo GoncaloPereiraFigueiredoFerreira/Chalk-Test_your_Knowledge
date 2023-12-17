@@ -36,4 +36,16 @@ public enum VisibilitySQL {
 		}
 		return null;
 	}
+
+	public boolean isValid(){
+		if (this.equals(VisibilitySQL.COURSE) ||
+			this.equals(VisibilitySQL.DELETED) ||
+			this.equals(VisibilitySQL.INSTITUTION) ||
+			this.equals(VisibilitySQL.NOT_LISTED) ||
+			this.equals(VisibilitySQL.PRIVATE) ||
+			this.equals(VisibilitySQL.PUBLIC) ||
+			this.equals(VisibilitySQL.TEST))
+				return true;
+		return false;
+	}
 }

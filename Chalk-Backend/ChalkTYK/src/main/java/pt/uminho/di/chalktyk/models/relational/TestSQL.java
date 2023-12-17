@@ -21,9 +21,10 @@ public class TestSQL implements Serializable {
 	private InstitutionSQL institution;
 	
 	@ManyToOne(targetEntity= CourseSQL.class, fetch=FetchType.LAZY)
-	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID", nullable=false) })
+	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID") })
 	private CourseSQL course;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "visibility")
 	private VisibilitySQL visibility;
 	

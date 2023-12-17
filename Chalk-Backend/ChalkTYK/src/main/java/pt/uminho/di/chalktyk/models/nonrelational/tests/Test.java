@@ -25,7 +25,7 @@ import java.util.*;
 @Document(collection = "tests")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonTypeName("basic")
-public class Test {
+public abstract class Test {
 	@Id
 	private String id;
 	private String specialistId;
@@ -39,17 +39,19 @@ public class Test {
 	private LocalDateTime publishDate;
 	private List<TestGroup> groups;
 
-	public void verifyProperties() throws BadInputException{
+	public void verifyInsertProperties() throws BadInputException {
         // check title
 		if (title == null || title.isEmpty())
 			throw new BadInputException("Cannot create test: A title of a test cannot be empty or null.");
 
 		// check publish date
-		if (publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
+		if (!publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
             throw new BadInputException("Cannot create test: Publish date is outdated.");
 
 		// check global points
 		if (globalPoints < 0)
 			throw new BadInputException("Cannot create test: Global points can't be negative.");
     }
+
+	public abstract void verifyProperties() throws BadInputException;
 }

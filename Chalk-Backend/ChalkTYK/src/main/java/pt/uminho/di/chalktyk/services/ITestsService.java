@@ -26,6 +26,15 @@ public interface ITestsService {
      Page<Test> getTests(Integer page, Integer itemsPerPage, List<Integer> tags, Boolean matchAllTags, String visibilityType, String visibilityTarget, String specialistId);
 
     /**
+     * Get test using its id
+     *
+     * @param testId
+     * @return test
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    Test getTestById(String testId) throws NotFoundException;
+
+    /**
      * Create a test
      *
      * @param visibility
@@ -76,8 +85,9 @@ public interface ITestsService {
      * @param testId
      * @param total 'false' to count the number of students that made a submission. 'true' to count the total number of submissions
      * @return number of students
+     * @throws NotFoundException if no test was found with the given id
      **/
-    Integer countStudentsTestResolutions(String testId, Boolean total);
+    Integer countStudentsTestResolutions(String testId, Boolean total) throws NotFoundException;
 
     /**
      * Get all test resolutions
@@ -116,8 +126,9 @@ public interface ITestsService {
      * @param testId
      * @param studentId
      * @return True or False
+     * @throws NotFoundException if no test or student was found with the given id
      **/
-    Boolean canStudentSubmitResolution(String testId, String studentId);
+    Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException;
 
     /**
      * Retrieves the number of (resolution) submissions a student has made for a specific test
