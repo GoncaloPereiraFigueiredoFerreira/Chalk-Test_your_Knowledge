@@ -1,5 +1,9 @@
-import { ExerciseJustificationKind } from "../Exercise";
-import { useReducer } from "react";
+import {
+  ExerciseJustificationKind,
+  ResolutionData,
+  TFResolutionData,
+} from "../Exercise";
+import { useEffect, useReducer } from "react";
 import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
 
 //------------------------------------//
@@ -8,19 +12,12 @@ import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
 //                                    //
 //------------------------------------//
 
-export interface TFState {
-  [id: string]: {
-    text: string;
-    justification: string;
-    type: string;
-    value: boolean;
-  };
-}
-
 // Type of actions allowed on the state
+
 export enum TFActionKind {
   CHOOSE = "CHOOSE",
   JUSTIFY = "JUSTIFY",
+  SETSTATE = "SETSTATE",
 }
 
 // TFAction Definition
@@ -28,33 +25,32 @@ export interface TFAction {
   type: TFActionKind;
   index: string;
   payload: string | boolean;
+  state?: TFResolutionData;
 }
 
 // Takes the current ExerciseState and an action to update the ExerciseState
-function ExerciseTFReducer(tfState: TFState, tfAction: TFAction) {
+function ExerciseTFReducer(tfState: TFResolutionData, tfAction: TFAction) {
   switch (tfAction.type) {
     case TFActionKind.CHOOSE:
       if (typeof tfAction.payload === "string")
         throw new Error("payload type error");
 
-      return {
-        ...tfState,
-        [tfAction.index]: {
-          ...tfState[tfAction.index],
-          value: tfAction.payload as boolean,
-        },
-      };
+      let newItemsCHOOSE = { ...tfState.items };
+      newItemsCHOOSE[tfAction.index].value = tfAction.payload;
+      return { ...tfState, items: newItemsCHOOSE };
 
     case TFActionKind.JUSTIFY:
       if (typeof tfAction.payload === "boolean")
         throw new Error("payload type error");
-      return {
-        ...tfState,
-        [tfAction.index]: {
-          ...tfState[tfAction.index],
-          justification: tfAction.payload as string,
-        },
-      };
+
+      let newItemsJUST = { ...tfState.items };
+      newItemsJUST[tfAction.index].justification = tfAction.payload;
+      return { ...tfState, items: newItemsJUST };
+
+    case TFActionKind.SETSTATE:
+      return { ...tfAction.state! };
+    default:
+      return tfState;
   }
 }
 
@@ -70,31 +66,36 @@ export interface TFSolveProps {
   items: {
     [id: string]: {
       text: string;
-      type: string;
     };
   };
+  resolution: ResolutionData;
+  setResolution: Function;
 }
 
 export function TFSolve({
   id,
   position,
-  items,
   statement,
   justifyKind,
+  resolution,
+  setResolution,
 }: TFSolveProps) {
-  let initState: TFState = Object.fromEntries(
-    Object.entries(items).map(([index, value]) => [
-      index,
-      {
-        justification: "",
-        text: value.text,
-        type: value.type,
-        value: false,
-      },
-    ])
-  );
+  let initState: TFResolutionData = resolution as TFResolutionData;
 
   const [state, dispatch] = useReducer(ExerciseTFReducer, initState);
+
+  useEffect(
+    () =>
+      dispatch({
+        type: TFActionKind.SETSTATE,
+        state: resolution as TFResolutionData,
+        index: "",
+        payload: "",
+      }),
+    [statement]
+  );
+
+  useEffect(() => setResolution(state), [state]);
 
   return (
     <>
@@ -103,7 +104,7 @@ export function TFSolve({
         <div className="flex text-xl font-bold px-4">V</div>
         <div className="flex text-xl font-bold px-4">F</div>
         <div></div>
-        {Object.keys(state).map((index) => (
+        {Object.keys(state.items).map((index) => (
           <TFShowStatement
             key={index}
             index={index}
@@ -116,7 +117,6 @@ export function TFSolve({
       </div>
     </>
   );
-  return <></>;
 }
 
 function TFShowStatement(props: any) {
@@ -127,6 +127,10 @@ function TFShowStatement(props: any) {
           className="radio-green"
           type="radio"
           name={props.name}
+          checked={
+            "value" in props.state.items[props.index] &&
+            props.state.items[props.index].value
+          }
           onChange={() => {
             props.dispatch({
               type: TFActionKind.CHOOSE,
@@ -141,6 +145,10 @@ function TFShowStatement(props: any) {
           className="radio-red"
           type="radio"
           name={props.name}
+          checked={
+            "value" in props.state.items[props.index] &&
+            !props.state.items[props.index].value
+          }
           onChange={() => {
             props.dispatch({
               type: TFActionKind.CHOOSE,
@@ -151,7 +159,7 @@ function TFShowStatement(props: any) {
         ></input>
       </div>
       <div className="">
-        <p>{props.state[props.index].text}</p>
+        <p>{props.state.items[props.index].text}</p>
       </div>
       <TFJustify
         index={props.index}
@@ -167,9 +175,12 @@ function TFJustify(props: any) {
   let justify =
     props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&
-      !props.state[props.index].value) ||
+      "value" in props.state.items[props.index] &&
+      !props.state.items[props.index].value) ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_TRUE &&
-      props.state[props.index].value);
+      "value" in props.state.items[props.index] &&
+      props.state.items[props.index].value);
+
   return props.justifyKind === ExerciseJustificationKind.NO_JUSTIFICATION ? (
     <div className="col-span-3"></div>
   ) : (
@@ -182,9 +193,9 @@ function TFJustify(props: any) {
         <textarea
           className={`${justify ? "" : "hidden"} basic-input-text`}
           name={"justification" + props.index}
-          rows={3}
+          rows={1}
           placeholder="Justifique a sua resposta"
-          value={props.state[props.index].justification}
+          value={props.state.items[props.index].justification}
           onChange={(e) =>
             props.dispatch({
               type: TFActionKind.JUSTIFY,

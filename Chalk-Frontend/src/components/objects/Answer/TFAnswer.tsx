@@ -5,7 +5,7 @@ import {
   OAResolutionData,
   TFResolutionData,
 } from "../Exercise/Exercise";
-import { Exercise, Resolution, Item } from "../Exercise/Exercise";
+import { Exercise, Resolution } from "../Exercise/Exercise";
 import axios from "axios";
 
 interface TFRubric {

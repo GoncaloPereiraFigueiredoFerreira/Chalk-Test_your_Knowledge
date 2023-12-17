@@ -1,27 +1,17 @@
 import { ImgPos } from "./ExHeader";
-import { Dropdown } from "../../../interactiveElements/Dropdown";
+import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
+import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
+import { Exercise } from "../Exercise";
+import { useState } from "react";
 
 interface EditHeaderProps {
-  setStatement: (value: string) => void;
-  statement: string;
-  setAddImg: (value: boolean) => void;
-  addImg: boolean;
-  setPostionImg: (value: ImgPos) => void;
-  postionImg: ImgPos;
-  setImg: (value: string) => void;
-  img: string;
+  dispatch: React.Dispatch<EditAction>;
+  state: Exercise;
 }
 
-export function EditHeader({
-  setStatement,
-  statement,
-  setAddImg,
-  addImg,
-  setPostionImg,
-  postionImg,
-  setImg,
-  img,
-}: EditHeaderProps) {
+export function EditHeader({ dispatch, state }: EditHeaderProps) {
+  const [addImg, setAddImg] = useState(state.statement.imagePath != undefined);
+
   return (
     <>
       <div className="mb-9">
@@ -36,8 +26,13 @@ export function EditHeader({
             id="header"
             className="header-textarea"
             placeholder="Escreva aqui o enunciado..."
-            value={statement}
-            onChange={(e) => setStatement(e.target.value)}
+            value={state.statement.text}
+            onChange={(e) =>
+              dispatch({
+                type: EditActionKind.CHANGE_STATEMENT,
+                statement: { text: e.target.value },
+              })
+            }
           ></textarea>
         </div>
         <div className="mt-2 mx-3 font-medium">
@@ -45,8 +40,8 @@ export function EditHeader({
             id="putImg"
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
-            onChange={() => setAddImg(!addImg)}
             checked={addImg}
+            onChange={() => setAddImg(!addImg)}
           ></input>
           <label
             htmlFor="putImg"
@@ -59,7 +54,7 @@ export function EditHeader({
               addImg ? "max-h-96" : "max-h-0 overflow-hidden"
             } transition-[max-height]`}
           >
-            <div className={"flex mt-3 gap-5 h-full"}>
+            <div className={"flex mt-3 gap-5"}>
               <div className="flex flex-col">
                 <label
                   htmlFor="image"
@@ -72,8 +67,13 @@ export function EditHeader({
                   placeholder="Imagem"
                   type="url"
                   className="flex rounded-lg bg-input-1"
-                  value={img}
-                  onChange={(e) => setImg(e.target.value)} //preencher
+                  value={state.statement.imagePath}
+                  onChange={(e) =>
+                    dispatch({
+                      type: EditActionKind.CHANGE_IMG_URL,
+                      statement: { imagePath: e.target.value },
+                    })
+                  }
                 ></input>
               </div>
 
@@ -84,13 +84,19 @@ export function EditHeader({
                 >
                   Posição:
                 </label>
-                <Dropdown
+                <DropdownBlock
                   options={Object.values(ImgPos)}
                   text="Posição"
-                  chosenOption={postionImg}
-                  setChosenOption={setPostionImg}
-                  className="rounded-lg h-full"
-                ></Dropdown>
+                  chosenOption={state.statement.imagePosition}
+                  setChosenOption={(position) =>
+                    dispatch({
+                      type: EditActionKind.CHANGE_IMG_POS,
+                      statement: { imagePosition: position },
+                    })
+                  }
+                  style="rounded-lg"
+                  placement="bottom"
+                ></DropdownBlock>
               </div>
             </div>
           </div>

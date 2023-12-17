@@ -6,7 +6,6 @@ import {
   ExerciseGroup,
 } from "../../objects/Exercise/Exercise";
 import { Test } from "./SolveTest/SolveTest";
-
 function renderExercise(
   exercise: Exercise,
   index: number,

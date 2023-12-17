@@ -1,4 +1,3 @@
-import { ListTests } from "../../objects/ListTests/ListTest.tsx";
 import { Searchbar } from "../../objects/Searchbar/Searchbar.tsx";
 
 export function SearchList() {

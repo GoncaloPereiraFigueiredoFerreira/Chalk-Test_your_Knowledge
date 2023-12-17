@@ -24,34 +24,82 @@ export function createNewExercise(newExercisetype: ExerciseType) {
   };
 
   switch (newExercisetype) {
+    case ExerciseType.TRUE_OR_FALSE:
     case ExerciseType.MULTIPLE_CHOICE:
       return {
         ...newExercise,
         justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {},
-      };
+        items: {
+          "0": {
+            text: "",
+          },
+        },
+        solution: {
+          data: {
+            type: newExercisetype,
+            items: {
+              "0": {
+                text: "",
+                value: false,
+                justification: "",
+              },
+            },
+          },
+        },
+      } as Exercise;
     case ExerciseType.OPEN_ANSWER:
       return {
         ...newExercise,
-      };
-    case ExerciseType.TRUE_OR_FALSE:
-      return {
-        ...newExercise,
-        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {},
-      };
+        solution: { data: { type: newExercisetype, text: "" } },
+      } as Exercise;
     case ExerciseType.FILL_IN_THE_BLANK:
       return {
         ...newExercise,
         justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
-      };
+      } as Exercise;
     case ExerciseType.CODE:
       return {
         ...newExercise,
         justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
+      } as Exercise;
+  }
+}
+
+export function createNewResolution(exercise: Exercise) {
+  // colocar aqui as chamadas para criação dos exercicios
+  let newResolution: Resolution;
+  switch (exercise.type) {
+    case ExerciseType.OPEN_ANSWER:
+      newResolution = {
+        data: {
+          type: exercise.type,
+          text: "",
+        },
       };
+      return newResolution as Resolution;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.TRUE_OR_FALSE:
+      let newResolutionData: TFResolutionData | MCResolutionData = {
+        type: exercise.type,
+        items: {},
+      };
+
+      if (newResolutionData.items != undefined && exercise.items != undefined) {
+        Object.entries(exercise.items).forEach(([key, value]) => {
+          newResolutionData.items[key] = {
+            value: false,
+            text: value.text,
+            justification: "",
+          };
+        });
+        newResolution = {
+          data: newResolutionData,
+        };
+      } else throw new Error("Invalid State");
+      return newResolution as Resolution;
   }
 }
 
@@ -105,12 +153,6 @@ export interface ResolutionItems {
   };
 }
 
-export interface Item {
-  text: string;
-  justification: string;
-  value: boolean;
-}
-
 //------------------------------------//
 //                                    //
 //             Exercise               //
@@ -126,12 +168,12 @@ export enum ExerciseType {
 }
 
 export enum ExerciseJustificationKind {
-  JUSTIFY_ALL = "X1",
-  JUSTIFY_FALSE = "X2",
-  JUSTIFY_UNMARKED = "X2",
-  JUSTIFY_TRUE = "X3",
-  JUSTIFY_MARKED = "X3",
-  NO_JUSTIFICATION = "X0",
+  JUSTIFY_ALL = "Todas",
+  JUSTIFY_FALSE = "Apenas Falsas",
+  JUSTIFY_UNMARKED = "Apenas Não Selecionadas",
+  JUSTIFY_TRUE = "Apenas Verdadeiras",
+  JUSTIFY_MARKED = "Apenas Selecionadas",
+  NO_JUSTIFICATION = "Nenhuma",
 }
 
 export interface Exercise {
@@ -147,7 +189,7 @@ export interface Exercise {
     text: string;
   };
   justifyKind?: ExerciseJustificationKind;
-  items?: { [id: string]: { text: string; type: string } };
+  items?: { [id: string]: { text: string } };
 
   solution?: Resolution;
   resolution?: Resolution;
@@ -163,7 +205,7 @@ export interface Exercise {
 export interface ExerciseGroup {
   exercises: Exercise[];
   groupInstructions: string;
-  groupCotations: number;
+  groupCotation: number;
 }
 
 //------------------------------------//
@@ -199,6 +241,7 @@ export interface PreviewProps {
 
 export interface SolveProps {
   context: ExerciseContext.SOLVE;
+  resolutionData: ResolutionData;
   setExerciseSolution: Function;
 }
 

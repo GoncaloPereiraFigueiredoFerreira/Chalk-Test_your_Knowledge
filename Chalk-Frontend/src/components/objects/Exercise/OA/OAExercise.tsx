@@ -1,5 +1,6 @@
-import { OASolve } from "./OASolve";
 import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import { OASolve } from "./OASolve";
+import { OAPreview } from "./OAPreview";
 
 export function OAExercise({
   position,
@@ -9,11 +10,17 @@ export function OAExercise({
   let exerciseDisplay = <></>;
   switch (context.context) {
     case ExerciseContext.SOLVE:
-      exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
+      exerciseDisplay = (
+        <OASolve
+          statement={exercise.statement}
+          resolution={context.resolutionData}
+          setResolution={context.setExerciseSolution}
+        ></OASolve>
+      );
       break;
 
     case ExerciseContext.PREVIEW:
-      exerciseDisplay = <OASolve statement={exercise.statement}></OASolve>;
+      exerciseDisplay = <OAPreview statement={exercise.statement}></OAPreview>;
       break;
 
     case ExerciseContext.EDIT:

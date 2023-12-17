@@ -1,35 +1,64 @@
-import { ExerciseJustificationKind } from "../Exercise";
-import { useReducer } from "react";
-import { ExerciseHeader } from "../Header/ExHeader";
-import { TFActionKind, TFSolveProps, TFState } from "../TF/TFSolve";
+import {
+  ExerciseJustificationKind,
+  MCResolutionData,
+  ResolutionData,
+} from "../Exercise";
+import { useEffect, useReducer } from "react";
+import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
+
+export interface MCSolveProps {
+  id: string;
+  position: string;
+  statement: {
+    imagePath?: string;
+    imagePosition?: ImgPos;
+    text: string;
+  };
+  justifyKind: ExerciseJustificationKind;
+  items: {
+    [id: string]: {
+      text: string;
+    };
+  };
+  resolution: ResolutionData;
+  setResolution: Function;
+}
 
 // MCAction Definition
 export interface MCAction {
-  type: TFActionKind;
+  type: MCActionKind;
   index: string;
   payload?: string;
+  state?: MCResolutionData;
+}
+
+export enum MCActionKind {
+  CHOOSE = "CHOOSE",
+  JUSTIFY = "JUSTIFY",
+  SETSTATE = "SETSTATE",
 }
 
 // Takes the current ExerciseState and an action to update the ExerciseState
-function ExerciseMCReducer(tfState: TFState, tfAction: MCAction) {
-  switch (tfAction.type) {
-    case TFActionKind.CHOOSE:
-      let newState = { ...tfState };
-      Object.keys(newState).map(
-        (index) => (newState[index].value = index === tfAction.index)
-      );
-      return newState;
+function ExerciseMCReducer(mcState: MCResolutionData, mcAction: MCAction) {
+  switch (mcAction.type) {
+    case MCActionKind.CHOOSE:
+      let newItems = { ...mcState.items };
 
-    case TFActionKind.JUSTIFY:
-      if (tfAction.payload != undefined)
-        return {
-          ...tfState,
-          [tfAction.index]: {
-            ...tfState[tfAction.index],
-            justification: tfAction.payload as string,
-          },
-        };
-      else throw new Error("No data provided in tfAction.payload");
+      Object.keys(newItems).map(
+        (index) => (newItems[index].value = index === mcAction.index)
+      );
+      return { ...mcState, items: newItems };
+
+    case MCActionKind.JUSTIFY:
+      let newItemsJUST = { ...mcState.items };
+      newItemsJUST[mcAction.index].justification = mcAction.payload ?? "";
+      return { ...mcState, items: newItemsJUST };
+
+    case MCActionKind.SETSTATE:
+      return { ...mcAction.state! };
+
+    default:
+      return mcState;
   }
 }
 
@@ -39,26 +68,30 @@ export function MCSolve({
   position,
   statement,
   justifyKind,
-}: TFSolveProps) {
-  let initState: TFState = Object.fromEntries(
-    Object.entries(items).map(([index, value]) => [
-      index,
-      {
-        justification: "",
-        text: value.text,
-        type: value.type,
-        value: false,
-      },
-    ])
-  );
+  resolution,
+  setResolution,
+}: MCSolveProps) {
+  let initState: MCResolutionData = resolution as MCResolutionData;
 
   const [state, dispatch] = useReducer(ExerciseMCReducer, initState);
+
+  useEffect(() => {
+    setResolution(state);
+  }, [state]);
+
+  useEffect(() => {
+    dispatch({
+      type: MCActionKind.SETSTATE,
+      index: "",
+      state: resolution as MCResolutionData,
+    });
+  }, [statement]);
 
   return (
     <>
       <ExerciseHeader header={statement}></ExerciseHeader>
       <ul>
-        {Object.entries(state).map(([index, value]) => (
+        {Object.entries(state.items).map(([index, value]) => (
           <div key={index}>
             <label
               htmlFor={"mc" + id + index + position}
@@ -69,9 +102,10 @@ export function MCSolve({
                 name={"mc" + id + position}
                 type="radio"
                 className="radio-blue mr-3"
+                checked={value.value}
                 onChange={() =>
                   dispatch({
-                    type: TFActionKind.CHOOSE,
+                    type: MCActionKind.CHOOSE,
                     index: index,
                   })
                 }
@@ -95,9 +129,9 @@ function MCJustify(props: any) {
   let justify =
     props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_UNMARKED &&
-      !props.state[props.index].value) ||
+      !props.state.items[props.index].value) ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_MARKED &&
-      props.state[props.index].value);
+      props.state.items[props.index].value);
 
   return props.justifyKind === ExerciseJustificationKind.NO_JUSTIFICATION ? (
     <div className="col-span-3"></div>
@@ -111,10 +145,10 @@ function MCJustify(props: any) {
           name={"justification" + props.index}
           rows={3}
           placeholder="Justifique a sua resposta"
-          value={props.state[props.index].justification}
+          value={props.state.items[props.index].justification}
           onChange={(e) =>
             props.dispatch({
-              type: TFActionKind.JUSTIFY,
+              type: MCActionKind.JUSTIFY,
               index: props.index,
               payload: e.target.value,
             })

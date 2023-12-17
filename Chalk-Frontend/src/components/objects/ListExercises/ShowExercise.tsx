@@ -22,12 +22,18 @@ import {
   ExerciseComponent,
   ExerciseComponentProps,
   ExerciseContext,
+  createNewResolution,
 } from "../Exercise/Exercise";
+import {
+  ListExerciseActionKind,
+  useListExerciseContext,
+} from "./ListExerciseContext";
 
 interface ExerciseProps {
   position: string;
   exercise: Exercise;
-  setEditMenuIsOpen: (value: boolean) => void;
+  setEditMenuIsOpen: (value: string) => void;
+  editMenuIsOpen: string;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
 }
@@ -36,11 +42,13 @@ export function ShowExercise({
   position,
   exercise,
   setEditMenuIsOpen,
+  editMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
+  const { dispatch } = useListExerciseContext();
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
     position: position,
@@ -207,7 +215,20 @@ export function ShowExercise({
             <button
               className="btn-options-exercise gray-icon"
               onClick={() => {
-                setEditMenuIsOpen(true);
+                if (editMenuIsOpen === "") {
+                  if (exercise.solution === undefined) {
+                    dispatch({
+                      type: ListExerciseActionKind.EDIT_EXERCISE,
+                      payload: {
+                        exercise: {
+                          ...exercise,
+                          solution: createNewResolution(exercise),
+                        },
+                      },
+                    });
+                  }
+                  setEditMenuIsOpen(exercise.id);
+                }
                 setSelectedExercise(exercise.id);
               }}
             >

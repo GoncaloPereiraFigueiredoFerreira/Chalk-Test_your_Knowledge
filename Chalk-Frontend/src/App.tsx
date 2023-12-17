@@ -8,13 +8,20 @@ import { useContext } from "react";
 import { ExerciseBankPage } from "./components/pages/ExerciseBankPage/ExerciseBankPage";
 import { FrontPage } from "./components/pages/FrontPage/FrontPage";
 import { WebApp } from "./WebApp";
-import { TestPage } from "./components/pages/TestPage/TestPage";
+import { TestPage } from "./components/pages/Tests/TestList/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
-import { Subscription } from "./components/pages/Subscription/Subscription";
-import { Correction } from "./components/pages/Correction/Correction";
+import { Subscription } from "./components/pages/HomePage/Subscription/Subscription";
 //import { CreateTest } from "./components/pages/CreateTest/CreateTest";
 import { SearchList } from "./components/pages/SearchList/SearchList";
 import { SolveTest } from "./components/pages/Tests/SolveTest/SolveTest";
+import { GroupsPage } from "./components/pages/Groups/GroupsPage";
+import { AvaliacoesPage } from "./components/pages/Groups/AvaliacoesPage";
+import { TestesPartilhadosPage } from "./components/pages/Groups/TestesPartilhadosPage";
+import { AlunosPage } from "./components/pages/Groups/AlunosPage";
+import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
+import { TestPreview } from "./components/pages/Tests/TestPreview";
+import { Correction } from "./components/pages/Tests/Correction/Correction";
+import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -29,7 +36,7 @@ function App() {
         <Route path="/pricing" element={<Subscription />} />
         <Route
           path="/webapp"
-          element={user.authenticated ? <WebApp /> : <WebApp /> /* <Login /> */}
+          element={user.authenticated ? <WebApp /> : <WebApp />}
         >
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
@@ -37,12 +44,20 @@ function App() {
           {/*<Route path="create-test" element={<CreateTest />} />*/}
           <Route path="tests">
             <Route index path="" element={<TestPage />} />
+            <Route path="preview" element={<PreviewTest />} />
             <Route path="solve" element={<SolveTest />} />
+            <Route path="correction" element={<Correction />} />
             <Route path="group/:id" />
           </Route>
           <Route path="profile" element={<Settings />} />
+          <Route path="groups" element={<GroupsPage />} />
+          <Route path="groups/:id" element={<GroupNavBar />}>
+            <Route path="alunos" element={<AlunosPage />} />
+            <Route path="testes" element={<TestesPartilhadosPage />} />
+            <Route path="avaliacoes" element={<AvaliacoesPage />} />
+          </Route>
+          {/*<Route path="correction" element={<Correction />} />*/}
 
-          <Route path="correction" element={<Correction />} />
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
           {/*<Route path="catalog" element={<Catalog />} />*/}
           {/*<Route path="test"  element={<TestCreator />} />*/}

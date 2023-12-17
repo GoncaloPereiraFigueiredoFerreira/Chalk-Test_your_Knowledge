@@ -45,7 +45,7 @@ function renderResolutions(
       <>
         {resID !== "" ? (
           <>
-            <p className="hover:text-blue-500" onClick={() => setResID(resID)}>
+            <p className="hover:text-blue-500" onClick={() => setResID("")}>
               Return
             </p>
             <Answer
@@ -57,6 +57,7 @@ function renderResolutions(
           </>
         ) : exerciseID !== "" ? (
           <>
+            <p>Lista de Resoluções do exercicio: {exerciseID}</p>
             {Object.entries(resolutions[exerciseID].studentRes).map(
               ([key, res]) => (
                 <>
@@ -76,6 +77,7 @@ function renderResolutions(
           </>
         ) : (
           <>
+            <p>Lista de todas as resoluções por corrigir:</p>
             {Object.entries(resolutions).map(([, exercise]) =>
               Object.entries(exercise.studentRes).map(([key, res]) => (
                 <>
@@ -202,14 +204,8 @@ export function Correction() {
                     <h3 className="text-xl font-medium">
                       Resoluções por corrigir
                     </h3>
-                    {exID === "" ? (
-                      <p>Lista de todas as resoluções por corrigir</p>
-                    ) : (
-                      <>
-                        <p>Lista de Resoluções do exercicio: {exID}</p>
-                        {resolutionMenu}
-                      </>
-                    )}
+
+                    {resolutionMenu}
 
                     {/*
                     <div className="flex h-full items-center justify-center">
