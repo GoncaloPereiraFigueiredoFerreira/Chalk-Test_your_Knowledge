@@ -1,3 +1,4 @@
+import os
 from flask import Flask,request, json
 #from flask_api import status
 from redis import Redis
@@ -5,7 +6,7 @@ from redis import Redis
 import api_ai
 
 api = Flask(__name__)
-cache = Redis(host='localhost', port=6379, decode_responses=True)
+cache = Redis(host=os.getenv("REDIS","localhost"), port=6379, decode_responses=True)
 cache_timeout = 600 # 10 min
 
 '''

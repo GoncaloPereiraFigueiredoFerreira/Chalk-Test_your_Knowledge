@@ -3,213 +3,220 @@ from openai import OpenAI
 import tiktoken
 import json 
 
+import os
+from threading import Semaphore, Timer
 from functools import singledispatch
 
-client = OpenAI(api_key = "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")
+client = OpenAI(api_key = os.getenv("API_KEY"))
 model = "gpt-3.5-turbo"
 
+requests_sem = Semaphore(int(os.getenv("N_REQ",3)))  
+
 def send_request(message,temperature = 0,presence = 0,frequency = 0):
-	tokens = 1000 #Todo 
+    requests_sem.acquire()
+    tokens = 1000 #Todo 
 
-	stream = client.chat.completions.create(
-		  model = model,
-		  messages = message,
-		  temperature = temperature,
-		  max_tokens = tokens,
-		  top_p = 1,
-		  frequency_penalty = frequency,
-		  presence_penalty = presence
-		)
+    stream = client.chat.completions.create(
+          model = model,
+          messages = message,
+          temperature = temperature,
+          max_tokens = tokens,
+          top_p = 1,
+          frequency_penalty = frequency,
+          presence_penalty = presence
+        )
 
-	return stream.choices[0].message.content
+    Timer(60,lambda: requests_sem.release()).start()
+
+    return stream.choices[0].message.content
 
 def num_tokens_from_messages(messages):
   """Returns the number of tokens used by a list of messages."""
   try:
-	  encoding = tiktoken.encoding_for_model(model)
+      encoding = tiktoken.encoding_for_model(model)
   except KeyError:
-	  encoding = tiktoken.get_encoding("cl100k_base")
+      encoding = tiktoken.get_encoding("cl100k_base")
   if model == "gpt-3.5-turbo-0613" or True:  # note: future models may deviate from this
-	  num_tokens = 0
-	  for message in messages:
-		  num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
-		  for key, value in message.items():
-			  num_tokens += len(encoding.encode(value))
-			  if key == "name":  # if there's a name, the role is omitted
-				  num_tokens += -1  # role is always required and always 1 token
-	  num_tokens += 2  # every reply is primed with <im_start>assistant
-	  return num_tokens
+      num_tokens = 0
+      for message in messages:
+          num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+          for key, value in message.items():
+              num_tokens += len(encoding.encode(value))
+              if key == "name":  # if there's a name, the role is omitted
+                  num_tokens += -1  # role is always required and always 1 token
+      num_tokens += 2  # every reply is primed with <im_start>assistant
+      return num_tokens
   else:
-	  raise NotImplementedError(f"""num_tokens_from_messages() is not presently implemented for model {model}.
+      raise NotImplementedError(f"""num_tokens_from_messages() is not presently implemented for model {model}.
   See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
 
 def send_open_answer(answers,question,answer_critiria,answer_topics = None,answer_auxiliar = None):
-	ret = []
+    ret = []
 
-	sys_pronpt = gen_sys_open_answer(question,answer_critiria,answer_topics,answer_auxiliar)
+    sys_pronpt = gen_sys_open_answer(question,answer_critiria,answer_topics,answer_auxiliar)
 
-	for i in answers:
-		user_pronpt = gen_user_open_answer(i[1])
-		resp = send_request([sys_pronpt,user_pronpt[0]])
-		resp = json.loads(resp)
-		ret.append((i[0],resp["category"]))
+    for i in answers:
+        user_pronpt = gen_user_open_answer(i[1])
+        resp = send_request([sys_pronpt,user_pronpt[0]])
+        resp = json.loads(resp)
+        ret.append((i[0],resp["category"]))
 
-	return ret
+    return ret
 
 def send_create_mult(text,questions,user_input = ""):
-	text = gen_sys_create_question(text)
-	questions = gen_user_create_multiple(user_input,questions)
+    text = gen_sys_create_question(text)
+    questions = gen_user_create_multiple(user_input,questions)
 
-	pronpt = [text] + questions
+    pronpt = [text] + questions
 
-	resp = send_request(pronpt,1,0.5,0.5)
-	resp = json.loads(resp)
+    resp = send_request(pronpt,1,0.5,0.5)
+    resp = json.loads(resp)
 
-	return resp
+    return resp
 
 def send_create_open(text,questions,user_input = ""):
-	text = gen_sys_create_question(text)
-	questions = gen_user_create_open(user_input,questions)
+    text = gen_sys_create_question(text)
+    questions = gen_user_create_open(user_input,questions)
 
-	pronpt = [text] + questions
+    pronpt = [text] + questions
 
-	print(pronpt)
+    print(pronpt)
 
-	resp = send_request(pronpt,1,0.5,0.5)
-	print(resp)
-	resp = json.loads(resp)
+    resp = send_request(pronpt,1,0.5,0.5)
+    print(resp)
+    resp = json.loads(resp)
 
-	return resp
+    return resp
 
 def send_create_true_false(text,questions,user_input = ""):
-	text = gen_sys_create_question(text)
-	questions = gen_user_create_true_false(user_input,questions)
+    text = gen_sys_create_question(text)
+    questions = gen_user_create_true_false(user_input,questions)
 
-	pronpt = [text] + questions
+    pronpt = [text] + questions
 
-	resp = send_request(pronpt,1,0.5,0.5)
-	resp = json.loads(resp)
+    resp = send_request(pronpt,1,0.5,0.5)
+    resp = json.loads(resp)
 
-	return resp
+    return resp
 
 def send_oral(text):
-	resp = send_request(text,1,0.5,0.5)
-	return resp
+    resp = send_request(text,1,0.5,0.5)
+    return resp
 
 def send_eval_oral(topics,text):
-	sys_pronpt = {"role":"system","content":gen_sys_eval_oral(topics)}
+    sys_pronpt = {"role":"system","content":gen_sys_eval_oral(topics)}
 
-	resp = send_request([sys_pronpt] + text)
+    resp = send_request([sys_pronpt] + text)
 
-	return resp
+    return resp
 
 
 def gen_sys_open_answer(question,answer_critiria,answer_topics = None,answer_auxiliar = None):
-	topics = ""
-	if topics:
-		topics = "Check if the following pieces of information are directly contained in the answer:\n"
-		for i in answer_topics:
-			topics = topics + "- " + i + "\n"
+    topics = ""
+    if topics:
+        topics = "Check if the following pieces of information are directly contained in the answer:\n"
+        for i in answer_topics:
+            topics = topics + "- " + i + "\n"
 
-	criteria = "Check if the answer can be placed in one of the following numbered categories,considering the topics above:\n"
-	for i in range(len(answer_critiria)):
-		criteria = criteria + str(i) + "- " + answer_critiria[i] + "\n"
+    criteria = "Check if the answer can be placed in one of the following numbered categories,considering the topics above:\n"
+    for i in range(len(answer_critiria)):
+        criteria = criteria + str(i) + "- " + answer_critiria[i] + "\n"
 
-	auxiliar = ""
-	if answer_auxiliar:
-		auxiliar = "Consider the following pieces of information, delimited by double quotes, in your answer.\"\"{}\"\"".format(answer_auxiliar)
+    auxiliar = ""
+    if answer_auxiliar:
+        auxiliar = "Consider the following pieces of information, delimited by double quotes, in your answer.\"\"{}\"\"".format(answer_auxiliar)
 
-	ret = '''{auxiliar}You will be provided with text delimited by triple quotes that is supposed to be the answer to the question \"{question}\".
+    ret = '''{auxiliar}You will be provided with text delimited by triple quotes that is supposed to be the answer to the question \"{question}\".
 {topics}{criteria}Finally, provide the category in which the question fits. Provide this categorie as {{"category": <insert category here>}}.'''.format(question = question, topics = topics, auxiliar = auxiliar, criteria = criteria)
 
-	ret = {"role":"system","content":ret}
+    ret = {"role":"system","content":ret}
 
-	return ret
+    return ret
 
 @singledispatch
 def gen_user_open_answer(resp):
-	return None
+    return None
 
 @gen_user_open_answer.register
 def _(resp:str):
-	return [{"role":"user","content":'"""' + resp + '"""'}]
+    return [{"role":"user","content":'"""' + resp + '"""'}]
 
 @gen_user_open_answer.register
 def _(rest:list):
-	ret = []
-	for i in resp:
-		ret.append(gen_user_open_answer(i))
-	return ret
+    ret = []
+    for i in resp:
+        ret.append(gen_user_open_answer(i))
+    return ret
 
 def gen_sys_create_question(text):
-	return {"role":"system",
-	"content":"You will be prompt to generate questions about the following text \"{}\".All questions must be in the text language. ".format(text)}
+    return {"role":"system",
+    "content":"You will be prompt to generate questions about the following text \"{}\".All questions must be in the text language. ".format(text)}
 
 def gen_user_create_multiple(user_input,questions = None):
-	ret = []
+    ret = []
 
-	if questions:
-		for i in questions:
-			answers = []
-			if "Answers" in i:
-				answers = i["Answers"]
-			aux = {"Question":i["Question"],"Answers":answers}
-			ret.append({"role":"assistant","content":json.dumps(aux)})
+    if questions:
+        for i in questions:
+            answers = []
+            if "Answers" in i:
+                answers = i["Answers"]
+            aux = {"Question":i["Question"],"Answers":answers}
+            ret.append({"role":"assistant","content":json.dumps(aux)})
 
-	ret.append({"role":"user","content":user_input + '.Generate a multiple choice question. The response must be in json, where there is a key "Question", "Answers", that is an array, and "Correct_answer" that is the position in "answers".'})
+    ret.append({"role":"user","content":user_input + '.Generate a multiple choice question. The response must be in json, where there is a key "Question", "Answers", that is an array, and "Correct_answer" that is the position in "answers".'})
 
-	return ret
+    return ret
 
 def gen_user_create_open(user_input,questions = None):
-	ret = []
+    ret = []
 
-	if questions:
-		for i in questions:
-			topics = []
-			if "Topics" in i:
-				topics = i["Topics"]
-			aux = {"Question":i["Question"],"Topics":topics}
-			ret.append({"role":"assistant","content":json.dumps(aux)})
+    if questions:
+        for i in questions:
+            topics = []
+            if "Topics" in i:
+                topics = i["Topics"]
+            aux = {"Question":i["Question"],"Topics":topics}
+            ret.append({"role":"assistant","content":json.dumps(aux)})
 
-	ret.append({"role":"user","content":user_input + '.Generate a open answer question and topics that must be covered in the answer. The response must be in json, where there is a key "Question" and "Topics".'})
+    ret.append({"role":"user","content":user_input + '.Generate a open answer question and topics that must be covered in the answer. The response must be in json, where there is a key "Question" and "Topics".'})
 
-	return ret
+    return ret
 
 def gen_user_create_true_false(user_input,questions = None):
-	ret = []
+    ret = []
 
-	if questions:
-		for i in questions:
-			aux = {"Question":i["Question"]}
-			ret.append({"role":"assistant","content":json.dumps(aux)})
+    if questions:
+        for i in questions:
+            aux = {"Question":i["Question"]}
+            ret.append({"role":"assistant","content":json.dumps(aux)})
 
-	ret.append({"role":"user","content":user_input + '.Generate a True or False question. The response must be in json, with this format {"Question":question,"True":True or False}.'})
+    ret.append({"role":"user","content":user_input + '.Generate a True or False question. The response must be in json, with this format {"Question":question,"True":True or False}.'})
 
-	return ret
+    return ret
 
 def gen_sys_oral(topics):
-	ret = "Consider the following topics:\n{}You will be provided answers from a user, and you must generate questions to ensure the student addresses the topics given, based on his answers."
-	aux = ""
+    ret = "Consider the following topics:\n{}You will be provided answers from a user, and you must generate questions to ensure the student addresses the topics given, based on his answers."
+    aux = ""
 
-	for i in topics:
-		aux = aux + "- " + i + "\n"
+    for i in topics:
+        aux = aux + "- " + i + "\n"
 
-	return {"role":"system","content":ret.format(aux)}
+    return {"role":"system","content":ret.format(aux)}
 
 def gen_ass_oral(question):
-	return {"role":"assistant","content":question}
+    return {"role":"assistant","content":question}
 
 def gen_user_oral(answer):
-	return {"role":"user","content":answer}
+    return {"role":"user","content":answer}
 
 def gen_sys_eval_oral(topics):
-	ret = "Consider the following topics:\n{}You will be provided with question and answers referent to the topics presented. You must evaluate the answers from 0 to 10 based on who the answers cover the topics presented.\nThe output must only be in json, with the format {{\"Cotation\": evaluation}}. "
-	aux = ""
+    ret = "Consider the following topics:\n{}You will be provided with question and answers referent to the topics presented. You must evaluate the answers from 0 to 10 based on who the answers cover the topics presented.\nThe output must only be in json, with the format {{\"Cotation\": evaluation}}. "
+    aux = ""
 
-	for i in topics:
-		aux = aux + "- " + i + "\n"
+    for i in topics:
+        aux = aux + "- " + i + "\n"
 
-	return ret.format(aux)
+    return ret.format(aux)
 
 '''
 Consider the folling rules for the use of commas:
