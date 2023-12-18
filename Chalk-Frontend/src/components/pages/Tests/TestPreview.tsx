@@ -6,7 +6,6 @@ import {
   ExerciseGroup,
 } from "../../objects/Exercise/Exercise";
 import { Test } from "./SolveTest/SolveTest";
-
 function renderExercise(
   exercise: Exercise,
   index: number,
@@ -18,7 +17,7 @@ function renderExercise(
   return (
     <div
       key={index}
-      className=" rounded-lg w-full p-4 bg-3-2 z-20"
+      className=" rounded-lg w-full p-4 bg-3-2 z-20 dark:bg-gray-700"
       onClick={(e) => {
         setSelectedExercise(index == exerciseSelected ? -1 : index);
         setShowExID(index == exerciseSelected ? "" : exercise.id);

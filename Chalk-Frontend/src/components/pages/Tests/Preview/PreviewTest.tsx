@@ -4,6 +4,7 @@ import { TestPreview } from "../TestPreview";
 import {
   ExerciseJustificationKind,
   ExerciseType,
+  ResolutionStatus,
 } from "../../../objects/Exercise/Exercise";
 import { Link } from "react-router-dom";
 

@@ -117,7 +117,11 @@ export enum ResolutionStatus {
 export interface Resolution {
   id?: string;
   cotation?: number;
-  studentID?: string;
+  student?: {
+    id: string;
+    name: string;
+    email: string;
+  };
   status?: ResolutionStatus;
   data: ResolutionData;
 }
