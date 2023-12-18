@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import pt.uminho.di.chalktyk.models.relational.CourseSQL;
 import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
 import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
+import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.models.relational.TestResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.TestSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
@@ -46,10 +48,11 @@ public class TestsService implements ITestsService {
     private final IStudentsService studentsService;
     private final IInstitutionsService institutionsService;
     private final ICoursesService coursesService;
+    private final ITagsService tagsService;
 
     @Autowired
     public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, TestResolutionDAO resolutionDAO, TestResolutionSqlDAO resolutionSqlDAO,
-            ISpecialistsService specialistsService, IStudentsService studentsService, IInstitutionsService institutionsService, ICoursesService coursesService){
+        ISpecialistsService specialistsService, IStudentsService studentsService, IInstitutionsService institutionsService, ICoursesService coursesService, ITagsService tagsService){
         this.entityManager = entityManager;
         this.testDAO = testDAO;
         this.testSqlDAO = testSqlDAO;
@@ -59,6 +62,7 @@ public class TestsService implements ITestsService {
         this.studentsService = studentsService;
         this.institutionsService = institutionsService;
         this.coursesService = coursesService;
+        this.tagsService = tagsService;
     }
 
     @Override
@@ -127,22 +131,23 @@ public class TestsService implements ITestsService {
         if (body.getCourseId() == null && visibility.equals(VisibilitySQL.COURSE))
             throw new BadInputException("Can't create test: can't set visibility to COURSE");
         
-        // TODO: test group + tags + exercícios ... whatever
-        for(TestGroup tg: body.getGroups()){
-            tg.verifyProperties();
-        }
+        // check test group
         for (TestGroup tg: body.getGroups()){
+            tg.verifyProperties();
             List<Exercise> exeList = tg.getExercises();
-            //for (Exercise exe: exeList){
-            //    			if (e instanceof ConcreteExercise ce)
-			//	ce.verifyProperties();
-			//if (e instanceof ShallowExercise se)
-			//	se.verifyInsertProperties();
-            //}
+            for (Exercise exe: exeList){
+                if (exe instanceof ConcreteExercise ce){
+				    ce.verifyProperties();
+                    Set<TagSQL> tags = ce.getTags();
+                    for (TagSQL tag : tags){
+                        if (tagsService.getTagById(tag.getId()) == null)
+                            throw new BadInputException("Can't create test: There is not tag with id \"" + tag.getId() + "\".");
+                    }
+                }
+			    if (exe instanceof ShallowExercise se)
+				    se.verifyInsertProperties();
+            }
         }
-        //for (String id:tagsIds)
-        //if(iTagsService.getTagById(id)==null)
-        //    throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
 
         // persist the test in nosql database
         body = testDAO.save(body);
