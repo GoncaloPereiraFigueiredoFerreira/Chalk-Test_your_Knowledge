@@ -14,6 +14,7 @@ import {
   ExerciseComponent,
   ExerciseContext,
 } from "../Exercise/Exercise";
+import { MCEdit } from "../Exercise/MC/MCEdit";
 
 //------------------------------------//
 //                                    //
@@ -23,14 +24,15 @@ import {
 
 export enum EditActionKind {
   CHANGE_STATEMENT = "CHANGE_STATEMENT",
-  // ADD_IMG = "ADD_IMG",
-  // REMOVE_IMG = "REMOVE_IMG",
+  ADD_IMG = "ADD_IMG",
+  REMOVE_IMG = "REMOVE_IMG",
   CHANGE_IMG_URL = "CHANGE_IMG_URL",
   CHANGE_IMG_POS = "CHANGE_IMG_POS",
   CHANGE_SOLUTION_TEXT = "CHANGE_SOLUTION_TEXT",
   ADD_ITEM = "ADD_ITEM",
   REMOVE_ITEM = "REMOVE_ITEM",
   CHANGE_ITEM_TF = "CHANGE_ITEM_TF",
+  CHANGE_ITEM_MC = "CHANGE_ITEM_MC",
   CHANGE_ITEM_TEXT = "CHANGE_ITEM_TEXT",
   CHANGE_JUSTIFY_KIND = "CHANGE_JUSTIFY_KIND",
 }
@@ -59,7 +61,7 @@ function EditReducer(state: Exercise, action: EditAction) {
     case EditActionKind.CHANGE_STATEMENT:
       if (action.statement != undefined)
         if (action.statement.text != undefined) {
-          let newStatement = {
+          let newStatement: Exercise["statement"] = {
             ...state.statement,
             text: action.statement.text,
           };
@@ -67,10 +69,30 @@ function EditReducer(state: Exercise, action: EditAction) {
         }
       throw new Error("Invalid action");
 
+    case EditActionKind.ADD_IMG:
+      if (state.statement.imagePath === undefined) {
+        let newStatement: Exercise["statement"] = {
+          ...state.statement,
+          imagePath: "",
+          imagePosition: ImgPos.BOT,
+        };
+        return { ...state, statement: newStatement } as Exercise;
+      }
+      throw new Error("Invalid action");
+
+    case EditActionKind.REMOVE_IMG:
+      if (state.statement.imagePath != undefined) {
+        let newStatement: Exercise["statement"] = {
+          text: state.statement.text,
+        };
+        return { ...state, statement: newStatement } as Exercise;
+      }
+      throw new Error("Invalid action");
+
     case EditActionKind.CHANGE_IMG_URL:
       if (action.statement != undefined)
         if (action.statement.imagePath != undefined) {
-          let newStatement = {
+          let newStatement: Exercise["statement"] = {
             ...state.statement,
             imagePath: action.statement.imagePath,
           };
@@ -81,7 +103,7 @@ function EditReducer(state: Exercise, action: EditAction) {
     case EditActionKind.CHANGE_IMG_POS:
       if (action.statement != undefined)
         if (action.statement.imagePosition != undefined) {
-          let newStatement = {
+          let newStatement: Exercise["statement"] = {
             ...state.statement,
             imagePosition: action.statement.imagePosition,
           };
@@ -97,20 +119,19 @@ function EditReducer(state: Exercise, action: EditAction) {
           state.type === ExerciseType.TRUE_OR_FALSE)
       ) {
         let newState: Exercise = { ...state };
-        console.log(action.data);
 
         if (
           newState.solution != undefined &&
           newState.solution.data.type !== ExerciseType.OPEN_ANSWER
         ) {
           if (newState.items && newState.solution.data.items) {
+            newState.items[action.data.id] = {
+              text: "",
+            };
             newState.solution.data.items[action.data.id] = {
               text: "",
               justification: "",
               value: false,
-            };
-            newState.items[action.data.id] = {
-              text: "",
             };
             return newState as Exercise;
           }
@@ -149,20 +170,46 @@ function EditReducer(state: Exercise, action: EditAction) {
       throw new Error("Invalid action");
 
     case EditActionKind.CHANGE_ITEM_TF:
-      console.log(action);
-      console.log(state.solution);
       if (
         action.data != undefined &&
-        state.solution != undefined &&
-        typeof action.data != "string"
+        typeof action.data != "string" &&
+        state.solution != undefined
       )
         if (
-          state.solution.data.type === ExerciseType.TRUE_OR_FALSE &&
           action.data.value != undefined &&
+          state.solution.data.type === ExerciseType.TRUE_OR_FALSE &&
           state.solution.data.items != undefined
         ) {
           let newItems = { ...state.solution.data.items };
           newItems[action.data.id].value = action.data.value;
+          return {
+            ...state,
+            solution: {
+              ...state.solution,
+              data: {
+                ...state.solution.data,
+                items: newItems,
+              },
+            },
+          } as Exercise;
+        }
+      throw new Error("Invalid action");
+
+    case EditActionKind.CHANGE_ITEM_MC:
+      if (
+        action.data != undefined &&
+        typeof action.data != "string" &&
+        state.solution != undefined
+      )
+        if (
+          state.solution.data.type === ExerciseType.MULTIPLE_CHOICE &&
+          state.solution.data.items != undefined
+        ) {
+          let newItems = { ...state.solution.data.items };
+          let selectedID = action.data.id;
+          Object.keys(newItems).map((key) => {
+            newItems[key].value = key === selectedID;
+          });
           return {
             ...state,
             solution: {
@@ -194,7 +241,12 @@ function EditReducer(state: Exercise, action: EditAction) {
           return {
             ...state,
             items: newItems,
-            solution: { data: { items: newSolutionItems } },
+            solution: {
+              data: {
+                ...state.solution.data,
+                items: newSolutionItems,
+              },
+            },
           } as Exercise;
         }
       throw new Error("Invalid action");
@@ -259,7 +311,7 @@ export function EditExercise({
     function editExerciseContent() {
       switch (exercise.type) {
         case ExerciseType.MULTIPLE_CHOICE:
-          return <></>;
+          return <MCEdit dispatch={editDispatch} state={state} />;
 
         case ExerciseType.OPEN_ANSWER:
           return <></>;
