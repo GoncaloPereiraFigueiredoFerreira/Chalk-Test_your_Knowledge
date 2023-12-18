@@ -1035,7 +1035,7 @@ public class ExercisesService implements IExercisesService{
         if (verifyParams && specialistId != null) {
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("Theres no specialist with the given id");
-        }
+        } //TODO verificação das tags
         Page<ExerciseSQL> exerciseSQLS = exerciseSqlDAO.getExercises(PageRequest.of(page, itemsPerPage),tags,matchAllTags,visibility,institutionId,courseId,specialistId,title,exerciseType);
         return exercisesSqlToNoSql(exerciseSQLS);
     }

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import jakarta.transaction.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ConcreteExercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
@@ -20,6 +22,7 @@ import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.relational.*;
 import pt.uminho.di.chalktyk.models.relational.CourseSQL;
 import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
 import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
@@ -44,9 +47,9 @@ public class TestsService implements ITestsService {
     private final TestSqlDAO testSqlDAO;
     private final TestResolutionDAO resolutionDAO;
     private final TestResolutionSqlDAO resolutionSqlDAO;
+    private final IInstitutionsService institutionsService;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
-    private final IInstitutionsService institutionsService;
     private final ICoursesService coursesService;
     private final ITagsService tagsService;
 
@@ -65,11 +68,61 @@ public class TestsService implements ITestsService {
         this.tagsService = tagsService;
     }
 
+
+    /**
+     * Retrieves tests that match the given filters. Necessary to check authorization.
+     *
+     * @param page
+     * @param itemsPerPage   maximum items in a page
+     * @param tags           Array of identifiers from the tags that will be used to filter the tests
+     * @param matchAllTags   Value that defines if the exercise must have all the given tags to be retrieved
+     * @param visibilityType Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'.
+     * @param specialistId
+     * @param courseId       to search for a test from a specific course
+     * @param institutionId  to search for a test from a specific institution
+     * @param title          to search for a test title
+     * @param verifyParams   if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
+     *                       *                         'false' does not verify database logic
+     * @return page of tests
+     **/
     @Override
-    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<Integer> tags, Boolean matchAllTags,
-            String visibilityType, String visibilityTarget, String specialistId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTests'");
+    public List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
+        Visibility visibility= null;
+        if (visibilityType != null) {
+            visibility = Visibility.fromValue(visibilityType);
+            if (visibility == null)
+                throw new BadInputException("Visibility type not found");
+        }
+
+        if(verifyParams && courseId!=null) {
+            if(!coursesService.existsCourseById(courseId))
+                throw new NotFoundException("Theres no course with the given id");
+        }
+
+        if(verifyParams && institutionId!=null) {
+            if(!institutionsService.existsInstitutionById(institutionId))
+                throw new NotFoundException("Theres no institution with the given id");
+        }
+
+        if (verifyParams && specialistId != null) {
+            if(!specialistsService.existsSpecialistById(specialistId))
+                throw new NotFoundException("Theres no specialist with the given id");
+        }
+        Page<TestSQL> testSQLS = testSqlDAO.getTests(PageRequest.of(page, itemsPerPage),tags, tags.size(), matchAllTags,visibility,institutionId,courseId,specialistId,title);
+        return exercisesSqlToNoSql(testSQLS);
+    }
+
+    /**
+     * Converts a page of TestSQL to a list of Tests(NoSQL)s
+     * @param testSQLPage page of testes
+     * @return a list of Test(NoSQL)s
+     * @throws NotFoundException if one of the testes on the page, was not found
+     */
+    private List<Test> exercisesSqlToNoSql(Page<TestSQL> testSQLPage) throws NotFoundException {
+        List<Test> testList = new ArrayList<>();
+        for(var test : testSQLPage)
+            testList.add(this.getTestById(test.getId()));
+        return testList;
     }
 
     @Override

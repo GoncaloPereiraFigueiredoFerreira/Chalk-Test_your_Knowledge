@@ -12,18 +12,22 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 public interface ITestsService {
     /**
-     * Retrieves tests that match the given filters
+     * Retrieves tests that match the given filters. Necessary to check authorization.
      *
      * @param page
      * @param itemsPerPage maximum items in a page
      * @param tags Array of identifiers from the tags that will be used to filter the tests
      * @param matchAllTags Value that defines if the exercise must have all the given tags to be retrieved
      * @param visibilityType Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'.
-     * @param visibilityTarget institute or course targeted
+     * @param courseId         to search for a test from a specific course
+     * @param institutionId    to search for a test from a specific institution
+     * @param title            to search for a test title
      * @param specialistId
+     * @param verifyParams if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
+     *      *                         'false' does not verify database logic
      * @return page of tests
      **/
-     Page<Test> getTests(Integer page, Integer itemsPerPage, List<Integer> tags, Boolean matchAllTags, String visibilityType, String visibilityTarget, String specialistId);
+     List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId,  String courseId, String institutionId, String title,boolean verifyParams) throws BadInputException, NotFoundException;
 
     /**
      * Get test using its id
@@ -113,7 +117,6 @@ public interface ITestsService {
      * Create a test resolution
      *
      * @param testId
-     * @param studentId
      * @return test resolution identifier
      * @throws BadInputException if any property of the test resolution is not valid.
      * @throws NotFoundException if no test was found with the given id
