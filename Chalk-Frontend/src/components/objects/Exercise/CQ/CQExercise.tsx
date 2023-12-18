@@ -17,6 +17,7 @@ export function CQExercise({
           statement={exercise.statement}
           resolution={context.resolutionData}
           setResolution={context.setExerciseSolution}
+          additionalProps={exercise.additionalProps}
         ></CQSolve>
       );
       break;
@@ -27,6 +28,7 @@ export function CQExercise({
           id={exercise.id}
           position={position}
           statement={exercise.statement}
+          additionalProps={exercise.additionalProps}
         ></CQPreview>
       );
       break;

@@ -22,6 +22,7 @@ import {
   ExerciseComponent,
   ExerciseComponentProps,
   ExerciseContext,
+  ExerciseType,
   createNewResolution,
 } from "../Exercise/Exercise";
 import {
@@ -57,7 +58,7 @@ export function ShowExercise({
 
   useEffect(() => {
     switch (exercise.type) {
-      case "multiple-choice":
+      case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
             <CheckedListIcon size="size-4" />
@@ -67,7 +68,7 @@ export function ShowExercise({
 
         setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
-      case "open-answer":
+      case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
             <TextIcon size="size-4" />
@@ -76,7 +77,7 @@ export function ShowExercise({
         );
         setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
-      case "true-or-false":
+      case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
             <CheckboxIcon size="size-4" />
@@ -85,7 +86,7 @@ export function ShowExercise({
         );
         setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
-      case "fill-in-the-blank":
+      case ExerciseType.FILL_IN_THE_BLANK:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
             <InputIcon size="size-4" />
@@ -102,7 +103,7 @@ export function ShowExercise({
           // ></FillBlankExercise>
         );
         break;
-      case "code":
+      case ExerciseType.CODE:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
             <CodeIcon size="size-4" />
@@ -118,6 +119,15 @@ export function ShowExercise({
           //   name={name}
           // ></CodeExercise>
         );
+        break;
+      case ExerciseType.CHAT:
+        setTypeLabel(
+          <label className="caracteristics-exercise gray-icon">
+            <TextIcon size="size-4" />
+            Chat Question
+          </label>
+        );
+        setPreview(<ExerciseComponent {...exerciseComponent} />);
         break;
     }
   }, [exercise]);

@@ -157,7 +157,7 @@ export function Correction() {
       group.exercises.map(
         (exercise) =>
           (temp[exercise.id] = {
-            solution: exercise.solution!,
+            solution: undefined, // isto tem de se ir buscar ao backend e n ao exercicio
             cotation: exercise.cotation!,
             justifyKind: exercise.justifyKind!,
             studentRes: getExResByID(exercise.id),
@@ -167,10 +167,6 @@ export function Correction() {
     setResolutions(temp);
   }, []);
 
-  console.log(test);
-
-  console.log(resolutions);
-
   return (
     <>
       <div className="h-screen overflow-auto">
@@ -178,7 +174,7 @@ export function Correction() {
           <div className="flex w-full justify-between border-gray-2-2 dark:text-white">
             {/*
                 Test Preview
-               */}
+            */}
             <div className="w-full flex flex-row divide-x-2 border-gray-2-2">
               <div className="flex flex-col w-3/4 h-screen overflow-auto bg-2-1 px-4 pt-6">
                 <h1 className="text-3xl font-medium">
@@ -209,7 +205,7 @@ export function Correction() {
                       Resoluções por corrigir
                     </h3>
 
-                    {renderResolutions(exID, resolutions!, setResolutions)}
+                    {/*renderResolutions(exID, resolutions!, setResolutions)*/}
 
                     {/*
                     <div className="flex h-full items-center justify-center">

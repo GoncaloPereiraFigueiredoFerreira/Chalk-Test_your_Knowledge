@@ -15,6 +15,7 @@ import {
   ExerciseContext,
 } from "../Exercise/Exercise";
 import { MCEdit } from "../Exercise/MC/MCEdit";
+import { CQEdit } from "../Exercise/CQ/CQEdit";
 
 //------------------------------------//
 //                                    //
@@ -35,6 +36,8 @@ export enum EditActionKind {
   CHANGE_ITEM_MC = "CHANGE_ITEM_MC",
   CHANGE_ITEM_TEXT = "CHANGE_ITEM_TEXT",
   CHANGE_JUSTIFY_KIND = "CHANGE_JUSTIFY_KIND",
+  CHANGE_MAX_ANSWERS = "CHANGE_MAX_ANSWERS",
+  ADD_TOPIC = "ADD_TOPIC",
 }
 
 export interface EditAction {
@@ -53,6 +56,7 @@ export interface EditAction {
         text?: string;
         value?: boolean;
       };
+
   justifyKind?: ExerciseJustificationKind;
 }
 
@@ -324,6 +328,8 @@ export function EditExercise({
 
         case ExerciseType.CODE:
           return <></>;
+        case ExerciseType.CHAT:
+          return <CQEdit dispatch={editDispatch} state={state} />;
       }
     }
     return (

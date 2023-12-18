@@ -19,7 +19,7 @@ const userExercises: Exercise[] = [
     id: "1",
     title: "Quantas canetas",
     visibility: "public",
-    type: ExerciseType.OPEN_ANSWER,
+    type: ExerciseType.CHAT,
     specialistId: "333",
     statement: {
       text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
