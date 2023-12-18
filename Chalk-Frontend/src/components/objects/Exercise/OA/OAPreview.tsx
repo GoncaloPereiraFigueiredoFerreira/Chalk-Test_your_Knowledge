@@ -45,9 +45,10 @@ export function OAPreview(props: any) {
           <div className="px-4 py-2 rounded-b-lg">
             <textarea
               id="editor"
-              rows={8}
+              rows={3}
               className="block w-full px-0 border-0 focus:ring-0"
               placeholder="Write your answer..."
+              disabled
             ></textarea>
           </div>
         </div>

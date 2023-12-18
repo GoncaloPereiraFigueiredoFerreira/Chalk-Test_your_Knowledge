@@ -49,7 +49,7 @@ const basictest: Test = {
             3: { text: "Argentina" },
             4: { text: "Setúbal" },
           },
-          type: ExerciseType.OPEN_ANSWER,
+          type: ExerciseType.CHAT,
           justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         },
         {
@@ -86,7 +86,7 @@ const basictest: Test = {
             4: { text: "Setúbal" },
           },
           type: ExerciseType.TRUE_OR_FALSE,
-          justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
+          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         },
       ],
       groupCotation: 3,
@@ -450,6 +450,13 @@ function initResolutions(test: Test): ResolutionData[][] {
           initResolution[groupID].push({
             type: ExerciseType.OPEN_ANSWER,
             text: "",
+          });
+          break;
+
+        case ExerciseType.CHAT:
+          initResolution[groupID].push({
+            type: ExerciseType.CHAT,
+            msgs: [exercise.statement.text],
           });
           break;
       }

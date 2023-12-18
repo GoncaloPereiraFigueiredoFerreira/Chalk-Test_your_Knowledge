@@ -97,6 +97,7 @@ export function TFSolve({
 
   useEffect(() => setResolution(state), [state]);
 
+  console.log(state.items);
   return (
     <>
       <ExerciseHeader header={statement} />

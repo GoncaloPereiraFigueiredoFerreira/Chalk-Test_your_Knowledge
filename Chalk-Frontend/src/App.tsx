@@ -19,7 +19,6 @@ import { AvaliacoesPage } from "./components/pages/Groups/AvaliacoesPage";
 import { TestesPartilhadosPage } from "./components/pages/Groups/TestesPartilhadosPage";
 import { AlunosPage } from "./components/pages/Groups/AlunosPage";
 import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
-import { TestPreview } from "./components/pages/Tests/TestPreview";
 import { Correction } from "./components/pages/Tests/Correction/Correction";
 import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
 

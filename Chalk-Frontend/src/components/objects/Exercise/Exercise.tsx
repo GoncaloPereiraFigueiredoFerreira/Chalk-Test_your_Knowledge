@@ -4,6 +4,7 @@
 //                                    //
 //------------------------------------//
 
+import { CQExercise } from "./CQ/CQExercise";
 import { ImgPos } from "./Header/ExHeader";
 import { MCExercise } from "./MC/MCExercise";
 import { OAExercise } from "./OA/OAExercise";
@@ -124,6 +125,7 @@ export interface Resolution {
 export type ResolutionData =
   | TFResolutionData
   | MCResolutionData
+  | CQResolutionData
   | OAResolutionData;
 
 export interface TFResolutionData {
@@ -139,6 +141,11 @@ export interface MCResolutionData {
 export interface OAResolutionData {
   type: ExerciseType.OPEN_ANSWER;
   text: string;
+}
+
+export interface CQResolutionData {
+  type: ExerciseType.CHAT;
+  msgs: string[];
 }
 
 export interface ResolutionItems {
@@ -161,6 +168,7 @@ export enum ExerciseType {
   TRUE_OR_FALSE = "true-or-false",
   FILL_IN_THE_BLANK = "fill-in-the-blank",
   CODE = "code",
+  CHAT = "chat",
 }
 
 export enum ExerciseJustificationKind {
@@ -187,9 +195,12 @@ export interface Exercise {
   justifyKind?: ExerciseJustificationKind;
   items?: { [id: string]: { text: string } };
 
-  solution?: Resolution;
-  resolution?: Resolution;
-  comments?: string[];
+  additionalProps?: ChatBasedProps;
+}
+
+export interface ChatBasedProps {
+  topics: string[];
+  maxMsgs: number;
 }
 
 //------------------------------------//
@@ -286,6 +297,15 @@ export function ExerciseComponent({
           exercise={exercise}
           position={position}
         ></OAExercise>
+      );
+    }
+    case ExerciseType.CHAT: {
+      return (
+        <CQExercise
+          context={context}
+          exercise={exercise}
+          position={position}
+        ></CQExercise>
       );
     }
   }

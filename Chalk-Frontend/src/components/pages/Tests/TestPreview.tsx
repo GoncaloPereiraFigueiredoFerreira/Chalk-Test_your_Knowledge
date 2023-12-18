@@ -16,31 +16,29 @@ function renderExercise(
   setShowExID: Function
 ) {
   return (
-    <>
-      <div
-        key={index}
-        className=" rounded-lg w-full p-4 bg-3-2 z-20"
-        onClick={(e) => {
-          setSelectedExercise(index == exerciseSelected ? -1 : index);
-          setShowExID(index == exerciseSelected ? "" : exercise.id);
-          e.stopPropagation();
-        }}
-      >
-        <div className="flex justify-between">
-          <label className="text-md font-medium">Exercício {index + 1}</label>
-          <p>Cotação do Exercício: {exercise.cotation}</p>
-        </div>
-        {index == exerciseSelected ? (
-          <ExerciseComponent
-            exercise={exercise}
-            context={{ context: ExerciseContext.PREVIEW }}
-            position={groupIndex + 1 + "." + (index + 1)}
-          ></ExerciseComponent>
-        ) : (
-          <></>
-        )}
+    <div
+      key={index}
+      className=" rounded-lg w-full p-4 bg-3-2 z-20"
+      onClick={(e) => {
+        setSelectedExercise(index == exerciseSelected ? -1 : index);
+        setShowExID(index == exerciseSelected ? "" : exercise.id);
+        e.stopPropagation();
+      }}
+    >
+      <div className="flex justify-between">
+        <label className="text-md font-medium">Exercício {index + 1}</label>
+        <p>Cotação do Exercício: {exercise.cotation}</p>
       </div>
-    </>
+      {index == exerciseSelected ? (
+        <ExerciseComponent
+          exercise={exercise}
+          context={{ context: ExerciseContext.PREVIEW }}
+          position={groupIndex + 1 + "." + (index + 1)}
+        ></ExerciseComponent>
+      ) : (
+        <></>
+      )}
+    </div>
   );
 }
 
@@ -54,41 +52,39 @@ function renderGroup(
   setShowExID: Function
 ) {
   return (
-    <>
-      <div
-        key={index}
-        className="rounded-lg w-full p-4 bg-3-1"
-        onClick={() => {
-          setSelectedGroup(index == selectedGroup ? -1 : index);
-          setSelectedEx(-1);
-          setShowExID("");
-        }}
-      >
-        <div className="flex justify-between mb-4 z-10">
-          <label className="text-xl font-medium">Grupo {index + 1}</label>
-          <p>Cotação do Grupo: {group.groupCotation}</p>
-        </div>
-        {selectedGroup == index ? (
-          <div>
-            <h2>{group.groupInstructions}</h2>
-            <div className="space-y-4">
-              {group.exercises.map((exercise, exId) => {
-                return renderExercise(
-                  exercise,
-                  exId,
-                  index,
-                  selectedEx,
-                  setSelectedEx,
-                  setShowExID
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
+    <div
+      key={index}
+      className="rounded-lg w-full p-4 bg-3-1"
+      onClick={() => {
+        setSelectedGroup(index == selectedGroup ? -1 : index);
+        setSelectedEx(-1);
+        setShowExID("");
+      }}
+    >
+      <div className="flex justify-between mb-4 z-10">
+        <label className="text-xl font-medium">Grupo {index + 1}</label>
+        <p>Cotação do Grupo: {group.groupCotation}</p>
       </div>
-    </>
+      {selectedGroup == index ? (
+        <div>
+          <h2>{group.groupInstructions}</h2>
+          <div className="space-y-4">
+            {group.exercises.map((exercise, exId) => {
+              return renderExercise(
+                exercise,
+                exId,
+                index,
+                selectedEx,
+                setSelectedEx,
+                setShowExID
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+    </div>
   );
 }
 

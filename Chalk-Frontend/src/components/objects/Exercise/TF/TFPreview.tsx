@@ -28,6 +28,9 @@ export function TFPreview({
   return (
     <>
       <ExerciseHeader header={statement} />
+      <p>
+        <strong>Tipo de Justificação:</strong> {justifyKind}
+      </p>
       <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
         <div className="flex text-xl font-bold px-4">V</div>
         <div className="flex text-xl font-bold px-4">F</div>
@@ -56,6 +59,7 @@ function TFShowStatement(props: any) {
           type="radio"
           name={props.name}
           onChange={() => setOpenJustify("true")}
+          disabled
         ></input>
       </div>
       <div className="flex items-start justify-center">
@@ -64,12 +68,13 @@ function TFShowStatement(props: any) {
           type="radio"
           name={props.name}
           onChange={() => setOpenJustify("false")}
+          disabled
         ></input>
       </div>
       <div className="">
         <p>{props.text}</p>
       </div>
-      <TFJustify open={openJustify} justifyKind={props.justifyKind}></TFJustify>
+      {/*<TFJustify open={openJustify} justifyKind={props.justifyKind}></TFJustify>*/}
     </>
   );
 }
@@ -86,14 +91,14 @@ function TFJustify(props: any) {
   ) : (
     <div
       className={`${
-        justify ? "h-28" : "h-0"
+        justify ? "h-16" : "h-0"
       } col-span-3 transition-[height] duration-75`}
     >
-      <div className="h-full px-7 overflow-hidden">
+      <div className=" px-7 overflow-hidden">
         <textarea
           className={`${justify ? "" : "hidden"} basic-input-text`}
           name={"justification"}
-          rows={3}
+          rows={1}
           placeholder="Justifique a sua resposta"
         ></textarea>
       </div>

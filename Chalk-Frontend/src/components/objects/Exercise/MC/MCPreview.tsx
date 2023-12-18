@@ -14,6 +14,9 @@ export function MCPreview({
   return (
     <>
       <ExerciseHeader header={statement}></ExerciseHeader>
+      <p>
+        <strong>Tipo de Justificação:</strong> {justifyKind}
+      </p>
       <ul>
         {Object.entries(items).map(([index, value]) => (
           <div key={index}>
@@ -27,14 +30,16 @@ export function MCPreview({
                 type="radio"
                 className="radio-blue mr-3"
                 onChange={() => setChosenOption(index)}
+                disabled
               ></input>
               {value.text}
             </label>
+            {/*
             <MCJustify
               index={index}
               chosenOption={chosenOption}
               justifyKind={justifyKind}
-            ></MCJustify>
+            ></MCJustify>*/}
           </div>
         ))}
       </ul>
