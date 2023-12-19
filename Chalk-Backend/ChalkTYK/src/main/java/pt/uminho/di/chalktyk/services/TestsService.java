@@ -17,9 +17,12 @@ import jakarta.persistence.PersistenceContext;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolutionStatus;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.Item;
 import jakarta.transaction.Transactional;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.Comment;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ConcreteExercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ShallowExercise;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.StringItem;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.DeliverDateTest;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.LiveTest;
@@ -279,17 +282,112 @@ public class TestsService implements ITestsService {
 
     @Override
     public void deleteTestById(String testId) throws NotFoundException {
-        throw new UnsupportedOperationException("Unimplemented method 'deleteTestById'");
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found in the non-relational database");
+        TestSQL testSQL = testSqlDAO.findById(testId).orElse(null);
+        if (testSQL == null)
+            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found in the relational database");
+
+        List<TestResolutionSQL> trs = resolutionSqlDAO.getTestResolutions(testId);
+        if (trs != null){
+            for (TestResolutionSQL tr: trs){
+                deleteTestResolutionById(tr.getId());
+            }
+        }
+
+        List<TestTagsSQL> tags = tagsSqlDAO.getTestTags(testId);
+        if (tags != null){
+            for (TestTagsSQL tag: tags){
+                tagsSqlDAO.delete(tag);
+            }
+        }
+
+        // TODO: delete test exercises
+
+        testDAO.delete(test);
+        testSqlDAO.delete(testSQL);
     }
 
     @Override
-    public String duplicateTestById(String testId) throws NotFoundException {
+    @Transactional
+    public String duplicateTestById(String specialistId, String testId) throws BadInputException, NotFoundException {
+        // check if the specialist exists
+        if (!specialistsService.existsSpecialistById(specialistId))
+            throw new NotFoundException("Can't duplicate test: couldn't find specialist with id \'" + specialistId + "\' .");
+        // check if the test exists
         if (!testDAO.existsById(testId))
-            throw new NotFoundException("Can't duplicate test: couldn't find test with id" + testId + " .");
-        //Test og = getTestById(testId);
-        //TestSQL ogSQL = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
+            throw new NotFoundException("Can't duplicate test: couldn't find test with id \'" + testId + "\' .");
         
-        return "";
+        // gets specialists institution
+        String institutionId = null;
+        Institution institution = institutionsService.getSpecialistInstitution(specialistId);
+        if(institution != null)
+            institutionId = institution.getName();
+
+        // fetch original models
+        Test og = getTestById(testId);
+        if (og == null)
+            throw new NotFoundException("Can't duplicate test: couldn't fetch test with id \'" + testId + "\' from non-relational database.");
+        TestSQL ogSQL = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
+        if (ogSQL == null)
+            throw new NotFoundException("Can't duplicate test: couldn't find test with id \'" + testId + "\' from relational database.");
+
+        // TODO: what to do about publish date and course
+        Test newTest = new Test(null, specialistId, institutionId, og.getCourseId(), og.getTitle(), og.getGlobalInstructions(), og.getGlobalPoints(), 
+                                og.getConclusion(), LocalDateTime.now(), null, null);
+
+        // persist the test in nosql database
+        newTest = testDAO.save(newTest);
+
+        // persists the test in sql database
+        InstitutionSQL inst = newTest.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, newTest.getInstitutionId()) : null;
+        CourseSQL course = newTest.getCourseId() != null ? entityManager.getReference(CourseSQL.class, newTest.getCourseId()) : null;
+        SpecialistSQL specialist = specialistId != null ? entityManager.getReference(SpecialistSQL.class, specialistId) : null;
+        // TODO: what to do about visibility
+        TestSQL newTestSQL = new TestSQL(newTest.getId(), inst, course, VisibilitySQL.PRIVATE, specialist, newTest.getTitle(), newTest.getPublishDate());
+        testSqlDAO.save(newTestSQL);
+        
+        duplicateExercises(og, newTest);
+        List<TestTagsSQL> tags = tagsSqlDAO.getTestTags(testId);
+        for (TestTagsSQL tmp: tags){
+            TagSQL tag = tagsService.getTagById(tmp.getTagId());
+            TestTagsPkSQL testTagPK = new TestTagsPkSQL(tag, newTestSQL);
+            TestTagsSQL testTag = new TestTagsSQL(tmp.getNExercises(), testTagPK, tag.getId(), newTest.getId());
+            tagsSqlDAO.save(testTag);
+        }
+
+        return newTest.getId();
+    }
+
+    @Transactional
+    private void duplicateExercises(Test oldTest, Test newTest) throws BadInputException, NotFoundException {
+        List<TestGroup> groups = oldTest.getGroups();
+        List<TestGroup> newGroup = new ArrayList<>();
+
+        if (groups != null){
+            for (TestGroup tg: groups){
+                tg.verifyProperties();
+                List<Exercise> exeList = tg.getExercises();
+                List<Exercise> newExeList = new ArrayList<>();
+
+                if (exeList != null){
+                    for (Exercise exe: exeList){
+                        // duplicate exercise
+                        String cloneId = exercisesService.duplicateExerciseById(exe.getSpecialistId(), exe.getId());
+                        Exercise cloneExe = exercisesService.getExerciseById(cloneId);
+                        if (cloneExe != null)
+                            newExeList.add(cloneExe);
+                    }
+                }
+
+                TestGroup newTg = new TestGroup(newExeList, tg.getGroupInstructions(), tg.getGroupPoints());
+                newGroup.add(newTg);
+            }
+        }
+
+        newTest.setGroups(newGroup);
+        testDAO.save(newTest);
     }
 
     @Override
@@ -404,6 +502,19 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional
+    public void deleteTestResolutionById(String resolutionId) throws NotFoundException {
+        TestResolution resolution = resolutionDAO.findById(resolutionId).orElse(null);
+        TestResolutionSQL resolutionSQL = resolutionSqlDAO.findById(resolutionId).orElse(null);
+        if (resolutionSQL == null)
+            throw new NotFoundException("Couldn't delete resolution: Resolution \'" + resolutionId + "\'was not found");
+
+        exercisesService.deleteAllExerciseResolutionByTestResolutionId(resolutionId);
+        resolutionDAO.delete(resolution);
+        resolutionSqlDAO.delete(resolutionSQL);
+    }
+
+    @Override
+    @Transactional
     public Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't find test with given id.");
@@ -499,8 +610,15 @@ public class TestsService implements ITestsService {
         ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
         er.setStatus(ExerciseResolutionStatus.REVISED);
         er.setPoints(points);
+        Comment c = null;
+        if (comment != null){
+            List<Item> items = new ArrayList<>();
+            StringItem si = new StringItem(comment);
+            items.add(si);
+            c = new Comment(items);
+            er.setComment(c);
+        }
         exerciseResolutionDAO.save(er);
-        // TODO: add comment
 
         TestResolution tr = getTestResolutionById(testResId);
         List<TestResolutionGroup> trgs = tr.getGroups();
@@ -509,6 +627,9 @@ public class TestsService implements ITestsService {
                 if (er.getId().equals(exeRes.getId())){
                     exeRes.setPoints(points);
                     exeRes.setStatus(ExerciseResolutionStatus.REVISED);
+                    if (comment != null)
+                        er.setComment(c);
+
                     if (trg.getGroupPoints() != null)
                         trg.setGroupPoints(trg.getGroupPoints() + points);
                     else

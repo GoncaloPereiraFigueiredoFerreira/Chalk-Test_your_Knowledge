@@ -59,11 +59,13 @@ public interface ITestsService {
     /**
      * Duplicates the test using its identifier
      *
+     * @param specialistId
      * @param testId
      * @return duplicate identifier
-     * @throws NotFoundException if no test was found with the given id
+     * @throws BadInputException if an error occurs when replicating any entity
+     * @throws NotFoundException if no test or specialist were found with the given ids
      **/
-    String duplicateTestById(String testId) throws NotFoundException;
+    String duplicateTestById(String specialistId, String testId) throws BadInputException, NotFoundException;
 
     /**
      * Update a test
@@ -133,6 +135,14 @@ public interface ITestsService {
      * @throws NotFoundException if no test was found with the given id
      **/
     String createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException;
+
+    /**
+     * Delete test resolution by its id
+     *
+     * @param  resolutionId
+     * @throws NotFoundException if no test resolution was found with the given id
+     **/
+    void deleteTestResolutionById(String resolutionId) throws NotFoundException;
 
     /**
      * Allows to check if the student can submit a resolution for the test

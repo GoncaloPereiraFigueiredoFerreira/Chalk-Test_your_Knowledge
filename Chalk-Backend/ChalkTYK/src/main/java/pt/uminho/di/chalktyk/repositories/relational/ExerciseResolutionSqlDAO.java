@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolutionStatus;
 import pt.uminho.di.chalktyk.models.relational.ExerciseResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 
@@ -100,5 +99,8 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
     List<ExerciseResolutionSQL> findExerciseResolutionSQLSByExercise_IdAndStudent_Id(String exerciseId, String studentId);
 
     @Query(value = "SELECT id FROM exercise_resolution WHERE exerciseid = :exeId AND test_resolutionid = :testResId", nativeQuery = true)
-    List<String> getResolutionIdFromExeAndTest(@Param("exeId") String exeId, @Param("testResId") String testResId);
+    List<String> getResolutionIdFromExeAndTestRes(@Param("exeId") String exeId, @Param("testResId") String testResId);
+
+    @Query(value = "SELECT * FROM exercise_resolution WHERE test_resolutionid = :testResId", nativeQuery = true)
+    List<ExerciseResolutionSQL> getResolutionFromTestRes(@Param("testResId") String testResId);
 }

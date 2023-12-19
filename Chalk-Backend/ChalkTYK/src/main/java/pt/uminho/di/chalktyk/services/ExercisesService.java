@@ -1084,13 +1084,28 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
-        List<String> ids = exerciseResolutionSqlDAO.getResolutionIdFromExeAndTest(exerciseId, testResId);
+        List<String> ids = exerciseResolutionSqlDAO.getResolutionIdFromExeAndTestRes(exerciseId, testResId);
         if (ids.size() > 0 && ids.get(0) != null){
             ExerciseResolution resolution = exerciseResolutionDAO.findById(ids.get(0)).orElse(null);
             return resolution;
         }
         else
             throw new NotFoundException("Could not get exercise resolution: No resolution was found.");
+    }
+
+    @Override
+    public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
+        List<ExerciseResolutionSQL> exesRes = exerciseResolutionSqlDAO.getResolutionFromTestRes(testResId);
+        
+        if (exesRes.size() > 0){
+            for (ExerciseResolutionSQL exeResSQL: exesRes){
+                ExerciseResolution exeRes = exerciseResolutionDAO.findById(exeResSQL.getId()).orElse(null);
+                if (exeRes != null){
+                    exerciseResolutionDAO.delete(exeRes);
+                }
+                exerciseResolutionSqlDAO.delete(exeResSQL);
+            }
+        }
     }
 
 

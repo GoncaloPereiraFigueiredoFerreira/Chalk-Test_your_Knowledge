@@ -16,6 +16,9 @@ public interface TestResolutionSqlDAO extends JpaRepository<TestResolutionSQL, S
     @Query(value = "select tr from TestResolutionSQL tr where tr.test.id = :testId")
     Page<TestResolutionSQL> getTestResolutions(@Param("testId") String testId, Pageable pageable);
 
+    @Query(value = "select * from test_resolution where testid = :testId", nativeQuery = true)
+    List<TestResolutionSQL> getTestResolutions(@Param("testId") String testId);
+
     @Query(value = "SELECT COUNT(*) FROM test_resolution WHERE testid = :testId", nativeQuery = true)
     int countTotalSubmissionsForTest(@Param("testId") String testId);
 
