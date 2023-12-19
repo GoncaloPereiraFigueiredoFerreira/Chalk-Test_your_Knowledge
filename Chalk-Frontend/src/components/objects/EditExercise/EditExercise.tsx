@@ -18,8 +18,6 @@ import {
   TFResolutionData,
   MCResolutionData,
   OAResolutionData,
-  InitResolutionDataType,
-  ExerciseIdentity,
   InitResolutionDataEx,
 } from "../Exercise/Exercise";
 
@@ -250,6 +248,11 @@ function EditReducer(state: EditState, action: EditAction) {
   }
 }
 
+interface EditState {
+  exercise: Exercise;
+  solution: ResolutionData;
+}
+
 //------------------------------------//
 //                                    //
 //           EditExercise             //
@@ -257,22 +260,19 @@ function EditReducer(state: EditState, action: EditAction) {
 //------------------------------------//
 
 interface EditExerciseProps {
-  editMenuIsOpen: string;
-  setEditMenuIsOpen: (value: string) => void;
-}
-
-interface EditState {
-  exercise: Exercise;
-  solution: ResolutionData;
+  exerciseID: string;
+  setExerciseID: (value: string) => void;
+  setEditMenuIsOpen: (value: boolean) => void;
 }
 
 export function EditExercise({
-  editMenuIsOpen,
+  exerciseID,
+  setExerciseID,
   setEditMenuIsOpen,
 }: EditExerciseProps) {
   const { dispatch, listExerciseState } = useListExerciseContext();
 
-  let exercise = listExerciseState.listExercises[editMenuIsOpen];
+  let exercise = listExerciseState.listExercises[exerciseID];
   let solution = InitResolutionDataEx(exercise);
 
   let initState: EditState = { exercise: exercise, solution: solution };
@@ -286,7 +286,7 @@ export function EditExercise({
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
             onClick={() => {
-              if (editMenuIsOpen === "-1") {
+              if (exerciseID === "-1") {
                 // <<< RETIRAR ESTE IF >>>
                 // TEMPORARIO ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
                 // PARA SE SABER O ID DO NOVO EXERCICIO
@@ -314,7 +314,8 @@ export function EditExercise({
                 });
                 // <<< MANTER (final)>>>
               }
-              setEditMenuIsOpen("");
+              setExerciseID("");
+              setEditMenuIsOpen(false);
             }}
           >
             Guardar e fechar
@@ -341,12 +342,12 @@ export function EditExercise({
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
             onClick={() => {
-              if (editMenuIsOpen === "-1") {
+              if (exerciseID === "-1") {
                 // <<< RETIRAR ESTE IF >>>
                 // TEMPORARIO ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
                 // PARA SE SABER O ID DO NOVO EXERCICIO
                 dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
+                  type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
                   payload: {
                     exercise: {
                       ...state.exercise,
@@ -369,7 +370,8 @@ export function EditExercise({
                 });
                 // <<< MANTER (final)>>>
               }
-              setEditMenuIsOpen("");
+              setExerciseID("");
+              setEditMenuIsOpen(false);
             }}
           >
             Guardar e fechar
@@ -377,12 +379,13 @@ export function EditExercise({
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
             onClick={() => {
-              if (editMenuIsOpen === "-1")
+              if (exerciseID === "-1")
                 dispatch({
                   type: ListExerciseActionKind.REMOVE_EXERCISE,
-                  payload: { selectedExercise: editMenuIsOpen },
+                  payload: { selectedExercise: exerciseID },
                 });
-              setEditMenuIsOpen("");
+              setExerciseID("");
+              setEditMenuIsOpen(false);
             }}
           >
             Cancelar

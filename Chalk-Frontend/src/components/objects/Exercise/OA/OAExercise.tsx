@@ -21,7 +21,7 @@ export function OAExerciseComp({
           position={position}
           context={context as SolveProps}
           exercise={exercise as OAExercise}
-        ></OASolve>
+        />
       );
       break;
 
@@ -31,7 +31,7 @@ export function OAExerciseComp({
           position={position}
           context={context as PreviewProps}
           exercise={exercise as OAExercise}
-        ></OAPreview>
+        />
       );
       break;
 
@@ -48,11 +48,13 @@ export function OAExerciseComp({
       break;
   }
   return (
-    <div className="">
-      <div className="m-5 text-title-2">
-        {position + ") " + exercise.base.title}
-      </div>
+    <>
+      {context.context !== ExerciseContext.EDIT ? (
+        <div className="m-5 text-title-2">
+          {position + ") " + exercise.base.title}
+        </div>
+      ) : null}
       <div className="m-5 text-lg">{exerciseDisplay}</div>
-    </div>
+    </>
   );
 }

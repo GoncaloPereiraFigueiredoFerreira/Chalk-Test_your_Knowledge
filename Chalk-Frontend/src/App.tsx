@@ -11,7 +11,7 @@ import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/Tests/TestList/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
 import { Subscription } from "./components/pages/HomePage/Subscription/Subscription";
-//import { CreateTest } from "./components/pages/CreateTest/CreateTest";
+import { CreateTest } from "./components/pages/CreateTest/CreateTest";
 import { SearchList } from "./components/pages/SearchList/SearchList";
 import { SolveTest } from "./components/pages/Tests/SolveTest/SolveTest";
 import { GroupsPage } from "./components/pages/Groups/GroupsPage";
@@ -40,7 +40,7 @@ function App() {
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
           <Route path="exercise-bank" element={<ExerciseBankPage />} />
-          {/*<Route path="create-test" element={<CreateTest />} />*/}
+          <Route path="create-test" element={<CreateTest />} />
           <Route path="tests">
             <Route index path="" element={<TestPage />} />
             <Route path="preview" element={<PreviewTest />} />

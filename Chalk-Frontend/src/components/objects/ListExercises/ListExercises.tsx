@@ -116,11 +116,13 @@ const userExercises: Exercise[] = [
 ];
 
 interface ListExercisesProps {
-  editMenuIsOpen: string;
-  setEditMenuIsOpen: (value: string) => void;
+  setExerciseID: (value: string) => void;
+  editMenuIsOpen: boolean;
+  setEditMenuIsOpen: (value: boolean) => void;
 }
 
 export function ListExercises({
+  setExerciseID,
   editMenuIsOpen,
   setEditMenuIsOpen,
 }: ListExercisesProps) {
@@ -152,8 +154,9 @@ export function ListExercises({
           <ShowExercise
             position={"1"}
             exercise={listExerciseState.listExercises["-1"]}
-            setEditMenuIsOpen={setEditMenuIsOpen}
+            setExerciseID={setExerciseID}
             editMenuIsOpen={editMenuIsOpen}
+            setEditMenuIsOpen={setEditMenuIsOpen}
             selectedExercise={listExerciseState.selectedExercise}
             setSelectedExercise={(value) =>
               dispatch({
@@ -165,26 +168,26 @@ export function ListExercises({
             }
           ></ShowExercise>
         ) : null}
-        {Object.entries(listExerciseState.listExercises).map(
-          ([key, exercise]) =>
-            exercise.identity.id === "-1" ? null : (
-              <ShowExercise
-                key={key}
-                position={key}
-                exercise={exercise}
-                setEditMenuIsOpen={setEditMenuIsOpen}
-                editMenuIsOpen={editMenuIsOpen}
-                selectedExercise={listExerciseState.selectedExercise}
-                setSelectedExercise={(value) =>
-                  dispatch({
-                    type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
-                    payload: {
-                      selectedExercise: value,
-                    },
-                  })
-                }
-              ></ShowExercise>
-            )
+        {Object.keys(listExerciseState.listExercises).map((value, index) =>
+          value === "-1" ? null : (
+            <ShowExercise
+              key={index}
+              position={(index + 1).toString()}
+              exercise={listExerciseState.listExercises[value]}
+              setExerciseID={setExerciseID}
+              editMenuIsOpen={editMenuIsOpen}
+              setEditMenuIsOpen={setEditMenuIsOpen}
+              selectedExercise={listExerciseState.selectedExercise}
+              setSelectedExercise={(value) =>
+                dispatch({
+                  type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
+                  payload: {
+                    selectedExercise: value,
+                  },
+                })
+              }
+            ></ShowExercise>
+          )
         )}
       </div>
       <PopUp
@@ -199,7 +202,10 @@ export function ListExercises({
                   newExerciseType: newExerciseType,
                 },
               });
-              if (editMenuIsOpen === "") setEditMenuIsOpen("-1");
+              if (!editMenuIsOpen) {
+                setEditMenuIsOpen(true);
+                setExerciseID("-1");
+              }
               setNewExercisePopUp(false);
             }}
           />

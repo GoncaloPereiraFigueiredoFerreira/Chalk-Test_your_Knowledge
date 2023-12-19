@@ -52,14 +52,16 @@ function ListExerciseStateReducer(
     case ListExerciseActionKind.CREATE_NEW_EXERCISE:
       if (action.payload)
         if (action.payload.exercise) {
+          let { ["-1"]: removedItem, ...cleanListExercises } =
+            listExerciseState.listExercises;
           let newListExercises = {
+            ...cleanListExercises,
             [action.payload.exercise.identity!.id]: action.payload.exercise,
-            ...listExerciseState.listExercises,
           };
           return {
             ...listExerciseState,
             listExercises: newListExercises,
-            selectedExercise: "",
+            selectedExercise: action.payload.exercise.identity!.id,
           };
         } else throw new Error("No data provided in action.payload.exercise");
       else throw new Error("No data provided in action.payload");
@@ -83,15 +85,12 @@ function ListExerciseStateReducer(
       if (action.payload)
         if (action.payload.selectedExercise) {
           let exerciseID = action.payload.selectedExercise;
-          if (
-            !Object.keys(listExerciseState.listExercises).includes(exerciseID)
-          ) {
-            let { exerciseID, ...newListExercises } =
+          if (exerciseID in listExerciseState.listExercises) {
+            const { [exerciseID]: removedItem, ...newListExercises } =
               listExerciseState.listExercises;
             return {
               ...listExerciseState,
               listExercises: newListExercises,
-              selectedExercise: "",
             };
           } else throw new Error("Exercise does not exist");
         } else

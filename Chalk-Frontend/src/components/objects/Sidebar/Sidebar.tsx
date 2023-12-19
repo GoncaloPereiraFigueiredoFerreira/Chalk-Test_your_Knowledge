@@ -2,12 +2,9 @@ import "./Sidebar.css";
 import {
   SidebarIcon,
   DownArrowIcon,
-  FoldersIcon,
   CheckListIcon,
-  SettingsIcon,
   GroupIcon,
   PenIcon,
-  MessageBoxIcon,
   HelpIcon,
   TeacherIcon,
   GraduateIcon,
@@ -153,7 +150,10 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           <li>
             <button
               className="relative inline-block text-lg group"
-              onClick={() => navigate("/webapp/create-test")}
+              onClick={() => {
+                toggle(false);
+                navigate("/webapp/create-test");
+              }}
             >
               {/*Bloco inicial*/}
               <span className="relative z-10 block px-3 py-3 overflow-hidden font-bold leading-tight transition-colors duration-500 ease-out border-2 text-gray-700 group-hover:text-white dark:text-gray-300 dark:group-hover:text-gray-800 bg-white group-hover:bg-gray-700 dark:bg-gray-800 dark:group-hover:bg-gray-500 border-gray-700 dark:border-gray-600 rounded-lg">
@@ -185,32 +185,42 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </button>
           </li>
           <li>
-            <Link to={"search"}>
-              <button className="sidebar-item bg-btn-1 group">
-                <SearchIcon style={"group-gray-icon"} />
-                <span className={isOpen ? "" : "hidden"}>
-                  Procurar conteúdos
-                </span>
-              </button>
-            </Link>
+            <button
+              className="sidebar-item bg-btn-1 group"
+              onClick={() => {
+                toggle(false);
+                navigate("/webapp/search");
+              }}
+            >
+              <SearchIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>Procurar conteúdos</span>
+            </button>
           </li>
           <li>
-            <Link to={"tests"}>
-              <button className="sidebar-item bg-btn-1 group">
-                <CheckListIcon style={"group-gray-icon"} />
-                <span className={isOpen ? "" : "hidden"}>Os meus testes</span>
-              </button>
-            </Link>
+            <button
+              className="sidebar-item bg-btn-1 group"
+              onClick={() => {
+                toggle(false);
+                navigate("/webapp/tests");
+              }}
+            >
+              <CheckListIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>Os meus testes</span>
+            </button>
           </li>
           <li>
-            <Link to={"exercise-bank"}>
-              <button className="sidebar-item bg-btn-1 group">
-                <PenIcon style={"group-gray-icon"} />
-                <span className={isOpen ? "" : "hidden"}>
-                  Banco de Exercícios
-                </span>
-              </button>
-            </Link>
+            <button
+              className="sidebar-item bg-btn-1 group"
+              onClick={() => {
+                toggle(false);
+                navigate("/webapp/exercise-bank");
+              }}
+            >
+              <PenIcon style={"group-gray-icon"} />
+              <span className={isOpen ? "" : "hidden"}>
+                Banco de Exercícios
+              </span>
+            </button>
           </li>
         </ul>
 
@@ -227,7 +237,11 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               {getGroup()}
             </button>
 
-            <ul className={`${showGroup ? "" : "hidden"} sidebar-dropdown`}>
+            <ul
+              className={`${
+                showGroup && isOpen ? "" : "hidden"
+              } sidebar-dropdown`}
+            >
               {user.user?.courses.map((item, index) => (
                 <li key={index}>
                   <button
