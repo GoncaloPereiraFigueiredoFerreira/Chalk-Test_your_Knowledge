@@ -1,5 +1,7 @@
 package pt.uminho.di.chalktyk.models.relational;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -38,14 +40,9 @@ public enum VisibilitySQL {
 	}
 
 	public boolean isValid(){
-		if (this.equals(VisibilitySQL.COURSE) ||
-			this.equals(VisibilitySQL.DELETED) ||
-			this.equals(VisibilitySQL.INSTITUTION) ||
-			this.equals(VisibilitySQL.NOT_LISTED) ||
-			this.equals(VisibilitySQL.PRIVATE) ||
-			this.equals(VisibilitySQL.PUBLIC) ||
-			this.equals(VisibilitySQL.TEST))
-				return true;
-		return false;
+		if (Arrays.stream(VisibilitySQL.values()).anyMatch(this::equals))
+			return true;
+		else
+			return false;
 	}
 }

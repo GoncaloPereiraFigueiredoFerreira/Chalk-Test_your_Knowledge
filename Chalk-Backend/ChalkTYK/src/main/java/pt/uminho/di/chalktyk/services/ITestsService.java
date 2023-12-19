@@ -2,8 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
@@ -45,8 +44,9 @@ public interface ITestsService {
      * @param body
      * @return test identifier
      * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if any exercise referenced in the test is not found
      **/
-    String createTest(VisibilitySQL visibility, Test body) throws BadInputException;
+    String createTest(VisibilitySQL visibility, Test body) throws BadInputException, NotFoundException;
 
     /**
      * Delete test by its id
@@ -114,6 +114,17 @@ public interface ITestsService {
     TestResolution getTestResolutionById(String resolutionId) throws NotFoundException;
 
     /**
+     * Create an initial test resolution, indicating that a test is starting
+     *
+     * @param testId
+     * @param studentId
+     * @return test resolution identifier
+     * @throws BadInputException if any property of the test resolution is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    String startTest(String testId, String studentId) throws BadInputException, NotFoundException;
+
+    /**
      * Create a test resolution
      *
      * @param testId
@@ -163,9 +174,26 @@ public interface ITestsService {
      **/
     TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException;
 
-    // TODO: start solving test ->     tests/{testId}/startTest.yml
-    // TODO: tests/resolutions/{testResolutionId}/{exerciseResolutionId}/manual-correction.yml
-    // TODO: tests/resolutions/{testResolutionId}/{exerciseId}/uploadResolution.yml
+    /**
+     * Get latest test resolution made by the student
+     *
+     * @param exeResId  exercise resolution identifier
+     * @param testResId test resolution identifier
+     * @param points    points attributed
+     * @param comment   additional comments made by the specialist
+     * @throws NotFoundException if no exercise resolution was found
+     **/
+    void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException;
+
+    /**
+     * Uploads a resolution for a specific exercise on a given test
+     * 
+     * @param  testResId
+     * @param  exeId
+     * @param  resolution
+     * @throws NotFoundException if no test or exercise were found
+     */
+    void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException;
 
     /**
      * If an exercise belongs to a test removes it from the test,

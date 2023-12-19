@@ -98,4 +98,7 @@ public interface ExerciseResolutionSqlDAO  extends JpaRepository<ExerciseResolut
      * @return the resolutions made by a student for a specific exercise.
      */
     List<ExerciseResolutionSQL> findExerciseResolutionSQLSByExercise_IdAndStudent_Id(String exerciseId, String studentId);
+
+    @Query(value = "SELECT id FROM exercise_resolution WHERE exerciseid = :exeId AND test_resolutionid = :testResId", nativeQuery = true)
+    List<String> getResolutionIdFromExeAndTest(@Param("exeId") String exeId, @Param("testResId") String testResId);
 }

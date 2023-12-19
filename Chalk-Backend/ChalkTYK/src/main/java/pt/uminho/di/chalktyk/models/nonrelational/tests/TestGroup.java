@@ -2,13 +2,17 @@ package pt.uminho.di.chalktyk.models.nonrelational.tests;
 
 import java.util.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class TestGroup {
 	private List<Exercise> exercises;
 	private String groupInstructions;

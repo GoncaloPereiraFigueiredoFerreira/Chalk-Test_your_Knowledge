@@ -160,6 +160,17 @@ public interface IExercisesService{
     ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
 
     /**
+     * Create an empty resolution for a specific exercise (at the start of a test).
+     *
+     * @param studentId      identifier of the creator of the resolution.
+     * @param exerciseId     identifier of the exercise
+     * @param testResId      identifier of the test resolution
+     * @return
+     * @throws NotFoundException if the exercise was not found
+     */
+    ExerciseResolution createEmptyExerciseResolution(String studentId, String exerciseId, String testResId) throws NotFoundException, BadInputException;
+
+    /**
      *
      * @param exerciseId identifier of the exercise
      * @param studentId identifier of the student
@@ -227,6 +238,15 @@ public interface IExercisesService{
      * @throws NotFoundException if the resolution does not exist
      */
     ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException;
+
+    /**
+     * Gets the exercise resolution identified from the test resolution and the exercise.
+     * @param exerciseId    identifier of the exercise
+     * @param testResId     identifier of the test resolution
+     * @return the exercise resolution identified by the given identifier.
+     * @throws NotFoundException if the resolution does not exist
+     */
+    ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException;
 
     /**
      * Used to set the points of an exercise resolution.

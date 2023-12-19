@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
-import pt.uminho.di.chalktyk.models.relational.ExerciseSQL;
 import pt.uminho.di.chalktyk.models.relational.TestSQL;
+import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
 
 @Repository
 public interface TestSqlDAO extends JpaRepository<TestSQL, String>{
@@ -23,7 +22,7 @@ public interface TestSqlDAO extends JpaRepository<TestSQL, String>{
             " :title is null or test.title = :title")
     Page<TestSQL> getTests(Pageable pageable,
                                    @Param("tagIDS") java.util.List<String> tagIDS, @Param("tagsSize") int tagsSize, @Param("matchAllTags")  boolean matchAllTags,
-                                   @Param("visibilityType") Visibility visibilityType,
+                                   @Param("visibilityType") VisibilitySQL visibilityType,
                                    @Param("institutionId") String institutionId,
                                    @Param("courseId") String courseId,
                                    @Param("specialistID") String specialistId,

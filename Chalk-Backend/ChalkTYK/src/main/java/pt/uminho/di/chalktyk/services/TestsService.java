@@ -2,7 +2,9 @@ package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +14,20 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
+import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolutionStatus;
 import jakarta.transaction.Transactional;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ConcreteExercise;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.ShallowExercise;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
+import pt.uminho.di.chalktyk.models.nonrelational.tests.DeliverDateTest;
+import pt.uminho.di.chalktyk.models.nonrelational.tests.LiveTest;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.relational.*;
+import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolutionGroup;
+import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.relational.CourseSQL;
 import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
 import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
@@ -30,11 +35,15 @@ import pt.uminho.di.chalktyk.models.relational.StudentSQL;
 import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.models.relational.TestResolutionSQL;
 import pt.uminho.di.chalktyk.models.relational.TestSQL;
+import pt.uminho.di.chalktyk.models.relational.TestTagsPkSQL;
+import pt.uminho.di.chalktyk.models.relational.TestTagsSQL;
 import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
+import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestDAO;
 import pt.uminho.di.chalktyk.repositories.nonrelational.TestResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestResolutionSqlDAO;
 import pt.uminho.di.chalktyk.repositories.relational.TestSqlDAO;
+import pt.uminho.di.chalktyk.repositories.relational.TestTagsSqlDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -47,25 +56,32 @@ public class TestsService implements ITestsService {
     private final TestSqlDAO testSqlDAO;
     private final TestResolutionDAO resolutionDAO;
     private final TestResolutionSqlDAO resolutionSqlDAO;
+    private final TestTagsSqlDAO tagsSqlDAO;
+    private final ExerciseResolutionDAO exerciseResolutionDAO;
     private final IInstitutionsService institutionsService;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
     private final ICoursesService coursesService;
     private final ITagsService tagsService;
+    private final IExercisesService exercisesService;
 
     @Autowired
     public TestsService(EntityManager entityManager, TestDAO testDAO, TestSqlDAO testSqlDAO, TestResolutionDAO resolutionDAO, TestResolutionSqlDAO resolutionSqlDAO,
-        ISpecialistsService specialistsService, IStudentsService studentsService, IInstitutionsService institutionsService, ICoursesService coursesService, ITagsService tagsService){
+                        TestTagsSqlDAO tagsSqlDAO, ExerciseResolutionDAO exerciseResolutionDAO, ISpecialistsService specialistsService, IStudentsService studentsService, 
+                        IInstitutionsService institutionsService, ICoursesService coursesService, ITagsService tagsService, IExercisesService exercisesService){
         this.entityManager = entityManager;
         this.testDAO = testDAO;
         this.testSqlDAO = testSqlDAO;
         this.resolutionDAO = resolutionDAO;
         this.resolutionSqlDAO = resolutionSqlDAO;
+        this.tagsSqlDAO = tagsSqlDAO;
+        this.exerciseResolutionDAO = exerciseResolutionDAO;
         this.specialistsService = specialistsService;
         this.studentsService = studentsService;
         this.institutionsService = institutionsService;
         this.coursesService = coursesService;
         this.tagsService = tagsService;
+        this.exercisesService = exercisesService;
     }
 
 
@@ -87,12 +103,12 @@ public class TestsService implements ITestsService {
      **/
     @Override
     public List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
-        Visibility visibility= null;
-        if (visibilityType != null) {
-            visibility = Visibility.fromValue(visibilityType);
-            if (visibility == null)
-                throw new BadInputException("Visibility type not found");
-        }
+        //Visibility visibility= null;
+        //if (visibilityType != null) {
+        //    visibility = Visibility.fromValue(visibilityType);
+        //    if (visibility == null)
+        //        throw new BadInputException("Visibility type not found");
+        //}
 
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
@@ -108,8 +124,9 @@ public class TestsService implements ITestsService {
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("Theres no specialist with the given id");
         }
-        Page<TestSQL> testSQLS = testSqlDAO.getTests(PageRequest.of(page, itemsPerPage),tags, tags.size(), matchAllTags,visibility,institutionId,courseId,specialistId,title);
-        return exercisesSqlToNoSql(testSQLS);
+        //Page<TestSQL> testSQLS = testSqlDAO.getTests(PageRequest.of(page, itemsPerPage),tags, tags.size(), matchAllTags,visibility,institutionId,courseId,specialistId,title);
+        //return exercisesSqlToNoSql(testSQLS);
+        return null;
     }
 
     /**
@@ -135,7 +152,7 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional
-    public String createTest(VisibilitySQL visibility, Test body) throws BadInputException {
+    public String createTest(VisibilitySQL visibility, Test body) throws BadInputException, NotFoundException {
         if (body == null)
             throw new BadInputException("Cannot create test: test is null.");
 
@@ -185,22 +202,57 @@ public class TestsService implements ITestsService {
             throw new BadInputException("Can't create test: can't set visibility to COURSE");
         
         // check test group
-        for (TestGroup tg: body.getGroups()){
-            tg.verifyProperties();
-            List<Exercise> exeList = tg.getExercises();
-            for (Exercise exe: exeList){
-                if (exe instanceof ConcreteExercise ce){
-				    ce.verifyProperties();
-                    Set<TagSQL> tags = ce.getTags();
-                    for (TagSQL tag : tags){
-                        if (tagsService.getTagById(tag.getId()) == null)
-                            throw new BadInputException("Can't create test: There is not tag with id \"" + tag.getId() + "\".");
+        // TODO: check if any exercise appears more than onceq
+        Map<String, Integer> tagsCounter = new HashMap<>();
+        List<TestGroup> groups = body.getGroups();
+        if (groups != null){
+            for (TestGroup tg: groups){
+                tg.verifyProperties();
+                List<Exercise> exeList = tg.getExercises();
+                if (exeList != null){
+                    for (Exercise exe: exeList){
+                        if (exe instanceof ConcreteExercise ce){
+		    	    	    ce.verifyProperties();
+                            Set<TagSQL> tags = ce.getTags();
+                            if (tags != null){
+                                for (TagSQL tag : tags){
+                                    if (tagsService.getTagById(tag.getId()) == null)
+                                        throw new BadInputException("Can't create test: There is not tag with id \"" + tag.getId() + "\".");
+                                    if (tagsCounter.containsKey(tag.getId()))
+                                        tagsCounter.put(tag.getId(), tagsCounter.get(tag.getId()) + 1);
+                                    else
+                                        tagsCounter.put(tag.getId(), 1);
+                                }
+                            }
+                        }
+		    	        if (exe instanceof ShallowExercise se){
+                            // TODO: create new exercise?
+
+		    	    	    se.verifyInsertProperties();
+                            Exercise og = exercisesService.getExerciseById(se.getOriginalExerciseId());
+                            while(!(og instanceof ConcreteExercise ce)){
+                                og = exercisesService.getExerciseById(se.getOriginalExerciseId());
+                            }
+                            ConcreteExercise ogExe = (ConcreteExercise) og;
+                            ogExe.verifyProperties();
+                            Set<TagSQL> tags = ogExe.getTags();
+                            if (tags != null){
+                                for (TagSQL tag : tags){
+                                    if (tagsService.getTagById(tag.getId()) == null)
+                                        throw new BadInputException("Can't create test: There is not tag with id \"" + tag.getId() + "\".");
+                                    if (tagsCounter.containsKey(tag.getId()))
+                                        tagsCounter.put(tag.getId(), tagsCounter.get(tag.getId()) + 1);
+                                    else
+                                        tagsCounter.put(tag.getId(), 1);
+                                }
+                            }
+                        }
                     }
                 }
-			    if (exe instanceof ShallowExercise se)
-				    se.verifyInsertProperties();
             }
         }
+
+        // TODO: check points in groups
 
         // persist the test in nosql database
         body = testDAO.save(body);
@@ -209,10 +261,20 @@ public class TestsService implements ITestsService {
         InstitutionSQL inst = body.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, body.getInstitutionId()) : null;
         CourseSQL course = courseId != null ? entityManager.getReference(CourseSQL.class, courseId) : null;
         SpecialistSQL specialist = specialistId != null ? entityManager.getReference(SpecialistSQL.class, specialistId) : null;
-        var bodySQL = new TestSQL(body.getId(), inst, course, visibility, specialist, body.getTitle(), body.getPublishDate());
+        TestSQL bodySQL = new TestSQL(body.getId(), inst, course, visibility, specialist, body.getTitle(), body.getPublishDate());
         testSqlDAO.save(bodySQL);
+        createTestTags(tagsCounter, bodySQL);
 
         return body.getId();
+    }
+
+    private void createTestTags(Map<String, Integer> tags, TestSQL test){
+        for (Map.Entry<String, Integer> entry: tags.entrySet()){
+            TagSQL tag = tagsService.getTagById(entry.getKey());
+            TestTagsPkSQL testTagPK = new TestTagsPkSQL(tag, test);
+            TestTagsSQL testTag = new TestTagsSQL(entry.getValue(), testTagPK, entry.getKey(), test.getId());
+            tagsSqlDAO.save(testTag);
+        }
     }
 
     @Override
@@ -224,8 +286,8 @@ public class TestsService implements ITestsService {
     public String duplicateTestById(String testId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Can't duplicate test: couldn't find test with id" + testId + " .");
-        Test og = getTestById(testId);
-        TestSQL ogSQL = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
+        //Test og = getTestById(testId);
+        //TestSQL ogSQL = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
         
         return "";
     }
@@ -267,9 +329,39 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public String createTestResolution(String testId, TestResolution resolution) throws BadInputException, NotFoundException {
-        // TODO: é suposto adicionar a resolução de um exercício, não de um teste inteiro
+    @Transactional
+    public String startTest(String testId, String studentId) throws BadInputException, NotFoundException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Can't start test: couldn't find test with id \'" + testId + "\'");
+        
+        TestResolution resolution = new TestResolution(null, studentId, testId, TestResolutionStatus.ONGOING, 
+                                                        LocalDateTime.now(), null, 0, null, null);
+        String resId = createTestResolution(testId, resolution);
+        List<TestGroup> tgs = test.getGroups();
+        if (tgs != null){
+            List<TestResolutionGroup> trgs = new ArrayList<>();
+            for(TestGroup tg: tgs){
+                List<ExerciseResolution> ers = new ArrayList<>();
+                List<Exercise> exes = tg.getExercises();
+                if (exes != null){
+                    for(Exercise exe: exes){
+                        ExerciseResolution er = exercisesService.createEmptyExerciseResolution(studentId, exe.getId(), resId);
+                        ers.add(er);
+                    }
+                }
+                trgs.add(new TestResolutionGroup(ers, null));
+            }
 
+            resolution.setGroups(trgs);
+            resolutionDAO.save(resolution);
+        }
+        
+        return resId;
+    }
+
+    @Override
+    public String createTestResolution(String testId, TestResolution resolution) throws BadInputException, NotFoundException {
         // check test
         if (testId == null)
             throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
@@ -284,6 +376,8 @@ public class TestsService implements ITestsService {
         // TODO: check visibility
         // TODO: check course and visibility
         // TODO: check if student belongs to course
+        // TODO: check resolution status
+        // TODO: check points in groups
 
         //set the identifier to null to avoid overwrite attacks
         resolution.setId(null);
@@ -299,12 +393,10 @@ public class TestsService implements ITestsService {
         // Save resolution in nosql database
         resolution = resolutionDAO.save(resolution);
 
-        // TODO: check resolution status
-
         // Persists the test resolution in SQL database
         TestSQL test = testId != null ? entityManager.getReference(TestSQL.class, testId) : null;
         StudentSQL student = studentId != null ? entityManager.getReference(StudentSQL.class, studentId) : null;
-        var resolutionSql = new TestResolutionSQL(resolution.getId(), test, student);
+        TestResolutionSQL resolutionSql = new TestResolutionSQL(resolution.getId(), test, student);
         resolutionSqlDAO.save(resolutionSql);
 
         return resolution.getId();
@@ -318,8 +410,7 @@ public class TestsService implements ITestsService {
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't find student with given id.");
 
-        // TODO: check course and visibility
-        Test test = testDAO.findById(testId).orElse(null);
+        Test test = getTestById(testId);
         if (test == null)
             throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't fetch non relational test with given id.");
         TestSQL testSQL = entityManager.getReference(TestSQL.class, testId);
@@ -333,17 +424,23 @@ public class TestsService implements ITestsService {
                 return false;
         }
         else if (vis.equals(VisibilitySQL.INSTITUTION)){
-            // TODO: wait for institutions service to work
-            /*
-            StudentSQL studentSQL = entityManager.getReference(StudentSQL.class, studentId);
-            if (!testSQL.getInstitution().getId().equals(studentSQL.getInstitution().getId()))
+            if (!institutionsService.isStudentOfInstitution(studentId, test.getInstitutionId()))
                 return false;
-             */
         }
         // TODO: the fuck is "TEST" visibility
 
-
-        // TODO: check if submission time is in limits
+        // check time constraints
+        if (test.getPublishDate().isAfter(LocalDateTime.now()))
+            return false;
+        if (test instanceof DeliverDateTest ddt){
+            if (LocalDateTime.now().isAfter(ddt.getDeliverDate()))
+                return false;
+        }
+        else if (test instanceof LiveTest lt){
+            if (lt.getStartDate().isAfter(LocalDateTime.now()) ||
+                LocalDateTime.now().isAfter(lt.getStartDate().plus(lt.getDuration()).plus(lt.getStartTolerance())))
+                return false;
+        }
 
         return true;
     }
@@ -395,6 +492,41 @@ public class TestsService implements ITestsService {
         }
 
         return res;
+    }
+
+    @Override
+	public void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException {
+        ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
+        er.setStatus(ExerciseResolutionStatus.REVISED);
+        er.setPoints(points);
+        exerciseResolutionDAO.save(er);
+        // TODO: add comment
+
+        TestResolution tr = getTestResolutionById(testResId);
+        List<TestResolutionGroup> trgs = tr.getGroups();
+        for (TestResolutionGroup trg: trgs){
+            for (ExerciseResolution exeRes: trg.getResolutions()){
+                if (er.getId().equals(exeRes.getId())){
+                    exeRes.setPoints(points);
+                    exeRes.setStatus(ExerciseResolutionStatus.REVISED);
+                    if (trg.getGroupPoints() != null)
+                        trg.setGroupPoints(trg.getGroupPoints() + points);
+                    else
+                        trg.setGroupPoints(points);
+
+                    break;
+                }
+            }
+        }
+
+        resolutionDAO.save(tr);
+	}
+
+    @Override
+    public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution)
+            throws NotFoundException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'uploadResolution'");
     }
 
     @Override

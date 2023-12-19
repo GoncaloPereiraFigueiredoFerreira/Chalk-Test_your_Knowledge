@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * type = 'live'
@@ -23,9 +24,17 @@ public class LiveTest extends Test {
 	private Duration duration;
 	private Duration startTolerance;
 
-	@Override
+	public LiveTest(String id, String specialistId, String institutionId, String courseId, String title, String globalInstructions,
+					Float globalPoints, String conclusion, LocalDateTime creationDate, LocalDateTime publishDate, List<TestGroup> groups,
+					LocalDateTime startDate, Duration duration, Duration startTolerance){
+		super(id, specialistId, institutionId, courseId, title, globalInstructions, globalPoints, conclusion, creationDate, publishDate, groups);
+		this.setStartDate(startDate);
+		this.setDuration(duration);
+		this.setStartTolerance(startTolerance);
+	}
+
 	public void verifyProperties() throws BadInputException {
-		super.verifyInsertProperties();
+		super.verifyProperties();
 		if (super.getPublishDate().isAfter(getStartDate()))
 			throw new BadInputException("Cannot create test: Start date is invalid - occurs before publish date");
 		
@@ -35,5 +44,4 @@ public class LiveTest extends Test {
 		if (getStartTolerance().isNegative())
 			throw new BadInputException("Cannot create test: Test start tolerance is negative");
 	}
-
 }

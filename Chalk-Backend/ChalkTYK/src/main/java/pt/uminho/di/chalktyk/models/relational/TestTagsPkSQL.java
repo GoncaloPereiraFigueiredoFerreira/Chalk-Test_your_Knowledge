@@ -8,7 +8,10 @@ import java.io.Serializable;
 @Setter
 @Embeddable
 @EqualsAndHashCode
+@AllArgsConstructor
 public class TestTagsPkSQL implements Serializable {
+	TestTagsPkSQL(){}
+
 	@ManyToOne(targetEntity= TagSQL.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TagID", referencedColumnName="ID", nullable=false) })
 	private TagSQL tag;

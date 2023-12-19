@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
 import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
 import pt.uminho.di.chalktyk.models.relational.*;
 import pt.uminho.di.chalktyk.repositories.nonrelational.ExerciseDAO;
@@ -959,6 +957,36 @@ public class ExercisesService implements IExercisesService{
         return resolution;
     }
 
+    @Override
+    @Transactional
+    public ExerciseResolution createEmptyExerciseResolution(String studentId, String exerciseId, String testResId) throws NotFoundException, BadInputException {
+        // checks if exercise exists
+        if (!exerciseSqlDAO.existsById(exerciseId))
+            throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
+
+
+        // prepares resolution
+        ExerciseResolution resolution = new ExerciseResolution(null, // prevents overwrite attacks
+                studentId,exerciseId,
+                null, // new resolution so it should not have a points
+                null,
+                ExerciseResolutionStatus.NOT_REVISED, // new resolution so cannot be already revised
+                null,
+                0);
+
+        // persists document
+        resolution = exerciseResolutionDAO.save(resolution);
+
+        // creates sql info and persists it
+        StudentSQL studentSQL = entityManager.getReference(StudentSQL.class, studentId);
+        ExerciseSQL exerciseSQL = entityManager.getReference(ExerciseSQL.class, exerciseId);
+        TestResolutionSQL testResolutionSQL = entityManager.getReference(TestResolutionSQL.class, testResId);
+        ExerciseResolutionSQL resolutionSQL = new ExerciseResolutionSQL(resolution.getId(), testResolutionSQL, studentSQL, exerciseSQL, 0);
+        exerciseResolutionSqlDAO.save(resolutionSQL);
+
+        return resolution;
+    }
+
     /**
      * @param exerciseId identifier of the exercise
      * @param studentId  identifier of the student
@@ -1052,6 +1080,17 @@ public class ExercisesService implements IExercisesService{
         if(resolution == null)
             throw new NotFoundException("Could not get exercise resolution: No resolution with the given id exists.");
         return resolution;
+    }
+
+    @Override
+    public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
+        List<String> ids = exerciseResolutionSqlDAO.getResolutionIdFromExeAndTest(exerciseId, testResId);
+        if (ids.size() > 0 && ids.get(0) != null){
+            ExerciseResolution resolution = exerciseResolutionDAO.findById(ids.get(0)).orElse(null);
+            return resolution;
+        }
+        else
+            throw new NotFoundException("Could not get exercise resolution: No resolution was found.");
     }
 
 
