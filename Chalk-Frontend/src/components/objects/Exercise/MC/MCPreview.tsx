@@ -1,40 +1,48 @@
 import { useState } from "react";
-import { ExerciseJustificationKind } from "../Exercise";
-import { ExerciseHeader } from "../Header/ExHeader";
-import { TFPreviewProps } from "../TF/TFPreview";
+import {
+  ExerciseJustificationKind,
+  MCExercise,
+  PreviewProps,
+} from "../Exercise";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 
-export function MCPreview({
-  id,
-  items,
-  position,
-  statement,
-  justifyKind,
-}: TFPreviewProps) {
+export interface MCPreviewProps {
+  exercise: MCExercise;
+  position: string;
+  context: PreviewProps;
+}
+
+export function MCPreview({ exercise, position, context }: MCPreviewProps) {
   const [chosenOption, setChosenOption] = useState("");
   return (
     <>
-      <ExerciseHeader header={statement}></ExerciseHeader>
+      <ExerciseHeaderComp header={exercise.base.statement}></ExerciseHeaderComp>
+      <p>
+        <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
+      </p>
       <ul>
-        {Object.entries(items).map(([index, value]) => (
+        {Object.entries(exercise.props.items).map(([index, value]) => (
           <div key={index}>
             <label
-              htmlFor={"mc" + id + index + position}
+              htmlFor={"mc" + exercise.identity?.id + index + position}
               className="flex px-4 py-2 gap-2 items-center hover:bg-gray-300"
             >
               <input
-                id={"mc" + id + index + position}
-                name={"mc" + id + position}
+                id={"mc" + exercise.identity?.id + index + position}
+                name={"mc" + exercise.identity?.id + position}
                 type="radio"
                 className="radio-blue mr-3"
                 onChange={() => setChosenOption(index)}
+                disabled
               ></input>
               {value.text}
             </label>
+            {/*
             <MCJustify
               index={index}
               chosenOption={chosenOption}
               justifyKind={justifyKind}
-            ></MCJustify>
+            ></MCJustify>*/}
           </div>
         ))}
       </ul>

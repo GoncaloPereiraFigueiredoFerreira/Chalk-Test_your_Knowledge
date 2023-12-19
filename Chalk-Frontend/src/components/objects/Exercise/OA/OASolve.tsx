@@ -4,14 +4,25 @@ import {
   FileUploadIcon,
   ListIcon,
 } from "../../SVGImages/SVGImages";
-import { ExerciseHeader } from "../Header/ExHeader";
-import { ExerciseType, OAResolutionData } from "../Exercise";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
+import {
+  ExerciseType,
+  OAExercise,
+  OAResolutionData,
+  SolveProps,
+} from "../Exercise";
 
-export function OASolve(props: any) {
-  const [state, setState] = useState<OAResolutionData>({
-    type: ExerciseType.OPEN_ANSWER,
-    text: props.resolution.text,
-  });
+export interface OASolveProps {
+  exercise: OAExercise;
+  position: string;
+  context: SolveProps;
+}
+
+export function OASolve(props: OASolveProps) {
+  let initState: OAResolutionData = props.context
+    .resolutionData as OAResolutionData;
+
+  const [state, setState] = useState<OAResolutionData>(initState);
 
   const setText = (text: string) => {
     setState({
@@ -21,16 +32,18 @@ export function OASolve(props: any) {
   };
 
   useEffect(() => {
-    setText(props.resolution.text);
-  }, [props.statement]);
+    setState(initState);
+  }, [props.exercise]);
 
   useEffect(() => {
-    props.setResolution(state);
+    props.context.setExerciseSolution(state);
   }, [state]);
 
   return (
     <>
-      <ExerciseHeader header={props.statement}></ExerciseHeader>
+      <ExerciseHeaderComp
+        header={props.exercise.base.statement}
+      ></ExerciseHeaderComp>
 
       <form>
         <div className="w-full mb-4 border-2 rounded-lg ex-1">

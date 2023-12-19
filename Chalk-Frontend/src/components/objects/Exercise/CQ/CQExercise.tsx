@@ -1,58 +1,60 @@
 import {
+  CQExercise,
   ExerciseComponentProps,
   ExerciseContext,
-  OAExercise,
   PreviewProps,
   SolveProps,
 } from "../Exercise";
-import { OASolve } from "./OASolve";
-import { OAPreview } from "./OAPreview";
+import { CQEdit } from "./CQEdit";
+import { CQPreview } from "./CQPreview";
+import { CQSolve } from "./CQSolve";
 
-export function OAExerciseComp({
+export function CQExerciseComp({
+  exercise,
   position,
   context,
-  exercise,
 }: ExerciseComponentProps) {
   let exerciseDisplay = <></>;
   switch (context.context) {
     case ExerciseContext.SOLVE:
       exerciseDisplay = (
-        <OASolve
+        <CQSolve
+          exercise={exercise as CQExercise}
           position={position}
           context={context as SolveProps}
-          exercise={exercise as OAExercise}
-        ></OASolve>
+        ></CQSolve>
       );
       break;
 
     case ExerciseContext.PREVIEW:
       exerciseDisplay = (
-        <OAPreview
+        <CQPreview
+          exercise={exercise as CQExercise}
           position={position}
           context={context as PreviewProps}
-          exercise={exercise as OAExercise}
-        ></OAPreview>
+        ></CQPreview>
       );
       break;
 
     case ExerciseContext.EDIT:
-      exerciseDisplay = <></>;
+      exerciseDisplay = (
+        <CQEdit exercise={exercise as CQExercise} context={context}></CQEdit>
+      );
       break;
 
     case ExerciseContext.GRADING:
       exerciseDisplay = <></>;
       break;
-
     case ExerciseContext.REVIEW:
       exerciseDisplay = <></>;
       break;
   }
   return (
-    <div className="">
+    <>
       <div className="m-5 text-title-2">
         {position + ") " + exercise.base.title}
       </div>
       <div className="m-5 text-lg">{exerciseDisplay}</div>
-    </div>
+    </>
   );
 }

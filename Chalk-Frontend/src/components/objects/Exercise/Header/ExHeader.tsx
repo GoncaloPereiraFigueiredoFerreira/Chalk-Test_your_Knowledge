@@ -1,3 +1,5 @@
+import { ExerciseHeader } from "../Exercise";
+
 export enum ImgPos {
   TOP = "TOP",
   BOT = "BOT",
@@ -5,17 +7,11 @@ export enum ImgPos {
   RIGHT = "RIGHT",
 }
 
-export interface ExerciseHeader {
-  text: string;
-  imagePath?: string;
-  imagePosition?: ImgPos;
-}
-
 interface HeaderProps {
   header: ExerciseHeader;
 }
 
-export function ExerciseHeader({ header }: HeaderProps) {
+export function ExerciseHeaderComp({ header }: HeaderProps) {
   if (header.imagePath) {
     const imgComponent = (
       <div className="flex w-full justify-center m-4">

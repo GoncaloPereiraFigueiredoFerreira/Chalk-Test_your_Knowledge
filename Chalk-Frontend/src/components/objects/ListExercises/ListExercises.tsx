@@ -16,142 +16,101 @@ import {
 
 const userExercises: Exercise[] = [
   {
-    id: "1",
-    title: "Quantas canetas",
-    visibility: "public",
+    base: {
+      title: "Contar canetas",
+      statement: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+        imagePath:
+          "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
+        imagePosition: ImgPos.RIGHT,
+      },
+    },
+    type: ExerciseType.CHAT,
+    props: { maxAnswers: 3, topics: ["Matemática"] },
+    identity: {
+      id: "1",
+      specialistId: "JCR",
+      visibility: "public",
+    },
+  },
+  {
+    base: {
+      title: "Contar canetas",
+      statement: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+        imagePath:
+          "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
+        imagePosition: ImgPos.RIGHT,
+      },
+    },
+    type: ExerciseType.TRUE_OR_FALSE,
+    props: {
+      justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
+      items: {
+        "1": { text: "Existem 9 canetas roxas ou vermelhas" },
+        "2": {
+          text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+        },
+        "3": { text: "Existem 8 canetas pretas" },
+        "4": {
+          text: "Existem mais canetas castanhas que amarelas",
+        },
+      },
+    },
+    identity: {
+      id: "2",
+      specialistId: "JCR",
+      visibility: "public",
+    },
+  },
+
+  {
+    base: {
+      title: "Contar canetas",
+      statement: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+        imagePath:
+          "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
+        imagePosition: ImgPos.BOT,
+      },
+    },
     type: ExerciseType.OPEN_ANSWER,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.RIGHT,
+    props: {},
+    identity: {
+      id: "3",
+      specialistId: "JCR",
+      visibility: "public",
     },
   },
+
   {
-    id: "2",
-    title: "Quantas canetas",
-    visibility: "public",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.RIGHT,
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-      },
-      "3": { text: "Existem 8 canetas pretas" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
+    base: {
+      title: "Contar canetas",
+      statement: {
+        text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
+        imagePath:
+          "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
+        imagePosition: ImgPos.RIGHT,
       },
     },
-  },
-  {
-    id: "6",
-    title: "Quantas canetas",
-    visibility: "private",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.RIGHT,
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_TRUE,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-      },
-      "3": { text: "Existem 8 canetas pretas" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
-      },
-    },
-  },
-  {
-    id: "3",
-    title: "Quantas canetas",
-    visibility: "public",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.BOT,
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-      },
-      "3": { text: "Existem 8 canetas pretas" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
-      },
-    },
-  },
-  {
-    id: "4",
-    title: "Quantas canetas",
-    visibility: "not-listed",
     type: ExerciseType.MULTIPLE_CHOICE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-    },
-    justifyKind: ExerciseJustificationKind.JUSTIFY_MARKED,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
-      "2": {
-        text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
-      },
-      "3": { text: "Existem 8 canetas pretas" },
-      "4": {
-        text: "Existem mais canetas castanhas que amarelas",
+    props: {
+      justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
+      items: {
+        "1": { text: "Existem 9 canetas roxas ou vermelhas" },
+        "2": {
+          text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+        },
+        "3": { text: "Existem 8 canetas pretas" },
+        "4": {
+          text: "Existem mais canetas castanhas que amarelas",
+        },
       },
     },
-  },
-  {
-    id: "5",
-    title: "Quantas canetas",
-    visibility: "course",
-    type: ExerciseType.OPEN_ANSWER,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.LEFT,
-    },
-  },
-  {
-    id: "7",
-    title: "Quantas canetas",
-    visibility: "institutional",
-    type: ExerciseType.TRUE_OR_FALSE,
-    specialistId: "333",
-    statement: {
-      text: "O Joao pegou em 29 canetas de 5 cores diferentes. Sabe-se que o numero de canetas amarelas é igual ao numero de canetas pretas, o numero de canetas roxas é metade do numero de canetas amarelas e que existem tres vezes mais canetas vermelhas do que roxas. Sabe-se ainda que existem 5 canetas castanhas",
-      imagePath:
-        "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
-      imagePosition: ImgPos.TOP,
-    },
-    justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-    items: {
-      "1": { text: "Existem 9 canetas roxas ou vermelhas" },
-      "2": {
-        text: "Existem mais canetas castanhas que amarelas",
-      },
+    identity: {
+      id: "4",
+      specialistId: "JCR",
+      visibility: "public",
     },
   },
 ];
@@ -208,7 +167,7 @@ export function ListExercises({
         ) : null}
         {Object.entries(listExerciseState.listExercises).map(
           ([key, exercise]) =>
-            exercise.id === "-1" ? null : (
+            exercise.identity.id === "-1" ? null : (
               <ShowExercise
                 key={key}
                 position={key}

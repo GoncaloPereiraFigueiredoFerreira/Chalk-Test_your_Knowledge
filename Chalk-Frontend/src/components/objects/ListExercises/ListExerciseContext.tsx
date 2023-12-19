@@ -1,9 +1,5 @@
 import { useContext, createContext, useReducer } from "react";
-import {
-  Exercise,
-  ExerciseType,
-  createNewExercise,
-} from "../Exercise/Exercise";
+import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 
 // Type of actions allowed on the state
 export enum ListExerciseActionKind {
@@ -26,7 +22,7 @@ function ListExerciseStateReducer(
         if (action.payload.exercises) {
           let newListExercises = { ...listExerciseState.listExercises };
           action.payload.exercises.forEach((element) => {
-            newListExercises[element.id] = element;
+            newListExercises[element.identity!.id] = element;
           });
           return { ...listExerciseState, listExercises: newListExercises };
         } else throw new Error("No data provided in action.payload.exercises");
@@ -35,7 +31,7 @@ function ListExerciseStateReducer(
     case ListExerciseActionKind.ADD_NEW_EXERCISE:
       if (action.payload)
         if (action.payload.newExerciseType) {
-          let newExercise: Exercise = createNewExercise(
+          let newExercise: Exercise = InitExercise(
             action.payload.newExerciseType
           );
           let newListExercises = {
@@ -57,7 +53,7 @@ function ListExerciseStateReducer(
       if (action.payload)
         if (action.payload.exercise) {
           let newListExercises = {
-            [action.payload.exercise.id]: action.payload.exercise,
+            [action.payload.exercise.identity!.id]: action.payload.exercise,
             ...listExerciseState.listExercises,
           };
           return {
@@ -73,12 +69,12 @@ function ListExerciseStateReducer(
         if (action.payload.exercise) {
           let newListExercises = {
             ...listExerciseState.listExercises,
-            [action.payload.exercise.id]: action.payload.exercise,
+            [action.payload.exercise.identity!.id]: action.payload.exercise,
           };
           return {
             ...listExerciseState,
             listExercises: newListExercises,
-            selectedExercise: action.payload.exercise.id,
+            selectedExercise: action.payload.exercise.identity!.id,
           };
         } else throw new Error("No data provided in action.payload.exercise");
       else throw new Error("No data provided in action.payload");

@@ -1,15 +1,23 @@
 import { useState } from "react";
-import { Exercise, ExerciseJustificationKind, ExerciseType } from "../Exercise";
+import {
+  CreateEditProps,
+  Exercise,
+  ExerciseJustificationKind,
+  ExerciseType,
+  MCExercise,
+  ResolutionData,
+} from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
 interface MCEditProps {
-  dispatch: React.Dispatch<EditAction>;
-  state: Exercise;
+  context: CreateEditProps;
+  exercise: MCExercise;
 }
-export function MCEdit({ dispatch, state }: MCEditProps) {
+
+export function MCEdit({ context, exercise }: MCEditProps) {
   const [openJustificationkind, setOpenJustificationkind] = useState(
-    state.justifyKind != ExerciseJustificationKind.NO_JUSTIFICATION
+    exercise.props.justifyType != ExerciseJustificationKind.NO_JUSTIFICATION
   );
 
   return (
@@ -18,13 +26,13 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
         Adicione as afirmações e escolha a opção correta.
       </p>
       <ul>
-        {Object.keys(state.items!).map((value, index) => {
+        {Object.keys(exercise.props.items!).map((value, index) => {
           return (
             <MCStatementEdit
               key={index}
               id={value}
-              state={state}
-              dispatch={dispatch}
+              solution={context.solutionData}
+              dispatch={context.dispatch}
             ></MCStatementEdit>
           );
         })}
@@ -36,13 +44,13 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
         onClick={() => {
           for (
             let newID = 0;
-            newID < Object.keys(state.items!).length + 1;
+            newID < Object.keys(exercise.props.items!).length + 1;
             newID++
           ) {
-            if (state.items![newID.toString()] === undefined) {
-              dispatch({
+            if (exercise.props.items![newID.toString()] === undefined) {
+              context.dispatch({
                 type: EditActionKind.ADD_ITEM,
-                data: { id: newID.toString() },
+                dataString: newID.toString(),
               });
               break;
             }
@@ -57,14 +65,14 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
             className="p-2 rounded outline-0 bg-input-2"
             onChange={() => {
               if (openJustificationkind)
-                dispatch({
+                context.dispatch({
                   type: EditActionKind.CHANGE_JUSTIFY_KIND,
-                  justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+                  dataJK: ExerciseJustificationKind.NO_JUSTIFICATION,
                 });
               else
-                dispatch({
+                context.dispatch({
                   type: EditActionKind.CHANGE_JUSTIFY_KIND,
-                  justifyKind: ExerciseJustificationKind.JUSTIFY_ALL,
+                  dataJK: ExerciseJustificationKind.JUSTIFY_ALL,
                 });
               setOpenJustificationkind(!openJustificationkind);
             }}
@@ -89,11 +97,11 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
               ExerciseJustificationKind.JUSTIFY_TRUE,
             ]}
             text="Posição"
-            chosenOption={state.justifyKind}
+            chosenOption={exercise.props.justifyType}
             setChosenOption={(justifyKind) =>
-              dispatch({
+              context.dispatch({
                 type: EditActionKind.CHANGE_JUSTIFY_KIND,
-                justifyKind: justifyKind,
+                dataJK: justifyKind,
               })
             }
             style="rounded-lg h-full"
@@ -107,18 +115,13 @@ export function MCEdit({ dispatch, state }: MCEditProps) {
 
 interface MCStatementEditProps {
   dispatch: React.Dispatch<EditAction>;
-  state: Exercise;
+  solution: ResolutionData;
   id: string;
 }
-function MCStatementEdit({ dispatch, state, id }: MCStatementEditProps) {
+function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
   let name = "mc";
-  if (
-    state.solution != undefined &&
-    state.solution.data != undefined &&
-    state.solution.data.type === ExerciseType.MULTIPLE_CHOICE
-  ) {
-    let solutionItem = state.solution.data.items[id];
-
+  if (solution.type === ExerciseType.MULTIPLE_CHOICE) {
+    let solutionItem = solution.items[id];
     return (
       <>
         <li className="flex items-center">
@@ -129,7 +132,7 @@ function MCStatementEdit({ dispatch, state, id }: MCStatementEditProps) {
             onChange={() => {
               dispatch({
                 type: EditActionKind.CHANGE_ITEM_MC,
-                data: { id: id },
+                dataString: id,
               });
             }}
             checked={solutionItem.value}
@@ -140,7 +143,8 @@ function MCStatementEdit({ dispatch, state, id }: MCStatementEditProps) {
             onChange={(e) =>
               dispatch({
                 type: EditActionKind.CHANGE_ITEM_TEXT,
-                data: { id: id, text: e.target.value },
+                dataString: id,
+                dataItem: { text: e.target.value, justification: "" },
               })
             }
             value={solutionItem.text}
@@ -151,7 +155,7 @@ function MCStatementEdit({ dispatch, state, id }: MCStatementEditProps) {
             onClick={() =>
               dispatch({
                 type: EditActionKind.REMOVE_ITEM,
-                data: { id: id },
+                dataString: id,
               })
             }
             value="Remove"

@@ -58,26 +58,6 @@ export function CreateNewExercisePopUp({
           <CheckboxIcon style="inherit-icon" size="size-12" />
           Verdadeiro ou falso
         </button>
-        <button
-          onClick={() => setNewExercisetype(ExerciseType.FILL_IN_THE_BLANK)}
-          className={`${
-            ExerciseType.FILL_IN_THE_BLANK != newExercisetype
-              ? "bg-btn-4-1"
-              : "btn-selected"
-          } btn-ListExercises text-lg group`}
-        >
-          <InputIcon style="inherit-icon" size="size-12" />
-          Preenchimento de espaços
-        </button>
-        <button
-          onClick={() => setNewExercisetype(ExerciseType.CODE)}
-          className={`${
-            ExerciseType.CODE != newExercisetype ? "bg-btn-4-1" : "btn-selected"
-          } btn-ListExercises text-lg group`}
-        >
-          <CodeIcon style="inherit-icon" size="size-12" />
-          Código
-        </button>
       </div>
       <div className="flex justify-end">
         <button
