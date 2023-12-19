@@ -75,7 +75,8 @@ export function TextareaBlock({
         }
 
       // 4: save modifiedContent
-      if (modifiedContent === "<p></p>") setText("");
+      if (modifiedContent === "<p></p>" || modifiedContent === "<p><br></p>")
+        setText("");
       else setText(modifiedContent);
     }
   };
@@ -152,6 +153,7 @@ export function TextareaBlock({
           ) : null}
         </div>
       </div>
+      {text}
     </>
   );
 }
