@@ -199,6 +199,8 @@ def oral():
     "Ex_id":str
     "Student_id":str
     "Answer":str 
+    "Topics": [str] #only give if intend to create a new question
+    "Question": str #only give if intend to create a new question
 }
 
 {
@@ -215,19 +217,23 @@ def get_oral():
 
     if prev:
         prev = json.loads(prev)
-        answer = req["Answer"]
-        answer = api_ai.gen_user_oral(answer)
-        prev.append(answer)
-
-        resp = api_ai.send_oral(prev)
-        prev.append({"role":"assistant","content":resp})
-
-        cache.set(h_ex,json.dumps(prev),cache_timeout)
-
-        ret = {"Question":resp}
 
     else:
-        ret = "404"#status.HTTP_404_NOT_FOUND
+        topics = req["Topics"]
+        question = req["Question"]
+        
+        prev = [api_ai.gen_sys_oral(topics),api_ai.gen_ass_oral(question)]
+        
+    answer = req["Answer"]
+    answer = api_ai.gen_user_oral(answer)
+    prev.append(answer)
+
+    resp = api_ai.send_oral(prev)
+    prev.append({"role":"assistant","content":resp})
+
+    cache.set(h_ex,json.dumps(prev),cache_timeout)
+
+    ret = {"Question":resp}
 
     return ret
 
