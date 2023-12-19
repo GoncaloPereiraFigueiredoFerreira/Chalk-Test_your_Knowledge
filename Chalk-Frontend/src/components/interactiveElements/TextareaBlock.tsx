@@ -47,8 +47,7 @@ export function TextareaBlock({
       }
 
       // 2: parse htmlContent -> parseContent
-      const regex =
-        /<(?<closing>\/?)(?<tagName>[^\/>]+)>|(?<textContent>[^<>]+)/g;
+      const regex = /<(\/?)(\w+)(?: \w+="[^"]*")*>|([^<>]+)/g;
       let parseContent = htmlContent.matchAll(regex);
 
       // 3: concat parseContent -> modifiedContent
@@ -153,7 +152,6 @@ export function TextareaBlock({
           ) : null}
         </div>
       </div>
-      <div>{textToHTML(text)}</div>
     </>
   );
 }
@@ -165,7 +163,8 @@ function decodeHtmlEntities(encodedString: string): string {
 }
 
 export function textToHTML(stringHTML: string) {
-  const pattern = /^(?:<(\w+)>(.+?)<\/\1>|([^<\n]+)|(<br>))/;
+  const pattern =
+    /^(?:(?:<(\w+)(?: class="([^"]*)")*>((?:.|\n)+?)<\/\1>)|([^<]+)|(<br>))/;
   const match = stringHTML.match(pattern);
   let element = <></>;
   let restElement = <></>;
@@ -176,20 +175,22 @@ export function textToHTML(stringHTML: string) {
     if (match[1] != undefined)
       switch (match[1]) {
         case "p":
-          element = <p>{textToHTML(match[2])}</p>;
+          element = <p className={match[2]}>{textToHTML(match[3])}</p>;
           break;
         case "strong":
-          element = <strong>{textToHTML(match[2])}</strong>;
+          element = (
+            <strong className={match[2]}>{textToHTML(match[3])}</strong>
+          );
           break;
         case "em":
-          element = <em>{textToHTML(match[2])}</em>;
+          element = <em className={match[2]}>{textToHTML(match[3])}</em>;
           break;
         default:
-          element = <br></br>;
+          element = <div className={match[2]}>{textToHTML(match[3])}</div>;
           break;
       }
-    else if (match[3] != undefined)
-      element = <>{decodeHtmlEntities(match[3])}</>;
+    else if (match[4] != undefined)
+      element = <>{decodeHtmlEntities(match[4])}</>;
     else element = <br></br>;
 
     if (rest != "") restElement = textToHTML(rest);
