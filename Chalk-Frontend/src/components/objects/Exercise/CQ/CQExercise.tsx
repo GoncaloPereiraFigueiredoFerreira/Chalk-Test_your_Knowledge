@@ -1,8 +1,15 @@
-import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import {
+  CQExercise,
+  ExerciseComponentProps,
+  ExerciseContext,
+  PreviewProps,
+  SolveProps,
+} from "../Exercise";
+import { CQEdit } from "./CQEdit";
 import { CQPreview } from "./CQPreview";
 import { CQSolve } from "./CQSolve";
 
-export function CQExercise({
+export function CQExerciseComp({
   exercise,
   position,
   context,
@@ -12,12 +19,9 @@ export function CQExercise({
     case ExerciseContext.SOLVE:
       exerciseDisplay = (
         <CQSolve
-          id={exercise.id}
+          exercise={exercise as CQExercise}
           position={position}
-          statement={exercise.statement}
-          resolution={context.resolutionData}
-          setResolution={context.setExerciseSolution}
-          additionalProps={exercise.additionalProps}
+          context={context as SolveProps}
         ></CQSolve>
       );
       break;
@@ -25,16 +29,17 @@ export function CQExercise({
     case ExerciseContext.PREVIEW:
       exerciseDisplay = (
         <CQPreview
-          id={exercise.id}
+          exercise={exercise as CQExercise}
           position={position}
-          statement={exercise.statement}
-          additionalProps={exercise.additionalProps}
+          context={context as PreviewProps}
         ></CQPreview>
       );
       break;
 
     case ExerciseContext.EDIT:
-      exerciseDisplay = <></>;
+      exerciseDisplay = (
+        <CQEdit exercise={exercise as CQExercise} context={context}></CQEdit>
+      );
       break;
 
     case ExerciseContext.GRADING:
@@ -46,7 +51,9 @@ export function CQExercise({
   }
   return (
     <>
-      <div className="m-5 text-title-2">{position + ") " + exercise.title}</div>
+      <div className="m-5 text-title-2">
+        {position + ") " + exercise.base.title}
+      </div>
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );

@@ -1,27 +1,17 @@
 import {
   ExerciseJustificationKind,
+  MCExercise,
   MCResolutionData,
   ResolutionData,
+  SolveProps,
 } from "../Exercise";
 import { useEffect, useReducer } from "react";
-import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
+import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
 
 export interface MCSolveProps {
-  id: string;
+  exercise: MCExercise;
   position: string;
-  statement: {
-    imagePath?: string;
-    imagePosition?: ImgPos;
-    text: string;
-  };
-  justifyKind: ExerciseJustificationKind;
-  items: {
-    [id: string]: {
-      text: string;
-    };
-  };
-  resolution: ResolutionData;
-  setResolution: Function;
+  context: SolveProps;
 }
 
 // MCAction Definition
@@ -62,44 +52,41 @@ function ExerciseMCReducer(mcState: MCResolutionData, mcAction: MCAction) {
   }
 }
 
-export function MCSolve({
-  id,
-  items,
-  position,
-  statement,
-  justifyKind,
-  resolution,
-  setResolution,
-}: MCSolveProps) {
-  let initState: MCResolutionData = resolution as MCResolutionData;
+export function MCSolve(props: MCSolveProps) {
+  let initState: MCResolutionData = props.context
+    .resolutionData as MCResolutionData;
 
   const [state, dispatch] = useReducer(ExerciseMCReducer, initState);
 
   useEffect(() => {
-    setResolution(state);
+    props.context.setExerciseSolution(state);
   }, [state]);
 
   useEffect(() => {
     dispatch({
       type: MCActionKind.SETSTATE,
       index: "",
-      state: resolution as MCResolutionData,
+      state: initState,
     });
-  }, [statement]);
+  }, [props.exercise]);
 
   return (
     <>
-      <ExerciseHeader header={statement}></ExerciseHeader>
+      <ExerciseHeaderComp
+        header={props.exercise.base.statement}
+      ></ExerciseHeaderComp>
       <ul>
         {Object.entries(state.items).map(([index, value]) => (
           <div key={index}>
             <label
-              htmlFor={"mc" + id + index + position}
+              htmlFor={
+                "mc" + props.exercise.identity?.id + index + props.position
+              }
               className="flex px-4 py-2 gap-2 items-center hover:bg-gray-300"
             >
               <input
-                id={"mc" + id + index + position}
-                name={"mc" + id + position}
+                id={"mc" + props.exercise.identity?.id + index + props.position}
+                name={"mc" + props.exercise.identity?.id + props.position}
                 type="radio"
                 className="radio-blue mr-3"
                 checked={value.value}
@@ -116,7 +103,7 @@ export function MCSolve({
               index={index}
               state={state}
               dispatch={dispatch}
-              justifyKind={justifyKind}
+              justifyKind={props.exercise.props.justifyType}
             ></MCJustify>
           </div>
         ))}

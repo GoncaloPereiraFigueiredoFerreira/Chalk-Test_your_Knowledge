@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
-import { CQResolutionData, ExerciseType } from "../Exercise";
+import {
+  CQExercise,
+  CQResolutionData,
+  ExerciseType,
+  SolveProps,
+} from "../Exercise";
 
-export function CQSolve(props: any) {
+export interface CQSolveProps {
+  exercise: CQExercise;
+  position: string;
+  context: SolveProps;
+}
+
+export function CQSolve(props: CQSolveProps) {
+  let initState: CQResolutionData = props.context
+    .resolutionData as CQResolutionData;
   const [state, setState] = useState<CQResolutionData>({
     type: ExerciseType.CHAT,
     msgs: [],
   });
+
   const [currentMsg, setMsg] = useState("");
 
   const addMsg = (text: string) => {
@@ -17,17 +31,17 @@ export function CQSolve(props: any) {
   const fetchAnswer = () => {};
 
   useEffect(() => {
-    props.setResolution(state);
+    props.context.setExerciseSolution(state);
   }, [state]);
 
   useEffect(() => {
     let tmpMsgs: string[] = [];
-    props.resolution.msgs.map((msg: string) => {
+    initState.msgs.map((msg: string) => {
       tmpMsgs.push(msg);
     });
 
     setState({ ...state, msgs: tmpMsgs });
-  }, [props.statement]);
+  }, [props.exercise]);
 
   // Enviar
 

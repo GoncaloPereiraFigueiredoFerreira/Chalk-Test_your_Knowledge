@@ -4,11 +4,10 @@ import { TestPreview } from "../TestPreview";
 import {
   ExerciseJustificationKind,
   ExerciseType,
-  ResolutionStatus,
 } from "../../../objects/Exercise/Exercise";
 import { Link } from "react-router-dom";
 
-export const basictest: Test = {
+export const exampleTest: Test = {
   type: "basic",
   conclusion: "",
   author: "JCR",
@@ -20,58 +19,69 @@ export const basictest: Test = {
     {
       exercises: [
         {
-          id: "11111",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
+          identity: {
+            id: "11111",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Portugal?",
+            },
           },
           type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+          props: {},
         },
+
         {
-          id: "22222",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com França?",
+          identity: {
+            id: "22222",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "Portugal" },
-            2: { text: "Polo norte" },
-            3: { text: "Pigs" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Espanha?",
+            },
           },
           type: ExerciseType.TRUE_OR_FALSE,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+          props: {
+            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            items: {
+              1: { text: "Portugal" },
+              2: { text: "Polo norte" },
+              3: { text: "Pigs" },
+              4: { text: "Setúbal" },
+            },
+          },
         },
         {
-          id: "3333",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
+          identity: {
+            id: "33333",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Espanha?",
+            },
           },
           type: ExerciseType.TRUE_OR_FALSE,
-          justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
+          props: {
+            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            items: {
+              1: { text: "Portugal" },
+              2: { text: "Polo norte" },
+              3: { text: "Pigs" },
+              4: { text: "Setúbal" },
+            },
+          },
         },
       ],
       groupCotation: 3,
@@ -81,58 +91,69 @@ export const basictest: Test = {
     {
       exercises: [
         {
-          id: "11111",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
+          identity: {
+            id: "55555",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Portugal?",
+            },
           },
           type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+          props: {},
+        },
+
+        {
+          identity: {
+            id: "66666",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
+          },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Espanha?",
+            },
+          },
+          type: ExerciseType.TRUE_OR_FALSE,
+          props: {
+            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            items: {
+              1: { text: "Portugal" },
+              2: { text: "Polo norte" },
+              3: { text: "Pigs" },
+              4: { text: "Setúbal" },
+            },
+          },
         },
         {
-          id: "22222",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com França?",
+          identity: {
+            id: "77777",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 15,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "Portugal" },
-            2: { text: "Polo norte" },
-            3: { text: "Pigs" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Espanha?",
+            },
           },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "3333",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
+          type: ExerciseType.TRUE_OR_FALSE,
+          props: {
+            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            items: {
+              1: { text: "Portugal" },
+              2: { text: "Polo norte" },
+              3: { text: "Pigs" },
+              4: { text: "Setúbal" },
+            },
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.MULTIPLE_CHOICE,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         },
       ],
       groupCotation: 16,
@@ -142,58 +163,69 @@ export const basictest: Test = {
     {
       exercises: [
         {
-          id: "11111",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
+          identity: {
+            id: "88888",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Portugal?",
+            },
           },
           type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
+          props: {},
+        },
+
+        {
+          identity: {
+            id: "99999",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
+          },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Espanha?",
+            },
+          },
+          type: ExerciseType.TRUE_OR_FALSE,
+          props: {
+            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            items: {
+              1: { text: "Portugal" },
+              2: { text: "Polo norte" },
+              3: { text: "Pigs" },
+              4: { text: "Setúbal" },
+            },
+          },
         },
         {
-          id: "22222",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com França?",
+          identity: {
+            id: "10101",
+            specialistId: "JCR",
+            visibility: "public",
+            cotation: 1,
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "Portugal" },
-            2: { text: "Polo norte" },
-            3: { text: "Pigs" },
-            4: { text: "Setúbal" },
+          base: {
+            title: "Vizinhos",
+            statement: {
+              text: "Qual o país que faz fronteira com Espanha?",
+            },
           },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "3333",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
+          type: ExerciseType.TRUE_OR_FALSE,
+          props: {
+            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            items: {
+              1: { text: "Portugal" },
+              2: { text: "Polo norte" },
+              3: { text: "Pigs" },
+              4: { text: "Setúbal" },
+            },
           },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.MULTIPLE_CHOICE,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
         },
       ],
       groupCotation: 1,
@@ -204,7 +236,7 @@ export const basictest: Test = {
 };
 
 export function PreviewTest() {
-  const [test, setTest] = useState<Test>(basictest);
+  const [test, setTest] = useState<Test>(exampleTest);
 
   return (
     <>

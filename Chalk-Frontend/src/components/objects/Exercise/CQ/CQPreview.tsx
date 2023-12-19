@@ -1,9 +1,16 @@
-import { ExerciseHeader } from "../Header/ExHeader";
+import { CQExercise, PreviewProps } from "../Exercise";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 
-export function CQPreview({ id, position, statement, additionalProps }: any) {
+export interface CQPreviewProps {
+  exercise: CQExercise;
+  position: string;
+  context: PreviewProps;
+}
+
+export function CQPreview({ exercise, position, context }: CQPreviewProps) {
   return (
     <>
-      <ExerciseHeader header={statement} />
+      <ExerciseHeaderComp header={exercise.base.statement} />
     </>
   );
 }

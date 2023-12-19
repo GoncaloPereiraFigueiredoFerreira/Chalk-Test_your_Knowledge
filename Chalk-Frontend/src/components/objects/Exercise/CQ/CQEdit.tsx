@@ -1,12 +1,12 @@
-import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
-import { Exercise } from "../Exercise";
+import { EditActionKind } from "../../EditExercise/EditExercise";
+import { CQExercise, CreateEditProps } from "../Exercise";
 
 interface CQEditProps {
-  dispatch: React.Dispatch<EditAction>;
-  state: Exercise;
+  context: CreateEditProps;
+  exercise: CQExercise;
 }
 
-export function CQEdit({ dispatch, state }: CQEditProps) {
+export function CQEdit({ context, exercise }: CQEditProps) {
   return (
     <>
       <div className="flex space-x-8">
@@ -15,11 +15,11 @@ export function CQEdit({ dispatch, state }: CQEditProps) {
           type="number"
           className="basic-input-text"
           onChange={(e) =>
-            dispatch({
+            context.dispatch({
               type: EditActionKind.CHANGE_ITEM_TEXT,
             })
           }
-          value={state.additionalProps?.maxMsgs}
+          value={exercise.props.maxAnswers}
         ></input>
       </div>
       <div className="flex space-x-8">

@@ -3,12 +3,21 @@ import {
   FileUploadIcon,
   ListIcon,
 } from "../../SVGImages/SVGImages";
-import { ExerciseHeader } from "../Header/ExHeader";
+import { OAExercise, PreviewProps } from "../Exercise";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 
-export function OAPreview(props: any) {
+export interface OAPreviewProps {
+  exercise: OAExercise;
+  position: string;
+  context: PreviewProps;
+}
+
+export function OAPreview(props: OAPreviewProps) {
   return (
     <>
-      <ExerciseHeader header={props.statement}></ExerciseHeader>
+      <ExerciseHeaderComp
+        header={props.exercise.base.statement}
+      ></ExerciseHeaderComp>
 
       <form>
         <div className="w-full mb-4 border-2 rounded-lg ex-1">

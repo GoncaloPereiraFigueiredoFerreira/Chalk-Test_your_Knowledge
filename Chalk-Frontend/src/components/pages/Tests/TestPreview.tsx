@@ -20,13 +20,13 @@ function renderExercise(
       className=" rounded-lg w-full p-4 bg-3-2 z-20 dark:bg-gray-700"
       onClick={(e) => {
         setSelectedExercise(index == exerciseSelected ? -1 : index);
-        setShowExID(index == exerciseSelected ? "" : exercise.id);
+        setShowExID(index == exerciseSelected ? "" : exercise.identity.id);
         e.stopPropagation();
       }}
     >
       <div className="flex justify-between">
         <label className="text-md font-medium">Exercício {index + 1}</label>
-        <p>Cotação do Exercício: {exercise.cotation}</p>
+        <p>Cotação do Exercício: {exercise.identity.cotation}</p>
       </div>
       {index == exerciseSelected ? (
         <ExerciseComponent
@@ -96,7 +96,8 @@ export interface TestPreviewProps {
 function findId(id: string, test: Test) {
   for (let i = 0; i < test.groups.length; i++) {
     for (let j = 0; j < test.groups[i].exercises.length; j++) {
-      if (test.groups[i].exercises[j].id === id) return { group: i, ex: j };
+      if (test.groups[i].exercises[j].identity.id === id)
+        return { group: i, ex: j };
     }
   }
   return { group: -1, ex: -1 };

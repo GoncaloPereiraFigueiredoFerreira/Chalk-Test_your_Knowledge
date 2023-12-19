@@ -1,46 +1,34 @@
-import { ExerciseJustificationKind } from "../Exercise";
+import {
+  ExerciseJustificationKind,
+  PreviewProps,
+  TFExercise,
+} from "../Exercise";
 import { useState } from "react";
-import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
+import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
 
 export interface TFPreviewProps {
-  id: string;
+  exercise: TFExercise;
   position: string;
-  statement: {
-    imagePath?: string;
-    imagePosition?: ImgPos;
-    text: string;
-  };
-  justifyKind: ExerciseJustificationKind;
-  items: {
-    [id: string]: {
-      text: string;
-    };
-  };
+  context: PreviewProps;
 }
 
-export function TFPreview({
-  id,
-  position,
-  items,
-  statement,
-  justifyKind,
-}: TFPreviewProps) {
+export function TFPreview({ exercise, position, context }: TFPreviewProps) {
   return (
     <>
-      <ExerciseHeader header={statement} />
+      <ExerciseHeaderComp header={exercise.base.statement} />
       <p>
-        <strong>Tipo de Justificação:</strong> {justifyKind}
+        <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
       </p>
       <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
         <div className="flex text-xl font-bold px-4">V</div>
         <div className="flex text-xl font-bold px-4">F</div>
         <div></div>
-        {Object.entries(items).map(([index, value]) => (
+        {Object.entries(exercise.props.items).map(([index, value]) => (
           <TFShowStatement
             key={index}
             text={value.text}
-            name={`radio-button-${index}-${id}-${position}`}
-            justifyKind={justifyKind}
+            name={`radio-button-${index}-${exercise.identity?.id}-${position}`}
+            justifyKind={exercise.props.justifyType}
           />
         ))}
       </div>

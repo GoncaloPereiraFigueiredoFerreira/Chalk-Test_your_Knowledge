@@ -1,10 +1,11 @@
 import {
   ExerciseJustificationKind,
-  ResolutionData,
+  SolveProps,
+  TFExercise,
   TFResolutionData,
 } from "../Exercise";
 import { useEffect, useReducer } from "react";
-import { ExerciseHeader, ImgPos } from "../Header/ExHeader";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 
 //------------------------------------//
 //                                    //
@@ -55,32 +56,13 @@ function ExerciseTFReducer(tfState: TFResolutionData, tfAction: TFAction) {
 }
 
 export interface TFSolveProps {
-  id: string;
+  exercise: TFExercise;
   position: string;
-  statement: {
-    imagePath?: string;
-    imagePosition?: ImgPos;
-    text: string;
-  };
-  justifyKind: ExerciseJustificationKind;
-  items: {
-    [id: string]: {
-      text: string;
-    };
-  };
-  resolution: ResolutionData;
-  setResolution: Function;
+  context: SolveProps;
 }
 
-export function TFSolve({
-  id,
-  position,
-  statement,
-  justifyKind,
-  resolution,
-  setResolution,
-}: TFSolveProps) {
-  let initState: TFResolutionData = resolution as TFResolutionData;
+export function TFSolve({ exercise, position, context }: TFSolveProps) {
+  let initState: TFResolutionData = context.resolutionData as TFResolutionData;
 
   const [state, dispatch] = useReducer(ExerciseTFReducer, initState);
 
@@ -88,19 +70,19 @@ export function TFSolve({
     () =>
       dispatch({
         type: TFActionKind.SETSTATE,
-        state: resolution as TFResolutionData,
+        state: context.resolutionData as TFResolutionData,
         index: "",
         payload: "",
       }),
-    [statement]
+    [exercise.base]
   );
 
-  useEffect(() => setResolution(state), [state]);
+  useEffect(() => context.setExerciseSolution(state), [state]);
 
   console.log(state.items);
   return (
     <>
-      <ExerciseHeader header={statement} />
+      <ExerciseHeaderComp header={exercise.base.statement} />
       <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
         <div className="flex text-xl font-bold px-4">V</div>
         <div className="flex text-xl font-bold px-4">F</div>
@@ -109,8 +91,8 @@ export function TFSolve({
           <TFShowStatement
             key={index}
             index={index}
-            name={`radio-button-${index}-${id}-${position}`}
-            justifyKind={justifyKind}
+            name={`radio-button-${index}-${exercise.identity?.id}-${position}`}
+            justifyKind={exercise.props.justifyType}
             state={state}
             dispatch={dispatch}
           />

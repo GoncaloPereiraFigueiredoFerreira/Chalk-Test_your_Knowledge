@@ -1,8 +1,14 @@
-import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import {
+  ExerciseComponentProps,
+  ExerciseContext,
+  OAExercise,
+  PreviewProps,
+  SolveProps,
+} from "../Exercise";
 import { OASolve } from "./OASolve";
 import { OAPreview } from "./OAPreview";
 
-export function OAExercise({
+export function OAExerciseComp({
   position,
   context,
   exercise,
@@ -12,15 +18,21 @@ export function OAExercise({
     case ExerciseContext.SOLVE:
       exerciseDisplay = (
         <OASolve
-          statement={exercise.statement}
-          resolution={context.resolutionData}
-          setResolution={context.setExerciseSolution}
+          position={position}
+          context={context as SolveProps}
+          exercise={exercise as OAExercise}
         ></OASolve>
       );
       break;
 
     case ExerciseContext.PREVIEW:
-      exerciseDisplay = <OAPreview statement={exercise.statement}></OAPreview>;
+      exerciseDisplay = (
+        <OAPreview
+          position={position}
+          context={context as PreviewProps}
+          exercise={exercise as OAExercise}
+        ></OAPreview>
+      );
       break;
 
     case ExerciseContext.EDIT:
@@ -37,7 +49,9 @@ export function OAExercise({
   }
   return (
     <div className="">
-      <div className="m-5 text-title-2">{position + ") " + exercise.title}</div>
+      <div className="m-5 text-title-2">
+        {position + ") " + exercise.base.title}
+      </div>
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </div>
   );

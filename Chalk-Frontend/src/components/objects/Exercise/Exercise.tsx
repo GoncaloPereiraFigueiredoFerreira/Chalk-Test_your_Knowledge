@@ -1,117 +1,9 @@
-//------------------------------------//
-//                                    //
-//         createNewExercise          //
-//                                    //
-//------------------------------------//
-
-import { CQExercise } from "./CQ/CQExercise";
+import { EditAction } from "../EditExercise/EditExercise";
+import { CQExerciseComp } from "./CQ/CQExercise";
 import { ImgPos } from "./Header/ExHeader";
-import { MCExercise } from "./MC/MCExercise";
-import { OAExercise } from "./OA/OAExercise";
-import { TFExercise } from "./TF/TFExercise";
-
-export function createNewExercise(newExercisetype: ExerciseType) {
-  // colocar aqui as chamadas para criação dos exercicios
-  let newExercise: Exercise = {
-    id: "-1",
-    title: "",
-    cotation: 0,
-    visibility: "private",
-    specialistId: "This User",
-    type: newExercisetype,
-    statement: {
-      text: "",
-    },
-  };
-
-  switch (newExercisetype) {
-    case ExerciseType.TRUE_OR_FALSE:
-    case ExerciseType.MULTIPLE_CHOICE:
-      return {
-        ...newExercise,
-        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {
-          "0": {
-            text: "",
-          },
-        },
-        solution: {
-          data: {
-            type: newExercisetype,
-            items: {
-              "0": {
-                text: "",
-                value: false,
-                justification: "",
-              },
-            },
-          },
-        },
-      } as Exercise;
-    case ExerciseType.OPEN_ANSWER:
-      return {
-        ...newExercise,
-        solution: { data: { type: newExercisetype, text: "" } },
-      } as Exercise;
-    case ExerciseType.FILL_IN_THE_BLANK:
-      return {
-        ...newExercise,
-        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {},
-      } as Exercise;
-    case ExerciseType.CODE:
-      return {
-        ...newExercise,
-        justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        items: {},
-      } as Exercise;
-  }
-}
-
-export function createNewResolution(exercise: Exercise) {
-  // colocar aqui as chamadas para criação dos exercicios
-  let newResolution: Resolution;
-  switch (exercise.type) {
-    case ExerciseType.OPEN_ANSWER:
-      newResolution = {
-        data: {
-          type: exercise.type,
-          text: "",
-        },
-      };
-      return newResolution as Resolution;
-
-    case ExerciseType.MULTIPLE_CHOICE:
-    case ExerciseType.TRUE_OR_FALSE:
-      let newResolutionData: TFResolutionData | MCResolutionData = {
-        type: exercise.type,
-        items: {},
-      };
-
-      if (newResolutionData.items != undefined && exercise.items != undefined) {
-        Object.entries(exercise.items).forEach(([key, value]) => {
-          newResolutionData.items[key] = {
-            value: false,
-            text: value.text,
-            justification: "",
-          };
-        });
-        newResolution = {
-          data: newResolutionData,
-        };
-      } else throw new Error("Invalid State");
-      return newResolution as Resolution;
-    case ExerciseType.CHAT:
-      let newResolutionDataCH: CQResolutionData = {
-        type: exercise.type,
-        msgs: [],
-      };
-      newResolution = {
-        data: newResolutionDataCH,
-      };
-      return newResolution as Resolution;
-  }
-}
+import { MCExerciseComp } from "./MC/MCExercise";
+import { OAExerciseComp } from "./OA/OAExercise";
+import { TFExerciseComp } from "./TF/TFExercise";
 
 //------------------------------------//
 //                                    //
@@ -119,19 +11,22 @@ export function createNewResolution(exercise: Exercise) {
 //                                    //
 //------------------------------------//
 
-export enum ResolutionStatus {
-  PENDING = "pending",
+export enum ResolutionType {
+  PENDING = "PENDING",
+  GRADED = "GRADED",
+  SOLUTION = "SOLUTION",
 }
 
 export interface Resolution {
-  id?: string;
-  cotation?: number;
+  id: string;
+  exerciseID: string;
+  cotation: number;
   student?: {
     id: string;
     name: string;
     email: string;
   };
-  status?: ResolutionStatus;
+  type: ResolutionType;
   data: ResolutionData;
 }
 
@@ -162,11 +57,13 @@ export interface CQResolutionData {
 }
 
 export interface ResolutionItems {
-  [id: string]: {
-    text: string;
-    justification: string;
-    value?: boolean;
-  };
+  [id: string]: ResolutionItem;
+}
+
+export interface ResolutionItem {
+  text: string;
+  justification?: string;
+  value?: boolean;
 }
 
 //------------------------------------//
@@ -179,11 +76,8 @@ export enum ExerciseType {
   MULTIPLE_CHOICE = "multiple-choice",
   OPEN_ANSWER = "open-answer",
   TRUE_OR_FALSE = "true-or-false",
-  FILL_IN_THE_BLANK = "fill-in-the-blank",
-  CODE = "code",
   CHAT = "chat",
 }
-
 export enum ExerciseJustificationKind {
   JUSTIFY_ALL = "Todas",
   JUSTIFY_FALSE = "Apenas Falsas",
@@ -192,29 +86,65 @@ export enum ExerciseJustificationKind {
   JUSTIFY_MARKED = "Apenas Selecionadas",
   NO_JUSTIFICATION = "Nenhuma",
 }
+export type Exercise = OAExercise | TFExercise | MCExercise | CQExercise;
 
-export interface Exercise {
-  id: string;
+export interface OAProps {}
+
+export interface TFProps {
+  items: ResolutionItems;
+  justifyType: ExerciseJustificationKind;
+}
+export type MCProps = TFProps;
+
+export interface CQProps {
+  maxAnswers: number;
+  topics: string[];
+}
+
+export interface OAExercise {
+  identity: ExerciseIdentity;
+  base: ExerciseBase;
+  type: ExerciseType.OPEN_ANSWER;
+  props: OAProps;
+}
+
+export interface TFExercise {
+  identity: ExerciseIdentity;
+  base: ExerciseBase;
+  type: ExerciseType.TRUE_OR_FALSE;
+  props: TFProps;
+}
+
+export interface MCExercise {
+  identity: ExerciseIdentity;
+  base: ExerciseBase;
+  type: ExerciseType.MULTIPLE_CHOICE;
+  props: MCProps;
+}
+
+export interface CQExercise {
+  identity: ExerciseIdentity;
+  base: ExerciseBase;
+  type: ExerciseType.CHAT;
+  props: CQProps;
+}
+
+export interface ExerciseHeader {
+  text: string;
+  imagePath?: string;
+  imagePosition?: ImgPos;
+}
+
+export interface ExerciseBase {
   title: string;
+  statement: ExerciseHeader;
+}
+
+export interface ExerciseIdentity {
+  id: string;
   cotation?: number;
   specialistId: string;
   visibility: string;
-  type: ExerciseType;
-  statement: {
-    imagePath?: string;
-    imagePosition?: ImgPos;
-    text: string;
-  };
-  justifyKind?: ExerciseJustificationKind;
-  items?: { [id: string]: { text: string } };
-  solution?: Resolution;
-  resolution?: Resolution;
-  additionalProps?: ChatBasedProps;
-}
-
-export interface ChatBasedProps {
-  topics: string[];
-  maxMsgs: number;
 }
 
 //------------------------------------//
@@ -249,7 +179,7 @@ export interface ExerciseComponentProps {
   context: ContextBasedProps;
 }
 
-type ContextBasedProps =
+export type ContextBasedProps =
   | PreviewProps
   | SolveProps
   | CreateEditProps
@@ -268,7 +198,8 @@ export interface SolveProps {
 
 export interface CreateEditProps {
   context: ExerciseContext.EDIT;
-  setExercise: Function;
+  dispatch: React.Dispatch<EditAction>;
+  solutionData: ResolutionData;
 }
 
 export interface GradingProps {
@@ -288,39 +219,176 @@ export function ExerciseComponent({
   switch (exercise.type) {
     case ExerciseType.MULTIPLE_CHOICE: {
       return (
-        <MCExercise
+        <MCExerciseComp
           context={context}
           exercise={exercise}
           position={position}
-        ></MCExercise>
+        ></MCExerciseComp>
       );
     }
     case ExerciseType.TRUE_OR_FALSE: {
       return (
-        <TFExercise
+        <TFExerciseComp
           context={context}
           exercise={exercise}
           position={position}
-        ></TFExercise>
+        ></TFExerciseComp>
       );
     }
     case ExerciseType.OPEN_ANSWER: {
       return (
-        <OAExercise
+        <OAExerciseComp
           context={context}
           exercise={exercise}
           position={position}
-        ></OAExercise>
+        ></OAExerciseComp>
       );
     }
     case ExerciseType.CHAT: {
       return (
-        <CQExercise
+        <CQExerciseComp
           context={context}
           exercise={exercise}
           position={position}
-        ></CQExercise>
+        ></CQExerciseComp>
       );
     }
   }
+}
+
+export function InitExercise(type: ExerciseType): Exercise {
+  let newExercise: Exercise;
+  let base = {
+    title: "",
+    statement: {
+      text: "",
+    },
+  };
+
+  let identity: ExerciseIdentity = {
+    id: "",
+    specialistId: "",
+    visibility: "",
+  };
+
+  switch (type) {
+    case ExerciseType.TRUE_OR_FALSE:
+      let TFExercise: TFExercise = {
+        base: base,
+        type: ExerciseType.TRUE_OR_FALSE,
+        props: {
+          items: {},
+          justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+        },
+        identity: identity,
+      };
+      newExercise = TFExercise;
+      break;
+    case ExerciseType.MULTIPLE_CHOICE:
+      let MCExercise: MCExercise = {
+        base: base,
+        type: ExerciseType.MULTIPLE_CHOICE,
+        props: {
+          items: {},
+          justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+        },
+        identity: identity,
+      };
+      newExercise = MCExercise;
+      break;
+    case ExerciseType.OPEN_ANSWER:
+      let OAExercise: OAExercise = {
+        base: base,
+        type: ExerciseType.OPEN_ANSWER,
+        props: {},
+        identity: identity,
+      };
+      newExercise = OAExercise;
+      break;
+
+    case ExerciseType.CHAT:
+      let CQExercise: CQExercise = {
+        base: base,
+        type: ExerciseType.CHAT,
+        props: {
+          maxAnswers: 0,
+          topics: [],
+        },
+        identity: identity,
+      };
+      newExercise = CQExercise;
+  }
+  return newExercise;
+}
+
+export function InitResolutionDataEx(exercise: Exercise): ResolutionData {
+  let newRes: ResolutionData;
+  switch (exercise.type) {
+    case ExerciseType.CHAT:
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [exercise.base.statement.text],
+      };
+      newRes = CQRes;
+      break;
+    case ExerciseType.MULTIPLE_CHOICE:
+      let MCRes: MCResolutionData = {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        items: { ...exercise.props.items },
+      };
+      newRes = MCRes;
+      break;
+    case ExerciseType.TRUE_OR_FALSE:
+      let TFRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: { ...exercise.props.items },
+      };
+      newRes = TFRes;
+      break;
+
+    case ExerciseType.OPEN_ANSWER:
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: "",
+      };
+      newRes = OARes;
+      break;
+  }
+  return newRes;
+}
+
+export function InitResolutionDataType(type: ExerciseType): ResolutionData {
+  let newRes: ResolutionData;
+  switch (type) {
+    case ExerciseType.CHAT:
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [],
+      };
+      newRes = CQRes;
+      break;
+    case ExerciseType.MULTIPLE_CHOICE:
+      let MCRes: MCResolutionData = {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        items: {},
+      };
+      newRes = MCRes;
+      break;
+    case ExerciseType.TRUE_OR_FALSE:
+      let TFRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: {},
+      };
+      newRes = TFRes;
+      break;
+
+    case ExerciseType.OPEN_ANSWER:
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: "",
+      };
+      newRes = OARes;
+      break;
+  }
+  return newRes;
 }

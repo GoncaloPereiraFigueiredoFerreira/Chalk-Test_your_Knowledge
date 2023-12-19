@@ -9,7 +9,7 @@ import {
   ExerciseType,
   Resolution,
 } from "../../../objects/Exercise/Exercise";
-import { basictest } from "../Preview/PreviewTest";
+import { exampleTest } from "../Preview/PreviewTest";
 import axios from "axios";
 import { Answer } from "../../../objects/Answer/Answer";
 
@@ -73,7 +73,10 @@ function renderResolutions(
             <Answer
               solution={resolutions[exerciseID].solution}
               cotation={resolutions[exerciseID].cotation}
-              justifyKind={resolutions[exerciseID].justifyKind}
+              justifyKind={
+                resolutions[exerciseID].justifyKind ??
+                ExerciseJustificationKind.NO_JUSTIFICATION
+              }
               resolution={resolutions[exerciseID].studentRes[resID]}
             ></Answer>
           </>
@@ -126,13 +129,13 @@ export interface Resolutions {
   [exerciseID: string]: {
     solution: Resolution;
     cotation: number;
-    justifyKind: ExerciseJustificationKind;
+    justifyKind?: ExerciseJustificationKind;
     studentRes: { [resolutionID: string]: Resolution };
   };
 }
 
 export function Correction() {
-  const [test, setTest] = useState<Test>(basictest);
+  const [test, setTest] = useState<Test>(exampleTest);
   const [resolutions, setResolutions] = useState<Resolutions>();
   //para mais tarde fazer uma aba de por corregir e corrigidas
   //const [corrected, setCorrected] = useState<Resolutions>();
@@ -156,11 +159,11 @@ export function Correction() {
     test.groups.map((group) =>
       group.exercises.map(
         (exercise) =>
-          (temp[exercise.id] = {
+          (temp[exercise.identity.id] = {
             solution: undefined, // isto tem de se ir buscar ao backend e n ao exercicio
-            cotation: exercise.cotation!,
-            justifyKind: exercise.justifyKind!,
-            studentRes: getExResByID(exercise.id),
+            cotation: exercise.identity.cotation!,
+            justifyKind: undefined,
+            studentRes: getExResByID(exercise.identity.id),
           })
       )
     );
