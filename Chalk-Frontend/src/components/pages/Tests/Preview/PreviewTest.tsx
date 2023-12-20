@@ -72,15 +72,10 @@ export const exampleTest: Test = {
               text: "Qual o país que faz fronteira com Espanha?",
             },
           },
-          type: ExerciseType.TRUE_OR_FALSE,
+          type: ExerciseType.CHAT,
           props: {
-            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
-            items: {
-              1: { text: "Portugal" },
-              2: { text: "Polo norte" },
-              3: { text: "Pigs" },
-              4: { text: "Setúbal" },
-            },
+            maxAnswers: 2,
+            topics: ["Geografia dos Paises"],
           },
         },
       ],

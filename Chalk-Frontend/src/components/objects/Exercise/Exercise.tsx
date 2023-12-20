@@ -38,11 +38,13 @@ export type ResolutionData =
 
 export interface TFResolutionData {
   type: ExerciseType.TRUE_OR_FALSE;
+  justifyType: ExerciseJustificationKind;
   items: ResolutionItems;
 }
 
 export interface MCResolutionData {
   type: ExerciseType.MULTIPLE_CHOICE;
+  justifyType: ExerciseJustificationKind;
   items: ResolutionItems;
 }
 
@@ -335,6 +337,7 @@ export function InitResolutionDataEx(exercise: Exercise): ResolutionData {
       let MCRes: MCResolutionData = {
         type: ExerciseType.MULTIPLE_CHOICE,
         items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
       };
       newRes = MCRes;
       break;
@@ -342,6 +345,7 @@ export function InitResolutionDataEx(exercise: Exercise): ResolutionData {
       let TFRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
         items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
       };
       newRes = TFRes;
       break;
@@ -370,6 +374,7 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
     case ExerciseType.MULTIPLE_CHOICE:
       let MCRes: MCResolutionData = {
         type: ExerciseType.MULTIPLE_CHOICE,
+        justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
       };
       newRes = MCRes;
@@ -377,6 +382,7 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
     case ExerciseType.TRUE_OR_FALSE:
       let TFRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
+        justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
       };
       newRes = TFRes;
