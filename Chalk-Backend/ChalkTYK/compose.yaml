@@ -1,16 +1,26 @@
 # docker permissions
 # https://www.digitalocean.com/community/questions/how-to-fix-docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket
 services:
-  mongodb:
-    image: 'mongo:7.0.3'
-    environment:
-      - 'MONGO_INITDB_DATABASE=chalktyk'
-      - 'MONGO_INITDB_ROOT_PASSWORD=password'
-      - 'MONGO_INITDB_ROOT_USERNAME=root'
-    ports:
-      - '27018:27017'
-    volumes:
-      - mongo_db:/data/db
+  #mongodb:
+  #  build: ./docker_mongo
+  #  command: [ "--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/data/keyfile" ]
+  #  environment:
+  #    - 'MONGO_INITDB_DATABASE=chalktyk'
+  #    - 'MONGO_INITDB_ROOT_PASSWORD=password'
+  #    - 'MONGO_INITDB_ROOT_USERNAME=root'
+  #  ports:
+  #    - '27017:27017'
+  #  volumes:
+  #    - mongo_db:/data/db
+  #  #      - ./mongo-keyfile.txt:/security/mongo-keyfile.txt:ro
+  #  networks:
+  #    - backend
+  #  healthcheck:
+  #    test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27017'}]}) }" | mongosh -u God -p password --quiet
+  #    interval: 5s
+  #    timeout: 30s
+  #    retries: 30
+
   postgres:
     image: 'postgres:16.1'
     environment:
@@ -21,11 +31,17 @@ services:
       - '5432:5432'
     volumes:
       - postgres_db:/data/db
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   postgres_db:
     driver:
       local
-  mongo_db:
-    driver:
-      local
+  #mongo_db:
+  #  driver:
+  #    local
