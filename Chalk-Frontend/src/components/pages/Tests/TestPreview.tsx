@@ -6,6 +6,7 @@ import {
   ExerciseGroup,
 } from "../../objects/Exercise/Exercise";
 import { Test } from "./SolveTest/SolveTest";
+
 function renderExercise(
   exercise: Exercise,
   index: number,
@@ -17,7 +18,7 @@ function renderExercise(
   return (
     <div
       key={index}
-      className=" rounded-lg w-full p-4 bg-3-2 z-20 dark:bg-gray-700"
+      className=" rounded-lg w-full p-4 bg-3-2 z-20 dark:bg-gray-700 cursor-pointer"
       onClick={(e) => {
         setSelectedExercise(index == exerciseSelected ? -1 : index);
         setShowExID(index == exerciseSelected ? "" : exercise.identity.id);
@@ -53,7 +54,7 @@ function renderGroup(
   return (
     <div
       key={index}
-      className="rounded-lg w-full p-4 bg-3-1"
+      className="rounded-lg w-full p-4 bg-3-1 cursor-pointer"
       onClick={() => {
         setSelectedGroup(index == selectedGroup ? -1 : index);
         setSelectedEx(-1);
@@ -111,10 +112,10 @@ export function TestPreview({ test, showExId, setShowExID }: TestPreviewProps) {
     //Queria mostrar este exercicio
     if (showExId !== "") {
       let { group, ex } = findId(showExId, test);
-      if (group != selectedGroup && ex != selectedEx) {
+      if (group != selectedGroup) {
         setSelectedGroup(group);
-        setSelectedEx(ex);
       }
+      if (ex != selectedEx) setSelectedEx(ex);
     }
   }, [showExId]);
 
