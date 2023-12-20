@@ -514,6 +514,15 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    public void updateTestResolution(String testResId, TestResolution resolution) throws BadInputException, NotFoundException {
+        TestResolution tr = getTestResolutionById(testResId);
+        
+        if (resolution != null){
+            resolutionDAO.save(tr);
+        }
+    }
+
+    @Override
     @Transactional
     public Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))

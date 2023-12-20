@@ -1,9 +1,10 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.springframework.stereotype.Service;
-import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
+
+import pt.uminho.di.chalktyk.models.courses.Course;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 

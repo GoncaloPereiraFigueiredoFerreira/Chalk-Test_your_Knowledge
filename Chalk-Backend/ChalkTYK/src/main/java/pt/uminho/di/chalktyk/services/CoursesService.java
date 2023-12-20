@@ -7,21 +7,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
-import pt.uminho.di.chalktyk.models.relational.CourseSQL;
-import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
-import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
-import pt.uminho.di.chalktyk.models.relational.StudentSQL;
-import pt.uminho.di.chalktyk.repositories.nonrelational.CourseDAO;
-import pt.uminho.di.chalktyk.repositories.relational.CourseSqlDAO;
+
+import pt.uminho.di.chalktyk.models.courses.Course;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.repositories.CourseDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class CoursesService implements ICoursesService {
@@ -29,16 +25,14 @@ public class CoursesService implements ICoursesService {
     @PersistenceContext
     private final EntityManager entityManager;
     private final CourseDAO courseDAO;
-    private final CourseSqlDAO courseSqlDAO;
     private final IInstitutionsService institutionsService;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
 
     @Autowired
-    public CoursesService(EntityManager entityManager, CourseDAO courseDAO, CourseSqlDAO courseSqlDAO, IInstitutionsService institutionsService, ISpecialistsService specialistsService, IStudentsService studentsService) {
+    public CoursesService(EntityManager entityManager, CourseDAO courseDAO, IInstitutionsService institutionsService, ISpecialistsService specialistsService, IStudentsService studentsService) {
         this.entityManager = entityManager;
         this.courseDAO = courseDAO;
-        this.courseSqlDAO = courseSqlDAO;
         this.institutionsService = institutionsService;
         this.specialistsService = specialistsService;
         this.studentsService = studentsService;
@@ -66,6 +60,8 @@ public class CoursesService implements ICoursesService {
             throw new BadInputException("Cannot create course: A name of a course cannot be empty or null.");
 
         // check owner (specialist) id
+        // TODO: get owner
+        /* 
         String ownerId = course.getOwnerId();
         if(ownerId == null)
             throw new BadInputException("Cannot create course: A course must have an owner.");
@@ -80,15 +76,15 @@ public class CoursesService implements ICoursesService {
                 institutionId = inst.getName();
         }catch (NotFoundException ignored){}
         course.setInstituitionId(institutionId);
-
-        // persist the course in nosql database
-        course = courseDAO.save(course);
+        */
 
         // persists the course in sql database
-        InstitutionSQL inst = institutionId != null ? entityManager.getReference(InstitutionSQL.class, institutionId) : null;
-        var spec = entityManager.getReference(SpecialistSQL.class, ownerId);
-        var courseSQL = new CourseSQL(course.getId(), inst, course.getName(), Set.of(spec));
-        courseSqlDAO.save(courseSQL);
+        // TODO: get institution
+        Institution inst = new Institution();//institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
+        // TODO: get specialist
+        Specialist spec = new Specialist("name", inst);//entityManager.getReference(Specialist.class, ownerId);
+        Course newCourse = new Course(null, name, course.getDescription(), null, inst);
+        courseDAO.save(newCourse);
 
         return course.getId();
     }
@@ -99,7 +95,7 @@ public class CoursesService implements ICoursesService {
      * @return course that has the given identifier
      * @throws NotFoundException if the course does not exist
      */
-    public Course getCourseById(String courseId) throws NotFoundException{
+    public Course getCourseById(String courseId) throws NotFoundException {
         Course c = courseDAO.findById(courseId).orElse(null);
         if(c == null)
             throw new NotFoundException("Could not get course: there is no course with the given identifier.");
@@ -108,7 +104,7 @@ public class CoursesService implements ICoursesService {
 
     @Override
     public boolean existsCourseById(String courseId) {
-        return courseSqlDAO.existsById(courseId);
+        return courseDAO.existsById(courseId);
     }
 
     /**
@@ -120,11 +116,11 @@ public class CoursesService implements ICoursesService {
     @Transactional
     @Override
     public void addSpecialistsToCourse(String courseId, List<String> specialistsIds) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not add specialists: course not found.");
         for(String specialistId : specialistsIds){
             if(specialistsService.existsSpecialistById(specialistId))
-                courseSqlDAO.addSpecialistToCourse(specialistId, courseId);
+                courseDAO.addSpecialistToCourse(specialistId, courseId);
         }
     }
 
@@ -137,11 +133,11 @@ public class CoursesService implements ICoursesService {
     @Transactional
     @Override
     public void addStudentsToCourse(String courseId, List<String> studentsIds) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not add students: course not found.");
         for(String studentId : studentsIds){
             if(studentsService.existsStudentById(studentId))
-                courseSqlDAO.addStudentToCourse(studentId, courseId);
+                courseDAO.addStudentToCourse(studentId, courseId);
         }
     }
 
@@ -154,11 +150,11 @@ public class CoursesService implements ICoursesService {
     @Transactional
     @Override
     public void removeSpecialistsFromCourse(String courseId, List<String> specialistsIds) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not remove specialists: course not found.");
         for(String specialistId : specialistsIds){
             if(specialistsService.existsSpecialistById(specialistId))
-                courseSqlDAO.removeSpecialistFromCourse(specialistId, courseId);
+                courseDAO.removeSpecialistFromCourse(specialistId, courseId);
         }
     }
 
@@ -171,11 +167,11 @@ public class CoursesService implements ICoursesService {
     @Transactional
     @Override
     public void removeStudentsFromCourse(String courseId, List<String> studentsIds) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not remove students: course not found.");
         for(String studentId : studentsIds){
             if(studentsService.existsStudentById(studentId))
-                courseSqlDAO.removeStudentFromCourse(studentId, courseId);
+                courseDAO.removeStudentFromCourse(studentId, courseId);
         }
     }
 
@@ -212,10 +208,10 @@ public class CoursesService implements ICoursesService {
 
         // Update sql information
         if(nameUpdated) {
-            var courseSQL = courseSqlDAO.findById(origCourse.getId()).orElse(null);
+            var courseSQL = courseDAO.findById(origCourse.getId()).orElse(null);
             assert courseSQL != null;
             courseSQL.setName(origCourse.getName());
-            courseSqlDAO.save(courseSQL);
+            courseDAO.save(courseSQL);
         }
     }
 
@@ -230,9 +226,10 @@ public class CoursesService implements ICoursesService {
      */
     @Override
     public List<Student> getCourseStudents(String courseId, int page, int itemsPerPage) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course students: the course does not exist.");
-        return studentsSqlToNoSql(courseSqlDAO.getCourseStudents(courseId, PageRequest.of(page, itemsPerPage)));
+        // TODO: maybe retornar página diretamente
+        return pageToListStudents(courseDAO.getCourseStudents(courseId, PageRequest.of(page, itemsPerPage)));
     }
 
     /**
@@ -246,17 +243,18 @@ public class CoursesService implements ICoursesService {
      */
     @Override
     public List<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        return specialistsSqlToNoSql(courseSqlDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage)));
+        // TODO: maybe retornar página diretamente
+        return pageToListSpecialists(courseDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage)));
     }
 
 
     @Override
     public boolean checkSpecialistInCourse(String courseId, String specialistId) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        return courseSqlDAO.isCourseSpecialist(courseId, specialistId);
+        return courseDAO.isCourseSpecialist(courseId, specialistId);
     }
 
     /**
@@ -268,9 +266,9 @@ public class CoursesService implements ICoursesService {
      */
     @Override
     public boolean checkStudentInCourse(String courseId, String studentId) throws NotFoundException {
-        if(!courseSqlDAO.existsById(courseId))
+        if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course students: the course does not exist.");
-        return courseSqlDAO.isCourseStudent(courseId, studentId);
+        return courseDAO.isCourseStudent(courseId, studentId);
     }
 
     /**
@@ -285,7 +283,8 @@ public class CoursesService implements ICoursesService {
     public List<Course> getStudentCourses(String studentId, int page, int itemsPerPage) throws NotFoundException {
         if(!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Could not get student courses: student does not exist.");
-        return coursesSqlToNoSql(courseSqlDAO.getStudentCourses(studentId, PageRequest.of(page, itemsPerPage)));
+        // TODO: maybe retornar página diretamente
+        return pageToListCourses(courseDAO.getStudentCourses(studentId, PageRequest.of(page, itemsPerPage)));
     }
 
     /**
@@ -300,7 +299,8 @@ public class CoursesService implements ICoursesService {
     public List<Course> getSpecialistCourses(String specialistId, int page, int itemsPerPage) throws NotFoundException {
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Could not get specialist courses: specialist does not exist.");
-        return coursesSqlToNoSql(courseSqlDAO.getSpecialistCourses(specialistId, PageRequest.of(page, itemsPerPage)));
+        // TODO: maybe retornar página diretamente
+        return pageToListCourses(courseDAO.getSpecialistCourses(specialistId, PageRequest.of(page, itemsPerPage)));
     }
 
     /**
@@ -315,29 +315,35 @@ public class CoursesService implements ICoursesService {
     public List<Course> getInstitutionCourses(String institutionId, int page, int itemsPerPage) throws NotFoundException {
         if(!institutionsService.existsInstitutionById(institutionId))
             throw new NotFoundException("Could not get institution courses: institution does not exist.");
-        return coursesSqlToNoSql(courseSqlDAO.getStudentCourses(institutionId, PageRequest.of(page, itemsPerPage)));
+        // TODO: maybe retornar página diretamente
+        return pageToListCourses(courseDAO.getStudentCourses(institutionId, PageRequest.of(page, itemsPerPage)));
     }
 
-    /* **** Auxiliary methods **** */
-
-    private List<Student> studentsSqlToNoSql(Page<StudentSQL> studentPage) throws NotFoundException {
+    /* ***  Auxiliary Methods  *** */
+    private List<Student> pageToListStudents(Page<Student> studentPage) throws NotFoundException {
         List<Student> studentList = new ArrayList<>();
-        for(var student : studentPage)
-            studentList.add(studentsService.getStudentById(student.getId()));
+        for(Student student : studentPage)
+            ;
+            // TODO: change this
+            //studentList.add(studentsService.getStudentById(student.getId()));
         return studentList;
     }
 
-    private List<Specialist> specialistsSqlToNoSql(Page<SpecialistSQL> specialistPage) throws NotFoundException {
+    private List<Specialist> pageToListSpecialists(Page<Specialist> specialistPage) throws NotFoundException {
         List<Specialist> specialistList = new ArrayList<>();
-        for(var specialist : specialistPage)
-            specialistList.add(specialistsService.getSpecialistById(specialist.getId()));
+        for(Specialist specialist : specialistPage)
+            ;
+            // TODO: change this
+            //specialistList.add(specialistsService.getSpecialistById(specialist.getId()));
         return specialistList;
     }
 
-    private List<Course> coursesSqlToNoSql(Page<CourseSQL> coursePage) throws NotFoundException {
+    private List<Course> pageToListCourses(Page<Course> coursePage) throws NotFoundException {
         List<Course> courseList = new ArrayList<>();
-        for(var course : coursePage)
-            courseList.add(this.getCourseById(course.getId()));
+        for(Course course : coursePage)
+            ;
+            // TODO: change this
+            //courseList.add(this.getCourseById(course.getId()));
         return courseList;
     }
 }

@@ -145,6 +145,16 @@ public interface ITestsService {
     void deleteTestResolutionById(String resolutionId) throws NotFoundException;
 
     /**
+     * Update a test resolution
+     *
+     * @param  testResId
+     * @param  resolution
+     * @throws BadInputException if any property of the test resolution is not valid.
+     * @throws NotFoundException if no test resolution was found with the given id
+     **/
+    void updateTestResolution(String testResId, TestResolution resolution) throws BadInputException, NotFoundException;
+
+    /**
      * Allows to check if the student can submit a resolution for the test
      *
      * @param testId
