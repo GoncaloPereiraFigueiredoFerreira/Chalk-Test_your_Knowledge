@@ -1,11 +1,9 @@
 import {
   CheckboxIcon,
   CheckedListIcon,
-  CodeIcon,
   EyeSlashIcon,
   GarbageIcon,
   GraduateIcon,
-  InputIcon,
   LinkIcon,
   LockIcon,
   PenIcon,
@@ -13,8 +11,7 @@ import {
   TextIcon,
   WorldSearchIcon,
 } from "../SVGImages/SVGImages";
-// import { FillBlankExercise } from "./FillBlank/FillBlankExercise";
-// import { CodeExercise } from "./Code/CodeExercise";
+import { PiChatsBold } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import "./ShowExercise.css";
 import {
@@ -32,8 +29,9 @@ import {
 interface ExerciseProps {
   position: string;
   exercise: Exercise;
-  setEditMenuIsOpen: (value: string) => void;
-  editMenuIsOpen: string;
+  setExerciseID: (value: string) => void;
+  editMenuIsOpen: boolean;
+  setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
 }
@@ -41,8 +39,9 @@ interface ExerciseProps {
 export function ShowExercise({
   position,
   exercise,
-  setEditMenuIsOpen,
+  setExerciseID,
   editMenuIsOpen,
+  setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
 }: ExerciseProps) {
@@ -89,7 +88,9 @@ export function ShowExercise({
       case ExerciseType.CHAT:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <TextIcon size="size-4" />
+            <div className="h-full scale-125">
+              <PiChatsBold />
+            </div>
             Chat Question
           </label>
         );
@@ -193,7 +194,7 @@ export function ShowExercise({
             <button
               className="btn-options-exercise gray-icon"
               onClick={() => {
-                if (editMenuIsOpen === "") {
+                if (!editMenuIsOpen) {
                   dispatch({
                     type: ListExerciseActionKind.EDIT_EXERCISE,
                     payload: {
@@ -201,7 +202,8 @@ export function ShowExercise({
                     },
                   });
 
-                  setEditMenuIsOpen(exercise.identity.id);
+                  setEditMenuIsOpen(true);
+                  setExerciseID(exercise.identity.id);
                 }
                 setSelectedExercise(exercise.identity.id);
               }}

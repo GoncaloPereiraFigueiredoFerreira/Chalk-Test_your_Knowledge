@@ -5,7 +5,8 @@ import { useState } from "react";
 import { ListExerciseProvider } from "../../objects/ListExercises/ListExerciseContext";
 
 export function ExerciseBankPage() {
-  const [editMenuIsOpen, setEditMenuIsOpen] = useState("");
+  const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
+  const [exerciseID, setExerciseID] = useState("");
 
   return (
     <ListExerciseProvider>
@@ -13,6 +14,7 @@ export function ExerciseBankPage() {
         <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
           <Searchbar></Searchbar>
           <ListExercises
+            setExerciseID={(value) => setExerciseID(value)}
             editMenuIsOpen={editMenuIsOpen}
             setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
           ></ListExercises>
@@ -22,9 +24,10 @@ export function ExerciseBankPage() {
             editMenuIsOpen ? "w-full" : "w-0"
           } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
         >
-          {editMenuIsOpen != "" ? (
+          {editMenuIsOpen ? (
             <EditExercise
-              editMenuIsOpen={editMenuIsOpen}
+              exerciseID={exerciseID}
+              setExerciseID={(value) => setExerciseID(value)}
               setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
             ></EditExercise>
           ) : null}

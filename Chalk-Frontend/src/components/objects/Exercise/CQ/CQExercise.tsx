@@ -22,7 +22,7 @@ export function CQExerciseComp({
           exercise={exercise as CQExercise}
           position={position}
           context={context as SolveProps}
-        ></CQSolve>
+        />
       );
       break;
 
@@ -32,13 +32,13 @@ export function CQExerciseComp({
           exercise={exercise as CQExercise}
           position={position}
           context={context as PreviewProps}
-        ></CQPreview>
+        />
       );
       break;
 
     case ExerciseContext.EDIT:
       exerciseDisplay = (
-        <CQEdit exercise={exercise as CQExercise} context={context}></CQEdit>
+        <CQEdit exercise={exercise as CQExercise} context={context} />
       );
       break;
 
@@ -51,9 +51,11 @@ export function CQExerciseComp({
   }
   return (
     <>
-      <div className="m-5 text-title-2">
-        {position + ") " + exercise.base.title}
-      </div>
+      {context.context !== ExerciseContext.EDIT ? (
+        <div className="m-5 text-title-2">
+          {position + ") " + exercise.base.title}
+        </div>
+      ) : null}
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );

@@ -2,10 +2,9 @@ import "./ListExercises.css";
 import {
   CheckboxIcon,
   CheckedListIcon,
-  CodeIcon,
-  InputIcon,
   TextIcon,
 } from "../SVGImages/SVGImages";
+import { PiChatsBold } from "react-icons/pi";
 import { useState } from "react";
 import { ExerciseType } from "../Exercise/Exercise";
 
@@ -31,7 +30,7 @@ export function CreateNewExercisePopUp({
             ExerciseType.MULTIPLE_CHOICE != newExercisetype
               ? "bg-btn-4-1"
               : "btn-selected"
-          } btn-ListExercises text-lg group`}
+          } btn-ListExercises group`}
         >
           <CheckedListIcon style="inherit-icon" size="size-12" />
           Escolha múltipla
@@ -42,7 +41,7 @@ export function CreateNewExercisePopUp({
             ExerciseType.OPEN_ANSWER != newExercisetype
               ? "bg-btn-4-1"
               : "btn-selected"
-          } btn-ListExercises text-lg group`}
+          } btn-ListExercises group`}
         >
           <TextIcon style="inherit-icon" size="size-12" />
           Resposta aberta
@@ -53,9 +52,20 @@ export function CreateNewExercisePopUp({
             ExerciseType.TRUE_OR_FALSE != newExercisetype
               ? "bg-btn-4-1"
               : "btn-selected"
-          } btn-ListExercises text-lg group`}
+          } btn-ListExercises group`}
         >
           <CheckboxIcon style="inherit-icon" size="size-12" />
+          Verdadeiro ou falso
+        </button>
+        <button
+          onClick={() => setNewExercisetype(ExerciseType.CHAT)}
+          className={`${
+            ExerciseType.CHAT != newExercisetype ? "bg-btn-4-1" : "btn-selected"
+          } btn-ListExercises group`}
+        >
+          <div className="inherit-icon size-12 ">
+            <PiChatsBold />{" "}
+          </div>
           Verdadeiro ou falso
         </button>
       </div>
@@ -64,7 +74,7 @@ export function CreateNewExercisePopUp({
           onClick={() => createNewExercise(newExercisetype)}
           className="btn-selected btn-ListExercises group"
         >
-          <label className="text-lg">Seguinte</label>
+          Seguinte
         </button>
       </div>
     </>

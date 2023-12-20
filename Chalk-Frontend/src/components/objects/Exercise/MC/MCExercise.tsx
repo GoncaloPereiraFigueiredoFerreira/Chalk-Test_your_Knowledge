@@ -24,7 +24,7 @@ export function MCExerciseComp({
           exercise={exercise as MCExercise}
           position={position}
           context={context as SolveProps}
-        ></MCSolve>
+        />
       );
       break;
 
@@ -34,7 +34,7 @@ export function MCExerciseComp({
           exercise={exercise as MCExercise}
           position={position}
           context={context as PreviewProps}
-        ></MCPreview>
+        />
       );
       break;
 
@@ -50,15 +50,18 @@ export function MCExerciseComp({
     case ExerciseContext.GRADING:
       exerciseDisplay = <></>;
       break;
+
     case ExerciseContext.REVIEW:
       exerciseDisplay = <></>;
       break;
   }
   return (
     <>
-      <div className="m-5 text-title-2">
-        {position + ") " + exercise.base.title}
-      </div>
+      {context.context !== ExerciseContext.EDIT ? (
+        <div className="m-5 text-title-2">
+          {position + ") " + exercise.base.title}
+        </div>
+      ) : null}
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );

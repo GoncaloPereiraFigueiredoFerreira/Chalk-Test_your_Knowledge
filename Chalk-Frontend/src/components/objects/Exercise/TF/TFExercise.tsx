@@ -10,16 +10,20 @@ import { TFEdit } from "./TFEdit";
 import { TFPreview } from "./TFPreview";
 import { TFSolve } from "./TFSolve";
 
-export function TFExerciseComp(props: ExerciseComponentProps) {
+export function TFExerciseComp({
+  exercise,
+  position,
+  context,
+}: ExerciseComponentProps) {
   let exerciseDisplay = <></>;
 
-  switch (props.context.context) {
+  switch (context.context) {
     case ExerciseContext.SOLVE:
       exerciseDisplay = (
         <TFSolve
-          context={props.context as SolveProps}
-          exercise={props.exercise as TFExercise}
-          position={props.position}
+          context={context as SolveProps}
+          exercise={exercise as TFExercise}
+          position={position}
         />
       );
       break;
@@ -27,9 +31,9 @@ export function TFExerciseComp(props: ExerciseComponentProps) {
     case ExerciseContext.PREVIEW:
       exerciseDisplay = (
         <TFPreview
-          context={props.context as PreviewProps}
-          exercise={props.exercise as TFExercise}
-          position={props.position}
+          context={context as PreviewProps}
+          exercise={exercise as TFExercise}
+          position={position}
         />
       );
       break;
@@ -37,8 +41,8 @@ export function TFExerciseComp(props: ExerciseComponentProps) {
     case ExerciseContext.EDIT:
       exerciseDisplay = (
         <TFEdit
-          context={props.context as CreateEditProps}
-          exercise={props.exercise as TFExercise}
+          context={context as CreateEditProps}
+          exercise={exercise as TFExercise}
         />
       );
       break;
@@ -53,9 +57,11 @@ export function TFExerciseComp(props: ExerciseComponentProps) {
   }
   return (
     <>
-      <div className="m-5 text-title-2">
-        {props.position + ") " + props.exercise.base.title}
-      </div>
+      {context.context !== ExerciseContext.EDIT ? (
+        <div className="m-5 text-title-2">
+          {position + ") " + exercise.base.title}
+        </div>
+      ) : null}
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );
