@@ -10,10 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
-import pt.uminho.di.chalktyk.models.relational.CourseSQL;
-import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
-import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
-import pt.uminho.di.chalktyk.models.relational.TagSQL;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -45,19 +41,19 @@ public abstract class Exercise {
 	@Column(name = "Visibility")
 	private Visibility visibility;
 
-	@ManyToOne(targetEntity= CourseSQL.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= Course.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID") })
 	private Course course;
 
-	@ManyToOne(targetEntity= SpecialistSQL.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= Specialist.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="SpecialistID", referencedColumnName="ID") })
 	private Specialist specialist;
 
-	@ManyToOne(targetEntity= InstitutionSQL.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
 
-	@ManyToMany(targetEntity= TagSQL.class, fetch = FetchType.LAZY)
+	@ManyToMany(targetEntity= Tag.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Exercise_Tag", joinColumns={ @JoinColumn(name="ExerciseID") }, inverseJoinColumns={ @JoinColumn(name="TagID") })
 	private Set<Tag> tags;
 
