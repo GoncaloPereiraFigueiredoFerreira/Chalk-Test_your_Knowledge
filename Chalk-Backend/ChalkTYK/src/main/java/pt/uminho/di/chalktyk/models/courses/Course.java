@@ -34,10 +34,10 @@ public class Course {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
-	@Column(name="Name", nullable=true, length=255)
+	@Column(name="Name", nullable=false, length=255)
 	private String name;
 	
-	@Column(name="Name", nullable=true, length=1000)
+	@Column(name="Description", nullable=true, length=1000)
 	private String description;
 	
 	@ManyToMany(targetEntity= Specialist.class, fetch = FetchType.LAZY)
@@ -45,7 +45,7 @@ public class Course {
 	private Set<Specialist> specialists = new HashSet<>();
 	
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
-	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID")})
+	@JoinColumn(name="InstitutionID", referencedColumnName="ID")
 	private Institution institution;
 
 	public void addSpecialist(Specialist s){

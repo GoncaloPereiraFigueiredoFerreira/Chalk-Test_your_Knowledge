@@ -1,13 +1,75 @@
 package pt.uminho.di.chalktyk.models.exercises;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Type;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public abstract class ConcreteExercise extends Exercise {
-	private String rubricId;
-	private String solutionId;
+	@Column(name="NrCopies", nullable=false)
+	private int nrCopies;
+
+	@Type(JsonBinaryType.class)
+	@Column(name = "Statement", columnDefinition = "jsonb")
 	private ExerciseStatement statement;
+
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseSolution.class)
+	@JoinColumn(name = "SolutionID", referencedColumnName = "ID")
 	private ExerciseSolution solution;
+
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseRubric.class)
+	@JoinColumn(name = "RubricID", referencedColumnName = "ID")
 	private ExerciseRubric rubric;
 
-	protected abstract boolean checkSolutionType();
+	public void verifyProperties() throws BadInputException {
+		String title = getTitle();
+		if(title == null || title.isEmpty())
+			throw new BadInputException("Cannot create concrete exercise: A title of a exercise cannot be empty or null.");
+		if(statement!=null)
+			statement.verifyProperties();
 
-	public abstract void evaluate(ExerciseResolutionData er);
+		super.verifyInsertProperties();
+	}
+
+	//TODO verificar ids
+	public abstract void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException;
+
+	//TODO verificar ids
+	public abstract void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException;
+
+	/**
+	 * @return string that represents the type of the exercise.
+	 */
+	public abstract String getExerciseType();
+
+	/**
+	 * Evaluates the resolution of an exercise.
+	 *
+	 * @param resolution resolution data that will be evaluated
+	 * @param solution   solution of the exercise
+	 * @param rubric     rubric of the exercise
+	 * @return points to be attributed to the resolution
+	 * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+	 */
+	public abstract ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException;
+
+	public void increaseNrCopies(){
+		nrCopies++;
+	}
+
+	public void decreaseNrCopies(){
+		nrCopies--;
+	}
 }
