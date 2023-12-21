@@ -34,7 +34,7 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 
 	@Type(JsonBinaryType.class)
 	@Column(name = "JustificationsRubrics", columnDefinition = "jsonb")
-	private Map<Integer, OpenAnswerRubric> justificationsRubrics = new HashMap<>();
+	private Map<Integer, OpenAnswerRubric> justificationsRubrics;
 	
 	@Override
 	public void verifyProperties() throws BadInputException {

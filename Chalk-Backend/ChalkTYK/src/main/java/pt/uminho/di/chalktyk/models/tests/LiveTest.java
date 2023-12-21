@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.models.tests;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -22,7 +23,8 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@DiscriminatorValue("Live")
+@JsonTypeName("live")
+@DiscriminatorValue("live")
 public class LiveTest extends Test {
 	@Column(name="StartDate")
 	@Temporal(TemporalType.TIMESTAMP)

@@ -2,8 +2,8 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.uminho.di.chalktyk.models.nonrelational.users.User;
-import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
+import pt.uminho.di.chalktyk.models.users.User;
+import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 

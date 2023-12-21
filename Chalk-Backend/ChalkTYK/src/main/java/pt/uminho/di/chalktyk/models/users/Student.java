@@ -1,19 +1,9 @@
 package pt.uminho.di.chalktyk.models.users;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,15 +17,24 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 @AllArgsConstructor
 @Entity
 @Table(name="Student")
+@DiscriminatorValue("Student")
 public class Student extends User {
-	@Column(name="ID")
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private String id;
 
-	@ManyToMany(targetEntity= Course.class, fetch = FetchType.LAZY)
+    public Student(String id, String name, String photoPath, String email, String description, Set<Course> courses, Institution institution) {
+        super(id, name, photoPath, email, description);
+        this.courses = courses;
+        this.institution = institution;
+    }
+
+    public Student(String id, String name, String photoPath, String email, String description) {
+        super(id, name, photoPath, email, description);
+        this.courses = null;
+        this.institution = null;
+    }
+
+    @ManyToMany(targetEntity= Course.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Student_Course", joinColumns={ @JoinColumn(name="StudentID") }, inverseJoinColumns={ @JoinColumn(name="CourseID") })
-	private ArrayList<Course> courses = new ArrayList<Course>();
+	private Set<Course> courses;
 
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })

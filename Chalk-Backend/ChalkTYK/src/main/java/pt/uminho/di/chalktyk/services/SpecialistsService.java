@@ -3,23 +3,22 @@ package pt.uminho.di.chalktyk.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.nonrelational.users.User;
-import pt.uminho.di.chalktyk.models.relational.SpecialistSQL;
-import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
-import pt.uminho.di.chalktyk.repositories.relational.SpecialistSqlDAO;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.User;
+import pt.uminho.di.chalktyk.repositories.SpecialistDAO;
+import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @Service
 public class SpecialistsService implements ISpecialistsService{
     private final UserDAO userDAO;
-    private final SpecialistSqlDAO specialistSqlDAO;
+    private final SpecialistDAO specialistDAO;
 
     @Autowired
-    public SpecialistsService(UserDAO userDAO, SpecialistSqlDAO specialistSqlDAO) {
+    public SpecialistsService(UserDAO userDAO, SpecialistDAO specialistDAO) {
         this.userDAO = userDAO;
-        this.specialistSqlDAO = specialistSqlDAO;
+        this.specialistDAO = specialistDAO;
     }
 
     /**
@@ -47,12 +46,8 @@ public class SpecialistsService implements ISpecialistsService{
         if(userDAO.existsByEmail(specialist.getEmail()))
             throw new BadInputException("Could not create specialist: Email is already used by another user.");
 
-        // Save user in nosql database
+        // Save user in database
         specialist = userDAO.save(specialist);
-
-        // Create entry in sql database using the id created by the nosql database
-        var specialistSql = new SpecialistSQL(specialist.getId(), null, specialist.getName(), specialist.getEmail());
-        specialistSqlDAO.save(specialistSql);
 
         return specialist.getId();
     }
@@ -74,7 +69,7 @@ public class SpecialistsService implements ISpecialistsService{
      */
     @Override
     public boolean existsSpecialistById(String specialistId) {
-        return specialistSqlDAO.existsById(specialistId);
+        return specialistDAO.existsById(specialistId);
     }
 
     @Override

@@ -4,28 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
-import pt.uminho.di.chalktyk.models.nonrelational.users.User;
-import pt.uminho.di.chalktyk.models.relational.StudentSQL;
-import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
-import pt.uminho.di.chalktyk.repositories.relational.StudentSqlDAO;
+import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.models.users.User;
+import pt.uminho.di.chalktyk.repositories.StudentDAO;
+import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @Service
 public class StudentsService implements IStudentsService{
-    @PersistenceContext
-    private final EntityManager entityManager;
     private final UserDAO userDAO;
-    private final StudentSqlDAO studentSqlDAO;
+    private final StudentDAO studentDAO;
 
     @Autowired
-    public StudentsService(EntityManager entityManager, UserDAO userDAO, StudentSqlDAO studentSqlDAO) {
-        this.entityManager = entityManager;
+    public StudentsService(UserDAO userDAO, StudentDAO studentDAO) {
         this.userDAO = userDAO;
-        this.studentSqlDAO = studentSqlDAO;
+        this.studentDAO = studentDAO;
     }
 
     /**
@@ -41,8 +35,9 @@ public class StudentsService implements IStudentsService{
         if (student == null)
             throw new BadInputException("Cannot create a student with a 'null' body.");
 
-        //set the identifier to null to avoid overwrite attacks
-        student.setId(null);
+        student.setId(null); //set the identifier to null to avoid overwrite attacks
+        student.setCourses(null); //set courses to null since a student when created should not have courses associated
+        student.setInstitution(null); //set institution to null since a student when created should not have an institution associated
 
         // check for any property format errors
         String inputErrors = student.checkInsertProperties();
@@ -53,20 +48,16 @@ public class StudentsService implements IStudentsService{
         if(userDAO.existsByEmail(student.getEmail()))
             throw new BadInputException("Could not create student: Email is already used by another user.");
 
-        // Save user in nosql database
-        student = userDAO.save(student);
-
-        // Create entry in sql database using the id created by the nosql database
-        var studentSql = new StudentSQL(student.getId(), null, student.getName(), student.getEmail(), null);
-        studentSqlDAO.save(studentSql);
+        // Save user in database
+        student = studentDAO.save(student);
 
         return student.getId();
     }
 
     @Override
     public Student getStudentById(String studentId) throws NotFoundException {
-        User u = userDAO.findById(studentId).orElse(null);
-        if (u instanceof Student s)
+        Student s = studentDAO.findById(studentId).orElse(null);
+        if (s != null)
             return s;
         else
             throw new NotFoundException("No student with the given id was found.");
@@ -80,7 +71,7 @@ public class StudentsService implements IStudentsService{
      */
     @Override
     public boolean existsStudentById(String studentId) {
-        return studentSqlDAO.existsById(studentId);
+        return studentDAO.existsById(studentId);
     }
 
     @Override
@@ -89,8 +80,7 @@ public class StudentsService implements IStudentsService{
             throw new BadInputException("Cannot updated student information: Null student was given.");
 
         Student student = getStudentById(studentId);
-        String newEmail = newStudent.getEmail(),
-               newName  = newStudent.getName();
+        String newEmail = newStudent.getEmail();
 
         // check for any property format errors
         String insertErrors = newStudent.checkInsertProperties();
@@ -101,7 +91,7 @@ public class StudentsService implements IStudentsService{
         if(!student.getEmail().equals(newEmail) && userDAO.existsByEmail(newEmail))
             throw new BadInputException("Could not update student information: Email is already used by another user.");
 
-        student.setName(newName);
+        student.setName(newStudent.getName());
         student.setEmail(newEmail);
         student.setDescription(newStudent.getDescription());
         student.setPhotoPath(newStudent.getPhotoPath());

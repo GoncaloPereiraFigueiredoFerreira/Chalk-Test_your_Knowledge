@@ -42,7 +42,7 @@ public class Course {
 	
 	@ManyToMany(targetEntity= Specialist.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Specialist_Course", joinColumns={ @JoinColumn(name="CourseID") }, inverseJoinColumns={ @JoinColumn(name="SpecialistID") })
-	private Set<Specialist> specialists = new HashSet<>();
+	private Set<Specialist> specialists;
 	
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
 	@JoinColumn(name="InstitutionID", referencedColumnName="ID")

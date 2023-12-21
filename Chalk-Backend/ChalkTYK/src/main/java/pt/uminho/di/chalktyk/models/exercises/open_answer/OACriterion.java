@@ -16,7 +16,7 @@ import java.util.Objects;
 @Setter
 public class OACriterion {
 	private String title;
-	private List<OAStandard> standards = new ArrayList<OAStandard>();
+	private List<OAStandard> standards;
 	
 	public void verifyProperties() throws BadInputException {
 		if (title==null)

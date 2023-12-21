@@ -1,9 +1,6 @@
 package pt.uminho.di.chalktyk.models.institutions;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +13,9 @@ import lombok.Setter;
 @Entity
 @Table(name="Institution")
 public class Institution {
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name="ID")
-	@Id	
 	private String name;
 
 	@Column(name="Description")

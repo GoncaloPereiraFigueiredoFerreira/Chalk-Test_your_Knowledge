@@ -2,20 +2,25 @@ package pt.uminho.di.chalktyk.models.users;
 
 import java.util.regex.Pattern;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User {
+	@Column(name="ID")
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String id;
+
 	@Column(name="Name")
 	private String name;
 

@@ -59,7 +59,7 @@ public abstract class Exercise {
 
 	@ManyToMany(targetEntity= TagSQL.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Exercise_Tag", joinColumns={ @JoinColumn(name="ExerciseID") }, inverseJoinColumns={ @JoinColumn(name="TagID") })
-	private Set<Tag> tags = new HashSet<>();
+	private Set<Tag> tags;
 
 	public void verifyInsertProperties() throws BadInputException {
 		if(points == null || points <= 0)

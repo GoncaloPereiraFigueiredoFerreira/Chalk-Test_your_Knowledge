@@ -1,13 +1,13 @@
 package pt.uminho.di.chalktyk.models.tests;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.users.Student;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.type.descriptor.jdbc.JsonJdbcType;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,7 +59,7 @@ public class TestResolution {
 	@Column(name="Status")
 	private TestResolutionStatus status;
 
-	@Type(JsonJdbcType.class)
-    @Column(columnDefinition = "Groups")
+	@Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb", name = "Groups")
 	private List<TestResolutionGroup> groups;
 }

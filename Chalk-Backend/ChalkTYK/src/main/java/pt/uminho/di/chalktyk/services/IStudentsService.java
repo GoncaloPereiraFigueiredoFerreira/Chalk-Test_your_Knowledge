@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
+import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 

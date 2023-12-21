@@ -1,9 +1,6 @@
 package pt.uminho.di.chalktyk.models.tests;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +19,4 @@ public class TestTag {
 
 	@EmbeddedId
 	private TestTagPK testTagPK;
-
-	@Column(name="TagID", nullable=false, insertable=false, updatable=false)
-	private Test test;
-
-	@Column(name="TestID", nullable=false, insertable=false, updatable=false)
-	private Tag tag;
 }

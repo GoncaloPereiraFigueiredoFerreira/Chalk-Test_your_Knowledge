@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
-import pt.uminho.di.chalktyk.models.nonrelational.users.User;
+import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.exceptions.*;
 
 public interface IUsersService {

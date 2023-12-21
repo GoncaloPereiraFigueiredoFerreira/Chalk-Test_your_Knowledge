@@ -12,13 +12,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Embeddable
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestTagPK {
+public class TestTagPK implements Serializable {
 	@ManyToOne(targetEntity= Tag.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TagID", referencedColumnName="ID", nullable=false) })
 	private Tag tag;

@@ -1,5 +1,8 @@
 package pt.uminho.di.chalktyk.models.tests;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -8,11 +11,11 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.type.descriptor.jdbc.JsonJdbcType;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -46,7 +49,8 @@ import lombok.Setter;
 @Table(name="Test")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("Basic")
+@DiscriminatorValue("basic")
+@JsonTypeName("basic")
 public class Test {
 	@Column(name="ID")
 	@Id	
@@ -89,10 +93,9 @@ public class Test {
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
 
-	// TODO: idk about this
-	@Type(JsonJdbcType.class)
-    @Column(columnDefinition = "Groups")
-	private List<TestGroup> groups = new ArrayList<TestGroup>();
+	@Type(JsonBinaryType.class)
+    @Column(name = "Groups", columnDefinition = "jsonb")
+	private Map<Integer,TestGroup> groups;
 
 	public void verifyProperties() throws BadInputException {
         // check title

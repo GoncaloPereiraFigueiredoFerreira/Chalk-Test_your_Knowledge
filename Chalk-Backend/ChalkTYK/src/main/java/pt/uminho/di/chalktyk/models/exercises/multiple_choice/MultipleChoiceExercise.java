@@ -31,7 +31,7 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 
 	@Type(JsonBinaryType.class)
 	@Column(name = "items", columnDefinition = "jsonb")
-	private Map<Integer, Item> items = new HashMap<>();
+	private Map<Integer, Item> items;
 
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {

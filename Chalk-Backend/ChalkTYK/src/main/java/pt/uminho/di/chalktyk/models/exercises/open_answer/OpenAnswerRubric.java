@@ -26,7 +26,7 @@ import java.util.List;
 public class OpenAnswerRubric extends ExerciseRubric {
 	@Type(JsonBinaryType.class)
 	@Column(name = "Criteria", columnDefinition = "jsonb")
-	private List<OACriterion> criteria = new ArrayList<OACriterion>();
+	private List<OACriterion> criteria;
 	
 	@Override
 	public void verifyProperties() throws BadInputException {
