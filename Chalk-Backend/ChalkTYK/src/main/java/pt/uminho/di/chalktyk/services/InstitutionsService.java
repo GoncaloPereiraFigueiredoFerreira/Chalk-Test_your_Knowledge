@@ -411,6 +411,7 @@ public class InstitutionsService implements IInstitutionsService {
         institution.verifyProperties();
         if (idao.existsById(institution.getName()))
             throw new BadInputException("Can't create institution: id is already in use");
+        manager.setInstitution(idao.save(institution));
         institutionManagerDAO.save(manager);
         return manager.getId();
     }
