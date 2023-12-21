@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.models.courses;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,4 +57,22 @@ public class Course {
 			specialists = new HashSet<>();
 		specialists.add(s);
 	}
+
+	public Course clone() {
+		Course duplicatedCourse = new Course();
+		duplicatedCourse.setName(this.name);
+		duplicatedCourse.setDescription(this.description);
+		duplicatedCourse.setOwnerId(this.ownerId);
+		duplicatedCourse.setInstitution(this.institution.clone());
+
+		// Duplicate specialists if present
+		if (this.specialists != null) {
+            Set<Specialist> duplicatedSpecialists = this.specialists.stream().map(Specialist::clone).collect(Collectors.toSet());
+			duplicatedCourse.setSpecialists(duplicatedSpecialists);
+		}
+
+		return duplicatedCourse;
+	}
+
+
 }

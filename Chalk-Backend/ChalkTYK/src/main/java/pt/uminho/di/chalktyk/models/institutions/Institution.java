@@ -40,4 +40,8 @@ public class Institution {
 		if (name == null || name.isEmpty())
 			throw new BadInputException("Can't create institution: institution's identifier is null/empty.");
 	}
+
+    public Institution clone() {
+		return new Institution(name,description,logoPath);
+    }
 }

@@ -6,6 +6,8 @@ import pt.uminho.di.chalktyk.models.users.Student;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.hibernate.type.descriptor.jdbc.JsonJdbcType;
 
@@ -61,5 +63,13 @@ public class TestResolution {
 
 	@Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb", name = "Groups")
-	private List<TestResolutionGroup> groups;
+	private Map<Integer,TestResolutionGroup> groups;
+
+	public void updateSum() {
+		totalPoints = groups.values().stream()
+				.map(TestResolutionGroup::getGroupPoints)
+				.filter(Objects::nonNull) // Filter out null values
+				.reduce(Float::sum)
+				.orElse(0.0f);
+	}
 }

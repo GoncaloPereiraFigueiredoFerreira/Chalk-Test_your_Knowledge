@@ -33,4 +33,8 @@ public class Specialist extends User {
         // TODO - checkSubscription
         return null;
     }
+
+    public Specialist clone() {
+        return new Specialist(getId(),getName(),getPhotoPath(),getEmail(),getDescription(),institution.clone());
+    }
 }

@@ -2,10 +2,10 @@ package pt.uminho.di.chalktyk.services;
 
 import java.util.List;
 
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.ExerciseResolution;
-import pt.uminho.di.chalktyk.models.nonrelational.tests.Test;
-import pt.uminho.di.chalktyk.models.nonrelational.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
+import pt.uminho.di.chalktyk.models.tests.Test;
+import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -26,7 +26,7 @@ public interface ITestsService {
      *      *                         'false' does not verify database logic
      * @return page of tests
      **/
-     List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId,  String courseId, String institutionId, String title,boolean verifyParams) throws BadInputException, NotFoundException;
+     List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException;
 
     /**
      * Get test using its id
@@ -46,7 +46,7 @@ public interface ITestsService {
      * @throws BadInputException if any property of the test is not valid.
      * @throws NotFoundException if any exercise referenced in the test is not found
      **/
-    String createTest(VisibilitySQL visibility, Test body) throws BadInputException, NotFoundException;
+    String createTest(Visibility visibility, Test body) throws BadInputException, NotFoundException;
 
     /**
      * Delete test by its id
@@ -58,6 +58,9 @@ public interface ITestsService {
 
     /**
      * Duplicates the test using its identifier
+     * id and specialist, institution are changed (to correspond the new specialist)
+     * visibility is set to private
+     * course is set to null
      *
      * @param specialistId
      * @param testId
@@ -134,7 +137,7 @@ public interface ITestsService {
      * @throws BadInputException if any property of the test resolution is not valid.
      * @throws NotFoundException if no test was found with the given id
      **/
-    String createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException;
+    TestResolution createTestResolution(String testId, TestResolution body) throws BadInputException, NotFoundException;
 
     /**
      * Delete test resolution by its id

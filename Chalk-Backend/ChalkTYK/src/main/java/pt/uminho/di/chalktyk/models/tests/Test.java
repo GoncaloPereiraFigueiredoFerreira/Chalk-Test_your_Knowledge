@@ -2,7 +2,11 @@ package pt.uminho.di.chalktyk.models.tests;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.annotations.Type;
+import pt.uminho.di.chalktyk.models.exercises.Exercise;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -10,10 +14,8 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.courses.Course;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.hibernate.type.descriptor.jdbc.JsonJdbcType;
 
@@ -60,7 +62,7 @@ public class Test {
 	@Column(name="Title")
 	private String title;
 
-	@Column(name="Title")
+	@Column(name="GlobalInstructions")
 	private String globalInstructions;
 
 	@Column(name="Points")
@@ -113,5 +115,73 @@ public class Test {
 		// check global points
 		if (globalPoints < 0)
 			throw new BadInputException("Cannot create test: Global points can't be negative.");
+
+		if (groups != null) {
+			for (TestGroup tg : groups.values()) {
+				tg.verifyProperties();
+			}
+		}
     }
+
+	public String getSpecialistId(){
+		if(specialist==null)
+			return null;
+		else return specialist.getId();
+	}
+
+	public String getCourseId(){
+		if(course==null)
+			return null;
+		else return course.getId();
+	}
+
+	public String getInstitutionId(){
+		if(institution==null)
+			return null;
+		else return institution.getName();
+	}
+
+	public Test clone() {
+		Test duplicatedTest = new Test();
+		duplicatedTest.setTitle(this.title);
+		duplicatedTest.setGlobalInstructions(this.globalInstructions);
+		duplicatedTest.setGlobalPoints(this.globalPoints);
+		duplicatedTest.setConclusion(this.conclusion);
+		duplicatedTest.setCreationDate(this.creationDate);
+		duplicatedTest.setPublishDate(this.publishDate);
+		duplicatedTest.setSpecialist(this.specialist.clone());
+		duplicatedTest.setVisibility(this.visibility);
+		duplicatedTest.setCourse(this.course.clone());
+		duplicatedTest.setInstitution(this.institution.clone());
+
+		// Duplicate groups if present
+		if (this.groups != null) {
+			Map<Integer, TestGroup> duplicatedGroups = new HashMap<>();
+			for (Map.Entry<Integer, TestGroup> entry : this.groups.entrySet()) {
+				duplicatedGroups.put(entry.getKey(), entry.getValue().clone());
+			}
+			duplicatedTest.setGroups(duplicatedGroups);
+		}
+		return duplicatedTest;
+	}
+
+	public Map<Integer, TestResolutionGroup> createEmptyResolutionGroups(){
+		Map<Integer, TestResolutionGroup> resolutionGroups = new HashMap<>();
+		if (groups != null){
+			for(Map.Entry<Integer,TestGroup> entryTG: groups.entrySet()){
+				Map<Integer, Pair<String, String>> resolutionGroupAnswers = entryTG.getValue().getExercises()
+						.entrySet()
+						.stream()
+						.collect(Collectors.toMap(
+								Map.Entry::getKey,
+								val -> {
+									int randomIndex = new Random().nextInt(val.getValue().size());
+									return new MutablePair<>(val.getValue().get(randomIndex), null);
+								}
+						));
+				resolutionGroups.put(entryTG.getKey(),new TestResolutionGroup(null,resolutionGroupAnswers));
+			}
+		}
+		return resolutionGroups;
+	}
 }
