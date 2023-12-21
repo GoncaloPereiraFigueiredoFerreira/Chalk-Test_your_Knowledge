@@ -2,8 +2,8 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.uminho.di.chalktyk.models.relational.TagSQL;
-import pt.uminho.di.chalktyk.repositories.relational.TagSqlDAO;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
+import pt.uminho.di.chalktyk.repositories.TagDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.util.ArrayList;
@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 
 @Service
 public class TagsService implements ITagsService {
-    private final TagSqlDAO tagSqlDAO;
+    private final TagDAO tagDAO;
 
     @Autowired
-    public TagsService(TagSqlDAO tagSqlDAO) {
-        this.tagSqlDAO = tagSqlDAO;
+    public TagsService(TagDAO tagDAO) {
+        this.tagDAO = tagDAO;
     }
 
     /**
@@ -40,14 +40,14 @@ public class TagsService implements ITagsService {
      * @return the tag
      */
     @Override
-    public TagSQL createTag(String name, String path) throws BadInputException {
+    public Tag createTag(String name, String path) throws BadInputException {
         if (name.contains("/"))
             throw new BadInputException("The name of a tag cannot contain the '/' character.");
 
         if(!isValidPath(path))
             throw new BadInputException("The path of the tag does not follow the following regular expression: \"^(\\/[^\\/\\n]*)*\\/$\"");
 
-        TagSQL t = tagSqlDAO.findByNameAndPath(name, path);
+        Tag t = tagDAO.findByNameAndPath(name, path);
         if(t != null)
             return t;
 
@@ -55,7 +55,7 @@ public class TagsService implements ITagsService {
         createPath(path);
 
         // Creates the tag
-        return tagSqlDAO.save(new TagSQL(null, name, path));
+        return tagDAO.save(new Tag(null, name, path));
     }
 
     /**
@@ -74,7 +74,7 @@ public class TagsService implements ITagsService {
         for(;i >= 0; i--){
             String auxName = tagsOnPath[i];
             String auxPath = createPathString(Arrays.copyOfRange(tagsOnPath, 0, i));
-            if (tagSqlDAO.existsByNameAndPath(auxName, auxPath))
+            if (tagDAO.existsByNameAndPath(auxName, auxPath))
                 break;
         }
 
@@ -85,7 +85,7 @@ public class TagsService implements ITagsService {
         for(; i < tagsOnPath.length; i++){
             String auxName = tagsOnPath[i];
             String auxPath = createPathString(Arrays.copyOfRange(tagsOnPath, 0, i));
-            tagSqlDAO.save(new TagSQL(null, auxName, auxPath));
+            tagDAO.save(new Tag(null, auxName, auxPath));
         }
 
         System.out.flush();
@@ -116,7 +116,7 @@ public class TagsService implements ITagsService {
      */
     @Override
     public void deleteTag(String id) {
-        tagSqlDAO.deleteById(id);
+        tagDAO.deleteById(id);
     }
 
     /**
@@ -126,8 +126,8 @@ public class TagsService implements ITagsService {
      * @return the tag that matches the given identifier, or 'null' if no tag exists with the given identifier
      */
     @Override
-    public TagSQL getTagById(String id) {
-        return tagSqlDAO.findById(id).orElse(null);
+    public Tag getTagById(String id) {
+        return tagDAO.findById(id).orElse(null);
     }
 
     /**
@@ -137,7 +137,7 @@ public class TagsService implements ITagsService {
      */
     @Override
     public boolean existsTagByNameAndPath(String name, String path) {
-        return tagSqlDAO.existsByNameAndPath(name, path);
+        return tagDAO.existsByNameAndPath(name, path);
     }
 
     /**
@@ -148,7 +148,7 @@ public class TagsService implements ITagsService {
      * and with the search starting at the given path
      * @throws BadInputException if 'levels' is not -1 or a positive number, or if there are any invalid paths.
      */
-    public List<TagSQL> listTags(String path, Integer levels) throws BadInputException{
+    public List<Tag> listTags(String path, Integer levels) throws BadInputException{
         StringBuilder pathRegexBuilder = new StringBuilder("^" + path);
         String pathRegex;
 
@@ -157,15 +157,15 @@ public class TagsService implements ITagsService {
 
         if (levels == -1){
             pathRegex = pathRegexBuilder.toString();
-            return tagSqlDAO.findByPathRegex(pathRegex);
+            return tagDAO.findByPathRegex(pathRegex);
         }else if (levels >= 1){
             pathRegex = pathRegexBuilder.append("$").toString();
-            List<TagSQL> tagList = tagSqlDAO.findByPathRegex(pathRegex);
+            List<Tag> tagList = tagDAO.findByPathRegex(pathRegex);
             for (int i = 1; i < levels; i++){
                 pathRegexBuilder.deleteCharAt(pathRegexBuilder.length() - 1); // delete '$' char
                 pathRegexBuilder.append("[^/\n]*/$");
                 pathRegex = pathRegexBuilder.toString();
-                tagList.addAll(tagSqlDAO.findByPathRegex(pathRegex));
+                tagList.addAll(tagDAO.findByPathRegex(pathRegex));
             }
             return tagList;
         }else {
@@ -181,8 +181,8 @@ public class TagsService implements ITagsService {
      * and with the search starting at the given paths
      * @throws BadInputException if 'levels' is not -1 or a positive number, or if there are any invalid paths.
      */
-    public List<TagSQL> listTags(List<String> paths, Integer levels) throws BadInputException{
-        List<TagSQL> tagList = new ArrayList<>();
+    public List<Tag> listTags(List<String> paths, Integer levels) throws BadInputException{
+        List<Tag> tagList = new ArrayList<>();
         for(String path : paths){
             tagList.addAll(listTags(path, levels));
         }
