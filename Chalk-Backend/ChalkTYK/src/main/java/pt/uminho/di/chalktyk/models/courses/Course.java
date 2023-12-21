@@ -39,7 +39,10 @@ public class Course {
 	
 	@Column(name="Description", nullable=true, length=1000)
 	private String description;
-	
+
+	@Column(name = "OwnerId", nullable = false)
+	private String ownerId; // id of the specialist that is the owner of the course
+
 	@ManyToMany(targetEntity= Specialist.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Specialist_Course", joinColumns={ @JoinColumn(name="CourseID") }, inverseJoinColumns={ @JoinColumn(name="SpecialistID") })
 	private Set<Specialist> specialists;

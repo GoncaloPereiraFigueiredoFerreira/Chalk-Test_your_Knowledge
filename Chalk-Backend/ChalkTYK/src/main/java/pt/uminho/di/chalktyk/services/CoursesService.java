@@ -1,9 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,22 +13,19 @@ import pt.uminho.di.chalktyk.repositories.CourseDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 public class CoursesService implements ICoursesService {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
     private final CourseDAO courseDAO;
     private final IInstitutionsService institutionsService;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
 
     @Autowired
-    public CoursesService(EntityManager entityManager, CourseDAO courseDAO, IInstitutionsService institutionsService, ISpecialistsService specialistsService, IStudentsService studentsService) {
-        this.entityManager = entityManager;
+    public CoursesService(CourseDAO courseDAO, IInstitutionsService institutionsService, ISpecialistsService specialistsService, IStudentsService studentsService) {
         this.courseDAO = courseDAO;
         this.institutionsService = institutionsService;
         this.specialistsService = specialistsService;
@@ -53,6 +47,7 @@ public class CoursesService implements ICoursesService {
             throw new BadInputException("Cannot create course: course is null.");
 
         course.setId(null); // to prevent overwrite attacks
+        course.setSpecialists(new HashSet<>()); // course's set of specialists should be empty
 
         // check name
         String name = course.getName();
@@ -60,31 +55,29 @@ public class CoursesService implements ICoursesService {
             throw new BadInputException("Cannot create course: A name of a course cannot be empty or null.");
 
         // check owner (specialist) id
-        // TODO: get owner
-        /* 
+        Specialist owner;
         String ownerId = course.getOwnerId();
         if(ownerId == null)
             throw new BadInputException("Cannot create course: A course must have an owner.");
-        if(!specialistsService.existsSpecialistById(ownerId))
-            throw new BadInputException("Cannot create course: A course must have a valid owner.");
-
+        try{ 
+            owner = specialistsService.getSpecialistById(ownerId); 
+        } catch (NotFoundException nfe){ 
+            throw new BadInputException("Cannot create course: A course must have a valid owner."); 
+        }
+        course.addSpecialist(owner);
+        
         // get owner's institution id
         String institutionId = null;
+        Institution inst = null;
         try {
-            var inst = institutionsService.getSpecialistInstitution(ownerId);
+            inst = institutionsService.getSpecialistInstitution(ownerId);
             if(inst != null)
                 institutionId = inst.getName();
         }catch (NotFoundException ignored){}
-        course.setInstituitionId(institutionId);
-        */
+        course.setInstitution(inst);
 
-        // persists the course in sql database
-        // TODO: get institution
-        Institution inst = new Institution();//institutionId != null ? entityManager.getReference(Institution.class, institutionId) : null;
-        // TODO: get specialist
-        Specialist spec = new Specialist("name", inst);//entityManager.getReference(Specialist.class, ownerId);
-        Course newCourse = new Course(null, name, course.getDescription(), null, inst);
-        courseDAO.save(newCourse);
+        // persists the course in database
+        course = courseDAO.save(course);
 
         return course.getId();
     }
@@ -203,16 +196,8 @@ public class CoursesService implements ICoursesService {
         origCourse.setName(course.getName());
         origCourse.setDescription(course.getDescription());
 
-        // update the course in nosql database
-        origCourse = courseDAO.save(origCourse);
-
-        // Update sql information
-        if(nameUpdated) {
-            var courseSQL = courseDAO.findById(origCourse.getId()).orElse(null);
-            assert courseSQL != null;
-            courseSQL.setName(origCourse.getName());
-            courseDAO.save(courseSQL);
-        }
+        // update the course in database
+        courseDAO.save(origCourse);
     }
 
     /**
@@ -228,8 +213,7 @@ public class CoursesService implements ICoursesService {
     public List<Student> getCourseStudents(String courseId, int page, int itemsPerPage) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course students: the course does not exist.");
-        // TODO: maybe retornar página diretamente
-        return pageToListStudents(courseDAO.getCourseStudents(courseId, PageRequest.of(page, itemsPerPage)));
+        return courseDAO.getCourseStudents(courseId, PageRequest.of(page, itemsPerPage)).toList();
     }
 
     /**
@@ -245,8 +229,7 @@ public class CoursesService implements ICoursesService {
     public List<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        // TODO: maybe retornar página diretamente
-        return pageToListSpecialists(courseDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage)));
+        return courseDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage)).toList();
     }
 
 
@@ -283,8 +266,7 @@ public class CoursesService implements ICoursesService {
     public List<Course> getStudentCourses(String studentId, int page, int itemsPerPage) throws NotFoundException {
         if(!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Could not get student courses: student does not exist.");
-        // TODO: maybe retornar página diretamente
-        return pageToListCourses(courseDAO.getStudentCourses(studentId, PageRequest.of(page, itemsPerPage)));
+        return courseDAO.getStudentCourses(studentId, PageRequest.of(page, itemsPerPage)).toList();
     }
 
     /**
@@ -299,8 +281,7 @@ public class CoursesService implements ICoursesService {
     public List<Course> getSpecialistCourses(String specialistId, int page, int itemsPerPage) throws NotFoundException {
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Could not get specialist courses: specialist does not exist.");
-        // TODO: maybe retornar página diretamente
-        return pageToListCourses(courseDAO.getSpecialistCourses(specialistId, PageRequest.of(page, itemsPerPage)));
+        return courseDAO.getSpecialistCourses(specialistId, PageRequest.of(page, itemsPerPage)).toList();
     }
 
     /**
@@ -315,35 +296,6 @@ public class CoursesService implements ICoursesService {
     public List<Course> getInstitutionCourses(String institutionId, int page, int itemsPerPage) throws NotFoundException {
         if(!institutionsService.existsInstitutionById(institutionId))
             throw new NotFoundException("Could not get institution courses: institution does not exist.");
-        // TODO: maybe retornar página diretamente
-        return pageToListCourses(courseDAO.getStudentCourses(institutionId, PageRequest.of(page, itemsPerPage)));
-    }
-
-    /* ***  Auxiliary Methods  *** */
-    private List<Student> pageToListStudents(Page<Student> studentPage) throws NotFoundException {
-        List<Student> studentList = new ArrayList<>();
-        for(Student student : studentPage)
-            ;
-            // TODO: change this
-            //studentList.add(studentsService.getStudentById(student.getId()));
-        return studentList;
-    }
-
-    private List<Specialist> pageToListSpecialists(Page<Specialist> specialistPage) throws NotFoundException {
-        List<Specialist> specialistList = new ArrayList<>();
-        for(Specialist specialist : specialistPage)
-            ;
-            // TODO: change this
-            //specialistList.add(specialistsService.getSpecialistById(specialist.getId()));
-        return specialistList;
-    }
-
-    private List<Course> pageToListCourses(Page<Course> coursePage) throws NotFoundException {
-        List<Course> courseList = new ArrayList<>();
-        for(Course course : coursePage)
-            ;
-            // TODO: change this
-            //courseList.add(this.getCourseById(course.getId()));
-        return courseList;
+        return courseDAO.getStudentCourses(institutionId, PageRequest.of(page, itemsPerPage)).toList();
     }
 }

@@ -30,19 +30,19 @@ public interface CourseDAO extends JpaRepository<Course, String> {
     @Query(value = "insert into student_course (courseid, studentid) values (:courseId, :studentId)", nativeQuery = true)
     void addStudentToCourse(@Param("studentId") String studentId, @Param("courseId") String courseId);
 
-    @Query(value = "select s from StudentSQL s join s.courses c where c.id = :courseId")
+    @Query(value = "select s from Student s join s.courses c where c.id = :courseId")
     Page<Student> getCourseStudents(@Param("courseId") String courseId, Pageable pageable);
 
-    @Query(value = "select c.specialists from CourseSQL c where c.id = :courseId")
+    @Query(value = "select c.specialists from Course c where c.id = :courseId")
     Page<Specialist> getCourseSpecialists(@Param("courseId") String courseId, Pageable pageable);
 
-    @Query(value = "select s.courses from StudentSQL s where s.id = :studentId")
+    @Query(value = "select s.courses from Student s where s.id = :studentId")
     Page<Course> getStudentCourses(@Param("studentId") String studentId, Pageable pageable);
 
-    @Query(value = "select c from CourseSQL c join c.specialists s where s.id = :specialistId")
+    @Query(value = "select c from Course c join c.specialists s where s.id = :specialistId")
     Page<Course> getSpecialistCourses(@Param("specialistId") String specialistId, Pageable pageable);
 
-    @Query(value = "select c from CourseSQL c where c.institution.id = :institutionId")
+    @Query(value = "select c from Course c where c.institution.name = :institutionId")
     Page<Course> getInstitutionCourses(@Param("institutionId") String institutionId, Pageable pageable);
 
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM specialist_course WHERE courseid = :courseId AND specialistid = :specialistId", nativeQuery = true)
