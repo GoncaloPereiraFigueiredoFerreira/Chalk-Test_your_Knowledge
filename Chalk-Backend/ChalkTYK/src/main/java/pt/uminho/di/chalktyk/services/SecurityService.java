@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.JwtException;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.Exercise;
+import pt.uminho.di.chalktyk.models.exercises.Exercise;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
@@ -136,9 +135,9 @@ public class SecurityService {
                 }
                 break;
             case "institution":
-                Institution institution = institutionsService.getStudentInstitution(studentId);
-                String institutionId = exercisesService.getExerciseInstitution(exerciseId);
-                if(institutionId != null && institutionsService.getInstitutionById(institutionId).equals(institution)){
+                Institution studentInstitution = institutionsService.getStudentInstitution(studentId);
+                Institution exerciseInstitution = exercisesService.getExerciseInstitution(exerciseId);
+                if(studentInstitution.equals(exerciseInstitution)){
                     ret = true;
                 }else{
                   throw new UnauthorizedException("The student can not see the institution's exercise");  
@@ -169,9 +168,9 @@ public class SecurityService {
                 }
                 break;
             case "institution":
-                Institution institution = institutionsService.getSpecialistInstitution(specialistId);
-                String institutionId = exercisesService.getExerciseInstitution(exerciseId);
-                if(institutionId != null && institutionsService.getInstitutionById(institutionId).equals(institution)){
+                Institution specialistInstitution = institutionsService.getSpecialistInstitution(specialistId);
+                Institution exerciseInstitution = exercisesService.getExerciseInstitution(exerciseId);
+                if(specialistInstitution.equals(exerciseInstitution)){
                     ret = true;
                 }else{
                   throw new UnauthorizedException("The specialist can not see the institution's exercise");  

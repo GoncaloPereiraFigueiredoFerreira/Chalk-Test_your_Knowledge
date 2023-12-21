@@ -2,7 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
@@ -29,7 +29,7 @@ public class ExercisesTestsService implements IExercisesTestsService{
     @Override
     public void deleteExerciseById(String exerciseId) throws NotFoundException, UnauthorizedException {
         String vis = exercisesService.getExerciseVisibility(exerciseId);
-        if(VisibilitySQL.fromValue(vis) == VisibilitySQL.TEST)
+        if(Visibility.fromValue(vis) == Visibility.TEST)
             throw new UnauthorizedException("Cannot delete exercise: exercise belongs to a test.");
         exercisesService.deleteExerciseById(exerciseId);
     }
