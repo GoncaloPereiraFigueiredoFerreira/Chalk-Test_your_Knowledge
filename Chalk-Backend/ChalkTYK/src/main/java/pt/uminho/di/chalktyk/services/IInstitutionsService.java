@@ -2,11 +2,10 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.nonrelational.courses.Course;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.users.InstitutionManager;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.users.InstitutionManager;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -44,12 +43,6 @@ public interface IInstitutionsService {
     * @param institution
     **/
     void updateInstitutionById(String institutionId, Institution institution);
-
-    /**
-    * Create institution
-    * @param institution
-    **/
-    void createInstitution(Institution institution) throws BadInputException;
 
     /**
      * Add specialists to institution
@@ -181,12 +174,11 @@ public interface IInstitutionsService {
 
     /**
      * Creates an institution manager.
-     * @param manager properties
-     * @param institution identifier of the institution this manager belongs to
+     * @param manager properties (the institution should be null since it will be the one referenced on the id)
      * @return identifier of the new manager
      * @throws BadInputException if any property of the manager is not valid.
      */
-    String createInstitutionManagerAndInstitution(InstitutionManager manager, Institution institution) throws BadInputException, NotFoundException;
+    String createInstitutionManagerAndInstitution(InstitutionManager manager) throws BadInputException, NotFoundException;
 
     /**
      * Gets an institution manager

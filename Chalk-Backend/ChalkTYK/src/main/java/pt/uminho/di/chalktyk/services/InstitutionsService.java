@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,17 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
-import pt.uminho.di.chalktyk.models.nonrelational.users.InstitutionManager;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Student;
-import pt.uminho.di.chalktyk.models.nonrelational.users.User;
-import pt.uminho.di.chalktyk.models.relational.InstitutionManagerSQL;
-import pt.uminho.di.chalktyk.models.relational.InstitutionSQL;
-import pt.uminho.di.chalktyk.repositories.nonrelational.InstitutionDAO;
-import pt.uminho.di.chalktyk.repositories.nonrelational.UserDAO;
-import pt.uminho.di.chalktyk.repositories.relational.InstitutionManagerSqlDAO;
-import pt.uminho.di.chalktyk.repositories.relational.InstitutionSqlDAO;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.users.InstitutionManager;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.models.users.User;
+import pt.uminho.di.chalktyk.repositories.InstitutionDAO;
+import pt.uminho.di.chalktyk.repositories.InstitutionManagerDAO;
+import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -31,19 +30,20 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 public class InstitutionsService implements IInstitutionsService {
     private final UserDAO userDAO;
     private final InstitutionDAO idao;
-    private final InstitutionSqlDAO isqldao;
     private final ISpecialistsService specialistsService;
     private final IStudentsService studentsService;
-    private final InstitutionManagerSqlDAO institutionManagerSqlDAO;
+    private final InstitutionManagerDAO institutionManagerDAO;
+    @PersistenceContext
+    private final EntityManager entityManager;
     
     @Autowired
-    public InstitutionsService(UserDAO userDAO, InstitutionDAO idao, InstitutionSqlDAO isqldao, ISpecialistsService specialistsService, IStudentsService studentsService, InstitutionManagerSqlDAO institutionManagerSqlDAO){
+    public InstitutionsService(UserDAO userDAO, InstitutionDAO idao, ISpecialistsService specialistsService, IStudentsService studentsService, InstitutionManagerDAO institutionManagerDAO, EntityManager entityManager){
         this.userDAO = userDAO;
         this.idao = idao;
-        this.isqldao = isqldao;
         this.specialistsService = specialistsService;
         this.studentsService = studentsService;
-        this.institutionManagerSqlDAO = institutionManagerSqlDAO;
+        this.institutionManagerDAO = institutionManagerDAO;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public boolean existsInstitutionById(String institutionId) {
-        return isqldao.existsById(institutionId);
+        return idao.existsById(institutionId);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class InstitutionsService implements IInstitutionsService {
                 Institution res = obj.get();
                 res.setDescription(body.getDescription());
                 res.setLogoPath(body.getLogoPath());
-                res.setSubscription(body.getSubscription()); // TODO - a subscricao nao devia ser alterada aqui
+                //res.setSubscription(body.getSubscription()); // TODO - a subscricao nao devia ser alterada aqui
                 idao.save(res);
             }
             else
@@ -90,23 +90,7 @@ public class InstitutionsService implements IInstitutionsService {
             throw new ServiceException("Couldn't update institution: institution is null");
     }
 
-    @Override
-    public void createInstitution(Institution institution) throws BadInputException {
-        if (institution != null){
-            if (institution.getName() == null || institution.getName().isEmpty())
-                throw new BadInputException("Can't create institution: institution's identifier is null/empty.");
-            if (!idao.existsById(institution.getName())){
-                // TODO - verificar a parte da subscricao
-                idao.save(institution);
-                InstitutionSQL sqlInst = new InstitutionSQL(institution.getName());
-                isqldao.save(sqlInst);
-            }
-            else
-                throw new BadInputException("Can't create institution: id is already in use");
-        }
-        else 
-            throw new BadInputException("Can't create institution: institution is null!");
-    }
+
 
     /**
      * Add specialists to institution
@@ -116,11 +100,12 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException { //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Could not add specialists: Institution not found.");
         for(String specialistId : specialistsIds){
-            if(specialistsService.existsSpecialistById(specialistId))
-                isqldao.addSpecialistToInstitution(specialistId,institutionId);
+            if(specialistsService.existsSpecialistById(specialistId)){
+                idao.addSpecialistToInstitution(specialistId,institutionId);
+            }
         }
     }
 
@@ -132,11 +117,11 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public void addStudentsToInstitution(String institutionId, List<String> studentsIds) throws NotFoundException { //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Could not add students: Institution not found.");
         for(String studentId : studentsIds){
             if(studentsService.existsStudentById(studentId))
-                isqldao.addStudentToInstitution(studentId,institutionId);
+                idao.addStudentToInstitution(studentId,institutionId);
         }
     }
 
@@ -148,11 +133,11 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public void removeSpecialistsFromInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException { //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
         for(String specialistId : specialistsIds){
             if(specialistsService.existsSpecialistById(specialistId))
-                isqldao.removeSpecialistFromInstitution(specialistId,institutionId);
+                idao.removeSpecialistFromInstitution(specialistId,institutionId);
         }
     }
 
@@ -164,11 +149,11 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public void removeStudentsFromInstitution(String institutionId, List<String> studentsIds) throws NotFoundException {  //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
         for(String studentId : studentsIds){
             if(studentsService.existsStudentById(studentId))
-                isqldao.removeStudentFromInstitution(studentId,institutionId);
+                idao.removeStudentFromInstitution(studentId,institutionId);
         }
     }
 
@@ -181,15 +166,15 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public boolean isStudentOfInstitution(String studentId, String institutionId) throws NotFoundException {  //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
 
-        InstitutionSQL institution = isqldao.getInstitutionByStudentId(studentId);
+        Institution institution = idao.getInstitutionByStudentId(studentId);
 
         if(institution==null)
             return false;
         else
-            return institution.getId().equals(institutionId);
+            return institution.getName().equals(institutionId);
     }
 
     /**
@@ -201,15 +186,15 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public boolean isSpecialistOfInstitution(String specialistId, String institutionId) throws NotFoundException {  //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
 
-        InstitutionSQL institution = isqldao.getInstitutionBySpecialistId(specialistId);
+        Institution institution = idao.getInstitutionBySpecialistId(specialistId);
 
         if(institution==null)
             return false;
         else
-            return institution.getId().equals(institutionId);
+            return institution.getName().equals(institutionId);
     }
 
     /**
@@ -221,15 +206,15 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public boolean isManagerOfInstitution(String managerId, String institutionId) throws NotFoundException {  //TODO test
-        if(!isqldao.existsById(institutionId))
+        if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
 
-        InstitutionSQL institution = isqldao.getInstitutionByInstitutionManagerId(managerId);
+        Institution institution = idao.getInstitutionByInstitutionManagerId(managerId);
 
         if(institution==null)
             return false;
         else
-            return institution.getId().equals(institutionId);
+            return institution.getName().equals(institutionId);
     }
 
     /**
@@ -246,7 +231,7 @@ public class InstitutionsService implements IInstitutionsService {
     public Page<Student> getInstitutionStudents(String institutionId, int page, int itemsPerPage) throws NotFoundException { // TODO test
         Pageable pageable = PageRequest.of(page, itemsPerPage);
 
-        Page<String> ids = isqldao.getInstitutionStudentsIds(institutionId,pageable);
+        Page<String> ids = idao.getInstitutionStudentsIds(institutionId,pageable);
         List<Student> studentList= new ArrayList<>();
         for(String id:ids){
             studentList.add(studentsService.getStudentById(id));
@@ -269,7 +254,7 @@ public class InstitutionsService implements IInstitutionsService {
     public Page<InstitutionManager> getInstitutionManagersFromInstitution(String institutionId, int page, int itemsPerPage) throws NotFoundException { // TODO test
         Pageable pageable = PageRequest.of(page, itemsPerPage);
 
-        Page<String> ids = isqldao.getInstitutionStudentsIds(institutionId,pageable);
+        Page<String> ids = idao.getInstitutionStudentsIds(institutionId,pageable);
         List<InstitutionManager> institutionManagerList= new ArrayList<>();
         for(String id:ids){
             institutionManagerList.add(this.getInstitutionManagerById(id));
@@ -289,7 +274,7 @@ public class InstitutionsService implements IInstitutionsService {
     public Page<Specialist> getInstitutionSpecialists(String institutionId, int page, int itemsPerPage) throws NotFoundException { //TODO test
         Pageable pageable = PageRequest.of(page, itemsPerPage);
 
-        Page<String> ids = isqldao.getInstitutionSpecialistsIds(institutionId,pageable);
+        Page<String> ids = idao.getInstitutionSpecialistsIds(institutionId,pageable);
         List<Specialist> specialistList= new ArrayList<>();
         for(String id:ids){
             specialistList.add(specialistsService.getSpecialistById(id));
@@ -307,8 +292,8 @@ public class InstitutionsService implements IInstitutionsService {
     public Institution getStudentInstitution(String studentId) throws NotFoundException { //TODO test
         if(!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Student not found");
-        InstitutionSQL institution = isqldao.getInstitutionByStudentId(studentId);
-        return idao.findById(institution.getId()).orElse(null);
+        Institution institution = idao.getInstitutionByStudentId(studentId);
+        return idao.findById(institution.getName()).orElse(null);
     }
 
     /**
@@ -322,8 +307,8 @@ public class InstitutionsService implements IInstitutionsService {
     public Institution getSpecialistInstitution(String specialistId) throws NotFoundException { //TODO test
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Specialist not found");
-        InstitutionSQL institution = isqldao.getInstitutionBySpecialistId(specialistId);
-        return institution == null ? null : idao.findById(institution.getId()).orElse(null);
+        Institution institution = idao.getInstitutionBySpecialistId(specialistId);
+        return institution == null ? null : idao.findById(institution.getName()).orElse(null);
     }
 
     /**
@@ -336,10 +321,10 @@ public class InstitutionsService implements IInstitutionsService {
     public Institution getManagerInstitution(String managerId) throws NotFoundException { //TODO test
         if(!this.existsInstitutionManagerById(managerId))
             throw new NotFoundException("Institution manager not found");
-        InstitutionSQL institution = isqldao.getInstitutionByInstitutionManagerId(managerId);
+        Institution institution = idao.getInstitutionByInstitutionManagerId(managerId);
         if(institution==null)
             throw new NotFoundException("Institution manager is not in an institution");
-        return idao.findById(institution.getId()).orElse(null);
+        return idao.findById(institution.getName()).orElse(null);
     }
 
     /**
@@ -348,7 +333,7 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public int countInstitutionStudents(String institutionId) { //TODO test
-        return isqldao.countInstitutionStudents(institutionId);
+        return idao.countInstitutionStudents(institutionId);
     }
 
     /**
@@ -357,7 +342,7 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public int countInstitutionSpecialists(String institutionId) {  //TODO test
-        return isqldao.countInstitutionSpecialists(institutionId);
+        return idao.countInstitutionSpecialists(institutionId);
     }
 
     /**
@@ -366,7 +351,7 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public int countInstitutionManagersFromInstitution(String institutionId) {  //TODO test
-        return isqldao.countInstitutionManagersFromInstitution(institutionId);
+        return idao.countInstitutionManagersFromInstitution(institutionId);
     }
 
     /**
@@ -379,28 +364,18 @@ public class InstitutionsService implements IInstitutionsService {
             throw new BadInputException("Could not create institution manager: Cannot create a manager with a 'null' body.");
 
         //set the identifier to null to avoid overwrite attacks
-        manager.setId(null);
+        if(manager.getId()!=null)
+            throw new BadInputException("Institution manager id must be null");
 
         String inputErrors = manager.checkInsertProperties();
         if(inputErrors != null)
             throw new BadInputException(inputErrors);
     }
 
-    /**
-     * Create the institution manager on non-relational and create the relation connection to institution
-     * @param manager entity after input verification
-     * @param institution reference to the sql table
-     */
-    private void createInstitutionManagerAux(InstitutionManager manager, InstitutionSQL institution) { //TODO test
-        manager = userDAO.save(manager);
-
-        var managerSql = new InstitutionManagerSQL(manager.getId(), manager.getName(), manager.getEmail(),institution);
-        institutionManagerSqlDAO.save(managerSql);
-    }
 
     /**
      * Creates an institution manager.
-     * @param manager properties
+     * @param manager properties (the institution should be null since it will be the one referenced on the id)
      * @param institutionId identifier of the institution this manager belongs to
      * @return identifier of the new manager
      * @throws BadInputException if any property of the manager is not valid.
@@ -408,41 +383,38 @@ public class InstitutionsService implements IInstitutionsService {
     @Override
     @Transactional(rollbackFor = {BadInputException.class})
     public String createInstitutionManager(InstitutionManager manager, String institutionId) throws BadInputException, NotFoundException { //TODO test
-        InstitutionSQL institution = isqldao.findById(institutionId).orElse(null);
-        
-        if(institution == null)
-            throw new NotFoundException("Could not create institution manager: The institution was not found");
-
+        if(manager.getInstitution()!=null)
+            throw new BadInputException("The manager institution is not null");
+        Institution institution = idao.findById(institutionId).orElse(null);
+        if(institution==null)
+            throw new BadInputException("The institution does not exist");
         verifyInstitutionManagerInput(manager);
-
-        // Create entry in sql database using the id created by the nosql database
-        createInstitutionManagerAux(manager,institution);
+        institutionManagerDAO.save(manager);
 
         return manager.getId();
     }
 
+
     /**
      * Creates an institution manager.
      * @param manager properties
-     * @param institution identifier of the institution this manager belongs to
      * @return identifier of the new manager
      * @throws BadInputException if any property of the manager is not valid.
      */
     @Override
     @Transactional(rollbackFor = {BadInputException.class})
-    public String createInstitutionManagerAndInstitution(InstitutionManager manager, Institution institution) throws BadInputException { //TODO test
-        if(!this.existsInstitutionById(institution.getName()))
-            throw new BadInputException("Could not create institution manager: Institution name already in use");
-
+    public String createInstitutionManagerAndInstitution(InstitutionManager manager) throws BadInputException { //TODO test
         verifyInstitutionManagerInput(manager);
-
-        this.createInstitution(institution);
-
-        // Create entry in sql database using the id created by the nosql database
-        createInstitutionManagerAux(manager,isqldao.findById(institution.getName()).orElse(null));
-
+        Institution institution = manager.getInstitution();
+        if (institution == null)
+            throw new BadInputException("Can't create institution: institution is null!");
+        institution.verifyProperties();
+        if (idao.existsById(institution.getName()))
+            throw new BadInputException("Can't create institution: id is already in use");
+        institutionManagerDAO.save(manager);
         return manager.getId();
     }
+
 
     /**
      * Gets an institution manager
@@ -466,6 +438,6 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public boolean existsInstitutionManagerById(String managerId) {
-        return institutionManagerSqlDAO.existsById(managerId);
+        return institutionManagerDAO.existsById(managerId);
     }
 }
