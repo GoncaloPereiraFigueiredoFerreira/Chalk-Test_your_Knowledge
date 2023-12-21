@@ -24,13 +24,13 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @param pageable page request information
      * @return page of resolutions, with a given status, of a specific exercise
      */
-    Page<ExerciseResolution> findByExerciseIdAndStatus(String exerciseId, ExerciseResolutionStatus status, Pageable pageable);
+    Page<ExerciseResolution> findAllByExerciseIdAndStatus(String exerciseId, ExerciseResolutionStatus status, Pageable pageable);
     
     /**
      * @param exerciseId identifier of the exercise
      * @return total number of resolutions for a specific exercise
      */
-    int countByExercise_Id(String exerciseId);
+    int countAllByExercise_Id(String exerciseId);
 
     /**
      * Counts the number of students that have at least one resolution for a specific exercise.
@@ -53,7 +53,7 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @param exerciseId identifier of the exercise
      * @return all exercise resolutions for a specific exercise
      */
-    List<ExerciseResolution> findExerciseResolutionSByExercise_Id(String exerciseId);
+    List<ExerciseResolution> findAllByExercise_Id(String exerciseId);
 
     /**
      * Finds a page of exercise resolutions for a specific exercise.
@@ -61,7 +61,7 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @param pageable information of the page
      * @return specific page of exercise resolutions for a given exercise
      */
-    Page<ExerciseResolution> findByExercise_Id(String exerciseId, Pageable pageable);
+    Page<ExerciseResolution> findAllByExercise_Id(String exerciseId, Pageable pageable);
 
     /**
      * Finds a page of the exercise resolutions for a specific exercise.
@@ -80,7 +80,7 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @param exerciseId exercise identifier
      */
     @Modifying
-    void deleteByExercise_Id(String exerciseId);
+    void deleteAllByExercise_Id(String exerciseId);
 
     /**
      * Gets the last resolution a specific student
@@ -99,7 +99,7 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @param studentId identifier of the student
      * @return the number of resolutions made by a student for a specific exercise.
      */
-    int countByExercise_IdAndStudent_Id(String exerciseId, String studentId);
+    int countAllByExercise_IdAndStudent_Id(String exerciseId, String studentId);
 
     /**
      * Finds the resolutions made by a student for a specific exercise.
@@ -108,6 +108,8 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @return the resolutions made by a student for a specific exercise.
      */
     Page<ExerciseResolution> findByExercise_IdAndStudent_Id(String exerciseId, String studentId, Pageable pageable);
+    List<ExerciseResolution> findAllByExercise_IdAndStudent_Id(String exerciseId, String studentId);
+
 
     @Query(value = "SELECT id FROM exercise_resolution WHERE exerciseid = :exeId AND test_resolutionid = :testResId", nativeQuery = true)
     List<String> getResolutionIdFromExeAndTestRes(@Param("exeId") String exeId, @Param("testResId") String testResId);

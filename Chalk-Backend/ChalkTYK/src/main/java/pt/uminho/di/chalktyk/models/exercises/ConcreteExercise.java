@@ -54,6 +54,32 @@ public abstract class ConcreteExercise extends Exercise {
 	 */
 	public abstract String getExerciseType();
 
+	public String getRubricId(){
+		return rubric == null ? null : rubric.getId();
+	}
+
+	public String getSolutionId(){
+		return solution == null ? null : solution.getId();
+	}
+
+	/**
+	 * Sets the id of the rubric, if rubric is not null.
+	 * @param rubricId id that the rubric should have
+	 */
+	public void setRubricIdIfExists(String rubricId){
+		if(rubric != null)
+			rubric.setId(rubricId);
+	}
+
+	/**
+	 * Sets the id of the solution, if solution is not null.
+	 * @param solutionId id that the solution should have
+	 */
+	public void setSolutionIdIfExists(String solutionId){
+		if(solution != null)
+			solution.setId(solutionId);
+	}
+
 	/**
 	 * Evaluates the resolution of an exercise.
 	 *

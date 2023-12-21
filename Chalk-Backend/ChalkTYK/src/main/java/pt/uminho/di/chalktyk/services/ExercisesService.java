@@ -7,6 +7,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.uminho.di.chalktyk.models.courses.Course;
+import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.repositories.ExerciseDAO;
+import pt.uminho.di.chalktyk.repositories.ExerciseResolutionDAO;
+import pt.uminho.di.chalktyk.repositories.ExerciseRubricDAO;
+import pt.uminho.di.chalktyk.repositories.ExerciseSolutionDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
@@ -16,33 +27,31 @@ import java.util.*;
 @Service("exercisesService")
 public class ExercisesService implements IExercisesService{
     private final ISpecialistsService specialistsService;
-    private final ExerciseDAO exerciseDAO;
-    private final ExerciseSqlDAO exerciseSqlDAO;
+    private final IStudentsService studentsService;
     private final ICoursesService coursesService;
     private final IInstitutionsService institutionsService;
     private final ITagsService iTagsService;
+    private final ExerciseDAO exerciseDAO;
     private final ExerciseSolutionDAO exerciseSolutionDAO;
     private final ExerciseRubricDAO exerciseRubricDAO;
+    private final ExerciseResolutionDAO exerciseResolutionDAO;
     @PersistenceContext
     private final EntityManager entityManager;
-    private final ExerciseResolutionSqlDAO exerciseResolutionSqlDAO;
-    private final ExerciseResolutionDAO exerciseResolutionDAO;
-    private final ExerciseCopySqlDAO exerciseCopySqlDAO;
 
-    public ExercisesService(ISpecialistsService specialistsService, ExerciseDAO exerciseDAO, ExerciseSqlDAO exerciseSqlDAO, ICoursesService coursesService, IInstitutionsService institutionsService, ITagsService iTagsService, ExerciseSolutionDAO exerciseSolutionDAO, ExerciseRubricDAO exerciseRubricDAO, EntityManager entityManager,
-                            ExerciseResolutionSqlDAO exerciseResolutionSqlDAO, ExerciseResolutionDAO exerciseResolutionDAO, ExerciseCopySqlDAO exerciseCopySqlDAO) {
+    public ExercisesService(ISpecialistsService specialistsService, IStudentsService studentsService, ExerciseDAO exerciseDAO, ICoursesService coursesService,
+                            IInstitutionsService institutionsService, ITagsService iTagsService, ExerciseSolutionDAO exerciseSolutionDAO,
+                            ExerciseRubricDAO exerciseRubricDAO, EntityManager entityManager,
+                            ExerciseResolutionDAO exerciseResolutionDAO) {
         this.specialistsService = specialistsService;
+        this.studentsService = studentsService;
         this.exerciseDAO = exerciseDAO;
-        this.exerciseSqlDAO = exerciseSqlDAO;
         this.coursesService = coursesService;
         this.institutionsService = institutionsService;
         this.iTagsService = iTagsService;
         this.exerciseSolutionDAO = exerciseSolutionDAO;
         this.exerciseRubricDAO = exerciseRubricDAO;
         this.entityManager = entityManager;
-        this.exerciseResolutionSqlDAO = exerciseResolutionSqlDAO;
         this.exerciseResolutionDAO = exerciseResolutionDAO;
-        this.exerciseCopySqlDAO = exerciseCopySqlDAO;
     }
 
     /**
@@ -72,9 +81,9 @@ public class ExercisesService implements IExercisesService{
         ConcreteExercise concreteExercise = getExerciseConcreteInstance(exerciseId);
 
         // gets tags
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        assert exerciseSQL != null;
-        concreteExercise.setTags(exerciseSQL.getTags());
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        assert exercise != null;
+        concreteExercise.setTags(exercise.getTags());
 
         return concreteExercise;
     }
@@ -87,7 +96,7 @@ public class ExercisesService implements IExercisesService{
      **/
     @Override
     public boolean exerciseExists(String exerciseId) {
-        return exerciseSqlDAO.existsById(exerciseId);
+        return exerciseDAO.existsById(exerciseId);
     }
 
     /**
@@ -104,60 +113,71 @@ public class ExercisesService implements IExercisesService{
     /**
      * Creates an exercise.
      *
-     * @param exercise     body of the exercise to be created. Regarding the metadata should
-     *                     contain, at least, the specialist identifier but may contain the institutionId and courseId
-     * @param rubric
+     * @param exercise   body of the exercise to be created. Regarding the metadata should
+     *                   contain, at least, the specialist identifier but may contain the institutionId and courseId
      * @param solution
-     * @param tagsIds
+     * @param rubric
      * @param visibility
+     * @param tagsIds
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
 
     @Override
     @Transactional
-    public String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws BadInputException {
+    public String createExercise(ConcreteExercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException {
         if(exercise == null)
             throw new BadInputException("Cannot create exercise: Exercise is null");
 
+        // Check if specialist is valid
+        Specialist specialist;
+        try {
+            specialist = specialistsService.getSpecialistById(exercise.getSpecialistId());
+            exercise.setSpecialist(specialist);
+        }catch (NotFoundException nfe){
+            throw new BadInputException("Cannot create exercise: Specialist does not exist.");
+        }
+
         // Check if tags are valid
-        for (String id:tagsIds)
-            if(iTagsService.getTagById(id)==null)
+        Set<Tag> tags = new HashSet<>();
+        for (String id:tagsIds) {
+            Tag tag = iTagsService.getTagById(id);
+            if (tag == null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
+            tags.add(tag);
+        }
+        exercise.setTags(tags);
+
         // Check if visibility is valid
         if(visibility == null)
             throw new BadInputException("Cannot create exercise: Visibility cant be null");
 
         // Checks if specialist exists and gets the institution where it belongs
-        Institution institution;
-        try { institution = institutionsService.getSpecialistInstitution(exercise.getSpecialistId()); }
-        catch (NotFoundException nfe){ throw new BadInputException("Cannot create exercise: Specialist does not exist."); }
-
-        // sets identifier of the institution
-        if(institution != null) exercise.setInstitutionId(institution.getName());
+        Institution institution = specialist.getInstitution();
+        exercise.setInstitution(institution);
 
         // If the specialist that owns the exercise does not have an institution,
         // then the exercise's visibility cannot be set to institution.
-        if (visibility == VisibilitySQL.INSTITUTION && institution == null)
+        if (visibility == Visibility.INSTITUTION && institution == null)
             throw new BadInputException("Cannot create exercise: cannot set visibility to INSTITUTION");
 
         // Check if course is valid
         String courseId = exercise.getCourseId();
         try {
             if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
-                throw new BadInputException("Cannot create exercise: course not found.");
+                throw new BadInputException("Cannot create exercise: specialist does not belong to the given course.");
         } catch (NotFoundException nfe){
-            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
+            throw new BadInputException("Cannot create exercise: course not found.");
         }
 
         // Cannot set visibility to COURSE without a course associated
-        if (courseId == null && visibility == VisibilitySQL.COURSE)
+        if (courseId == null && visibility == Visibility.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
 
         // Prevent overrides
         exercise.setId(null);
-        exercise.setRubricId(null);
-        exercise.setSolutionId(null);
+        exercise.setRubric(null);
+        exercise.setSolution(null);
 
         // Check exercise properties
         exercise.verifyProperties();
@@ -167,39 +187,19 @@ public class ExercisesService implements IExercisesService{
             solution.verifyInsertProperties();
             exercise.verifyResolutionProperties(solution.getData());
             solution = exerciseSolutionDAO.save(solution);
-            exercise.setSolutionId(solution.getId());
+            exercise.setSolution(solution);
         }
 
         // Check rubric
         if (rubric != null) {
             exercise.verifyRubricProperties(rubric);
             rubric = exerciseRubricDAO.save(rubric);
-            exercise.setRubricId(rubric.getId());
+            exercise.setRubric(rubric);
         }
 
-        // persists the exercise in nosql database
+        // persists the exercise in database
         exercise = exerciseDAO.save(exercise);
 
-        InstitutionSQL institutionSql = exercise.getInstitutionId() != null ? entityManager.getReference(InstitutionSQL.class, exercise.getInstitutionId()) : null;
-        SpecialistSQL specialistSql = exercise.getSpecialistId() != null ? entityManager.getReference(SpecialistSQL.class, exercise.getSpecialistId()) : null;
-        CourseSQL courseSql = exercise.getCourseId() != null ? entityManager.getReference(CourseSQL.class, exercise.getCourseId()) : null;
-        Set<TagSQL> tagsSet = new HashSet<>();
-        for(String tag : tagsIds){
-            tagsSet.add(entityManager.getReference(TagSQL.class, tag));
-        }
-
-        ExerciseSQL relExercise =
-                new ExerciseSQL(
-                        exercise.getId(),
-                        institutionSql,
-                        specialistSql,
-                        courseSql,
-                        exercise.getTitle(),
-                        exercise.getExerciseType(),
-                        visibility,
-                        0,
-                        tagsSet);
-        exerciseSqlDAO.save(relExercise);
         return exercise.getId();
     }
 
@@ -217,41 +217,35 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     public void deleteExerciseById(String exerciseId) throws NotFoundException {
         // Checks if exercise exists
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        if(exerciseSQL == null)
-            throw new NotFoundException("Could not delete exercise: Exercise does not exist.");
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise != null;
+        if(exercise == null)
+            throw new NotFoundException("Could not delete exercise: Exercise does not exist.");
 
         // Checks existence of resolutions
-        //boolean cannotBeDeleted = exerciseResolutionSqlDAO.countExerciseResolutionSQLByExercise_Id(exerciseId) > 0;
+        //boolean cannotBeDeleted = exerciseResolutionDAO.countByExercise_Id(exerciseId) > 0;
         deleteExerciseResolutions(exerciseId);
 
         // Checks existence of copies
         // If the exercise has copies it cannot be deleted
         // until all copies seize to exist.
-        boolean cannotBeDeleted = exerciseSqlDAO.countExerciseCopies(exerciseId) > 0;
+        boolean cannotBeDeleted = exercise instanceof ConcreteExercise ce && ce.getNrCopies() > 0;
 
         // When the exercise cannot not be deleted:
         if(cannotBeDeleted) {
-            //  visibility is set to "DELETED"
-            exerciseSQL.setVisibility(VisibilitySQL.DELETED);
+            // visibility is set to "DELETED"
+            exercise.setVisibility(Visibility.DELETED);
 
             // owner is removed
-            exerciseSQL.setSpecialist(null);
-            exercise.setSpecialistId(null);
+            exercise.setSpecialist(null);
 
             // course is removed
-            exerciseSQL.setCourse(null);
-            exercise.setCourseId(null);
+            exercise.setCourse(null);
 
             // institution is removed
-            exerciseSQL.setInstitution(null);
-            exercise.setInstitutionId(null);
+            exercise.setInstitution(null);
 
             //save modifications in both databases
-            exerciseSqlDAO.save(exerciseSQL);
-            exerciseDAO.save(exercise);
+            exercise = exerciseDAO.save(exercise);
         }
         else{
             if(exercise instanceof ConcreteExercise ce){
@@ -262,19 +256,19 @@ public class ExercisesService implements IExercisesService{
                 // Delete solution if exists
                 if(ce.getRubricId() != null)
                     exerciseRubricDAO.deleteById(ce.getRubricId());
+
+            } else if (exercise instanceof ShallowExercise se){
+                // The exercise is shallow, so it needs to be removed
+                // from the original exercise copies
+                decrementsNrOfCopies(se.getOriginalExerciseId());
             }
 
-            // Delete from exercise copy table in sql database
-            removeExerciseFromCopiesTable(exerciseId);
-
-            // Delete from exercise table in sql database
-            exerciseSqlDAO.deleteById(exerciseId);
-
-            // Delete exercise document in nosql database
+            // Delete exercise from the database
             exerciseDAO.deleteById(exerciseId);
         }
     }
 
+    // TODO - verificar se existe metodo para dar update a visibilidade, ao curso e à cotacao de um exercicio.
     /**
      * Duplicates the exercise that contains the given identifier.
      * The id of the specialist, and if existent, the institution identifier
@@ -290,8 +284,7 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     public String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException {
         // checks if the specialist exists
-        if(!specialistsService.existsSpecialistById(specialistId))
-            throw new NotFoundException("Could not duplicate exercise: specialist does not exist.");
+        Specialist specialist = specialistsService.getSpecialistById(specialistId);
 
         // gets specialists institution
         String institutionId = null;
@@ -300,37 +293,31 @@ public class ExercisesService implements IExercisesService{
         if(institution != null)
             institutionId = institution.getName();
 
+        Exercise source = _getExerciseById(exerciseId);
+
         // finds the original exercise since the source exercise
         // might be shallow, i.e., might not be the original exercise
         String originalId = exerciseId;
-        Exercise original = _getExerciseById(exerciseId);
+        Exercise original = source;
 
         // if the exercise is shallow, then gets the original exercise id
-        if(original instanceof ShallowExercise originalShallow)
+        if(original instanceof ShallowExercise originalShallow) {
             originalId = originalShallow.getOriginalExerciseId();
+            original = originalShallow.getOriginalExercise();
+        }
 
         // Creates a shallow exercise, because a copy has the same contents as the original
-        ShallowExercise copy = new ShallowExercise(originalId, specialistId, institutionId, null, 0.0f);
+        ShallowExercise copy = new ShallowExercise(null, source.getTitle(), original.getExerciseType(), 0.0f, Visibility.PRIVATE, null, specialist, institution, source.getTags(), original);
 
-        // persists nosql copy
+        // increment original exercise copies
+        ConcreteExercise originalCE = (ConcreteExercise) original;
+        originalCE.increaseNrCopies();
+        exerciseDAO.save(originalCE);
+
+        // persists copy
         copy = exerciseDAO.save(copy);
 
-        // get source sql (some sql information might differ from the original exercise sql,
-        //  and since the exercise being duplicated is the source exercise, the source sql
-        //  info is the one that should be duplicated)
-        ExerciseSQL sourceSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        assert sourceSQL != null;
-
-        // create sql entry
-        InstitutionSQL institutionSQL = institutionId != null ? entityManager.getReference(InstitutionSQL.class, institutionId) : null;
-        SpecialistSQL specialistSQL = entityManager.getReference(SpecialistSQL.class, specialistId);
-        ExerciseSQL copySQL = new ExerciseSQL(copy.getId(), institutionSQL, specialistSQL, null, sourceSQL.getTitle(), sourceSQL.getExerciseType(), VisibilitySQL.PRIVATE, 0, sourceSQL.getTags());
-        copySQL = exerciseSqlDAO.save(copySQL);
-
-        // create copy entry
-        addExerciseToCopiesTable(copySQL.getId(), originalId);
-
-        return copySQL.getId();
+        return copy.getId();
     }
 
     /**
@@ -347,7 +334,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     @Transactional
-    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, VisibilitySQL visibility) throws NotFoundException, BadInputException {
+    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
         if(!exerciseExists(exerciseId))
             throw new NotFoundException("ExerciseId does not correspond to any exercise");
         if(exercise!=null) {
@@ -413,11 +400,11 @@ public class ExercisesService implements IExercisesService{
             if(origExercise instanceof ConcreteExercise origCE) {
                 //Ids from rubric and solution cannot be changed
                 if(concreteExercise.getRubricId()==null)
-                    concreteExercise.setRubricId(origCE.getRubricId());
+                    concreteExercise.setRubricIdIfExists(origCE.getRubricId());
                 if(!Objects.equals(concreteExercise.getRubricId(), origCE.getRubricId()))
                     throw new BadInputException("Cannot change exercise rubric id");
                 if(concreteExercise.getSolutionId()==null)
-                    concreteExercise.setSolutionId(origCE.getSolutionId());
+                    concreteExercise.setSolutionIdIfExists(origCE.getSolutionId());
                 if(!Objects.equals(concreteExercise.getSolutionId(), origCE.getSolutionId()))
                     throw new BadInputException("Cannot change exercise solution id");
             } else throw new AssertionError("Exercise is not concrete after conversion");
@@ -449,26 +436,26 @@ public class ExercisesService implements IExercisesService{
             //If type changed then modify it on sql
             if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType())||
                     !Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle())){
-                ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(concreteExercise.getId()).orElse(null);
-                assert exerciseSQL != null;
-                exerciseSQL.setTitle(concreteExercise.getTitle());
-                exerciseSQL.setExerciseType(concreteExercise.getExerciseType());
+                Exercise exercise = exerciseDAO.findById(concreteExercise.getId()).orElse(null);
+                assert exercise != null;
+                exercise.setTitle(concreteExercise.getTitle());
+                exercise.setExerciseType(concreteExercise.getExerciseType());
                 if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){
                     if(exercise.getCourseId()==null){
-                        exerciseSQL.setCourse(null);
+                        exercise.setCourse(null);
                     }
-                    else exerciseSQL.setCourse(entityManager.getReference(CourseSQL.class,exercise.getCourseId()));
+                    else exercise.setCourse(entityManager.getReference(Course.class,exercise.getCourseId()));
                 }
-                exerciseSqlDAO.save(exerciseSQL);
+                exerciseDAO.save(exercise);
             }
         } else if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){ //If new exercise is shallow verify if course needs to be updated
-                ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exercise.getId()).orElse(null);
-                assert exerciseSQL != null;
+                Exercise exercise = exerciseDAO.findById(exercise.getId()).orElse(null);
+                assert exercise != null;
                 if(exercise.getCourseId()==null){
-                    exerciseSQL.setCourse(null);
+                    exercise.setCourse(null);
                 }
-                else exerciseSQL.setCourse(entityManager.getReference(CourseSQL.class,exercise.getCourseId()));
-                exerciseSqlDAO.save(exerciseSQL);
+                else exercise.setCourse(entityManager.getReference(Course.class,exercise.getCourseId()));
+                exerciseDAO.save(exercise);
         }
 
 
@@ -486,19 +473,19 @@ public class ExercisesService implements IExercisesService{
         for (String id:tagsIds)
             if(iTagsService.getTagById(id)==null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        assert exerciseSQL!=null;
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        assert exercise!=null;
 
         Set<String> setTagsIds = new HashSet<>(tagsIds);
-        Set<TagSQL> tags = new HashSet<>();
+        Set<Tag> tags = new HashSet<>();
         for (String tagId:setTagsIds){
-            TagSQL tag = iTagsService.getTagById(tagId);
+            Tag tag = iTagsService.getTagById(tagId);
             if(tag==null)
                 throw new NotFoundException("Tag with id "+tagId+" was not found");
             tags.add(tag);
         }
-        exerciseSQL.setTags(tags);
-        exerciseSqlDAO.save(exerciseSQL);
+        exercise.setTags(tags);
+        exerciseDAO.save(exercise);
     }
 
     /**
@@ -507,34 +494,34 @@ public class ExercisesService implements IExercisesService{
      * @param exerciseId   identifier of the exercise to be updated
      * @param visibility   new visibility
      */
-    private void updateExerciseVisibility(String exerciseId,VisibilitySQL visibility) throws BadInputException {
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        assert exerciseSQL!=null;
+    private void updateExerciseVisibility(String exerciseId,Visibility visibility) throws BadInputException {
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        assert exercise!=null;
 
         // Checks if specialist exists and gets the institution where it belongs
-        pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution institution;
-        try { institution = institutionsService.getSpecialistInstitution(exerciseSQL.getSpecialist().getId()); }
+        Institution institution;
+        try { institution = institutionsService.getSpecialistInstitution(exercise.getSpecialist().getId()); }
         catch (NotFoundException nfe){ throw new BadInputException("Cannot create exercise: Specialist does not exist."); }
 
         // If the specialist that owns the exercise does not have an institution,
         // then the exercise's visibility cannot be set to institution.
-        if (visibility == VisibilitySQL.INSTITUTION && institution == null)
+        if (visibility == Visibility.INSTITUTION && institution == null)
             throw new BadInputException("Cannot set visibility to INSTITUTION");
 
         // Check if course is valid
-        String courseId = exerciseSQL.getCourse().getId();
+        String courseId = exercise.getCourse().getId();
         try {
-            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exerciseSQL.getSpecialist().getId()))
+            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialist().getId()))
                 throw new BadInputException("Cannot create exercise: course not found.");
         } catch (NotFoundException nfe){
             throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
         }
 
         // Cannot set visibility to COURSE without a course associated
-        if (courseId == null && visibility == VisibilitySQL.COURSE)
+        if (courseId == null && visibility == Visibility.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
-        exerciseSQL.setVisibility(visibility);
-        exerciseSqlDAO.save(exerciseSQL);
+        exercise.setVisibility(visibility);
+        exerciseDAO.save(exercise);
     }
 
 
@@ -598,19 +585,21 @@ public class ExercisesService implements IExercisesService{
             // checks if rubric is valid
             ce.verifyRubricProperties(rubric);
 
-            // if exercise already has rubric, then the rubric document should be overwritten, conserving the identifier.
-            if(ce.getRubricId() != null) {
-                ExerciseRubric oldRubric = exerciseRubricDAO.findById(ce.getRubricId()).orElse(null);
-                assert oldRubric != null;
-                rubric.setId(oldRubric.getId());
-            }
+            // if exercise already has rubric, then the rubric should
+            // be overwritten, conserving the identifier.
+            String rubricID = ce.getRubricId();
+            boolean update = rubricID != null;
+            rubric.setId(rubricID);
 
             // persists rubric
             rubric = exerciseRubricDAO.save(rubric);
-            ce.setRubricId(rubric.getId());
 
-            // updates the exercise document
-            exerciseDAO.save(ce);
+            // if the exercise did not have a rubric,
+            // then the association needs to be created
+            if(!update) {
+                ce.setRubric(rubric);
+                exerciseDAO.save(ce); // updates the exercise
+            }
         }
     }
 
@@ -634,13 +623,13 @@ public class ExercisesService implements IExercisesService{
 
             // remove the rubric identifier
             String rubricId = ce.getRubricId();
-            ce.setRubricId(null);
-
-            // delete the rubric document
-            exerciseRubricDAO.deleteById(rubricId);
+            ce.setRubric(null);
 
             // saves the exercise
             exerciseDAO.save(ce);
+
+            // delete the rubric document
+            exerciseRubricDAO.deleteById(rubricId);
         }
     }
 
@@ -676,19 +665,21 @@ public class ExercisesService implements IExercisesService{
             // checks if solution is valid
             ce.verifyResolutionProperties(solution.getData());
 
-            // if exercise already has solution, then the solution document should be overwritten, conserving the identifier.
-            if(ce.getSolutionId() != null) {
-                ExerciseSolution oldSolution = exerciseSolutionDAO.findById(ce.getSolutionId()).orElse(null);
-                assert oldSolution != null;
-                solution.setId(oldSolution.getId());
-            }
+            // if exercise already has solution, then the solution should
+            // be overwritten, conserving the identifier.
+            String solutionID = ce.getSolutionId();
+            boolean update = solutionID != null;
+            solution.setId(solutionID);
 
             // persists solution
             solution = exerciseSolutionDAO.save(solution);
-            ce.setSolutionId(solution.getId());
 
-            // updates the exercise document
-            exerciseDAO.save(ce);
+            // if the exercise did not have a solution,
+            // then the association needs to be created
+            if(!update) {
+                ce.setSolution(solution);
+                exerciseDAO.save(ce); // updates the exercise
+            }
         }
     }
 
@@ -741,36 +732,34 @@ public class ExercisesService implements IExercisesService{
 
             // remove the solution identifier
             String solutionId = ce.getSolutionId();
-            ce.setSolutionId(null);
-
-            // delete the solution document
-            exerciseSolutionDAO.deleteById(solutionId);
+            ce.setSolution(null);
 
             // saves the exercise
             exerciseDAO.save(ce);
+
+            // delete the solution document
+            exerciseSolutionDAO.deleteById(solutionId);
         }
     }
 
     @Override
     @Transactional
     public String getExerciseCourse(String exerciseId) throws NotFoundException {
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        if(exerciseSQL==null)
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        if(exercise==null)
             throw new NotFoundException("There is no exercise for the given id");
-        if(exerciseSQL.getCourse()==null)
+        if(exercise.getCourse()==null)
             return null;
-        return exerciseSQL.getCourse().getId();
+        return exercise.getCourse().getId();
     }
 
     @Override
     @Transactional
-    public String getExerciseInstitution(String exerciseId) throws NotFoundException {
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.findById(exerciseId).orElse(null);
-        if(exerciseSQL==null)
+    public Institution getExerciseInstitution(String exerciseId) throws NotFoundException {
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        if(exercise == null)
             throw new NotFoundException("There is no exercise for the given id");
-        if(exerciseSQL.getInstitution()==null)
-            return null;
-        return exerciseSQL.getInstitution().getId();
+        return exercise.getInstitution();
     }
 
     /**
@@ -858,9 +847,9 @@ public class ExercisesService implements IExercisesService{
     @Override
     public Integer countExerciseResolutions(String exerciseId, boolean total) {
         if(total)
-            return exerciseResolutionSqlDAO.countExerciseResolutionSQLSByExercise_Id(exerciseId);
+            return exerciseResolutionDAO.countAllByExercise_Id(exerciseId);
         else
-            return exerciseResolutionSqlDAO.countStudentsWithResolutionForExercise(exerciseId);
+            return exerciseResolutionDAO.countStudentsWithResolutionForExercise(exerciseId);
     }
 
     /**
@@ -874,23 +863,20 @@ public class ExercisesService implements IExercisesService{
      */
     @Transactional
     @Override
-    public List<Pair<StudentSQL, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest) {
-        Page<ExerciseResolutionSQL> resolutionsSQL;
+    public List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest) {
+        Page<ExerciseResolution> resolutions;
 
         // gets the page of resolutions to return
         if(latest)
-            resolutionsSQL = exerciseResolutionSqlDAO.findLatestExerciseResolutionSQLSByExercise_Id(exerciseId, PageRequest.of(page, itemsPerPage));
+            resolutions = exerciseResolutionDAO.findLatestResolutionsByExercise_Id(exerciseId, PageRequest.of(page, itemsPerPage));
         else
-            resolutionsSQL = exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_Id(exerciseId,PageRequest.of(page, itemsPerPage));
+            resolutions = exerciseResolutionDAO.findAllByExercise_Id(exerciseId,PageRequest.of(page, itemsPerPage));
 
-        // gets the basic student info (StudentSQL) from the ExerciseResolutionSQL instances
-        // and pairs it with the respective ExerciseResolution (NoSQL) instances
-        List<Pair<StudentSQL, ExerciseResolution>> list = new ArrayList<>();
-        for (ExerciseResolutionSQL resSQL : resolutionsSQL){
-            ExerciseResolution res = exerciseResolutionDAO.findById(resSQL.getId()).orElse(null);
-            assert res != null;
-            list.add(Pair.of(resSQL.getStudent(), res));
-        }
+        // gets the basic student info (Student) from the ExerciseResolution instances
+        // and pairs it with the respective ExerciseResolution (No) instances
+        List<Pair<Student, ExerciseResolution>> list = new ArrayList<>();
+        for (ExerciseResolution res : resolutions)
+            list.add(Pair.of(res.getStudent(), res));
         return list;
     }
 
@@ -909,50 +895,46 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
         // checks if exercise exists
-        if (!exerciseSqlDAO.existsById(exerciseId))
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        if (exercise == null)
             throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
+
+        // checks if student exists
+        Student student = studentsService.getStudentById(studentId);
 
         // checks if resolution is valid
         if(resolutionData == null)
             throw new BadInputException("Could not create exercise resolution: resolution data is null.");
 
-
         // prepares resolution
         ExerciseResolution resolution = new ExerciseResolution(null, // prevents overwrite attacks
-                studentId,exerciseId,
                 null, // new resolution so it should not have a points
+                null, // submission number will be set later in this method
                 resolutionData,
                 ExerciseResolutionStatus.NOT_REVISED, // new resolution so cannot be already revised
-                null,
-                null);
+                null, // new resolution so it cannot have a comment
+                exercise,
+                student
+                );
 
         // checks the resolution data against the exercise data
         checkResolutionData(resolution);
 
         // sets resolution number
-        ExerciseResolutionSQL lastResolutionSQL = exerciseResolutionSqlDAO.getStudentLastResolution(studentId,exerciseId);
-        int submissionNr = lastResolutionSQL != null ? lastResolutionSQL.getSubmissionNr() + 1 : 1;
+        ExerciseResolution lastResolution = exerciseResolutionDAO.getStudentLastResolution(studentId,exerciseId);
+        int submissionNr = lastResolution != null ? lastResolution.getSubmissionNr() + 1 : 1;
         resolution.setSubmissionNr(submissionNr);
 
-        // persists document
-        resolution = exerciseResolutionDAO.save(resolution);
-
-        // creates sql info and persists it
-        StudentSQL studentSQL = entityManager.getReference(StudentSQL.class, studentId);
-        ExerciseSQL exerciseSQL = entityManager.getReference(ExerciseSQL.class, exerciseId);
-        ExerciseResolutionSQL resolutionSQL = new ExerciseResolutionSQL(resolution.getId(), studentSQL, exerciseSQL, submissionNr);
-        exerciseResolutionSqlDAO.save(resolutionSQL);
-
-        return resolution;
+        // persists resolution
+        return exerciseResolutionDAO.save(resolution);
     }
 
     @Override
     @Transactional
     public ExerciseResolution createEmptyExerciseResolution(String studentId, String exerciseId, String testResId) throws NotFoundException, BadInputException {
         // checks if exercise exists
-        if (!exerciseSqlDAO.existsById(exerciseId))
+        if (!exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
-
 
         // prepares resolution
         ExerciseResolution resolution = new ExerciseResolution(null, // prevents overwrite attacks
@@ -967,11 +949,11 @@ public class ExercisesService implements IExercisesService{
         resolution = exerciseResolutionDAO.save(resolution);
 
         // creates sql info and persists it
-        StudentSQL studentSQL = entityManager.getReference(StudentSQL.class, studentId);
-        ExerciseSQL exerciseSQL = entityManager.getReference(ExerciseSQL.class, exerciseId);
-        TestResolutionSQL testResolutionSQL = entityManager.getReference(TestResolutionSQL.class, testResId);
-        ExerciseResolutionSQL resolutionSQL = new ExerciseResolutionSQL(resolution.getId(), testResolutionSQL, studentSQL, exerciseSQL, 0);
-        exerciseResolutionSqlDAO.save(resolutionSQL);
+        Student student = entityManager.getReference(Student.class, studentId);
+        Exercise exercise = entityManager.getReference(Exercise.class, exerciseId);
+        TestResolution testResolution = entityManager.getReference(TestResolution.class, testResId);
+        ExerciseResolution resolution = new ExerciseResolution(resolution.getId(), testResolution, student, exercise, 0);
+        exerciseResolutionDAO.save(resolution);
 
         return resolution;
     }
@@ -984,7 +966,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public Integer countExerciseResolutionsByStudent(String exerciseId, String studentId) {
-        return exerciseResolutionSqlDAO.countExerciseResolutionSQLSByExercise_IdAndStudent_Id(exerciseId, studentId);
+        return exerciseResolutionDAO.countAllByExercise_IdAndStudent_Id(exerciseId, studentId);
     }
 
     /**
@@ -994,8 +976,8 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the exercise does not exist
      */
     @Override
-    public List<ExerciseResolutionSQL> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException {
-        return exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_IdAndStudent_Id(exerciseId, studentId);
+    public List<ExerciseResolution> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException {
+        return exerciseResolutionDAO.findAllByExercise_IdAndStudent_Id(exerciseId, studentId);
     }
 
     /**
@@ -1005,9 +987,9 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public ExerciseResolution getLastExerciseResolutionByStudent(String exerciseId, String studentId) {
-        ExerciseResolutionSQL resolutionSQL = exerciseResolutionSqlDAO.getStudentLastResolution(studentId, exerciseId);
+        ExerciseResolution resolution = exerciseResolutionDAO.getStudentLastResolution(studentId, exerciseId);
         try {
-            return resolutionSQL != null ? getExerciseResolution(resolutionSQL.getId()) : null;
+            return resolution != null ? getExerciseResolution(resolution.getId()) : null;
         }catch (NotFoundException nfe){
             throw new AssertionError(nfe.getMessage());
         }
@@ -1053,8 +1035,8 @@ public class ExercisesService implements IExercisesService{
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("Theres no specialist with the given id");
         } //TODO verificação das tags
-        Page<ExerciseSQL> exerciseSQLS = exerciseSqlDAO.getExercises(PageRequest.of(page, itemsPerPage),tags,matchAllTags,visibility,institutionId,courseId,specialistId,title,exerciseType);
-        return exercisesSqlToNoSql(exerciseSQLS);
+        Page<Exercise> exerciseS = exerciseDAO.getExercises(PageRequest.of(page, itemsPerPage),tags,matchAllTags,visibility,institutionId,courseId,specialistId,title,exerciseType);
+        return exercisesToNo(exerciseS);
     }
 
     /**
@@ -1073,7 +1055,7 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
-        List<String> ids = exerciseResolutionSqlDAO.getResolutionIdFromExeAndTestRes(exerciseId, testResId);
+        List<String> ids = exerciseResolutionDAO.getResolutionIdFromExeAndTestRes(exerciseId, testResId);
         if (ids.size() > 0 && ids.get(0) != null){
             ExerciseResolution resolution = exerciseResolutionDAO.findById(ids.get(0)).orElse(null);
             return resolution;
@@ -1084,15 +1066,15 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
-        List<ExerciseResolutionSQL> exesRes = exerciseResolutionSqlDAO.getResolutionFromTestRes(testResId);
+        List<ExerciseResolution> exesRes = exerciseResolutionDAO.getResolutionFromTestRes(testResId);
         
         if (exesRes.size() > 0){
-            for (ExerciseResolutionSQL exeResSQL: exesRes){
-                ExerciseResolution exeRes = exerciseResolutionDAO.findById(exeResSQL.getId()).orElse(null);
+            for (ExerciseResolution exeRes: exesRes){
+                ExerciseResolution exeRes = exerciseResolutionDAO.findById(exeRes.getId()).orElse(null);
                 if (exeRes != null){
                     exerciseResolutionDAO.delete(exeRes);
                 }
-                exerciseResolutionSqlDAO.delete(exeResSQL);
+                exerciseResolutionDAO.delete(exeRes);
             }
         }
     }
@@ -1175,9 +1157,9 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public String getExerciseVisibility(String exerciseId) throws NotFoundException {
-        Optional<ExerciseSQL> exerciseSQL = exerciseSqlDAO.findById(exerciseId);
-        if(exerciseSQL.isPresent())
-            return exerciseSQL.get().getVisibility().toString();
+        Optional<Exercise> exercise = exerciseDAO.findById(exerciseId);
+        if(exercise.isPresent())
+            return exercise.get().getVisibility().toString();
         else
             throw new NotFoundException("Exercise does not exist.");
     }
@@ -1193,17 +1175,17 @@ public class ExercisesService implements IExercisesService{
      */
     private boolean isExerciseOwner(String exerciseId, String specialistId){
         if(specialistId == null) return false;
-        return specialistId.equals(exerciseSqlDAO.getExerciseSpecialistId(exerciseId));
+        return specialistId.equals(exerciseDAO.getExerciseSpecialistId(exerciseId));
     }
 
-    private SpecialistSQL verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
-        if(!exerciseSqlDAO.existsById(exerciseId))
+    private Specialist verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
+        if(!exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Exercise not found");
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Specialist not found");
 
-        ExerciseSQL relExerciseToBeCopied = exerciseSqlDAO.getReferenceById(exerciseId);
-        SpecialistSQL specialist = relExerciseToBeCopied.getSpecialist();
+        Exercise relExerciseToBeCopied = exerciseDAO.getReferenceById(exerciseId);
+        Specialist specialist = relExerciseToBeCopied.getSpecialist();
         if(specialist==null || !specialist.getId().equals(specialistId)) //TODO maybe mudar isto
             throw new UnauthorizedException("The specialist is not the owner of the exercise");
         return specialist;
@@ -1215,74 +1197,36 @@ public class ExercisesService implements IExercisesService{
      */
     private void deleteExerciseResolutions(String exerciseId){
         // get all resolutions related to the given exercise
-        List<ExerciseResolutionSQL> resolutionSQLS =
-                exerciseResolutionSqlDAO.findExerciseResolutionSQLSByExercise_Id(exerciseId);
+        List<ExerciseResolution> resolutionS =
+                exerciseResolutionDAO.findExerciseResolutionSByExercise_Id(exerciseId);
         // Delete resolutions entries in sql database
-        exerciseResolutionSqlDAO.deleteExerciseResolutionSQLSByExercise_Id(exerciseId);
+        exerciseResolutionDAO.deleteByExercise_Id(exerciseId);
         // Delete resolutions documents in nosql database
-        resolutionSQLS.stream().map(ExerciseResolutionSQL::getId).forEach(exerciseResolutionDAO::deleteById);
+        resolutionS.stream().map(ExerciseResolution::getId).forEach(exerciseResolutionDAO::deleteById);
     }
 
     /**
-     * Removes exercise (which will stop being a copy) from the copies table. Assumes the exercise exists.
-     * If the original exercise gets to zero copies and has as visibility "deleted",
-     * the original exercise is deleted.
-     * @param exerciseId identifier of the exercise. Expects the identifier to not be null.
+     * Decrements the number of copies from a concrete exercise.
+     * If the exercise gets to zero copies and has visibility as "deleted",
+     * the exercise is deleted.
+     * @param exerciseId identifier of the exercise
      */
-    private void removeExerciseFromCopiesTable(String exerciseId) {
+    private void decrementsNrOfCopies(String exerciseId) {
         assert exerciseId != null;
 
-        //find entry in copies table
-        ExerciseCopySQL exerciseCopySQL = exerciseCopySqlDAO.findById(exerciseId).orElse(null);
-        assert exerciseCopySQL != null;
+        // finds exercise and converts it to a ConcreteExercise instance
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        assert exercise instanceof ConcreteExercise;
+        ConcreteExercise ce = (ConcreteExercise) exercise;
 
-        // get the id of the original exercise, to update the number of copies
-        String originalId = exerciseCopySQL.getOriginalId();
+        // decrements the number of copies by 1
+        ce.decreaseNrCopies();
 
-        // deletes entry from copies table
-        exerciseCopySqlDAO.deleteById(exerciseId);
-
-        // Gets original exercise and decrements number of copies by one
-        ExerciseSQL originalExerciseSql = exerciseSqlDAO.findById(originalId).orElse(null);
-        assert originalExerciseSql != null && originalExerciseSql.getNrCopies() > 0;
-        originalExerciseSql.decreaseNrCopies();
-
-        // Deletes original exercise if it does not have any copies and the visibility is set no deleted
-        if (originalExerciseSql.getNrCopies() == 0 && originalExerciseSql.getVisibility() == VisibilitySQL.DELETED) {
-            try {
-                deleteExerciseById(originalId);
-            } catch (NotFoundException nfe) {
-                throw new AssertionError(nfe.getMessage());
-            }
-        } else {
-            // update exercise
-            exerciseSqlDAO.save(originalExerciseSql);
-        }
-    }
-
-    /**
-     * Adds a copy entry of an exercise, and updates
-     * the original exercise number of copies.
-     * Assumes that both exercises exist,
-     * both the sql and non sql version, and that the original exercise is
-     * a concrete exercise.
-     * @param exerciseId identifier of the exercise that is a copy.
-     * @param originalId identifier of the original exercise.
-     */
-    private void addExerciseToCopiesTable(String exerciseId, String originalId){
-        // get sql references to the exercises
-        ExerciseSQL exerciseSQL = exerciseSqlDAO.getReferenceById(exerciseId),
-                    originalSQL = exerciseSqlDAO.findById(originalId).orElse(null);
-
-        assert originalSQL != null;
-
-        // creates copy entry
-        ExerciseCopySQL exerciseCopySQL = new ExerciseCopySQL(exerciseSQL, exerciseId, originalSQL, originalId);
-        exerciseCopySqlDAO.save(exerciseCopySQL);
-
-        // increments originalSQL number of copies
-        originalSQL.increaseNrCopies();
-        exerciseSqlDAO.save(originalSQL);
+        // Deletes exercise if it does not have any copies and the visibility is set no deleted
+        if (ce.getNrCopies() == 0 && ce.getVisibility() == Visibility.DELETED)
+            exerciseDAO.deleteById(exerciseId);
+        else
+            exerciseDAO.save(ce); // updates exercise
     }
 
     /**
@@ -1366,7 +1310,7 @@ public class ExercisesService implements IExercisesService{
             exerciseDAO.save(origCE);
 
             // Removes exercise from the original exercise copies
-            removeExerciseFromCopiesTable(origCE.getId());
+            decrementsNrOfCopies(origCE.getId());
         } else throw new AssertionError("Original exercise is not concrete");
     }
 
@@ -1412,14 +1356,14 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Converts a page of ExerciseSQL to a list of Exercise(NoSQL)s
-     * @param exerciseSQLPage page of exercises
-     * @return a list of Exercise(NoSQL)s
+     * Converts a page of Exercise to a list of Exercise(No)s
+     * @param exercisePage page of exercises
+     * @return a list of Exercise(No)s
      * @throws NotFoundException if one of the exercises, on the page, was not found
      */
-    private List<Exercise> exercisesSqlToNoSql(Page<ExerciseSQL> exerciseSQLPage) throws NotFoundException {
+    private List<Exercise> exercisesToNo(Page<Exercise> exercisePage) throws NotFoundException {
         List<Exercise> exerciseList = new ArrayList<>();
-        for(var exercise : exerciseSQLPage)
+        for(var exercise : exercisePage)
             exerciseList.add(this.getExerciseById(exercise.getId()));
         return exerciseList;
     }
@@ -1444,7 +1388,7 @@ public class ExercisesService implements IExercisesService{
         for(int pageIndex = 0, i = 0; i < resolutionsCount; pageIndex++, i += 5){
             // gets page
             Page<ExerciseResolution> page =
-                    exerciseResolutionDAO.findByExerciseIdAndStatus(exerciseId,
+                    exerciseResolutionDAO.findAllByExerciseIdAndStatus(exerciseId,
                                                                     ExerciseResolutionStatus.NOT_REVISED,
                                                                     PageRequest.of(pageIndex, 5));
 

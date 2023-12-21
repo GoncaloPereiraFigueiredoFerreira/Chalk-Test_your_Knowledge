@@ -45,7 +45,14 @@ public class ExerciseResolution {
 	@ManyToOne(targetEntity= Student.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="StudentID", referencedColumnName="ID", nullable=false) })
 	private Student student;
-	
+
+	public String getExerciseId(){
+		return exercise == null ? null : exercise.getId();
+	}
+
+	public String getStudentId(){
+		return student == null ? null : student.getId();
+	}
 
 	/**
 	 * Checks if the resolution inserted properties is correctly formed.

@@ -62,6 +62,18 @@ public abstract class Exercise {
 			throw new BadInputException("Cannot create exercise: The points of an exercise cannot be null, and must be positive.");
 	}
 
+	public String getSpecialistId(){
+		return specialist == null ? null : specialist.getId();
+	}
+
+	public String getCourseId(){
+		return course == null ? null : course.getId();
+	}
+
+	public String getInstitutionId(){
+		return institution == null ? null : institution.getName();
+	}
+
 	/**
 	 * Updates the exerciseType attribute when the object is persisted.
 	 */

@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.data.util.Pair;
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -39,12 +40,13 @@ public interface IExercisesService{
 
     /**
      * Creates an exercise.
+     *
      * @param exercise body of the exercise to be created. Regarding the metadata should
      *                 contain, at least, the specialist identifier
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
-    String createExercise(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws BadInputException;
+    String createExercise(ConcreteExercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException;
 
     /**
      * Delete exercise by id.
@@ -278,7 +280,7 @@ public interface IExercisesService{
 
     String getExerciseCourse(String exerciseId) throws NotFoundException; // TODO implementar (Bronze) 
     
-    String getExerciseInstitution(String exerciseId) throws NotFoundException; // TODO implementar (Bronze)
+    Institution getExerciseInstitution(String exerciseId) throws NotFoundException; // TODO implementar (Bronze)
 
     /**
      * @param exerciseId identifier of the exercise
