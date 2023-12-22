@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
@@ -25,7 +26,7 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @Setter
 @JsonTypeName("MC")
 @DiscriminatorValue("MC")
-public class MultipleChoiceExercise extends ConcreteExercise {
+public class MultipleChoiceExercise extends Exercise {
 	@Column(name = "MCType")
 	private Mctype mctype;
 
@@ -122,7 +123,7 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 	}
 
 	@Override
-	public void verifyProperties() throws BadInputException {
+	public void verifyInsertProperties() throws BadInputException {
 		super.verifyInsertProperties();
 		for (Map.Entry<Integer, Item> entry : items.entrySet()) {
 			Item item = entry.getValue();
@@ -130,5 +131,24 @@ public class MultipleChoiceExercise extends ConcreteExercise {
 				throw new BadInputException("Multiple choice cannot have null items.");
 			item.verifyProperties();
 		}
+	}
+
+	@Override
+	public Exercise cloneExerciseDataOnly()  {
+		var exercise = new MultipleChoiceExercise();
+		try { copyExerciseDataOnlyTo(exercise); }
+		catch (BadInputException ignored){}
+		return exercise;
+	}
+
+	@Override
+	public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
+		if(!(exercise instanceof MultipleChoiceExercise mce))
+			throw new BadInputException("Exercise is not of the same type.");
+		_copyExerciseDataOnlyTo(mce);
+		mce.mctype = mctype;
+		mce.items = new HashMap<>();
+		for(Map.Entry<Integer, Item> entry : items.entrySet())
+			mce.items.put(entry.getKey(), entry.getValue().clone());
 	}
 }

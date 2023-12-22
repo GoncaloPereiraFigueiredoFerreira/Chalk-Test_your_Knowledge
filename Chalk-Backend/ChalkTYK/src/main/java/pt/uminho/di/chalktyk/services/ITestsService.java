@@ -238,4 +238,21 @@ public interface ITestsService {
      * @throws NotFoundException if the exercise does not exist
      */
     String removeExerciseFromTest(String exerciseId) throws NotFoundException;
+    
+    /**
+     * Gets the exercise resolution identified from the test resolution and the exercise.
+     * @param exerciseId    identifier of the exercise
+     * @param testResId     identifier of the test resolution
+     * @return the exercise resolution identified by the given identifier.
+     * @throws NotFoundException if the resolution does not exist
+     */
+    ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException;
+
+    /**
+     * Delete all exercise resolutions related to a certain test resolution.
+     *
+     * @param  testResId            identifier of the test resolution
+     * @throws NotFoundException    if the test resolution was not found
+     */
+    void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException;
 }

@@ -3,11 +3,11 @@ package pt.uminho.di.chalktyk.models.exercises.open_answer;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
@@ -17,7 +17,7 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @Setter
 @DiscriminatorValue("OA")
 @JsonTypeName("OA")
-public class OpenAnswerExercise extends ConcreteExercise {
+public class OpenAnswerExercise extends Exercise {
 	@Override
     public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
         if(!(exerciseResolutionData instanceof OpenAnswerData openAnswerData))
@@ -49,5 +49,20 @@ public class OpenAnswerExercise extends ConcreteExercise {
     @Override
     public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
         throw new UnauthorizedException("Open answer exercise cannot be evaluated automatically.");
+    }
+
+    @Override
+    public Exercise cloneExerciseDataOnly() {
+        var exercise = new OpenAnswerExercise();
+        try { copyExerciseDataOnlyTo(exercise); }
+        catch (BadInputException ignored){}
+        return exercise;
+    }
+
+    @Override
+    public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
+        if(!(exercise instanceof OpenAnswerExercise oae))
+            throw new BadInputException("Exercise is not of the same type.");
+        _copyExerciseDataOnlyTo(oae);
     }
 }

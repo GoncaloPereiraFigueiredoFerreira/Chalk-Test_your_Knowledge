@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.fill_the_blanks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -10,6 +11,7 @@ import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -19,9 +21,10 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @DiscriminatorValue("FTB")
 @JsonTypeName("FTB")
-public class FillTheBlanksExercise extends ConcreteExercise {
+public class FillTheBlanksExercise extends Exercise {
 	@Type(JsonBinaryType.class)
 	@Column(name = "TextSegments", columnDefinition = "jsonb")
 	private List<String> textSegments;
@@ -64,9 +67,8 @@ public class FillTheBlanksExercise extends ConcreteExercise {
 		throw new UnauthorizedException("Automatic evaluation for fill the blanks exercises is not implemented yet.");
 	}
 
-
 	@Override
-	public void verifyProperties() throws BadInputException {
+	public void verifyInsertProperties() throws BadInputException {
 		for (String textSegment:textSegments){
 			if(textSegment==null)
 				throw new BadInputException("The text segments cannot be null.");
@@ -76,5 +78,21 @@ public class FillTheBlanksExercise extends ConcreteExercise {
 
 	private int numberOfAnswers(){
 		return textSegments.size()-1;
+	}
+
+	@Override
+	public Exercise cloneExerciseDataOnly() {
+		var exercise = new FillTheBlanksExercise();
+		try { copyExerciseDataOnlyTo(exercise); }
+		catch (BadInputException ignored){}
+		return exercise;
+	}
+
+	@Override
+	public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
+		if(!(exercise instanceof FillTheBlanksExercise ftbe))
+			throw new BadInputException("Exercise is not of the same type.");
+		_copyExerciseDataOnlyTo(ftbe);
+		ftbe.setTextSegments(new ArrayList<>(textSegments));
 	}
 }
