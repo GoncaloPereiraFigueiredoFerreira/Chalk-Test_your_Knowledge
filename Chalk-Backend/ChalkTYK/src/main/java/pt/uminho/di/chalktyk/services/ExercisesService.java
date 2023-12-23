@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
@@ -58,7 +57,7 @@ public class ExercisesService implements IExercisesService{
      * Get Exercise by ID
      *
      * @param exerciseId of the exercise
-     * @return exercise from the given ID. Can return shallow exercises.
+     * @return exercise from the given ID.
      **/
     private Exercise _getExerciseById(String exerciseId) throws NotFoundException {
         Optional<Exercise> obj = exerciseDAO.findById(exerciseId);
@@ -70,22 +69,18 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Get Exercise by ID
+     * Get Exercise by ID. Loads everything except solution and rubric.
      *
      * @param exerciseId of the exercise
      * @return concrete exercise with the given ID
      **/
     @Override
     public Exercise getExerciseById(String exerciseId) throws NotFoundException {
-        // gets a concrete instance of the exercise (because it might be a shallow exercise)
-        ConcreteExercise concreteExercise = getExerciseConcreteInstance(exerciseId);
-
         // gets tags
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise != null;
-        concreteExercise.setTags(exercise.getTags());
-
-        return concreteExercise;
+        Exercise exercise = exerciseDAO.loadByIdWithoutSolutionAndRubric(exerciseId).orElse(null);
+        if(exercise == null)
+            throw new NotFoundException("Exercise does not exist.");
+        return exercise;
     }
 
     /**
@@ -97,17 +92,6 @@ public class ExercisesService implements IExercisesService{
     @Override
     public boolean exerciseExists(String exerciseId) {
         return exerciseDAO.existsById(exerciseId);
-    }
-
-    /**
-     * Verify is exercise is shallow
-     *
-     * @param exerciseId of the exercise
-     * @return true if exercise is shallow, false otherwise
-     **/
-    @Override
-    public boolean exerciseIsShallow(String exerciseId) throws NotFoundException {
-        return _getExerciseById(exerciseId) instanceof ShallowExercise;
     }
 
     /**
@@ -125,7 +109,7 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     @Transactional
-    public String createExercise(ConcreteExercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException {
+    public String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException {
         if(exercise == null)
             throw new BadInputException("Cannot create exercise: Exercise is null");
 
@@ -180,7 +164,7 @@ public class ExercisesService implements IExercisesService{
         exercise.setSolution(null);
 
         // Check exercise properties
-        exercise.verifyProperties();
+        exercise.verifyInsertProperties();
 
         // Check solution
         if (solution != null) {
@@ -218,54 +202,22 @@ public class ExercisesService implements IExercisesService{
     public void deleteExerciseById(String exerciseId) throws NotFoundException {
         // Checks if exercise exists
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
+        if (exercise == null)
             throw new NotFoundException("Could not delete exercise: Exercise does not exist.");
 
         // Checks existence of resolutions
-        //boolean cannotBeDeleted = exerciseResolutionDAO.countByExercise_Id(exerciseId) > 0;
         deleteExerciseResolutions(exerciseId);
 
-        // Checks existence of copies
-        // If the exercise has copies it cannot be deleted
-        // until all copies seize to exist.
-        boolean cannotBeDeleted = exercise instanceof ConcreteExercise ce && ce.getNrCopies() > 0;
+        // Delete exercise from the database
+        exerciseDAO.deleteById(exerciseId);
 
-        // When the exercise cannot not be deleted:
-        if(cannotBeDeleted) {
-            // visibility is set to "DELETED"
-            exercise.setVisibility(Visibility.DELETED);
+        // Delete rubric if exists
+        if (exercise.getSolutionId() != null)
+            exerciseSolutionDAO.deleteById(exercise.getSolutionId());
 
-            // owner is removed
-            exercise.setSpecialist(null);
-
-            // course is removed
-            exercise.setCourse(null);
-
-            // institution is removed
-            exercise.setInstitution(null);
-
-            //save modifications in both databases
-            exercise = exerciseDAO.save(exercise);
-        }
-        else{
-            if(exercise instanceof ConcreteExercise ce){
-                // Delete rubric if exists
-                if(ce.getSolutionId() != null)
-                    exerciseSolutionDAO.deleteById(ce.getSolutionId());
-
-                // Delete solution if exists
-                if(ce.getRubricId() != null)
-                    exerciseRubricDAO.deleteById(ce.getRubricId());
-
-            } else if (exercise instanceof ShallowExercise se){
-                // The exercise is shallow, so it needs to be removed
-                // from the original exercise copies
-                decrementsNrOfCopies(se.getOriginalExerciseId());
-            }
-
-            // Delete exercise from the database
-            exerciseDAO.deleteById(exerciseId);
-        }
+        // Delete solution if exists
+        if (exercise.getRubricId() != null)
+            exerciseRubricDAO.deleteById(exercise.getRubricId());
     }
 
     // TODO - verificar se existe metodo para dar update a visibilidade, ao curso e à cotacao de um exercicio.
@@ -290,32 +242,21 @@ public class ExercisesService implements IExercisesService{
         String institutionId = null;
         Institution institution =
                 institutionsService.getSpecialistInstitution(specialistId);
-        if(institution != null)
-            institutionId = institution.getName();
 
         Exercise source = _getExerciseById(exerciseId);
 
-        // finds the original exercise since the source exercise
-        // might be shallow, i.e., might not be the original exercise
-        String originalId = exerciseId;
-        Exercise original = source;
+        // duplicates data related information
+        // and sets other information
+        Exercise copy = source.cloneExerciseDataOnly();
+        copy.setVisibility(Visibility.PRIVATE);
+        copy.setPoints(0.0f);
+        copy.setTags(new HashSet<>(source.getTags()));
+        copy.setInstitution(institution);
+        copy.setSpecialist(specialist);
+        copy.setCourse(null);
 
-        // if the exercise is shallow, then gets the original exercise id
-        if(original instanceof ShallowExercise originalShallow) {
-            originalId = originalShallow.getOriginalExerciseId();
-            original = originalShallow.getOriginalExercise();
-        }
-
-        // Creates a shallow exercise, because a copy has the same contents as the original
-        ShallowExercise copy = new ShallowExercise(null, source.getTitle(), original.getExerciseType(), 0.0f, Visibility.PRIVATE, null, specialist, institution, source.getTags(), original);
-
-        // increment original exercise copies
-        ConcreteExercise originalCE = (ConcreteExercise) original;
-        originalCE.increaseNrCopies();
-        exerciseDAO.save(originalCE);
-
-        // persists copy
-        copy = exerciseDAO.save(copy);
+        // persists exercise
+        exerciseDAO.save(copy);
 
         return copy.getId();
     }
@@ -336,9 +277,9 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
         if(!exerciseExists(exerciseId))
-            throw new NotFoundException("ExerciseId does not correspond to any exercise");
+            throw new NotFoundException("No exercise with the given id exists.");
         if(exercise!=null) {
-            if(exercise.getId()==null)
+            if(exercise.getId() == null)
                 exercise.setId(exerciseId);
             if (!Objects.equals(exerciseId, exercise.getId()))
                 throw new BadInputException("ExerciseId must be the same as the one given in the exercise");
@@ -354,10 +295,12 @@ public class ExercisesService implements IExercisesService{
             updateExerciseVisibility(exerciseId,visibility);
     }
 
+
+    // TODO - ver se existe update exercise's course and owner
     /**
      * Updates an exercise body.
      *
-     * @param exercise     new exercise body
+     * @param newBody new exercise body
      * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
      * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
@@ -365,101 +308,51 @@ public class ExercisesService implements IExercisesService{
      * the rubric or solution don't belong to the new exercise body
      */
     @Transactional
-    public void updateExerciseBody(Exercise exercise, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
-        Exercise origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
-        assert origExercise != null;
+    public void updateExerciseBody(Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
+        String exerciseId = newBody.getId();
+        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
+        assert exercise != null;
 
+        // Check new body properties
+        newBody.verifyInsertProperties();
+        
+        // copies exercise related data to the original exercise
+        newBody.copyExerciseDataOnlyTo(exercise);
 
-        String courseId = exercise.getCourseId();
-        try {
-            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
-                throw new BadInputException("Cannot create exercise: course not found.");
-        } catch (NotFoundException nfe){
-            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
+        boolean deleteRubric = false;
+        ExerciseRubric rubric = exerciseRubricDAO.findByExerciseId(exerciseId).orElse(null);
+        if(hasNewRubric){
+            // if there is a new rubric, delete the current rubric 
+            if(rubric != null){
+                exercise.setRubric(null);
+                deleteRubric = true;
+            }
+        }else{
+            // else, check if the exercise and the rubric are compatible.
+            if(rubric != null)
+                exercise.verifyRubricProperties(rubric);
         }
 
-        //Exercise specialist and institutions cannot be changed
-        if(!Objects.equals(exercise.getSpecialistId(), origExercise.getSpecialistId()))
-            throw new BadInputException("Cannot change exercise specialist");
-        if(!Objects.equals(exercise.getInstitutionId(), origExercise.getInstitutionId()))
-            throw new BadInputException("Cannot change exercise institution");
-
-
-        if(exercise instanceof ShallowExercise shallowExercise){
-            if(!(origExercise instanceof ShallowExercise origSE))
-                throw new BadInputException("Cannot convert concrete exercise to shallow exercise");
-            if(!Objects.equals(shallowExercise.getOriginalExerciseId(), origSE.getOriginalExerciseId()))
-                throw new BadInputException("Cannot change shallow exercise original exercise");
-        }
-        else if (exercise instanceof ConcreteExercise concreteExercise) {
-            //If new exercise is concrete and original was shallow then we need to convert it to concrete
-            if(origExercise instanceof ShallowExercise origSE){
-                convertShallowToConcreteAndUpdate(origSE,false,null,false,null);
-                origExercise = exerciseDAO.findById(exercise.getId()).orElse(null);
+        boolean deleteSolution = false;
+        ExerciseSolution solution = exerciseSolutionDAO.findByExerciseId(exerciseId).orElse(null);
+        if(hasNewSolution){
+            // if there is a new solution, delete the current solution 
+            if(solution != null) {
+                exercise.setSolution(null);
+                deleteSolution = true;
             }
-            if(origExercise instanceof ConcreteExercise origCE) {
-                //Ids from rubric and solution cannot be changed
-                if(concreteExercise.getRubricId()==null)
-                    concreteExercise.setRubricIdIfExists(origCE.getRubricId());
-                if(!Objects.equals(concreteExercise.getRubricId(), origCE.getRubricId()))
-                    throw new BadInputException("Cannot change exercise rubric id");
-                if(concreteExercise.getSolutionId()==null)
-                    concreteExercise.setSolutionIdIfExists(origCE.getSolutionId());
-                if(!Objects.equals(concreteExercise.getSolutionId(), origCE.getSolutionId()))
-                    throw new BadInputException("Cannot change exercise solution id");
-            } else throw new AssertionError("Exercise is not concrete after conversion");
+        }else{
+            // else, check if the exercise and the solution are compatible.
+            if(solution != null)
+                exercise.verifyResolutionProperties(solution.getData());
         }
 
-        // Check exercise properties
-        exercise.verifyInsertProperties();
-
-        //Verify that the exercise rubric and solution and still correct after exercise changes
-        if(exercise instanceof ConcreteExercise concreteExercise){
-            if(hasNewRubric) {
-                String rubricId = concreteExercise.getRubricId();
-                if (rubricId != null) {
-                    ExerciseRubric exerciseRubric = exerciseRubricDAO.findById(rubricId).orElse(null);
-                    assert exerciseRubric != null;
-                    concreteExercise.verifyRubricProperties(exerciseRubric);
-                }
-            }
-
-            if(hasNewSolution) {
-                String solutionId = concreteExercise.getSolutionId();
-                if (solutionId != null) {
-                    ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
-                    assert exerciseSolution != null;
-                    concreteExercise.verifyResolutionProperties(exerciseSolution.getData());
-                }
-            }
-
-            //If type changed then modify it on sql
-            if(!Objects.equals(((ConcreteExercise) origExercise).getExerciseType(), concreteExercise.getExerciseType())||
-                    !Objects.equals(((ConcreteExercise) origExercise).getTitle(), concreteExercise.getTitle())){
-                Exercise exercise = exerciseDAO.findById(concreteExercise.getId()).orElse(null);
-                assert exercise != null;
-                exercise.setTitle(concreteExercise.getTitle());
-                exercise.setExerciseType(concreteExercise.getExerciseType());
-                if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){
-                    if(exercise.getCourseId()==null){
-                        exercise.setCourse(null);
-                    }
-                    else exercise.setCourse(entityManager.getReference(Course.class,exercise.getCourseId()));
-                }
-                exerciseDAO.save(exercise);
-            }
-        } else if(!Objects.equals(exercise.getCourseId(), origExercise.getCourseId())){ //If new exercise is shallow verify if course needs to be updated
-                Exercise exercise = exerciseDAO.findById(exercise.getId()).orElse(null);
-                assert exercise != null;
-                if(exercise.getCourseId()==null){
-                    exercise.setCourse(null);
-                }
-                else exercise.setCourse(entityManager.getReference(Course.class,exercise.getCourseId()));
-                exerciseDAO.save(exercise);
-        }
-
-
-        exerciseDAO.save(exercise);
+        exerciseDAO.save(newBody);
+        
+        if(deleteRubric)
+            exerciseRubricDAO.deleteById(rubric.getId());
+        if(deleteSolution)
+            exerciseSolutionDAO.deleteById(solution.getId());
     }
 
     /**
@@ -533,25 +426,9 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public ExerciseRubric getExerciseRubric(String exerciseId) throws NotFoundException {
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
+        if(exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Cannot get exercise rubric: exercise does not exist.");
-
-        // if exercise is shallow, the rubric needs to be retrieved from the original
-        if(exercise instanceof ShallowExercise se){
-            assert se.getOriginalExerciseId() != null;
-            exercise = exerciseDAO.findById(se.getOriginalExerciseId()).orElse(null);
-        }
-
-        // Retrieves rubric from the exercise
-        if(exercise instanceof ConcreteExercise ce){
-            if(ce.getRubricId() == null)
-                return null;
-            else
-                return exerciseRubricDAO.findById(ce.getRubricId()).orElse(null);
-        }else {
-            throw new AssertionError("Exercise is not a concrete exercise.");
-        }
+        return exerciseRubricDAO.findByExerciseId(exerciseId).orElse(null);
     }
 
     /**
@@ -567,70 +444,42 @@ public class ExercisesService implements IExercisesService{
     public void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException {
         // finds exercise
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
+        if (exercise == null)
             throw new NotFoundException("Cannot create exercise rubric: exercise does not exist.");
 
         // checks if rubric is not null
-        if(rubric == null)
+        if (rubric == null)
             throw new BadInputException("Cannot create exercise rubric: rubric is null.");
         rubric.setId(null); // prevent overwrite attack
 
-        // if exercise is shallow, the exercise needs to be converted to a concrete exercise.
-        if(exercise instanceof ShallowExercise se){
-            convertShallowToConcreteAndUpdate(se, true, rubric, false, null);
-        }else{
-            assert exercise instanceof ConcreteExercise;
-            ConcreteExercise ce = (ConcreteExercise) exercise;
+        // checks if rubric is valid
+        exercise.verifyRubricProperties(rubric);
 
-            // checks if rubric is valid
-            ce.verifyRubricProperties(rubric);
+        // if exercise already has rubric, then the rubric should
+        // be overwritten, conserving the identifier.
+        String oldRubricID = exercise.getRubricId();
+        boolean update = oldRubricID != null;
 
-            // if exercise already has rubric, then the rubric should
-            // be overwritten, conserving the identifier.
-            String rubricID = ce.getRubricId();
-            boolean update = rubricID != null;
-            rubric.setId(rubricID);
+        // persists rubric
+        rubric.setId(oldRubricID);
+        rubric = exerciseRubricDAO.save(rubric);
 
-            // persists rubric
-            rubric = exerciseRubricDAO.save(rubric);
+        // sets new rubric and persists the exercise to save the association
+        exercise.setRubric(rubric);
+        exerciseDAO.save(exercise);
 
-            // if the exercise did not have a rubric,
-            // then the association needs to be created
-            if(!update) {
-                ce.setRubric(rubric);
-                exerciseDAO.save(ce); // updates the exercise
-            }
+        // if the exercise did not have a rubric,
+        // then the association needs to be created
+        if (!update) {
+            exercise.setRubric(rubric);
+            exerciseDAO.save(exercise); // updates the exercise to save the association
         }
     }
 
     @Override
     @Transactional
-    public void deleteExerciseRubric(String exerciseId) throws BadInputException, NotFoundException {
-        // finds exercise
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
-            throw new NotFoundException("Cannot create exercise solution: exercise does not exist.");
-
-        // if exercise is shallow convert it to concrete exercise and delete the rubric
-        if(exercise instanceof ShallowExercise se){
-            // the rubric is deleted by setting the 'updateRubric' argument to true,
-            // and defining the rubric as null
-            convertShallowToConcreteAndUpdate(se, true, null, false, null);
-        }else{
-            // if the exercise is a concrete exercise
-            assert exercise instanceof ConcreteExercise;
-            ConcreteExercise ce = (ConcreteExercise) exercise;
-
-            // remove the rubric identifier
-            String rubricId = ce.getRubricId();
-            ce.setRubric(null);
-
-            // saves the exercise
-            exerciseDAO.save(ce);
-
-            // delete the rubric document
-            exerciseRubricDAO.deleteById(rubricId);
-        }
+    public void deleteExerciseRubric(String exerciseId) {
+        exerciseRubricDAO.deleteByExerciseId(exerciseId);
     }
 
     @Override
@@ -644,66 +493,43 @@ public class ExercisesService implements IExercisesService{
     public void createExerciseSolution(String exerciseId, ExerciseSolution solution) throws NotFoundException, BadInputException {
         // finds exercise
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
+        if (exercise == null)
             throw new NotFoundException("Cannot create exercise solution: exercise does not exist.");
 
         // checks if solution is not null
-        if(solution == null)
+        if (solution == null)
             throw new BadInputException("Cannot create exercise solution: solution is null.");
         solution.setId(null); // prevent overwrite attack
 
-        // if exercise is shallow, the exercise needs to be converted to a concrete exercise.
-        // To do this:
-        //  - the exercise is removed from the original exercise copies
-        //  - the rubric of the original exercise should be duplicated.
-        if(exercise instanceof ShallowExercise se){
-            convertShallowToConcreteAndUpdate(se, false, null, true, solution);
-        }else{
-            assert exercise instanceof ConcreteExercise;
-            ConcreteExercise ce = (ConcreteExercise) exercise;
+        // checks if solution is valid
+        exercise.verifyResolutionProperties(solution.getData());
 
-            // checks if solution is valid
-            ce.verifyResolutionProperties(solution.getData());
+        // if exercise already has solution, then the solution should
+        // be overwritten, conserving the identifier.
+        String oldSolutionID = exercise.getSolutionId();
+        boolean update = oldSolutionID != null;
 
-            // if exercise already has solution, then the solution should
-            // be overwritten, conserving the identifier.
-            String solutionID = ce.getSolutionId();
-            boolean update = solutionID != null;
-            solution.setId(solutionID);
+        // persists solution
+        solution.setId(oldSolutionID);
+        solution = exerciseSolutionDAO.save(solution);
 
-            // persists solution
-            solution = exerciseSolutionDAO.save(solution);
+        // sets new solution and persists the exercise to save the association
+        exercise.setSolution(solution);
+        exerciseDAO.save(exercise);
 
-            // if the exercise did not have a solution,
-            // then the association needs to be created
-            if(!update) {
-                ce.setSolution(solution);
-                exerciseDAO.save(ce); // updates the exercise
-            }
+        // if the exercise did not have a solution,
+        // then the association needs to be created
+        if (!update) {
+            exercise.setSolution(solution);
+            exerciseDAO.save(exercise); // updates the exercise to save the association
         }
     }
 
     @Override
     public ExerciseSolution getExerciseSolution(String exerciseId) throws NotFoundException {
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
+        if(exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Cannot get exercise solution: exercise does not exist.");
-
-        // if exercise is shallow, the solution needs to be retrieved from the original
-        if(exercise instanceof ShallowExercise se){
-            assert se.getOriginalExerciseId() != null;
-            exercise = exerciseDAO.findById(se.getOriginalExerciseId()).orElse(null);
-        }
-
-        // Retrieves solution from the exercise
-        if(exercise instanceof ConcreteExercise ce){
-            if(ce.getSolutionId() == null)
-                return null;
-            else
-                return exerciseSolutionDAO.findById(ce.getSolutionId()).orElse(null);
-        }else {
-            throw new AssertionError("Exercise is not a concrete exercise.");
-        }
+        return exerciseSolutionDAO.findByExerciseId(exerciseId).orElse(null);
     }
 
     @Override
@@ -714,32 +540,8 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     @Transactional
-    public void deleteExerciseSolution(String exerciseId) throws NotFoundException, BadInputException {
-        // finds exercise
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
-            throw new NotFoundException("Cannot create exercise solution: exercise does not exist.");
-
-        // if exercise is shallow convert it to concrete exercise and delete the solution
-        if(exercise instanceof ShallowExercise se){
-            // the solution is deleted by setting the 'updateSolution' argument to true,
-            // and defining the solution as null
-            convertShallowToConcreteAndUpdate(se, false, null, true, null);
-        }else{
-            // if the exercise is a concrete exercise
-            assert exercise instanceof ConcreteExercise;
-            ConcreteExercise ce = (ConcreteExercise) exercise;
-
-            // remove the solution identifier
-            String solutionId = ce.getSolutionId();
-            ce.setSolution(null);
-
-            // saves the exercise
-            exerciseDAO.save(ce);
-
-            // delete the solution document
-            exerciseSolutionDAO.deleteById(solutionId);
-        }
+    public void deleteExerciseSolution(String exerciseId) {
+        exerciseSolutionDAO.deleteByExerciseId(exerciseId);
     }
 
     @Override
@@ -779,8 +581,8 @@ public class ExercisesService implements IExercisesService{
         if(!correctionType.equalsIgnoreCase("auto") && !correctionType.equalsIgnoreCase("ai"))
             throw new BadInputException("Could not correct exercise resolutions: Correction type must be 'auto' or 'ai'.");
 
-        // gets a concrete instance of the exercise and it's rubric
-        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);
+        // gets instance of the exercise and it's rubric
+        Exercise exercise = _getExerciseById(exerciseId);
 
         // checks existence of a rubric, which is required
         // for the automatic correction of the exercise
@@ -822,8 +624,8 @@ public class ExercisesService implements IExercisesService{
             return resolution.getPoints();
         String exerciseId = resolution.getExerciseId();
 
-        // gets a concrete instance of the exercise and it's rubric
-        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseId);
+        // gets instance of the exercise and it's rubric
+        Exercise exercise = _getExerciseById(exerciseId);
 
         // checks existence of a rubric, which is required
         // for the automatic correction of the exercise
@@ -929,35 +731,6 @@ public class ExercisesService implements IExercisesService{
         return exerciseResolutionDAO.save(resolution);
     }
 
-    @Override
-    @Transactional
-    public ExerciseResolution createEmptyExerciseResolution(String studentId, String exerciseId, String testResId) throws NotFoundException, BadInputException {
-        // checks if exercise exists
-        if (!exerciseDAO.existsById(exerciseId))
-            throw new NotFoundException("Could not create exercise resolution: exercise does not exist.");
-
-        // prepares resolution
-        ExerciseResolution resolution = new ExerciseResolution(null, // prevents overwrite attacks
-                studentId,exerciseId,
-                null, // new resolution so it should not have a points
-                null,
-                ExerciseResolutionStatus.NOT_REVISED, // new resolution so cannot be already revised
-                null,
-                0);
-
-        // persists document
-        resolution = exerciseResolutionDAO.save(resolution);
-
-        // creates sql info and persists it
-        Student student = entityManager.getReference(Student.class, studentId);
-        Exercise exercise = entityManager.getReference(Exercise.class, exerciseId);
-        TestResolution testResolution = entityManager.getReference(TestResolution.class, testResId);
-        ExerciseResolution resolution = new ExerciseResolution(resolution.getId(), testResolution, student, exercise, 0);
-        exerciseResolutionDAO.save(resolution);
-
-        return resolution;
-    }
-
     /**
      * @param exerciseId identifier of the exercise
      * @param studentId  identifier of the student
@@ -1051,32 +824,6 @@ public class ExercisesService implements IExercisesService{
         if(resolution == null)
             throw new NotFoundException("Could not get exercise resolution: No resolution with the given id exists.");
         return resolution;
-    }
-
-    @Override
-    public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
-        List<String> ids = exerciseResolutionDAO.getResolutionIdFromExeAndTestRes(exerciseId, testResId);
-        if (ids.size() > 0 && ids.get(0) != null){
-            ExerciseResolution resolution = exerciseResolutionDAO.findById(ids.get(0)).orElse(null);
-            return resolution;
-        }
-        else
-            throw new NotFoundException("Could not get exercise resolution: No resolution was found.");
-    }
-
-    @Override
-    public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
-        List<ExerciseResolution> exesRes = exerciseResolutionDAO.getResolutionFromTestRes(testResId);
-        
-        if (exesRes.size() > 0){
-            for (ExerciseResolution exeRes: exesRes){
-                ExerciseResolution exeRes = exerciseResolutionDAO.findById(exeRes.getId()).orElse(null);
-                if (exeRes != null){
-                    exerciseResolutionDAO.delete(exeRes);
-                }
-                exerciseResolutionDAO.delete(exeRes);
-            }
-        }
     }
 
 
@@ -1196,147 +943,8 @@ public class ExercisesService implements IExercisesService{
      * @param exerciseId identifier of the exercise
      */
     private void deleteExerciseResolutions(String exerciseId){
-        // get all resolutions related to the given exercise
-        List<ExerciseResolution> resolutionS =
-                exerciseResolutionDAO.findExerciseResolutionSByExercise_Id(exerciseId);
-        // Delete resolutions entries in sql database
-        exerciseResolutionDAO.deleteByExercise_Id(exerciseId);
-        // Delete resolutions documents in nosql database
-        resolutionS.stream().map(ExerciseResolution::getId).forEach(exerciseResolutionDAO::deleteById);
-    }
-
-    /**
-     * Decrements the number of copies from a concrete exercise.
-     * If the exercise gets to zero copies and has visibility as "deleted",
-     * the exercise is deleted.
-     * @param exerciseId identifier of the exercise
-     */
-    private void decrementsNrOfCopies(String exerciseId) {
-        assert exerciseId != null;
-
-        // finds exercise and converts it to a ConcreteExercise instance
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise instanceof ConcreteExercise;
-        ConcreteExercise ce = (ConcreteExercise) exercise;
-
-        // decrements the number of copies by 1
-        ce.decreaseNrCopies();
-
-        // Deletes exercise if it does not have any copies and the visibility is set no deleted
-        if (ce.getNrCopies() == 0 && ce.getVisibility() == Visibility.DELETED)
-            exerciseDAO.deleteById(exerciseId);
-        else
-            exerciseDAO.save(ce); // updates exercise
-    }
-
-    /**
-     * Copies exercise metadata from ex1 to ex2
-     * @param from exercise that has the wanted metadata. Assumed not null.
-     * @param to exercise that will have its metadata overwritten. Assumed not null.
-     */
-    private void copyExerciseMetadata(Exercise from, Exercise to){
-        to.setId(from.getId());
-        to.setSpecialistId(from.getSpecialistId());
-        to.setInstitutionId(from.getInstitutionId());
-        to.setPoints(from.getPoints());
-        to.setCourseId(from.getCourseId());
-    }
-
-    /**
-     * Convert a shallow exercise to a concrete exercise.
-     * @param se the shallow exercise that should be converted to a concrete exercise.
-     * @param updateRubric if 'true' the rubric should be updated with the given rubric.
-     *                     if 'false' the rubric from the original exercise is duplicated.
-     * @param rubric new rubric, or 'null' if the rubric should be deleted
-     * @param updateSolution if 'true' the solution should be updated with the given solution.
-     *                       if 'false' the solution from the original exercise is duplicated.
-     * @param solution new solution, or 'null' if the solution should be deleted
-     * @throws BadInputException if the new solution or rubric are not valid
-     */
-    private void convertShallowToConcreteAndUpdate(ShallowExercise se, boolean updateRubric, ExerciseRubric rubric, boolean updateSolution, ExerciseSolution solution) throws BadInputException {
-        // Retrieves original exercise
-        Exercise origExercise = exerciseDAO.findById(se.getOriginalExerciseId()).orElse(null);
-
-        if(origExercise instanceof ConcreteExercise origCE) {
-            // if the rubric should be updated, check if the rubric is valid and then persist it
-            if(updateRubric) {
-                if(rubric != null) {
-                    origCE.verifyRubricProperties(rubric);
-                    rubric.setId(null); //prevent overwrite attacks
-                    rubric = exerciseRubricDAO.save(rubric);
-                    origCE.setRubricId(rubric.getId());
-                }else origCE.setRubricId(null);
-            }
-            // else, copy the original exercise rubric
-            else {
-                // Retrieves original exercise rubric and duplicates it
-                String rubricId = origCE.getRubricId();
-                if(rubricId != null) {
-                    ExerciseRubric exerciseRubric = exerciseRubricDAO.findById(rubricId).orElse(null);
-                    assert exerciseRubric != null;
-                    exerciseRubric.setId(null);
-                    exerciseRubric = exerciseRubricDAO.save(exerciseRubric);
-                    origCE.setRubricId(exerciseRubric.getId());
-                }
-            }
-
-            // if the solution should be updated, check if the rubric is valid and then persist it
-            if(updateSolution) {
-                if(solution != null) {
-                    origCE.verifyResolutionProperties(solution.getData());
-                    solution.setId(null); //prevent overwrite attacks
-                    solution = exerciseSolutionDAO.save(solution);
-                    origCE.setSolutionId(solution.getId());
-                } else origCE.setSolutionId(null);
-            }
-            // else, copy the original exercise solution
-            else {
-                // Retrieves original exercise solution and duplicates it
-                String solutionId = origCE.getSolutionId();
-                if(solutionId != null) {
-                    ExerciseSolution exerciseSolution = exerciseSolutionDAO.findById(solutionId).orElse(null);
-                    assert exerciseSolution != null;
-                    exerciseSolution.setId(null);
-                    exerciseSolution = exerciseSolutionDAO.save(exerciseSolution);
-                    origCE.setSolutionId(exerciseSolution.getId());
-                }
-            }
-
-            // copies metadata to the original exercise object, since this object is an
-            // instance of the object we want the exercise to become
-            copyExerciseMetadata(se, origCE);
-
-            // updates the exercise document
-            exerciseDAO.save(origCE);
-
-            // Removes exercise from the original exercise copies
-            decrementsNrOfCopies(origCE.getId());
-        } else throw new AssertionError("Original exercise is not concrete");
-    }
-
-    /**
-     * If an exercise is shallow, creates a concrete instance of the exercise. Only an instance is created, the databases are not updated.
-     * @param exerciseId Identifier of the exercise
-     * @return a concrete exercise
-     * @throws NotFoundException if the original exercise does not exist
-     */
-    private ConcreteExercise getExerciseConcreteInstance(String exerciseId) throws NotFoundException {
-        Exercise exercise = _getExerciseById(exerciseId);
-        ConcreteExercise concreteExercise;
-
-        // if the exercise is shallow, converts it to a concrete instance
-        if(exercise instanceof ShallowExercise se) {
-            // gets original concrete exercise
-            Exercise original = _getExerciseById(se.getOriginalExerciseId());
-            assert original instanceof ConcreteExercise;
-            concreteExercise = (ConcreteExercise) original;
-
-            // copies the shallow exercise metadata to the concrete exercise
-            copyExerciseMetadata(se, concreteExercise);
-        }
-        else concreteExercise = (ConcreteExercise) exercise;
-
-        return concreteExercise;
+        // Delete resolutions entries from database
+        exerciseResolutionDAO.deleteAllByExercise_Id(exerciseId);
     }
 
     /**
@@ -1349,7 +957,7 @@ public class ExercisesService implements IExercisesService{
         assert exerciseResolution != null;
 
         // gets concrete exercise
-        ConcreteExercise exercise = getExerciseConcreteInstance(exerciseResolution.getExerciseId());
+        Exercise exercise = _getExerciseById(exerciseResolution.getExerciseId());
 
         // checks the resolution data against the exercise data.
         exercise.verifyResolutionProperties(exerciseResolution.getData());
@@ -1377,7 +985,7 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the exercise, or its rubric, or its solution were not found
      * @throws UnauthorizedException if the resolutions cannot be corrected automatically
      */
-    private void automaticExerciseResolutionsCorrection(ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws NotFoundException, UnauthorizedException {
+    private void automaticExerciseResolutionsCorrection(Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws NotFoundException, UnauthorizedException {
         String exerciseId = exercise.getId();
 
         // Get number of resolutions not revised
@@ -1407,7 +1015,7 @@ public class ExercisesService implements IExercisesService{
      * @return points attributed to the resolution
      * @throws UnauthorizedException if the resolution cannot be corrected automatically
      */
-    private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, ConcreteExercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws UnauthorizedException {
+    private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws UnauthorizedException {
         assert resolution != null && exercise != null && rubric != null && solution != null;
         resolution = exercise.automaticEvaluation(resolution, solution, rubric);
         exerciseResolutionDAO.save(resolution);

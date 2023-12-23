@@ -31,14 +31,6 @@ public interface IExercisesService{
     boolean exerciseExists(String exerciseId);
 
     /**
-     * Verify is exercise is shallow
-     *
-     * @param exerciseId of the exercise
-     * @return true if exercise is shallow, false otherwise
-     **/
-    boolean exerciseIsShallow(String exerciseId) throws NotFoundException;
-
-    /**
      * Creates an exercise.
      *
      * @param exercise body of the exercise to be created. Regarding the metadata should
@@ -46,7 +38,7 @@ public interface IExercisesService{
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
-    String createExercise(ConcreteExercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException;
+    String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException;
 
     /**
      * Delete exercise by id.
@@ -161,17 +153,6 @@ public interface IExercisesService{
     ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
 
     /**
-     * Create an empty resolution for a specific exercise (at the start of a test).
-     *
-     * @param studentId      identifier of the creator of the resolution.
-     * @param exerciseId     identifier of the exercise
-     * @param testResId      identifier of the test resolution
-     * @return
-     * @throws NotFoundException if the exercise was not found
-     */
-    ExerciseResolution createEmptyExerciseResolution(String studentId, String exerciseId, String testResId) throws NotFoundException, BadInputException;
-
-    /**
      *
      * @param exerciseId identifier of the exercise
      * @param studentId identifier of the student
@@ -241,23 +222,6 @@ public interface IExercisesService{
     ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException;
 
     /**
-     * Gets the exercise resolution identified from the test resolution and the exercise.
-     * @param exerciseId    identifier of the exercise
-     * @param testResId     identifier of the test resolution
-     * @return the exercise resolution identified by the given identifier.
-     * @throws NotFoundException if the resolution does not exist
-     */
-    ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException;
-
-    /**
-     * Delete all exercise resolutions related to a certain test resolution.
-     *
-     * @param  testResId            identifier of the test resolution
-     * @throws NotFoundException    if the test resolution was not found
-     */
-    void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException;
-
-    /**
      * Used to set the points of an exercise resolution.
      * @param resolutionId identifier of the resolution
      * @param points points to set
@@ -266,7 +230,7 @@ public interface IExercisesService{
      */
     void setExerciseResolutionPoints(String resolutionId, float points) throws NotFoundException, BadInputException;
 
-    void deleteExerciseRubric(String exerciseId) throws BadInputException, NotFoundException;
+    void deleteExerciseRubric(String exerciseId);
 
     void updateExerciseRubric(String exerciseId, ExerciseRubric rubric) throws BadInputException, NotFoundException;
 
@@ -276,7 +240,7 @@ public interface IExercisesService{
 
     void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException;
 
-    void deleteExerciseSolution(String exerciseId) throws NotFoundException, BadInputException;
+    void deleteExerciseSolution(String exerciseId);
 
     String getExerciseCourse(String exerciseId) throws NotFoundException; // TODO implementar (Bronze) 
     

@@ -109,11 +109,4 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      */
     Page<ExerciseResolution> findByExercise_IdAndStudent_Id(String exerciseId, String studentId, Pageable pageable);
     List<ExerciseResolution> findAllByExercise_IdAndStudent_Id(String exerciseId, String studentId);
-
-
-    @Query(value = "SELECT id FROM exercise_resolution WHERE exerciseid = :exeId AND test_resolutionid = :testResId", nativeQuery = true)
-    List<String> getResolutionIdFromExeAndTestRes(@Param("exeId") String exeId, @Param("testResId") String testResId);
-
-    @Query(value = "SELECT * FROM exercise_resolution WHERE test_resolutionid = :testResId", nativeQuery = true)
-    List<ExerciseResolution> getResolutionFromTestRes(@Param("testResId") String testResId);
 }

@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.repositories;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,8 +11,15 @@ import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 
+import java.util.Optional;
+
 @Repository
 public interface ExerciseDAO extends JpaRepository<Exercise, String> {
+
+    @EntityGraph(value = "Exercise.NoRubricNoSolution", type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT e FROM Exercise e WHERE e.id = :exerciseId")
+    Optional<Exercise> loadByIdWithoutSolutionAndRubric(@Param("exerciseId") String exerciseId);
+
     @Query(value = "SELECT e.tags FROM Exercise e WHERE e.id = :exerciseId")
     java.util.Set<Tag> getExerciseTags(@Param("exerciseId") String exerciseId);
 
