@@ -21,7 +21,7 @@ public interface TestResolutionDAO extends JpaRepository<TestResolution,String> 
     @Query(value = "SELECT COUNT(*) FROM TestResolution tr where tr.test.id = :testId")
     int countTotalSubmissionsForTest(@Param("testId") String testId);
 
-    @Query(value = "SELECT COUNT(*) FROM (SELECT DISTINCT tr.student.id FROM TestResolution tr where tr.test.id = :testId)")
+    @Query(value = "SELECT COUNT(DISTINCT tr.student.id) FROM TestResolution tr where tr.test.id = :testId")
     int countDistinctSubmissionsForTest(@Param("testId") String testId);
 
     @Query(value = "SELECT COUNT(*) FROM TestResolution tr WHERE tr.student.id = :studentId AND tr.test.id = :testId")
