@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.fill_the_blanks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Getter
 @Setter
 @JsonTypeName("FTB")
-public class FillTheBlanksData extends ExerciseResolutionData {
+public class FillTheBlanksData extends ExerciseResolutionData implements Serializable {
 	private List<String> fillings;
 
 	public void verifyInsertProperties() throws BadInputException {

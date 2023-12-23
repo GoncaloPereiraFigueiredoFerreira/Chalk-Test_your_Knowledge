@@ -74,5 +74,11 @@ public class Course {
 		return duplicatedCourse;
 	}
 
+	/**
+	 * Creates a course with id, where the rest of the parameters are null.
+	 */
+	public Course(String id){
+		 this.id=id;
+	}
 
 }

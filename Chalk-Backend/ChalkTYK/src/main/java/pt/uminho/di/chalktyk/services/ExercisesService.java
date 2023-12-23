@@ -459,7 +459,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public ExerciseRubric getExerciseRubric(String exerciseId) throws NotFoundException {
-        if(exerciseDAO.existsById(exerciseId))
+        if(!exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Cannot get exercise rubric: exercise does not exist.");
         return exerciseRubricDAO.findByExerciseId(exerciseId).orElse(null);
     }
@@ -512,7 +512,7 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void deleteExerciseRubric(String exerciseId) {
-        //exerciseRubricDAO.deleteByExerciseId(exerciseId);
+        exerciseRubricDAO.deleteByExerciseId(exerciseId);
     }
 
     @Override
@@ -560,7 +560,7 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     public ExerciseSolution getExerciseSolution(String exerciseId) throws NotFoundException {
-        if(exerciseDAO.existsById(exerciseId))
+        if(!exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Cannot get exercise solution: exercise does not exist.");
         return exerciseSolutionDAO.findByExerciseId(exerciseId).orElse(null);
     }
@@ -574,7 +574,7 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void deleteExerciseSolution(String exerciseId) {
-        //exerciseSolutionDAO.deleteByExerciseId(exerciseId);
+        exerciseSolutionDAO.deleteByExerciseId(exerciseId);
     }
 
     @Override

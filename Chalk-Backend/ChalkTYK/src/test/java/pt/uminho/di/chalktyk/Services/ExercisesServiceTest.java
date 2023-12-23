@@ -5,14 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.Seed;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.*;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksData;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksExercise;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.fill_the_blanks.FillTheBlanksRubric;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.multiple_choice.*;
-import pt.uminho.di.chalktyk.models.nonrelational.exercises.open_answer.*;
-import pt.uminho.di.chalktyk.models.relational.TagSQL;
-import pt.uminho.di.chalktyk.models.relational.VisibilitySQL;
+import pt.uminho.di.chalktyk.models.courses.Course;
+import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
+import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.*;
+import pt.uminho.di.chalktyk.models.exercises.open_answer.*;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
+import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -40,7 +44,7 @@ public class ExercisesServiceTest {
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.iTagsService = iTagsService;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService);
+        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService,exercisesService);
     }
 
 
@@ -53,13 +57,13 @@ public class ExercisesServiceTest {
         this.studentId = seed.addStudentAnnie();
     }
 
-    private OpenAnswerExercise createOAExercise(String specialistId,String courseId){
+    private OpenAnswerExercise createOAExercise(String specialistId, String courseId){
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español OA");
         exercise.setPoints(2.0F);
-        exercise.setSpecialistId(specialistId);
-        exercise.setCourseId(courseId);
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
         return exercise;
     }
 
@@ -80,12 +84,12 @@ public class ExercisesServiceTest {
         OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",2.0F);
         OAStandard oaStandardMin = new OAStandard("Ni siquiera intentó resolver","No puedo robar tanto",0.0F);
         List<OAStandard> oaStandards = Arrays.asList(oaStandardMin,oaStandardMax);
-        return new OpenAnswerRubric(List.of(new OACriterion(oaStandards, "Há intentado")));
+        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado",oaStandards)));
     }
 
 
     private MultipleChoiceExercise createMCExercise(String specialistId, String courseId){
-        HashMap<Integer,Item> itemResolutions = new HashMap<>();
+        HashMap<Integer, Item> itemResolutions = new HashMap<>();
         itemResolutions.put(1,new StringItem("Là"));
         itemResolutions.put(2,new StringItem("Ali"));
         itemResolutions.put(3,new StringItem("There"));
@@ -93,12 +97,12 @@ public class ExercisesServiceTest {
 
 
 
-        MultipleChoiceExercise exercise = new MultipleChoiceExercise(itemResolutions, Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION);
+        MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español MC");
         exercise.setPoints(3.0F);
-        exercise.setSpecialistId(specialistId);
-        exercise.setCourseId(courseId);
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
         return exercise;
     }
 
@@ -152,7 +156,7 @@ public class ExercisesServiceTest {
         mcRubricMap.put(1,createOARubric());
         mcRubricMap.put(2,createOARubric());
         mcRubricMap.put(3,createOARubric());
-        return new MultipleChoiceRubric(mcRubricMap,1.0F,0.0F);
+        return new MultipleChoiceRubric(1.0F,0.0F,mcRubricMap);
     }
 
     private FillTheBlanksExercise createFTBExercise(String specialistId, String courseId){
@@ -160,8 +164,8 @@ public class ExercisesServiceTest {
         fillTheBlanksExercise.setStatement(new ExerciseStatement("Preenche com a música dos patinhos","",""));
         fillTheBlanksExercise.setTitle("Patinhos sabem nadar FTB");
         fillTheBlanksExercise.setPoints(2.0F);
-        fillTheBlanksExercise.setSpecialistId(specialistId);
-        fillTheBlanksExercise.setCourseId(courseId);
+        fillTheBlanksExercise.setSpecialist(new Specialist(specialistId));
+        fillTheBlanksExercise.setCourse(new Course(courseId));
         return fillTheBlanksExercise;
     }
 
@@ -190,8 +194,8 @@ public class ExercisesServiceTest {
     public void createOAExercise() throws BadInputException {
         ExerciseSolution exerciseSolution = createOASolution();
         ExerciseRubric exerciseRubric = createOARubric();
-        ConcreteExercise exercise = createOAExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
+        Exercise exercise = createOAExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -200,8 +204,8 @@ public class ExercisesServiceTest {
     public void createMCExercise() throws BadInputException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
-        ConcreteExercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
+        Exercise exercise = createMCExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -210,83 +214,36 @@ public class ExercisesServiceTest {
     public void createFTBExercise() throws BadInputException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
+        Exercise exercise = createFTBExercise(specialistId,courseId);
 
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,Arrays.asList("26c3e51a-bb31-4807-a3d1-b29d566fe7e1"), VisibilitySQL.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, Arrays.asList());
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
     @Test
     @Transactional
-    public void createShallowCopy() throws BadInputException, NotFoundException {
+    public void createDuplicate() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
-        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
-        assertFalse(exercisesService.exerciseIsShallow(exerciseId));
-        assertTrue(exercisesService.exerciseIsShallow(shallowId));
+        Exercise exercise = createFTBExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
+        String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
+        assertTrue(exercisesService.exerciseExists(duplicateId));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
     @Test
     @Transactional
-    public void createShallowOfShallowCopy() throws BadInputException, NotFoundException {
+    public void deleteExercise() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
-        String shallowId1 = exercisesService.duplicateExerciseById(specialistId,exerciseId);
-        String shallowId2 = exercisesService.duplicateExerciseById(specialistId,shallowId1);
-        assertFalse(exercisesService.exerciseIsShallow(exerciseId));
-        assertTrue(exercisesService.exerciseIsShallow(shallowId1));
-        assertTrue(exercisesService.exerciseIsShallow(shallowId2));
-        assert exercisesService.getExerciseById(shallowId2) instanceof ConcreteExercise;
-    }
+        Exercise exercise = createFTBExercise(specialistId,courseId);
 
-    @Test
-    @Transactional
-    public void deleteConcreteExercise() throws BadInputException, NotFoundException {
-        ExerciseSolution exerciseSolution = createFTBSolution();
-        ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,Arrays.asList("26c3e51a-bb31-4807-a3d1-b29d566fe7e1"), VisibilitySQL.PUBLIC);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, List.of());
         assertTrue(exercisesService.exerciseExists(exerciseId));
 
         exercisesService.deleteExerciseById(exerciseId);
         assertFalse(exercisesService.exerciseExists(exerciseId));
-    }
-
-    @Test
-    @Transactional
-    public void deleteShallowExercise() throws BadInputException, NotFoundException {
-        ExerciseSolution exerciseSolution = createFTBSolution();
-        ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
-        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
-
-        assertTrue(exercisesService.exerciseExists(shallowId));
-
-        exercisesService.deleteExerciseById(shallowId);
-        assertFalse(exercisesService.exerciseExists(shallowId));
-    }
-
-    @Test
-    @Transactional
-    public void deleteConcreteExerciseWithCopies() throws BadInputException, NotFoundException {
-        ExerciseSolution exerciseSolution = createFTBSolution();
-        ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
-        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
-
-        assertTrue(exercisesService.exerciseExists(shallowId));
-        assertTrue(exercisesService.exerciseExists(exerciseId));
-
-        exercisesService.deleteExerciseById(exerciseId);
-        assertTrue(exercisesService.exerciseExists(exerciseId));
-        assertTrue(exercisesService.exerciseExists(shallowId));
     }
 
     @Test
@@ -296,8 +253,8 @@ public class ExercisesServiceTest {
         try {
             ExerciseSolution exerciseSolution = createFTBSolution();
             ExerciseRubric exerciseRubric = createFTBRubric();
-            ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-            String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
+            Exercise exercise = createFTBExercise(specialistId,courseId);
+            String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
             exercisesService.updateAllOnExercise(exerciseId,null,null,createOASolution(),null,null);
         } catch (BadInputException bie){
             if(Objects.equals(bie.getMessage(), "Exercise resolution does not match exercise type (fill the blanks)."))
@@ -308,79 +265,43 @@ public class ExercisesServiceTest {
 
     @Test
     @Transactional
-    public void updateExerciseFTBtoMCOnAShallow() throws NotFoundException, BadInputException {
-        String tagId = iTagsService.createTag("Espanol","/").getId();
+    public void deleteRubricAndSolution() throws NotFoundException, BadInputException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution, new ArrayList<>(), VisibilitySQL.PUBLIC);
+        Exercise exercise = createFTBExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
+        exercisesService.deleteExerciseRubric(exerciseId);
+        exercisesService.deleteExerciseSolution(exerciseId);
 
-        ExerciseRubric oaRubric = createOARubric();
-        ExerciseSolution oaSolution = createOASolution();
-        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
-        exercisesService.updateAllOnExercise(
-                shallowId,
-                createOAExercise(specialistId,courseId),
-                oaRubric,
-                oaSolution, List.of(tagId),VisibilitySQL.COURSE);
-
-        Exercise updatedExercise = exercisesService.getExerciseById(shallowId);
-        assert updatedExercise instanceof ConcreteExercise;
-        assertEquals("OA", ((ConcreteExercise) updatedExercise).getExerciseType());
-        assertEquals(List.of("Espanol"), ((ConcreteExercise) updatedExercise).getTags().stream().map(TagSQL::getName).toList());
-        assertTrue(oaRubric.equals(exercisesService.getExerciseRubric(shallowId)));
-        assertTrue(oaSolution.getData().equals(exercisesService.getExerciseSolution(shallowId).getData()));
-
-        //Test if original didn't change
-        assertTrue(exerciseRubric.equals(exercisesService.getExerciseRubric(exerciseId)));
-        assertTrue(exerciseSolution.getData().equals(exercisesService.getExerciseSolution(exerciseId).getData()));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+        assertNull(exercisesService.getExerciseRubric(exerciseId));
+        assertNull(exercisesService.getExerciseSolution(exerciseId));
     }
 
     @Test
     @Transactional
-    public void deleteRubricAndSolutionFromExerciseShallow() throws NotFoundException, BadInputException {
-        ExerciseSolution exerciseSolution = createFTBSolution();
-        ExerciseRubric exerciseRubric = createFTBRubric();
-        ConcreteExercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution, new ArrayList<>(), VisibilitySQL.PUBLIC);
-
-        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
-        exercisesService.deleteExerciseRubric(shallowId);
-        exercisesService.deleteExerciseSolution(shallowId);
-
-        Exercise updatedExercise = exercisesService.getExerciseById(shallowId);
-        assert updatedExercise instanceof ConcreteExercise;
-        assertNull(exercisesService.getExerciseRubric(shallowId));
-        assertNull(exercisesService.getExerciseSolution(shallowId));
-
-        //Test if original didn't change
-        assertTrue(exerciseRubric.equals(exercisesService.getExerciseRubric(exerciseId)));
-        assertTrue(exerciseSolution.getData().equals(exercisesService.getExerciseSolution(exerciseId).getData()));
-    }
-
-    @Test
-    @Transactional
-    public void createResolutionAndCorrectForMCShallow() throws BadInputException, NotFoundException, UnauthorizedException {
+    public void createResolutionAndCorrect() throws BadInputException, NotFoundException, UnauthorizedException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
-        ConcreteExercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseRubric,exerciseSolution,new ArrayList<>(), VisibilitySQL.PUBLIC);
-        String shallowId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
+        Exercise exercise = createMCExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
 
-        exercisesService.createExerciseResolution(studentId,shallowId,createHalfWrongMCResolution());
+        exercisesService.createExerciseResolution(studentId,exerciseId,createHalfWrongMCResolution());
         ExerciseResolutionData rightMC = createRightMCResolution();
-        exercisesService.createExerciseResolution(studentId,shallowId,rightMC);
-        assertEquals(2,exercisesService.countExerciseResolutions(shallowId,true));
-        assertEquals(1,exercisesService.countExerciseResolutions(shallowId,false));
+        exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone()); //todo este clone tem magia negra
+        assertEquals(2,exercisesService.countExerciseResolutions(exerciseId,true));
+        assertEquals(1,exercisesService.countExerciseResolutions(exerciseId,false));
 
-        ExerciseResolution exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(shallowId,studentId);
+        //Verify that the resolution was correctly inserted
+        ExerciseResolution exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(exerciseId,studentId);
         assertTrue(rightMC.equals(exerciseResolution.getData()));
         assertNull(exerciseResolution.getPoints());
         assertEquals(2,exerciseResolution.getSubmissionNr());
         assertEquals(ExerciseResolutionStatus.NOT_REVISED,exerciseResolution.getStatus());
 
+        //
         exercisesService.issueExerciseResolutionCorrection(exerciseResolution.getId(),"auto");
-        exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(shallowId,studentId);
+        exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(exerciseId,studentId);
         assertFalse(rightMC.equals(exerciseResolution.getData()));
         assertEquals(3.0F,exerciseResolution.getPoints());
         assertEquals(2,exerciseResolution.getSubmissionNr());
