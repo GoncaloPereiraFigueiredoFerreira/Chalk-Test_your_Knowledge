@@ -33,7 +33,12 @@ public class FillTheBlanksOptionsExercise extends FillTheBlanksExercise {
 		}
 	}
 
+<<<<<<< HEAD
 	public void verifyProperties() throws BadInputException {
+=======
+	@Override
+	public void verifyInsertProperties() throws BadInputException {
+>>>>>>> d76657bc60d89f5918f27966fde2a780e5968bdc
 		if(options.size()!=(super.getTextSegments().size()-1))
 			throw new BadInputException("The options size must be equals to the number of segments minus 1.");
 		for (List<String> opts:options){

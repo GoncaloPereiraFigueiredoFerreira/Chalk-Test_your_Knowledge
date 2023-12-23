@@ -2,10 +2,10 @@ package pt.uminho.di.chalktyk.models.tests;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -13,7 +13,10 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 
 import java.time.LocalDateTime;
 import java.util.*;
+<<<<<<< HEAD
 import java.util.stream.Collectors;
+=======
+>>>>>>> d76657bc60d89f5918f27966fde2a780e5968bdc
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -95,6 +98,16 @@ public class Test {
     @Column(name = "Groups", columnDefinition = "jsonb")
 	private Map<Integer,TestGroup> groups;
 
+	/**
+	 * Calculates and updates global and group points.
+	 * @throws BadInputException if the points of an exercise are not a positive number.
+	 */
+	public void calculatePoints() throws BadInputException {
+		globalPoints = 0.0f;
+		for (TestGroup group : groups.values())
+			globalPoints += group.calculateGroupPoints();
+	}
+
 	public void verifyProperties() throws BadInputException {
         // check title
 		if (title == null || title.isEmpty())
@@ -109,8 +122,8 @@ public class Test {
             throw new BadInputException("Cannot create test: Publish date is outdated.");
 
 		// check global points
-		if (globalPoints < 0)
-			throw new BadInputException("Cannot create test: Global points can't be negative.");
+		if (globalPoints <= 0)
+			throw new BadInputException("Cannot create test: Global points must be positive.");
 
 		if (groups != null) {
 			for (TestGroup tg : groups.values()) {
@@ -137,18 +150,22 @@ public class Test {
 		else return institution.getName();
 	}
 
-	public Test clone() {
+	// TODO - ver onde é que o Luis usou este metodo porque nao é suposto fazer deep clone das associacoes
+	/**
+	 * Clones everything except associations.
+	 * @return cloned test, or 'null' if any property of the test is not valid.
+	 */
+	public Test cloneAllButAssociations() {
 		Test duplicatedTest = new Test();
 		duplicatedTest.setTitle(this.title);
 		duplicatedTest.setGlobalInstructions(this.globalInstructions);
+		try { calculatePoints();
+		} catch (BadInputException e) { return null; }
 		duplicatedTest.setGlobalPoints(this.globalPoints);
 		duplicatedTest.setConclusion(this.conclusion);
 		duplicatedTest.setCreationDate(this.creationDate);
 		duplicatedTest.setPublishDate(this.publishDate);
-		duplicatedTest.setSpecialist(this.specialist.clone());
 		duplicatedTest.setVisibility(this.visibility);
-		duplicatedTest.setCourse(this.course.clone());
-		duplicatedTest.setInstitution(this.institution.clone());
 
 		// Duplicate groups if present
 		if (this.groups != null) {
@@ -165,17 +182,23 @@ public class Test {
 		Map<Integer, TestResolutionGroup> resolutionGroups = new HashMap<>();
 		if (groups != null){
 			for(Map.Entry<Integer,TestGroup> entryTG: groups.entrySet()){
-				Map<Integer, Pair<String, String>> resolutionGroupAnswers = entryTG.getValue().getExercises()
-						.entrySet()
-						.stream()
-						.collect(Collectors.toMap(
-								Map.Entry::getKey,
-								val -> {
-									int randomIndex = new Random().nextInt(val.getValue().size());
-									return new MutablePair<>(val.getValue().get(randomIndex), null);
-								}
-						));
-				resolutionGroups.put(entryTG.getKey(),new TestResolutionGroup(null,resolutionGroupAnswers));
+				Map<Integer, Pair<String, String>> resolutionGroupAnswers = new HashMap<>();
+
+				for(Map.Entry<Integer, TestExercise> entry : entryTG.getValue().getExercises().entrySet()){
+					Integer exerciseGroupId = entry.getKey();
+					TestExercise exercise = entry.getValue();
+					assert exercise != null; // exercise cannot be empty or null
+					String exerciseId = exercise.getId();
+					assert exerciseId != null; // exercise id cannot be null
+
+					// pair with an exercise (global) id
+					// and a 'null' resolution id
+					Pair<String, String> pair = Pair.of(exerciseId, null);
+
+					resolutionGroupAnswers.put(entry.getKey(), pair);
+				}
+
+				resolutionGroups.put(entryTG.getKey(), new TestResolutionGroup(null, resolutionGroupAnswers));
 			}
 		}
 		return resolutionGroups;
