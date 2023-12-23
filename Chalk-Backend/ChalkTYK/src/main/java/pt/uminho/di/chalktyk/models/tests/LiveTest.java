@@ -31,22 +31,20 @@ public class LiveTest extends Test {
 	private LocalDateTime startDate;
 
 	@Column(name="Duration")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Duration duration;
+	private long duration; // in seconds
 
 	@Column(name="StartTolerance")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Duration startTolerance;
+	private long startTolerance; // in seconds
 
 	public void verifyProperties() throws BadInputException {
 		super.verifyProperties();
 		if (super.getPublishDate().isAfter(getStartDate()))
 			throw new BadInputException("Cannot create test: Start date is invalid - occurs before publish date");
 		
-		if (getDuration().isNegative() || getDuration().isZero())
-			throw new BadInputException("Cannot create test: Test duration is invalid - non-positive duration");
+		if (getDuration() <= 0)
+			throw new BadInputException("Cannot create test: Test duration is invalid. The test duration is represented in seconds and must be a positive number.");
 		
-		if (getStartTolerance().isNegative())
-			throw new BadInputException("Cannot create test: Test start tolerance is negative");
+		if (getStartTolerance() <= 0 || getStartTolerance() > getDuration())
+			throw new BadInputException("Cannot create test: Test start tolerance is invalid. The test start tolerance is represented in seconds and must be a positive number that is equal or less than the the test duration.");
 	}
 }

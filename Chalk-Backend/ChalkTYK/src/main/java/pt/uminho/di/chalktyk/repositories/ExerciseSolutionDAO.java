@@ -16,6 +16,6 @@ public interface ExerciseSolutionDAO extends JpaRepository<ExerciseSolution, Str
     Optional<ExerciseSolution> findByExerciseId(@Param("exerciseId") String exerciseId);
 
     @Modifying(flushAutomatically = true)
-    @Query("DELETE Exercise.solution WHERE Exercise.id = :exerciseId")
+    @Query("DELETE FROM ExerciseSolution s WHERE s.id = (SELECT e.solution.id FROM Exercise e WHERE e.id = :exerciseId)")
     void deleteByExerciseId(@Param("exerciseId") String exerciseId);
 }
