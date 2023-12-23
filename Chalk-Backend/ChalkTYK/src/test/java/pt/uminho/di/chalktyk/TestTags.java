@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.relational.TagSQL;
-import pt.uminho.di.chalktyk.repositories.relational.TagSqlDAO;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
+import pt.uminho.di.chalktyk.repositories.TagDAO;
 import pt.uminho.di.chalktyk.services.ITagsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
@@ -15,12 +15,12 @@ import java.util.List;
 public class TestTags {
 
     private final ITagsService iTagsService;
-    private final TagSqlDAO tagSqlDAO;
+    private final TagDAO tagDAO;
 
     @Autowired
-    public TestTags(ITagsService iTagsService, TagSqlDAO tagSqlDAO) {
+    public TestTags(ITagsService iTagsService, TagDAO tagDAO) {
         this.iTagsService = iTagsService;
-        this.tagSqlDAO = tagSqlDAO;
+        this.tagDAO = tagDAO;
     }
 
     void _createTags() throws BadInputException{
@@ -48,14 +48,14 @@ public class TestTags {
     @Transactional
     void testSearchByPathRegex() throws BadInputException {
         _createTags();
-        System.out.println(tagSqlDAO.findByPathRegex("^/"));
+        System.out.println(tagDAO.findByPathRegex("^/"));
     }
 
     @Test
     @Transactional
     void listTags() throws BadInputException {
         _createTags();
-        List<TagSQL> tags = iTagsService.listTags("/", -1);
+        List<Tag> tags = iTagsService.listTags("/", -1);
         assert existsTagByNameAndPath("A", "/", tags);
         assert existsTagByNameAndPath("C", "/A/", tags);
         assert existsTagByNameAndPath("A", "/A/C/", tags);
@@ -84,8 +84,8 @@ public class TestTags {
         assert existsTagByNameAndPath("B", "/B/", tags);
     }
 
-    boolean existsTagByNameAndPath(String name, String path, List<TagSQL> tags){
-        for(TagSQL t : tags){
+    boolean existsTagByNameAndPath(String name, String path, List<Tag> tags){
+        for(Tag t : tags){
             if(t.getName().equals(name) && t.getPath().equals(path))
                 return true;
         }
