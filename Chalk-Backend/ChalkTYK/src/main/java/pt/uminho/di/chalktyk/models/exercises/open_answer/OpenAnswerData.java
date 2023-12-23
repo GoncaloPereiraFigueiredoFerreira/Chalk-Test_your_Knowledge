@@ -27,4 +27,9 @@ public class OpenAnswerData extends ExerciseResolutionData {
 			return false;
 		return true;
 	}
+
+	@Override
+	public ExerciseResolutionData clone() {
+		return new OpenAnswerData(text);
+	}
 }

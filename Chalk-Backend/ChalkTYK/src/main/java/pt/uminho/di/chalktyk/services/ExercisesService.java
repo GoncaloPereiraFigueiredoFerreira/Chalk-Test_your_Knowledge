@@ -235,6 +235,12 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException {
+        return duplicateExerciseById(specialistId, exerciseId, null, null, null);
+    }
+
+    @Override
+    @Transactional
+    public String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Float points, Visibility visibility) throws NotFoundException {
         // checks if the specialist exists
         Specialist specialist = specialistsService.getSpecialistById(specialistId);
 
@@ -245,15 +251,38 @@ public class ExercisesService implements IExercisesService{
 
         Exercise source = _getExerciseById(exerciseId);
 
+        // duplicates rubric
+        ExerciseRubric rubric = exerciseRubricDAO.findByExerciseId(exerciseId).orElse(null),
+                rubricCopy = null;
+
+        if(rubric != null) {
+            rubricCopy = rubric.clone();
+            rubricCopy.setId(null);
+            rubricCopy = exerciseRubricDAO.save(rubricCopy);
+        }
+
+        // duplicates solution
+        ExerciseSolution solution = exerciseSolutionDAO.findByExerciseId(exerciseId).orElse(null),
+                solutionCopy = null;
+
+        if(solution != null) {
+            solutionCopy = new ExerciseSolution();
+            solutionCopy.setData(solution.getData().clone());
+            solutionCopy.setId(null);
+            solutionCopy = exerciseSolutionDAO.save(solutionCopy);
+        }
+
         // duplicates data related information
         // and sets other information
         Exercise copy = source.cloneExerciseDataOnly();
-        copy.setVisibility(Visibility.PRIVATE);
-        copy.setPoints(0.0f);
+        copy.setVisibility(visibility == null ? Visibility.PRIVATE : visibility);
+        copy.setPoints(points == null || points <= 0.0f ? 1.0f : points);
         copy.setTags(new HashSet<>(source.getTags()));
         copy.setInstitution(institution);
         copy.setSpecialist(specialist);
-        copy.setCourse(null);
+        copy.setCourse(courseId == null ? null : coursesService.getCourseById(courseId));
+        copy.setRubric(rubricCopy);
+        copy.setSolution(solutionCopy);
 
         // persists exercise
         exerciseDAO.save(copy);

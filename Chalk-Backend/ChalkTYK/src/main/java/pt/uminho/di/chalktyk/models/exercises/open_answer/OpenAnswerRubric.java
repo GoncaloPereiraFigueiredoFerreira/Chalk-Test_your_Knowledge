@@ -27,7 +27,12 @@ public class OpenAnswerRubric extends ExerciseRubric {
 	@Type(JsonBinaryType.class)
 	@Column(name = "Criteria", columnDefinition = "jsonb")
 	private List<OACriterion> criteria;
-	
+
+	public OpenAnswerRubric(String id, List<OACriterion> criteria) {
+		super(id);
+		this.criteria = criteria;
+	}
+
 	@Override
 	public void verifyProperties() throws BadInputException {
 		if(criteria == null || criteria.isEmpty())
@@ -52,8 +57,7 @@ public class OpenAnswerRubric extends ExerciseRubric {
 		return true;
 	}
 
-
 	public OpenAnswerRubric clone(){
-		return new OpenAnswerRubric(criteria.stream().map(OACriterion::clone).toList());
+		return new OpenAnswerRubric(getId(), criteria.stream().map(OACriterion::clone).toList());
     }
 }

@@ -23,6 +23,12 @@ public class FillTheBlanksRubric extends ExerciseRubric {
 	private Float fillingPoints;
 	private Float penalty;
 
+	public FillTheBlanksRubric(String id, Float fillingPoints, Float penalty) {
+		super(id);
+		this.fillingPoints = fillingPoints;
+		this.penalty = penalty;
+	}
+
 	@Override
 	public void verifyProperties() throws BadInputException {
 		if(penalty == null || fillingPoints == null || penalty < 0 || fillingPoints < 0)
@@ -38,5 +44,10 @@ public class FillTheBlanksRubric extends ExerciseRubric {
 		if(!(Objects.equals(fillTheBlanksRubric.getPenalty(), penalty)))
 			return false;
 		return true;
+	}
+
+	@Override
+	public ExerciseRubric clone() {
+		return new FillTheBlanksRubric(getId(), fillingPoints, penalty);
 	}
 }

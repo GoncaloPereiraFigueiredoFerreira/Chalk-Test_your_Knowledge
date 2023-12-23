@@ -7,4 +7,5 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 public abstract class ExerciseResolutionData {
     public abstract void verifyInsertProperties() throws BadInputException;
     public abstract boolean equals(ExerciseResolutionData exerciseResolutionData);
+    public abstract ExerciseResolutionData clone();
 }
