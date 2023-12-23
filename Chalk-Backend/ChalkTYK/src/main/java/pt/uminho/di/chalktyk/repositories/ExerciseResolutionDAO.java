@@ -15,7 +15,8 @@ import java.util.List;
 
 @Repository
 public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution, String> {
-    long countByExerciseIdAndStatus(String exerciseId, ExerciseResolutionStatus status);
+    @Query("SELECT COUNT(r) FROM ExerciseResolution r WHERE r.exercise.id = :exerciseId AND r.status = :status")
+    long countByExerciseIdAndStatus(@Param("exerciseId") String exerciseId, @Param("status") ExerciseResolutionStatus status);
 
     /**
      * Finds a page of resolutions, with a given status, of a specific exercise
