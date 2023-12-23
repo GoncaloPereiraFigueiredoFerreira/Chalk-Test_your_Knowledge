@@ -359,13 +359,9 @@ public class InstitutionsService implements IInstitutionsService {
      * @param manager properties
      * @throws BadInputException if any property of the manager is not valid.
      */
-    private void verifyInstitutionManagerInput(InstitutionManager manager) throws BadInputException { //TODO test
+    private void verifyInstitutionManagerInput(InstitutionManager manager) throws BadInputException {
         if (manager == null)
             throw new BadInputException("Could not create institution manager: Cannot create a manager with a 'null' body.");
-
-        //set the identifier to null to avoid overwrite attacks
-        if(manager.getId()!=null)
-            throw new BadInputException("Institution manager id must be null");
 
         String inputErrors = manager.checkInsertProperties();
         if(inputErrors != null)
@@ -383,36 +379,66 @@ public class InstitutionsService implements IInstitutionsService {
     @Override
     @Transactional(rollbackFor = {BadInputException.class})
     public String createInstitutionManager(InstitutionManager manager, String institutionId) throws BadInputException, NotFoundException { //TODO test
-        if(manager.getInstitution()!=null)
-            throw new BadInputException("The manager institution is not null");
+        // check if manager is null
+        if(manager == null)
+            throw new BadInputException("Manager cannot be null.");
+
+        // persists institution
         Institution institution = idao.findById(institutionId).orElse(null);
         if(institution==null)
             throw new BadInputException("The institution does not exist");
-        verifyInstitutionManagerInput(manager);
-        institutionManagerDAO.save(manager);
 
+        // sets the manager institution
+        manager.setInstitution(institution);
+
+        // check manager properties
+        verifyInstitutionManagerInput(manager);
+
+        //set the identifier to null to avoid overwrite attacks
+        manager.setId(null);
+
+        manager = institutionManagerDAO.save(manager);
         return manager.getId();
     }
 
 
     /**
-     * Creates an institution manager.
-     * @param manager properties
+     * Creates an institution and its manager.
+     *
+     * @param institution
+     * @param manager
      * @return identifier of the new manager
-     * @throws BadInputException if any property of the manager is not valid.
+     * @throws BadInputException if any property of the institution or the manager is not valid.
      */
     @Override
     @Transactional(rollbackFor = {BadInputException.class})
-    public String createInstitutionManagerAndInstitution(InstitutionManager manager) throws BadInputException { //TODO test
-        verifyInstitutionManagerInput(manager);
-        Institution institution = manager.getInstitution();
-        if (institution == null)
-            throw new BadInputException("Can't create institution: institution is null!");
+    public String createInstitutionAndManager(Institution institution, InstitutionManager manager) throws BadInputException {
+        // check institution
+        if(institution == null)
+            throw new BadInputException("Institution cannot be null.");
         institution.verifyProperties();
-        if (idao.existsById(institution.getName()))
-            throw new BadInputException("Can't create institution: id is already in use");
-        manager.setInstitution(idao.save(institution));
-        institutionManagerDAO.save(manager);
+
+        // check if an institution with the given name already exists
+        if(idao.existsById(institution.getName()))
+            throw new BadInputException("An institution already exists with the given name.");
+
+        // check if manager is null
+        if(manager == null)
+            throw new BadInputException("Manager cannot be null.");
+
+        // persists institution
+        institution = idao.save(institution);
+
+        // sets the manager institution
+        manager.setInstitution(institution);
+
+        // check manager properties
+        verifyInstitutionManagerInput(manager);
+
+        //set the identifier to null to avoid overwrite attacks
+        manager.setId(null);
+
+        manager = institutionManagerDAO.save(manager);
         return manager.getId();
     }
 

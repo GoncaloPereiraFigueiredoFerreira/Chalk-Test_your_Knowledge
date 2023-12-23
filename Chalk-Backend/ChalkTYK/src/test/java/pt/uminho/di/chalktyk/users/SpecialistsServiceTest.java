@@ -107,6 +107,6 @@ public class SpecialistsServiceTest {
         s = specialistsService.getSpecialistById(id);
         
         // checks that the fields were updated
-        assert s != null && !s.getName().equals(name) && !s.getEmail().equals(email) && !s.getPhotoPath().equals(photoPath) && !s.getDescription().equals(description);
+        assert s != null && s.getName().equals(name) && s.getEmail().equals(email) && s.getPhotoPath().equals(photoPath) && s.getDescription().equals(description);
     }
 }
