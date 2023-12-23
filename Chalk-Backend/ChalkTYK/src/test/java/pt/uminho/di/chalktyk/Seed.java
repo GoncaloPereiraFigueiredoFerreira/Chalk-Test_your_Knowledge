@@ -1,9 +1,7 @@
 package pt.uminho.di.chalktyk;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Time;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -13,23 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.annotations.Type;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import pt.uminho.di.chalktyk.models.courses.Course;
-import pt.uminho.di.chalktyk.models.exercises.ConcreteExercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseStatement;
@@ -106,7 +92,7 @@ public class Seed {
         Specialist s3 = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg","whitman@yahoo.com", "#3", null);
         String specialist1 = specialistsService.createSpecialist(s1);
         String specialist2 = specialistsService.createSpecialist(s2);
-        String specialist3 = addSpecialistWhitman();
+        String specialist3 = specialistsService.createSpecialist(s3);
 
         // courses
         Course c1 = new Course(null, "Spanish 101", "#1", specialist1, null, null);
@@ -123,6 +109,7 @@ public class Seed {
         Tag tag2 = tagsService.createTag("NewEspanol","/");
         Tag tag3 = tagsService.createTag("OldEspanol","/");
 
+        /* 
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         ConcreteExercise ex1 = createMCExercise(s1, c1, tag1);
@@ -131,6 +118,7 @@ public class Seed {
         exercisesService.createExercise(ex1, exerciseSolution, exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
         exercisesService.createExercise(ex2, exerciseSolution, exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
         exercisesService.createExercise(ex3, exerciseSolution, exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
+        */
 
         // tests
         TestGroup tg1 = new TestGroup("instructions1", Float.valueOf(1), new HashMap<>());
@@ -142,14 +130,14 @@ public class Seed {
 
         LiveTest t2 = new LiveTest(null, "TEST #2", "instructions 2", 
                     100.0F, "", LocalDateTime.now(), LocalDateTime.now().plusMinutes(10), s2, Visibility.PRIVATE, c2, null, new HashMap<>(),
-                    LocalDateTime.now().plusDays(1), Time.valueOf(LocalTime.of(1, 0)), Time.valueOf(LocalTime.of(0, 5)));//Duration.ofHours(1), Duration.ofMinutes(5));
+                    LocalDateTime.now().plusDays(1), 60, 5);//Duration.ofHours(1), Duration.ofMinutes(5));
 
         DeliverDateTest t3 = new DeliverDateTest(null, "TEST #3", "instructions 3", 
                     5.0F, "", LocalDateTime.now(), LocalDateTime.now().plusHours(1), s3, Visibility.NOT_LISTED, c3, null, Map.of(0, tg1),
                     LocalDateTime.now().plusDays(4));
-        String test1 = testsService.createTest(Visibility.PUBLIC, t1);
-        String test2 = testsService.createTest(Visibility.PRIVATE, t2);
-        String test3 = testsService.createTest(Visibility.NOT_LISTED, t3);
+        String test1 = testsService.createTest(t1);
+        String test2 = testsService.createTest(t2);
+        String test3 = testsService.createTest(t3);
 
         // test resolutions
         TestResolutionGroup trg = new TestResolutionGroup(4.0F, null);
@@ -165,31 +153,6 @@ public class Seed {
         testsService.createTestResolution(test2, tr2);
         testsService.createTestResolution(test3, tr3);
     }
-
-    public String addSpecialistChang() throws BadInputException {
-        Specialist s = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
-                "senor@chang.com", "#1", null);
-        return specialistsService.createSpecialist(s);
-    }
-
-    public String addStudentAnnie() throws BadInputException {
-        Student st = new Student(null, "Annie Edison", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "annie_edison@gmail.com", "none #2");
-       return studentsService.createStudent(st);
-    }
-
-    public String addSpecialistWhitman() throws BadInputException {
-        Specialist s = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
-                "whitman@yahoo.com", "#3", null);
-        return specialistsService.createSpecialist(s);
-    }
-
-    public String addCourse(String specialistId) throws BadInputException {
-        Course c1 = new Course(null, "Spanish 101", "#1", specialistId, null, null);
-        return coursesService.createCourse(c1);
-    }
-
-
-
 
     @Test
     public void test() throws BadInputException, NotFoundException {
