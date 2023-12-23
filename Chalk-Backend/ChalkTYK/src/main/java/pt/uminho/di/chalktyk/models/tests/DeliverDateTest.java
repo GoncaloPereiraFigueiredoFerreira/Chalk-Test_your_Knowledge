@@ -1,7 +1,6 @@
 package pt.uminho.di.chalktyk.models.tests;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;

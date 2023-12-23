@@ -1,10 +1,15 @@
 package pt.uminho.di.chalktyk.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
+
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
+import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -70,14 +75,136 @@ public interface ITestsService {
     String duplicateTestById(String specialistId, String testId) throws BadInputException, NotFoundException;
 
     /**
-     * Update a test
+     * Updates a test's title
      *
      * @param testId
-     * @param body
+     * @param title
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestTitle(String testId, String title) throws NotFoundException;
+
+    /**
+     * Updates a test's global instructions
+     *
+     * @param testId
+     * @param globalInstructions
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestGlobalInstructions(String testId, String globalInstructions) throws NotFoundException;
+
+    /**
+     * Updates a test's conclusion
+     *
+     * @param testId
+     * @param conclusion
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestConclusion(String testId, String conclusion) throws NotFoundException;
+
+    /**
+     * Updates a test's publish date
+     *
+     * @param testId
+     * @param publishDate
      * @throws BadInputException if any property of the test is not valid.
      * @throws NotFoundException if no test was found with the given id
      **/
-    void updateTest(String testId, Test body) throws BadInputException, NotFoundException;
+    void updateTestPublishDate(String testId, LocalDateTime publishDate) throws NotFoundException, BadInputException;
+
+    /**
+     * Updates a test's visibility
+     *
+     * @param testId
+     * @param visibility
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestVisibility(String testId, Visibility visibility) throws NotFoundException, BadInputException;
+    
+    /**
+     * Updates a test's specialist
+     *
+     * @param testId
+     * @param specialistId
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestSpecialist(String testId, String specialistId) throws NotFoundException, BadInputException;
+    
+    /**
+     * Updates a test's course
+     *
+     * @param testId
+     * @param courseId
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestCourse(String testId, String courseId) throws NotFoundException, BadInputException;
+    
+    /**
+     * Updates a test's institution
+     *
+     * @param testId
+     * @param institutionId
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestInstitution(String testId, String institutionId) throws NotFoundException, BadInputException;
+    
+    /**
+     * Updates a test's groups
+     *
+     * @param testId
+     * @param groups
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestGroups(String testId, Map<Integer,TestGroup> groups) throws NotFoundException, BadInputException;
+
+    /**
+     * Updates a test's deliver date
+     * Exclusive for tests of the type DeliverDateTest
+     *
+     * @param testId
+     * @param deliverDate
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestDeliverDate(String testId, LocalDateTime deliverDate) throws NotFoundException, BadInputException;
+
+    /**
+     * Updates a test's start date
+     * Exclusive for tests of the type LiveTest
+     *
+     * @param testId
+     * @param startDate
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestStartDate(String testId, LocalDateTime startDate) throws NotFoundException, BadInputException;
+    
+    /**
+     * Updates a test's duration
+     * Exclusive for tests of the type LiveTest
+     *
+     * @param testId
+     * @param duration
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestDuration(String testId, long duration) throws NotFoundException, BadInputException;
+    
+    /**
+     * Updates a test's start tolerance
+     * Exclusive for tests of the type LiveTest
+     *
+     * @param testId
+     * @param startTolerance
+     * @throws BadInputException if any property of the test is not valid.
+     * @throws NotFoundException if no test was found with the given id
+     **/
+    void updateTestStartTolerance(String testId, long startTolerance) throws NotFoundException, BadInputException;
+
 
     /**
      * Issue the automatic correction of the test resolutions
