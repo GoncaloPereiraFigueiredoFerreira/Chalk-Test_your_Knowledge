@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -129,14 +130,6 @@ public class TestsService implements ITestsService {
         body.verifyProperties();
         body.setId(null);                       // to prevent overwrite attacks
 
-        // ACHO QUE NAO É PRECISO
-        // check visibility
-        //Visibility visibility = body.getVisibility();
-        //if (visibility == null)
-        //    throw new BadInputException("Can't create test: Visibility can't be null");
-        //if (!visibility.isValid())
-        //    throw new BadInputException("Can't create test: Visibility is invalid");
-
         // check owner (specialist) id
         String specialistId = body.getSpecialistId();
         if (specialistId == null)
@@ -156,6 +149,9 @@ public class TestsService implements ITestsService {
         }
 
         // check visibility constraints
+        Visibility visibility = body.getVisibility();
+        if (visibility == null)
+            throw new BadInputException("Can't create test: Visibility can't be null");
         if (body.getInstitutionId() == null && body.getVisibility().equals(Visibility.INSTITUTION))
             throw new BadInputException("Can't create test: can't set visibility to INSTITUTION");
         if (body.getCourseId() == null && body.getVisibility().equals(Visibility.COURSE))
@@ -175,11 +171,11 @@ public class TestsService implements ITestsService {
             }
         }
 
+        /* 
         for (String exerciseId: exerciseIds){
             Exercise exercise = exercisesService.getExerciseById(exerciseId);
             if(exercise == null)
                 throw new BadInputException("Exercise with id "+exerciseId+" does not exist");
-            /* 
             if (exercise instanceof ConcreteExercise ce){
                 ce.verifyProperties();
                 Set<Tag> tags = ce.getTags();
@@ -215,8 +211,8 @@ public class TestsService implements ITestsService {
                     }
                 }
             }
-            */
         }
+        */
 
 
         Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
@@ -233,7 +229,7 @@ public class TestsService implements ITestsService {
         catch (NotFoundException ignored){}
 
         body = testDAO.save(body);
-        createTestTags(tagsCounter, body);
+        //createTestTags(tagsCounter, body);
 
         return body.getId();
     }
@@ -315,6 +311,7 @@ public class TestsService implements ITestsService {
             for (Map.Entry<Integer,TestGroup> entryGroups: groups.entrySet()){
 
                 TestGroup olgTg = entryGroups.getValue();
+                /* 
                 Map<Integer, List<String>> exeIdMap = olgTg.getExercises();
                 Map<Integer, List<String>> newExeMap = new HashMap<>();
 
@@ -332,6 +329,7 @@ public class TestsService implements ITestsService {
 
                 TestGroup newTg = new TestGroup(olgTg.getGroupInstructions(), olgTg.getGroupPoints(), newExeMap);
                 newGroups.put(entryGroups.getKey(),newTg);
+                */
             }
         }
         oldTest.setGroups(newGroups);
@@ -597,7 +595,6 @@ public class TestsService implements ITestsService {
         return null;
     }
 
-<<<<<<< HEAD
 
     @Override
     public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
@@ -610,16 +607,5 @@ public class TestsService implements ITestsService {
     public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteAllExerciseResolutionByTestResolutionId'");
-=======
-    @Override
-    public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
-        // TODO
->>>>>>> d76657bc60d89f5918f27966fde2a780e5968bdc
     }
 }
