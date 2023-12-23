@@ -9,6 +9,7 @@ import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.repositories.StudentDAO;
 import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.IStudentsService;
+import pt.uminho.di.chalktyk.services.IUsersService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -17,12 +18,14 @@ public class StudentsServiceTest {
     private final IStudentsService studentsService;
     private final UserDAO userDAO;
     private final StudentDAO studentDAO;
+    private final IUsersService usersService;
 
     @Autowired
-    public StudentsServiceTest(IStudentsService studentsService, UserDAO userDAO, StudentDAO studentDAO) {
+    public StudentsServiceTest(IStudentsService studentsService, UserDAO userDAO, StudentDAO studentDAO, IUsersService usersService) {
         this.studentsService = studentsService;
         this.userDAO = userDAO;
         this.studentDAO = studentDAO;
+        this.usersService = usersService;
     }
 
     String createStudentAlex() throws BadInputException {
@@ -103,7 +106,7 @@ public class StudentsServiceTest {
         assert s != null && !s.getName().equals(name) && !s.getEmail().equals(email) && !s.getPhotoPath().equals(photoPath) && !s.getDescription().equals(description);
 
         Student newStudent = new Student(null, name, photoPath, email, description);
-        studentsService.updateBasicStudentInformation(id, newStudent);
+        usersService.updateBasicProperties(id, name,email,photoPath,description);
         s = studentsService.getStudentById(id);
 
         // checks that the fields were updated
