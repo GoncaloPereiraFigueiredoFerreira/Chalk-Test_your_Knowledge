@@ -5,8 +5,6 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.annotations.Type;
-import pt.uminho.di.chalktyk.models.exercises.Exercise;
-import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -16,8 +14,6 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.hibernate.type.descriptor.jdbc.JsonJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;

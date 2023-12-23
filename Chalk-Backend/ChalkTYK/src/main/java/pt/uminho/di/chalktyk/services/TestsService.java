@@ -2,12 +2,9 @@ package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -181,6 +178,7 @@ public class TestsService implements ITestsService {
             Exercise exercise = exercisesService.getExerciseById(exerciseId);
             if(exercise == null)
                 throw new BadInputException("Exercise with id "+exerciseId+" does not exist");
+            /* 
             if (exercise instanceof ConcreteExercise ce){
                 ce.verifyProperties();
                 Set<Tag> tags = ce.getTags();
@@ -216,6 +214,7 @@ public class TestsService implements ITestsService {
                     }
                 }
             }
+            */
         }
 
         // TODO: check points in groups
@@ -355,7 +354,7 @@ public class TestsService implements ITestsService {
         if (total)
             return resolutionDAO.countTotalSubmissionsForTest(testId);
         else
-            return resolutionDAO.countDistinctSubmissionsForTest(testId);
+            return 0;//resolutionDAO.countDistinctSubmissionsForTest(testId);
     }
 
     @Override
@@ -440,7 +439,7 @@ public class TestsService implements ITestsService {
         if (resolution == null)
             throw new NotFoundException("Couldn't delete resolution: Resolution \'" + resolutionId + "\'was not found");
 
-        exercisesService.deleteAllExerciseResolutionByTestResolutionId(resolutionId);
+        //exercisesService.deleteAllExerciseResolutionByTestResolutionId(resolutionId);
         resolutionDAO.delete(resolution);
     }
 
@@ -485,8 +484,9 @@ public class TestsService implements ITestsService {
                 return false;
         }
         else if (test instanceof LiveTest lt){
-            if (lt.getStartDate().isAfter(LocalDateTime.now()) ||
-                LocalDateTime.now().isAfter(lt.getStartDate().plus(lt.getDuration()).plus(lt.getStartTolerance())))
+            if (lt.getStartDate().isAfter(LocalDateTime.now()))
+                // TODO: convert to duration  
+                //LocalDateTime.now().isAfter(lt.getStartDate().plus(lt.getDuration()).plus(lt.getStartTolerance())))
                 return false;
         }
 
@@ -499,7 +499,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find student with given id.");
-        return resolutionDAO.countStudentSubmissionsForTest(studentId, testId);
+        return 0;//resolutionDAO.countStudentSubmissionsForTest(studentId, testId);
     }
 
     @Override
@@ -508,7 +508,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find student with given id.");
-        return resolutionDAO.getStudentTestResolutionsIds(testId, studentId);
+        return null;//resolutionDAO.getStudentTestResolutionsIds(testId, studentId);
     }
 
     @Override
@@ -595,5 +595,19 @@ public class TestsService implements ITestsService {
         // changes visibility of exercise from TEST to private
         // cant be done if after publish date
         return null;
+    }
+
+
+    @Override
+    public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getExerciseResolution'");
+    }
+
+
+    @Override
+    public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAllExerciseResolutionByTestResolutionId'");
     }
 }
