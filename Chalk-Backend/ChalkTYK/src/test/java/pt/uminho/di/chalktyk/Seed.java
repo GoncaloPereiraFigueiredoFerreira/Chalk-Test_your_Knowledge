@@ -1,9 +1,7 @@
 package pt.uminho.di.chalktyk;
 
 
-import java.sql.Time;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -156,11 +154,8 @@ public class Seed {
 
     @Test
     public void test() throws BadInputException, NotFoundException {
-        Student st1 = new Student(null, "Jeff Winger", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "dpelton@gmail.com", "none #1");
-        studentsService.createStudent(st1);
+        testsService.deleteTestById("7cd29983-2f07-4e16-8e76-45a0de48cc23");
     }
-
-
 
     // exercício
     private ExerciseSolution createMCSolution(){
