@@ -72,11 +72,11 @@ public abstract class Exercise {
 	@JoinTable(name="Exercise_Tag", joinColumns={ @JoinColumn(name="ExerciseID") }, inverseJoinColumns={ @JoinColumn(name="TagID") })
 	private Set<Tag> tags;
 
-	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseSolution.class)
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseSolution.class, orphanRemoval = true)
 	@JoinColumn(name = "SolutionID", referencedColumnName = "ID")
 	private ExerciseSolution solution;
 
-	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseRubric.class)
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseRubric.class, orphanRemoval = true)
 	@JoinColumn(name = "RubricID", referencedColumnName = "ID")
 	private ExerciseRubric rubric;
 

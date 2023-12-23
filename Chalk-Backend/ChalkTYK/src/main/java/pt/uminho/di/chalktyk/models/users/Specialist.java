@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,5 +36,13 @@ public class Specialist extends User {
 
     public Specialist clone() {
         return new Specialist(getId(),getName(),getPhotoPath(),getEmail(),getDescription(),institution.clone());
+    }
+
+    /**
+     * Creates a specialist with id, where the rest of the parameters are null.
+     */
+    public Specialist(String id){
+        super(id,null,null,null,null);
+        this.institution = null;
     }
 }

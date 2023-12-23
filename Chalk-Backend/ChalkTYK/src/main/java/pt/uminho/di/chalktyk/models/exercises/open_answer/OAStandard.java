@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class OAStandard {
+public class OAStandard  implements Serializable {
 	private String title;
 	private String description;
 	private Float points;

@@ -8,6 +8,7 @@ import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @JsonTypeName("MC")
-public class MultipleChoiceData extends ExerciseResolutionData {
+public class MultipleChoiceData extends ExerciseResolutionData implements Serializable {
 	private Map<Integer, MultipleChoiceResolutionItem> items;
 
 	@Override
