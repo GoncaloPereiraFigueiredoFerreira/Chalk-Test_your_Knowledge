@@ -1,7 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.users.InstitutionManager;
 import pt.uminho.di.chalktyk.models.users.Specialist;
@@ -174,11 +173,13 @@ public interface IInstitutionsService {
 
     /**
      * Creates an institution manager.
-     * @param manager properties (the institution should be null since it will be the one referenced on the id)
+     *
+     * @param institution
+     * @param manager     properties (the institution should be null since it will be the one referenced on the id)
      * @return identifier of the new manager
      * @throws BadInputException if any property of the manager is not valid.
      */
-    String createInstitutionManagerAndInstitution(InstitutionManager manager) throws BadInputException, NotFoundException;
+    String createInstitutionAndManager(Institution institution, InstitutionManager manager) throws BadInputException, NotFoundException;
 
     /**
      * Gets an institution manager

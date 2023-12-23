@@ -40,7 +40,7 @@ public abstract class User {
 		if(name == null || name.isEmpty())
 			return "Not a valid name.";
 
-		String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+		String regexPattern = "^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,}$";
 		boolean validEmail = Pattern.compile(regexPattern)
 									.matcher(this.email)
 									.matches();

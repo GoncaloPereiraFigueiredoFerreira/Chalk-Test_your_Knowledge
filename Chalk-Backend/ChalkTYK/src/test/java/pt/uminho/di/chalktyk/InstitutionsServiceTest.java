@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.nonrelational.subscriptions.Subscription;
-import pt.uminho.di.chalktyk.models.nonrelational.users.Specialist;
+import pt.uminho.di.chalktyk.models.subscriptions.Subscription;
+import pt.uminho.di.chalktyk.models.users.InstitutionManager;
+import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.IInstitutionsService;
-import pt.uminho.di.chalktyk.models.nonrelational.institutions.Institution;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -34,7 +35,7 @@ public class InstitutionsServiceTest {
     @Test
     @Transactional
     public void test() throws NotFoundException, BadInputException {
-        Institution inst = new Institution("UM");
+        Institution inst = new Institution("UM", "desc", "logoPath");
         inst.setDescription("Universidade do Minho");
         inst.setLogoPath("image.png");
 
@@ -75,12 +76,11 @@ public class InstitutionsServiceTest {
     @Test
     @Transactional
     public void testGetInstitutionBySpecialistId() throws NotFoundException, BadInputException {
-        Institution inst = new Institution("UM");
+        Institution inst = new Institution("UM", "desc", "logoPath");
         inst.setDescription("Universidade do Minho");
         inst.setLogoPath("image.png");
 
-        institutionService.createInstitution(inst);
-
+        institutionService.createInstitutionAndManager(inst, new InstitutionManager(null, "InstManager1" , "instmanager1/photo.png", "instmanager1@gmail.com", "instmanager1 description", null));
         String id = iSpecialistsService.createSpecialist(new Specialist(null, "Luis", "","lisinho@gmail.com", "HOmem bonito", null));
 
         institutionService.addSpecialistsToInstitution("UM", Collections.singletonList("yo"));

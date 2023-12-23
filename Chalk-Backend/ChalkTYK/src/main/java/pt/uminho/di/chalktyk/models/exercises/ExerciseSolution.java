@@ -1,9 +1,7 @@
 package pt.uminho.di.chalktyk.models.exercises;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +17,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 public class ExerciseSolution {
 	@Id
 	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
 	@Type(JsonBinaryType.class)

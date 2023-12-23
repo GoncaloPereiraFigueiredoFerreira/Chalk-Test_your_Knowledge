@@ -13,6 +13,7 @@ import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OpenAnswerRubric extends ExerciseRubric {
+public class OpenAnswerRubric extends ExerciseRubric  implements Serializable {
 	@Type(JsonBinaryType.class)
 	@Column(name = "Criteria", columnDefinition = "jsonb")
 	private List<OACriterion> criteria;

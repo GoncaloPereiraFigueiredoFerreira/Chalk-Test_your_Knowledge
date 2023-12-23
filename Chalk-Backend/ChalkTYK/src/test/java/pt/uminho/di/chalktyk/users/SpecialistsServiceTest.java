@@ -9,6 +9,7 @@ import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.repositories.SpecialistDAO;
 import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
+import pt.uminho.di.chalktyk.services.IUsersService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -17,12 +18,14 @@ public class SpecialistsServiceTest {
     private final ISpecialistsService specialistsService;
     private final UserDAO userDAO;
     private final SpecialistDAO specialistDAO;
+    private final IUsersService usersService;
 
     @Autowired
-    public SpecialistsServiceTest(ISpecialistsService specialistsService, UserDAO userDAO, SpecialistDAO specialistDAO) {
+    public SpecialistsServiceTest(ISpecialistsService specialistsService, UserDAO userDAO, SpecialistDAO specialistDAO, IUsersService usersService) {
         this.specialistsService = specialistsService;
         this.userDAO = userDAO;
         this.specialistDAO = specialistDAO;
+        this.usersService = usersService;
     }
 
     String createSpecialistAlex() throws BadInputException {
@@ -101,12 +104,11 @@ public class SpecialistsServiceTest {
                 description = "new description";
         // assert that the specialist does not have the values that will be updated
         assert s != null && !s.getName().equals(name) && !s.getEmail().equals(email) && !s.getPhotoPath().equals(photoPath) && !s.getDescription().equals(description);
-        
-        Specialist newSpecialist = new Specialist(null, name, photoPath, email, description);
-        specialistsService.updateBasicSpecialistInformation(id, newSpecialist);
+
+        usersService.updateBasicProperties(id, name, email, photoPath, description);
         s = specialistsService.getSpecialistById(id);
         
         // checks that the fields were updated
-        assert s != null && !s.getName().equals(name) && !s.getEmail().equals(email) && !s.getPhotoPath().equals(photoPath) && !s.getDescription().equals(description);
+        assert s != null && s.getName().equals(name) && s.getEmail().equals(email) && s.getPhotoPath().equals(photoPath) && s.getDescription().equals(description);
     }
 }

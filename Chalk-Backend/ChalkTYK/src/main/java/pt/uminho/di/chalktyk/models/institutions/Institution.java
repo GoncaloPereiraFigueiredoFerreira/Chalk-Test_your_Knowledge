@@ -15,8 +15,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Table(name="Institution")
 public class Institution {
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name="ID")
+	@Column(name="ID", unique=true)
 	private String name;
 
 	@Column(name="Description")

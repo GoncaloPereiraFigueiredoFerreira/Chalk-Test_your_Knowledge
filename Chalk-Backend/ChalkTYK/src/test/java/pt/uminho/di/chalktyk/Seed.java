@@ -69,7 +69,7 @@ public class Seed {
     public void seed() throws BadInputException, NotFoundException {
         Institution inst = new Institution("Greendale", null, null);
         InstitutionManager instMan = new InstitutionManager(null, "Dean Pelton", null, "dpelton@gmail.com", "i'm a peanut bar", inst);
-        institutionsService.createInstitutionManagerAndInstitution(instMan);
+        institutionsService.createInstitutionAndManager(inst,instMan);
 
         //addInstitution();
         
@@ -152,10 +152,44 @@ public class Seed {
         testsService.createTestResolution(test3, tr3);
     }
 
+
+
+
+    
     @Test
     public void test() throws BadInputException, NotFoundException {
         testsService.deleteTestById("7cd29983-2f07-4e16-8e76-45a0de48cc23");
     }
+
+
+
+
+
+
+
+
+    public String addSpecialistChang() throws BadInputException {
+        Specialist s = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
+                "senor@chang.com", "#1", null);
+        return specialistsService.createSpecialist(s);
+    }
+
+    public String addStudentAnnie() throws BadInputException {
+        Student st = new Student(null, "Annie Edison", "https://i.kym-cdn.com/photos/images/newsfeed/001/718/713/854.jpg", "annie_edison@gmail.com", "none #2");
+        return studentsService.createStudent(st);
+    }
+
+    public String addSpecialistWhitman() throws BadInputException {
+        Specialist s = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
+                "whitman@yahoo.com", "#3", null);
+        return specialistsService.createSpecialist(s);
+    }
+
+    public String addCourse(String specialist) throws BadInputException {
+        Course c1 = new Course(null, "Spanish 101", "#1", specialist, null, null);
+        return coursesService.createCourse(c1);
+    }
+
 
     // exercício
     private ExerciseSolution createMCSolution(){
