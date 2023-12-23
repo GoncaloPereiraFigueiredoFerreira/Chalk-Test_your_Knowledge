@@ -100,7 +100,7 @@ public class InstitutionsService implements IInstitutionsService {
      */
     @Override
     public void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException { //TODO test
-        if(!idao.existsById(institutionId))
+        if(!existsInstitutionById(institutionId))
             throw new NotFoundException("Could not add specialists: Institution not found.");
         for(String specialistId : specialistsIds){
             if(specialistsService.existsSpecialistById(specialistId)){
@@ -428,7 +428,6 @@ public class InstitutionsService implements IInstitutionsService {
 
         // persists institution
         institution = idao.save(institution);
-
         // sets the manager institution
         manager.setInstitution(institution);
 

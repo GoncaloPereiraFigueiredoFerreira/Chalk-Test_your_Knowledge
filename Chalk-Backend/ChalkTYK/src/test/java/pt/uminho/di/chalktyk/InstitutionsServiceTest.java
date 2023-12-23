@@ -81,7 +81,6 @@ public class InstitutionsServiceTest {
         inst.setLogoPath("image.png");
 
         institutionService.createInstitutionAndManager(inst, new InstitutionManager(null, "InstManager1" , "instmanager1/photo.png", "instmanager1@gmail.com", "instmanager1 description", null));
-
         String id = iSpecialistsService.createSpecialist(new Specialist(null, "Luis", "","lisinho@gmail.com", "HOmem bonito", null));
 
         institutionService.addSpecialistsToInstitution("UM", Collections.singletonList("yo"));
