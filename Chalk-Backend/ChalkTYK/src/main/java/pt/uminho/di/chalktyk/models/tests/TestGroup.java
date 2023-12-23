@@ -6,13 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-<<<<<<< HEAD
-=======
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.ConcreteExercise;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.ReferenceExercise;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
->>>>>>> d76657bc60d89f5918f27966fde2a780e5968bdc
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 @Getter

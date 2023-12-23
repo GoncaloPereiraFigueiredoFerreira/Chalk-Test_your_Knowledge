@@ -1,6 +1,8 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.springframework.data.util.Pair;
+import org.springframework.transaction.annotation.Transactional;
+
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -75,6 +77,20 @@ public interface IExercisesService{
      */
     // TODO - criar metodos privados para update individual de cada componente
     public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility)  throws NotFoundException, BadInputException;
+
+    /**
+     * Updates an exercise body.
+     *
+     * @param newBody new exercise body
+     * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
+     * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
+     * @throws NotFoundException if the test wasn't found
+     * @throws BadInputException solution, rubric, institution or specialist ids where changed,
+     * course was not found,
+     * the rubric or solution don't belong to the new exercise body
+     */
+    @Transactional
+    public void updateExerciseBody(Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws NotFoundException, BadInputException;
 
     /**
      * Retrieves the rubric of an exercise.

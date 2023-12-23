@@ -303,15 +303,17 @@ public class ExercisesService implements IExercisesService{
      * @param newBody new exercise body
      * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
      * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
+     * @throws NotFoundException if the test wasn't found
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
      * course was not found,
      * the rubric or solution don't belong to the new exercise body
      */
     @Transactional
-    public void updateExerciseBody(Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
+    public void updateExerciseBody(Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws NotFoundException, BadInputException {
         String exerciseId = newBody.getId();
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise != null;
+        if (exercise == null)
+            throw new NotFoundException("Couldn't update exercise: exercise with id \'" + exerciseId + "\' wasn't found");
 
         // Check new body properties
         newBody.verifyInsertProperties();
@@ -381,15 +383,17 @@ public class ExercisesService implements IExercisesService{
         exerciseDAO.save(exercise);
     }
 
+
     /**
-     * Updates and exercise visibility, Assumes exercise exists
+     * Updates and exercise visibility. Assumes that the exercise exists
      *
      * @param exerciseId   identifier of the exercise to be updated
      * @param visibility   new visibility
+     * @throws BadInputException if there's something wrong with the text
      */
-    private void updateExerciseVisibility(String exerciseId,Visibility visibility) throws BadInputException {
+    private void updateExerciseVisibility(String exerciseId, Visibility visibility) throws BadInputException {
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise!=null;
+        assert exercise != null;
 
         // Checks if specialist exists and gets the institution where it belongs
         Institution institution;
@@ -479,7 +483,7 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void deleteExerciseRubric(String exerciseId) {
-        exerciseRubricDAO.deleteByExerciseId(exerciseId);
+        //exerciseRubricDAO.deleteByExerciseId(exerciseId);
     }
 
     @Override
@@ -541,7 +545,7 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void deleteExerciseSolution(String exerciseId) {
-        exerciseSolutionDAO.deleteByExerciseId(exerciseId);
+        //exerciseSolutionDAO.deleteByExerciseId(exerciseId);
     }
 
     @Override
@@ -989,6 +993,7 @@ public class ExercisesService implements IExercisesService{
         String exerciseId = exercise.getId();
 
         // Get number of resolutions not revised
+        /* 
         long resolutionsCount = exerciseResolutionDAO.countByExerciseIdAndStatus(exerciseId, ExerciseResolutionStatus.NOT_REVISED);
 
         // Iterates over all resolutions that are not revised, and corrects them
@@ -1004,6 +1009,7 @@ public class ExercisesService implements IExercisesService{
             for (ExerciseResolution res : page)
                 automaticExerciseResolutionCorrection(res, exercise, rubric, solution);
         }
+        */
     }
 
     /**

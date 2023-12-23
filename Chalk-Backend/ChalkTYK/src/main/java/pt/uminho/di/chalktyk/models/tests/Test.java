@@ -13,10 +13,6 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 
 import java.time.LocalDateTime;
 import java.util.*;
-<<<<<<< HEAD
-import java.util.stream.Collectors;
-=======
->>>>>>> d76657bc60d89f5918f27966fde2a780e5968bdc
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
