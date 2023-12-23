@@ -130,14 +130,6 @@ public class TestsService implements ITestsService {
         body.verifyProperties();
         body.setId(null);                       // to prevent overwrite attacks
 
-        // ACHO QUE NAO É PRECISO
-        // check visibility
-        //Visibility visibility = body.getVisibility();
-        //if (visibility == null)
-        //    throw new BadInputException("Can't create test: Visibility can't be null");
-        //if (!visibility.isValid())
-        //    throw new BadInputException("Can't create test: Visibility is invalid");
-
         // check owner (specialist) id
         String specialistId = body.getSpecialistId();
         if (specialistId == null)
@@ -157,6 +149,9 @@ public class TestsService implements ITestsService {
         }
 
         // check visibility constraints
+        Visibility visibility = body.getVisibility();
+        if (visibility == null)
+            throw new BadInputException("Can't create test: Visibility can't be null");
         if (body.getInstitutionId() == null && body.getVisibility().equals(Visibility.INSTITUTION))
             throw new BadInputException("Can't create test: can't set visibility to INSTITUTION");
         if (body.getCourseId() == null && body.getVisibility().equals(Visibility.COURSE))
@@ -176,6 +171,7 @@ public class TestsService implements ITestsService {
             }
         }
 
+        /* 
         for (String exerciseId: exerciseIds){
             Exercise exercise = exercisesService.getExerciseById(exerciseId);
             if(exercise == null)
@@ -216,6 +212,7 @@ public class TestsService implements ITestsService {
                 }
             }
         }
+        */
 
 
         Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
@@ -232,7 +229,7 @@ public class TestsService implements ITestsService {
         catch (NotFoundException ignored){}
 
         body = testDAO.save(body);
-        createTestTags(tagsCounter, body);
+        //createTestTags(tagsCounter, body);
 
         return body.getId();
     }
@@ -314,6 +311,7 @@ public class TestsService implements ITestsService {
             for (Map.Entry<Integer,TestGroup> entryGroups: groups.entrySet()){
 
                 TestGroup olgTg = entryGroups.getValue();
+                /* 
                 Map<Integer, List<String>> exeIdMap = olgTg.getExercises();
                 Map<Integer, List<String>> newExeMap = new HashMap<>();
 
@@ -331,6 +329,7 @@ public class TestsService implements ITestsService {
 
                 TestGroup newTg = new TestGroup(olgTg.getGroupInstructions(), olgTg.getGroupPoints(), newExeMap);
                 newGroups.put(entryGroups.getKey(),newTg);
+                */
             }
         }
         oldTest.setGroups(newGroups);
@@ -353,7 +352,7 @@ public class TestsService implements ITestsService {
         if (total)
             return resolutionDAO.countTotalSubmissionsForTest(testId);
         else
-            return resolutionDAO.countDistinctSubmissionsForTest(testId);
+            return 0;//resolutionDAO.countDistinctSubmissionsForTest(testId);
     }
 
     @Override
@@ -438,7 +437,7 @@ public class TestsService implements ITestsService {
         if (resolution == null)
             throw new NotFoundException("Couldn't delete resolution: Resolution \'" + resolutionId + "\'was not found");
 
-        exercisesService.deleteAllExerciseResolutionByTestResolutionId(resolutionId);
+        //exercisesService.deleteAllExerciseResolutionByTestResolutionId(resolutionId);
         resolutionDAO.delete(resolution);
     }
 
@@ -483,8 +482,9 @@ public class TestsService implements ITestsService {
                 return false;
         }
         else if (test instanceof LiveTest lt){
-            if (lt.getStartDate().isAfter(LocalDateTime.now()) ||
-                LocalDateTime.now().isAfter(lt.getStartDate().plus(lt.getDuration()).plus(lt.getStartTolerance())))
+            if (lt.getStartDate().isAfter(LocalDateTime.now()))
+                // TODO: convert to duration  
+                //LocalDateTime.now().isAfter(lt.getStartDate().plus(lt.getDuration()).plus(lt.getStartTolerance())))
                 return false;
         }
 
@@ -497,7 +497,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find student with given id.");
-        return resolutionDAO.countStudentSubmissionsForTest(studentId, testId);
+        return 0;//resolutionDAO.countStudentSubmissionsForTest(studentId, testId);
     }
 
     @Override
@@ -506,7 +506,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find student with given id.");
-        return resolutionDAO.getStudentTestResolutionsIds(testId, studentId);
+        return null;//resolutionDAO.getStudentTestResolutionsIds(testId, studentId);
     }
 
     @Override
@@ -595,14 +595,17 @@ public class TestsService implements ITestsService {
         return null;
     }
 
+
     @Override
     public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
-        // TODO
-        return null;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getExerciseResolution'");
     }
+
 
     @Override
     public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
-        // TODO
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAllExerciseResolutionByTestResolutionId'");
     }
 }
