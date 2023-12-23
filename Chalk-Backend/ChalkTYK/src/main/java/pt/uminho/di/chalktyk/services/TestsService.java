@@ -64,23 +64,7 @@ public class TestsService implements ITestsService {
         this.exercisesService = exercisesService;
     }
 
-
-    /**
-     * Retrieves tests that match the given filters. Necessary to check authorization.
-     *
-     * @param page
-     * @param itemsPerPage   maximum items in a page
-     * @param tags           Array of identifiers from the tags that will be used to filter the tests
-     * @param matchAllTags   Value that defines if the exercise must have all the given tags to be retrieved
-     * @param visibilityType Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'.
-     * @param specialistId
-     * @param courseId       to search for a test from a specific course
-     * @param institutionId  to search for a test from a specific institution
-     * @param title          to search for a test title
-     * @param verifyParams   if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
-     *                       *                         'false' does not verify database logic
-     * @return page of tests
-     **/
+    
     @Override
     public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
         Visibility visibility;
@@ -157,67 +141,41 @@ public class TestsService implements ITestsService {
         if (body.getCourseId() == null && body.getVisibility().equals(Visibility.COURSE))
             throw new BadInputException("Can't create test: can't set visibility to COURSE");
 
+        // count tags
+        // check and duplicate exercises
+        Map<String, Integer> tagsCounter = new HashMap<>();
         List<TestExercise> exercises = body.getGroups().values().stream().flatMap(g -> g.getExercises().values().stream()).toList();
-
         for(TestExercise te : exercises){
+            Exercise exe = null;
             if(te instanceof ReferenceExercise re){
                 // Duplicates the exercise
-                String dupExerciseId = exercisesService.duplicateExerciseById(specialistId,re.getId());
-                // Sets exercise visibility to test
-                // Sets exercise points
-                // TODO - acabar
-            }else if (te instanceof ConcreteExercise ce){
-
+                String dupExerciseId = exercisesService.duplicateExerciseById(specialistId, re.getId());
+                exe = exercisesService.getExerciseById(dupExerciseId);
+                exe.setVisibility(Visibility.TEST);
+                exe.setPoints(re.getPoints());
+                exercisesService.updateExerciseBody(exe, false, false);
             }
-        }
-
-        /* 
-        for (String exerciseId: exerciseIds){
-            Exercise exercise = exercisesService.getExerciseById(exerciseId);
-            if(exercise == null)
-                throw new BadInputException("Exercise with id "+exerciseId+" does not exist");
-            if (exercise instanceof ConcreteExercise ce){
-                ce.verifyProperties();
-                Set<Tag> tags = ce.getTags();
-                if (tags != null){
-                    for (Tag tag : tags){
-                        if (tagsService.getTagById(tag.getId()) == null)
-                            throw new BadInputException("Can't create test: There is not tag with id \"" + tag.getId() + "\".");
-                        if (tagsCounter.containsKey(tag.getId()))
-                            tagsCounter.put(tag.getId(), tagsCounter.get(tag.getId()) + 1);
-                        else
-                            tagsCounter.put(tag.getId(), 1);
-                    }
-                }
+            else if (te instanceof ConcreteExercise ce){
+                exe = ce.getExercise();
             }
-            else if (exercise instanceof ShallowExercise se){
-                // TODO: create new exercise?
-
-                se.verifyInsertProperties();
-                Exercise og = exercisesService.getExerciseById(se.getOriginalExerciseId());
-                while(!(og instanceof ConcreteExercise ce)){
-                    og = exercisesService.getExerciseById(se.getOriginalExerciseId());
-                }
-                ce.verifyProperties();
-                Set<Tag> tags = ce.getTags();
-                if (tags != null){
-                    for (Tag tag : tags){
-                        if (tagsService.getTagById(tag.getId()) == null)
-                            throw new BadInputException("Can't create test: There is not tag with id \"" + tag.getId() + "\".");
-                        if (tagsCounter.containsKey(tag.getId()))
-                            tagsCounter.put(tag.getId(), tagsCounter.get(tag.getId()) + 1);
-                        else
-                            tagsCounter.put(tag.getId(), 1);
-                    }
+            Set<Tag> tags = exe.getTags();
+            if (tags != null){
+                for (Tag tag : tags){
+                    if (tagsService.getTagById(tag.getId()) == null)
+                        throw new BadInputException("Can't create test: There isn't a tag with id \"" + tag.getId() + "\".");
+                    if (tagsCounter.containsKey(tag.getId()))
+                        tagsCounter.put(tag.getId(), tagsCounter.get(tag.getId()) + 1);
+                    else
+                        tagsCounter.put(tag.getId(), 1);
                 }
             }
         }
-        */
 
-
+        // set course
         Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
         body.setCourse(course);
 
+        // set specialist
         Specialist specialist = entityManager.getReference(Specialist.class, specialistId);
         body.setSpecialist(specialist);
 
@@ -229,7 +187,7 @@ public class TestsService implements ITestsService {
         catch (NotFoundException ignored){}
 
         body = testDAO.save(body);
-        //createTestTags(tagsCounter, body);
+        createTestTags(tagsCounter, body);
 
         return body.getId();
     }
@@ -352,7 +310,7 @@ public class TestsService implements ITestsService {
         if (total)
             return resolutionDAO.countTotalSubmissionsForTest(testId);
         else
-            return 0;//resolutionDAO.countDistinctSubmissionsForTest(testId);
+            return resolutionDAO.countDistinctSubmissionsForTest(testId);
     }
 
     @Override
@@ -492,12 +450,13 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public Integer countStudentSubmissionsForTest(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find student with given id.");
-        return 0;//resolutionDAO.countStudentSubmissionsForTest(studentId, testId);
+        return resolutionDAO.countStudentSubmissionsForTest(studentId, testId);
     }
 
     @Override
@@ -506,7 +465,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find student with given id.");
-        return null;//resolutionDAO.getStudentTestResolutionsIds(testId, studentId);
+        return resolutionDAO.getStudentTestResolutionsIds(testId, studentId);
     }
 
     @Override

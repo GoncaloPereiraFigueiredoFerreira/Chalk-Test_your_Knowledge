@@ -15,7 +15,7 @@ public interface ExerciseRubricDAO extends JpaRepository<ExerciseRubric, String>
     @Query("SELECT e.rubric FROM Exercise e WHERE e.id = :exerciseId")
     Optional<ExerciseRubric> findByExerciseId(@Param("exerciseId") String exerciseId);
 
-    @Modifying(flushAutomatically = true)
-    @Query("DELETE Exercise.rubric WHERE Exercise.id = :exerciseId")
-    void deleteByExerciseId(@Param("exerciseId") String exerciseId);
+    //@Modifying(flushAutomatically = true)
+    //@Query("DELETE Exercise.rubric WHERE Exercise.id = :exerciseId")
+    //void deleteByExerciseId(@Param("exerciseId") String exerciseId);
 }
