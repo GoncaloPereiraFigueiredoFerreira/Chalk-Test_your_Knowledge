@@ -47,13 +47,25 @@ const userExercises: Exercise[] = [
     props: {
       justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
       items: {
-        "1": { text: "Existem 9 canetas roxas ou vermelhas" },
+        "1": {
+          text: "Existem 9 canetas roxas ou vermelhas",
+          justification: "",
+          value: false,
+        },
         "2": {
           text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          justification: "",
+          value: false,
         },
-        "3": { text: "Existem 8 canetas pretas" },
+        "3": {
+          text: "Existem 8 canetas pretas",
+          justification: "",
+          value: false,
+        },
         "4": {
           text: "Existem mais canetas castanhas que amarelas",
+          justification: "",
+          value: false,
         },
       },
     },
@@ -97,13 +109,25 @@ const userExercises: Exercise[] = [
     props: {
       justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
       items: {
-        "1": { text: "Existem 9 canetas roxas ou vermelhas" },
+        "1": {
+          text: "Existem 9 canetas roxas ou vermelhas",
+          justification: "",
+          value: false,
+        },
         "2": {
           text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          justification: "",
+          value: false,
         },
-        "3": { text: "Existem 8 canetas pretas" },
+        "3": {
+          text: "Existem 8 canetas pretas",
+          justification: "",
+          value: false,
+        },
         "4": {
           text: "Existem mais canetas castanhas que amarelas",
+          justification: "",
+          value: false,
         },
       },
     },

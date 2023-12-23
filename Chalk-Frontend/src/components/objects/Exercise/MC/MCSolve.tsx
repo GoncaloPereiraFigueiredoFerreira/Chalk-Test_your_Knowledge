@@ -2,11 +2,10 @@ import {
   ExerciseJustificationKind,
   MCExercise,
   MCResolutionData,
-  ResolutionData,
   SolveProps,
 } from "../Exercise";
 import { useEffect, useReducer } from "react";
-import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 
 export interface MCSolveProps {
   exercise: MCExercise;

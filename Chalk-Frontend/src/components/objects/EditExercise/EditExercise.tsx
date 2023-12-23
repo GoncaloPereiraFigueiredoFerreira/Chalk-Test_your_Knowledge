@@ -8,7 +8,6 @@ import {
   ExerciseType,
   ExerciseComponent,
   ExerciseContext,
-  ResolutionItem,
   ExerciseHeader,
   ResolutionData,
   TFResolutionData,
@@ -44,7 +43,11 @@ export interface EditAction {
   type: EditActionKind;
   dataString?: string;
   dataImgPos?: ImgPos;
-  dataItem?: ResolutionItem;
+  dataItem?: {
+    text?: string;
+    justification?: string;
+    value?: boolean;
+  };
   dataJK?: ExerciseJustificationKind;
 }
 
@@ -112,10 +115,12 @@ function EditReducer(state: EditState, action: EditAction) {
           newItems[action.dataString!] = {
             text: "",
             justification: "",
+            value: false,
           };
           newSolItems[action.dataString!] = {
             text: "",
             justification: "",
+            value: false,
           };
           return {
             solution: { ...solution, items: newSolItems } as ResolutionData,
@@ -139,8 +144,8 @@ function EditReducer(state: EditState, action: EditAction) {
         let newItems = { ...exercise.props.items };
         let newSolutionItems = { ...newSolution.items };
 
-        newItems[action.dataString!].text = action.dataItem!.text;
-        newSolutionItems[action.dataString!].text = action.dataItem!.text;
+        newItems[action.dataString!].text = action.dataItem!.text!;
+        newSolutionItems[action.dataString!].text = action.dataItem!.text!;
         return {
           exercise: {
             ...exercise,
@@ -156,7 +161,7 @@ function EditReducer(state: EditState, action: EditAction) {
           ...solution,
         } as MCResolutionData;
         let newItems = { ...newSolution.items };
-        newItems[action.dataString!].value = action.dataItem!.value;
+        newItems[action.dataString!].value = action.dataItem!.value!;
         return {
           ...state,
           solution: {

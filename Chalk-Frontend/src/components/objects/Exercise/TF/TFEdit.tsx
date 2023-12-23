@@ -16,8 +16,11 @@ interface TFEditProps {
 
 export function TFEdit({ exercise, context }: TFEditProps) {
   const [openJustificationkind, setOpenJustificationkind] = useState(
-    exercise.props.justifyType != ExerciseJustificationKind.NO_JUSTIFICATION
+    exercise.props.justifyType !== ExerciseJustificationKind.NO_JUSTIFICATION
   );
+  console.log(openJustificationkind);
+  console.log(exercise.props.justifyType);
+
   return (
     <>
       <p className="block mb-2 text-sm text-gray-900 dark:text-white">
@@ -103,7 +106,7 @@ export function TFEdit({ exercise, context }: TFEditProps) {
               ExerciseJustificationKind.JUSTIFY_TRUE,
             ]}
             text="Posição"
-            chosenOption={exercise.props.items.justifyKind}
+            chosenOption={exercise.props.justifyType}
             setChosenOption={(justifyKind) =>
               context.dispatch({
                 type: EditActionKind.CHANGE_JUSTIFY_KIND,
@@ -148,7 +151,7 @@ function TFStatementEdit({
                 dispatch({
                   type: EditActionKind.CHANGE_ITEM_TF,
                   dataString: id,
-                  dataItem: { value: true, text: "", justification: "" },
+                  dataItem: { value: true },
                 });
               }}
               checked={solutionItem.value}
@@ -163,7 +166,7 @@ function TFStatementEdit({
                 dispatch({
                   type: EditActionKind.CHANGE_ITEM_TF,
                   dataString: id,
-                  dataItem: { value: false, text: "", justification: "" },
+                  dataItem: { value: false },
                 });
               }}
               checked={!solutionItem.value}
@@ -179,7 +182,6 @@ function TFStatementEdit({
                   dataString: id,
                   dataItem: {
                     text: e.target.value,
-                    justification: "",
                   },
                 })
               }

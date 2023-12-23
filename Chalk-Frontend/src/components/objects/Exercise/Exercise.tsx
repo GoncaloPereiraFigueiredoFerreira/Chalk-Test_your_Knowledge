@@ -64,8 +64,8 @@ export interface ResolutionItems {
 
 export interface ResolutionItem {
   text: string;
-  justification?: string;
-  value?: boolean;
+  justification: string;
+  value: boolean;
 }
 
 //------------------------------------//

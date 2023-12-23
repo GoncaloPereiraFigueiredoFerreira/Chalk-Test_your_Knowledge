@@ -38,7 +38,7 @@ export function CreateTest({ test }: CreateTestProps) {
         <div
           className={`${
             selectedMenu === "dd-list-exercises" ? "w-full" : "w-0"
-          } flex flex-col h-screen overflow-auto bg-2-1`}
+          } flex flex-col transition-[width] h-screen overflow-auto bg-2-1`}
         >
           {selectedMenu === "dd-list-exercises" ? (
             <>
