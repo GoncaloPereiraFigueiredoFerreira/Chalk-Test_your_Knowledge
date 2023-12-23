@@ -32,6 +32,32 @@ public class UsersService implements IUsersService{
     }
 
     @Override
+    public User getUserByEmail(String email) throws NotFoundException {
+        User u = userDAO.findByEmail(email).orElse(null);
+        if (u != null)
+            return u;
+        else
+            throw new NotFoundException("No user with the given email was found.");
+    }
+
+    @Override
+    public void updateBasicProperties(String userId, String name, String email, String photoPath, String description) throws NotFoundException, BadInputException {
+        User user = getUserById(userId);
+
+        if(!user.getEmail().equals(email) && userDAO.existsByEmail(email))
+            throw new BadInputException("Email already used by another user.");
+
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhotoPath(photoPath);
+        user.setDescription(description);
+        String insertError = user.checkInsertProperties();
+        if(insertError != null)
+            throw new BadInputException("Could not update user properties: " + insertError);
+        userDAO.save(user);
+    }
+
+    @Override
     public boolean login(String userId) {
         //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
         return false;

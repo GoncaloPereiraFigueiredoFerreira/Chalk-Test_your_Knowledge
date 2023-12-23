@@ -71,30 +71,4 @@ public class SpecialistsService implements ISpecialistsService{
     public boolean existsSpecialistById(String specialistId) {
         return specialistDAO.existsById(specialistId);
     }
-
-    @Override
-    public void updateBasicSpecialistInformation(String specialistId, Specialist newSpecialist) throws NotFoundException, BadInputException {
-        if(newSpecialist == null)
-            throw new BadInputException("Cannot updated specialist information: Null specialist was given.");
-
-        Specialist specialist = getSpecialistById(specialistId);
-        String newEmail = newSpecialist.getEmail(),
-                newName  = newSpecialist.getName();
-
-        // check for any property format errors
-        String insertErrors = newSpecialist.checkInsertProperties();
-        if(insertErrors != null)
-            throw new BadInputException("Could not update specialist information:" + insertErrors);
-
-        // if the email is to be changed, it cannot belong to any other user
-        if(!specialist.getEmail().equals(newEmail) && userDAO.existsByEmail(newEmail))
-            throw new BadInputException("Could not update specialist information: Email is already used by another user.");
-
-        specialist.setName(newName);
-        specialist.setEmail(newEmail);
-        specialist.setDescription(newSpecialist.getDescription());
-        specialist.setPhotoPath(newSpecialist.getPhotoPath());
-
-        userDAO.save(specialist);
-    }
 }

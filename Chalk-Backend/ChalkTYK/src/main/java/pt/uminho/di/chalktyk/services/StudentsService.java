@@ -73,29 +73,4 @@ public class StudentsService implements IStudentsService{
     public boolean existsStudentById(String studentId) {
         return studentDAO.existsById(studentId);
     }
-
-    @Override
-    public void updateBasicStudentInformation(String studentId, Student newStudent) throws NotFoundException, BadInputException {
-        if(newStudent == null)
-            throw new BadInputException("Cannot updated student information: Null student was given.");
-
-        Student student = getStudentById(studentId);
-        String newEmail = newStudent.getEmail();
-
-        // check for any property format errors
-        String insertErrors = newStudent.checkInsertProperties();
-        if(insertErrors != null)
-            throw new BadInputException("Could not update student information:" + insertErrors);
-
-        // if the email is to be changed, it cannot belong to any other user
-        if(!student.getEmail().equals(newEmail) && userDAO.existsByEmail(newEmail))
-            throw new BadInputException("Could not update student information: Email is already used by another user.");
-
-        student.setName(newStudent.getName());
-        student.setEmail(newEmail);
-        student.setDescription(newStudent.getDescription());
-        student.setPhotoPath(newStudent.getPhotoPath());
-
-        userDAO.save(student);
-    }
 }
