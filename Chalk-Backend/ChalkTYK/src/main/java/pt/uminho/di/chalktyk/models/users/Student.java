@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.users;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -17,7 +16,6 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 @AllArgsConstructor
 @Entity
 @Table(name="Student")
-@DiscriminatorValue("Student")
 public class Student extends User {
 
     public Student(String id, String name, String photoPath, String email, String description, Set<Course> courses, Institution institution) {

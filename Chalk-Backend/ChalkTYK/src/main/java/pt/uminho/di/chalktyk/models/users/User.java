@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User {
 	@Column(name="ID")
 	@Id

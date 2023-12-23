@@ -13,11 +13,15 @@ import pt.uminho.di.chalktyk.models.institutions.Institution;
 @AllArgsConstructor
 @Entity
 @Table(name="InstitutionManager")
-@DiscriminatorValue("InstitutionManager")
 public class InstitutionManager extends User {
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
+
+	public InstitutionManager(String id, String name, String photoPath, String email, String description, Institution institution){
+		super(id, name, photoPath, email, description);
+		setInstitution(institution);
+	}
 
 	@Override
 	public String checkSubscription() {
