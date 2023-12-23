@@ -35,7 +35,14 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 	@Type(JsonBinaryType.class)
 	@Column(name = "JustificationsRubrics", columnDefinition = "jsonb")
 	private Map<Integer, OpenAnswerRubric> justificationsRubrics;
-	
+
+	public MultipleChoiceRubric(String id, Float choicePoints, Float penalty, Map<Integer, OpenAnswerRubric> justificationsRubrics) {
+		super(id);
+		this.choicePoints = choicePoints;
+		this.penalty = penalty;
+		this.justificationsRubrics = justificationsRubrics;
+	}
+
 	@Override
 	public void verifyProperties() throws BadInputException {
 		if (penalty == null || choicePoints == null || penalty < 0 || choicePoints < 0)
@@ -61,6 +68,14 @@ public class MultipleChoiceRubric extends ExerciseRubric {
 		if(!(Objects.equals(multipleChoiceRubric.getPenalty(), penalty)))
 			return false;
 		return true;
+	}
+
+	@Override
+	public ExerciseRubric clone() {
+		Map<Integer, OpenAnswerRubric> jrCloned = new HashMap<>();
+		for(Map.Entry<Integer, OpenAnswerRubric> entry : justificationsRubrics.entrySet())
+			jrCloned.put(entry.getKey(), entry.getValue().clone());
+		return new MultipleChoiceRubric(getId(), choicePoints, penalty, jrCloned);
 	}
 
 	public float getMaxPointsSum() {

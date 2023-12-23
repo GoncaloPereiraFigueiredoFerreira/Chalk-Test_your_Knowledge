@@ -42,6 +42,15 @@ public class MultipleChoiceData extends ExerciseResolutionData {
 		}
 		return true;
 	}
+
+	@Override
+	public ExerciseResolutionData clone() {
+		Map<Integer, MultipleChoiceResolutionItem> itemsCloned = new HashMap<>();
+		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry : items.entrySet())
+			itemsCloned.put(entry.getKey(), entry.getValue().clone());
+		return new MultipleChoiceData(itemsCloned);
+	}
+
 	public Set<Integer> getIds(){
 		return items.keySet();
 	}

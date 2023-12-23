@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.fill_the_blanks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -36,5 +37,10 @@ public class FillTheBlanksData extends ExerciseResolutionData {
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public ExerciseResolutionData clone() {
+		return new FillTheBlanksData(new ArrayList<>(fillings));
 	}
 }

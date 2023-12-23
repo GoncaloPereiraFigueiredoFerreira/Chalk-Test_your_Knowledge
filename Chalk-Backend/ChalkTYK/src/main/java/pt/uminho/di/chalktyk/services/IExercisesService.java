@@ -63,6 +63,8 @@ public interface IExercisesService{
      */
     String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
 
+    String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Float points, Visibility visibility) throws NotFoundException;
+
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
