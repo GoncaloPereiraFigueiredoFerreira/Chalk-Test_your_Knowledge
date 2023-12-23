@@ -1,19 +1,4 @@
-import {
-  CheckboxIcon,
-  CheckedListIcon,
-  EyeSlashIcon,
-  GarbageIcon,
-  GraduateIcon,
-  LinkIcon,
-  LockIcon,
-  PenIcon,
-  SchoolIcon,
-  TextIcon,
-  WorldSearchIcon,
-} from "../SVGImages/SVGImages";
-import { PiChatsBold } from "react-icons/pi";
 import { useEffect, useState } from "react";
-import "./ShowExercise.css";
 import {
   Exercise,
   ExerciseComponent,
@@ -21,34 +6,42 @@ import {
   ExerciseContext,
   ExerciseType,
 } from "../Exercise/Exercise";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { Icon } from "../../interactiveElements/Icon";
+import { PiChatsBold } from "react-icons/pi";
 import {
-  ListExerciseActionKind,
-  useListExerciseContext,
-} from "./ListExerciseContext";
+  CreateTestActionKind,
+  useCreateTestContext,
+} from "./CreateTestContext";
+import {
+  CheckboxIcon,
+  CheckedListIcon,
+  GraduateIcon,
+  LinkIcon,
+  LockIcon,
+  SchoolIcon,
+  TextIcon,
+  WorldSearchIcon,
+} from "../SVGImages/SVGImages";
 
-interface ExerciseProps {
+interface DragDropShowExerciseProps {
   position: string;
   exercise: Exercise;
-  setExerciseID: (value: string) => void;
-  editMenuIsOpen: boolean;
-  setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: boolean;
   setSelectedExercise: (value: string) => void;
 }
 
-export function ShowExercise({
+export function DragDropShowExercise({
   position,
   exercise,
-  setExerciseID,
-  editMenuIsOpen,
-  setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
-}: ExerciseProps) {
+}: DragDropShowExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [visibility, setVisibility] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
-  const { dispatch } = useListExerciseContext();
+  const { testState, dispatch } = useCreateTestContext();
+
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
     position: position,
@@ -151,7 +144,7 @@ export function ShowExercise({
     <div
       className={`${
         selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2`}
+      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2 group-hover`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
@@ -166,20 +159,12 @@ export function ShowExercise({
             <label className="flex min-w-max font-medium text-xl">
               {exercise.base.title}
             </label>
-            <div
-              className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
-            >
-              <div className="bg-yellow-600 tag-exercise">Matemática</div>
-              <div className="bg-blue-600 tag-exercise">4º ano</div>
-              <div className="bg-green-600 tag-exercise">escolinha</div>
-              <div className="bg-gray-500 tag-exercise">+8</div>
-            </div>
           </button>
           <button
             className={`${
               selectedExercise
-                ? "mr-[204px] pr-4 border-r-2"
-                : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
+                ? "mr-[75px] pr-4 border-r-2"
+                : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
             } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
             onClick={() =>
               selectedExercise
@@ -196,30 +181,18 @@ export function ShowExercise({
             <button
               className="btn-options-exercise gray-icon"
               onClick={() => {
-                if (!editMenuIsOpen) {
-                  dispatch({
-                    type: ListExerciseActionKind.EDIT_EXERCISE,
-                    payload: {
-                      exercise: exercise,
-                    },
-                  });
-
-                  setEditMenuIsOpen(true);
-                  setExerciseID(exercise.identity.id);
-                }
-                setSelectedExercise(exercise.identity.id);
+                dispatch({
+                  type: CreateTestActionKind.ADD_EXERCISE,
+                  exercise: {
+                    groupPosition: testState.groupPosition,
+                    exercisePosition: testState.exercisePosition,
+                    exercise: exercise,
+                  },
+                });
               }}
             >
-              <PenIcon size="size-5" />
-              Editar
-            </button>
-            <button className="btn-options-exercise gray-icon">
-              <EyeSlashIcon size="size-5" />
-              Visibilidade
-            </button>
-            <button className="btn-options-exercise gray-icon">
-              <GarbageIcon size="size-5" />
-              Eliminar
+              <FaArrowRightFromBracket />
+              Adicionar
             </button>
           </div>
         </div>

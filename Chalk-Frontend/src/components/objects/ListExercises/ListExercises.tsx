@@ -115,6 +115,10 @@ const userExercises: Exercise[] = [
   },
 ];
 
+export function getListExercises() {
+  return userExercises;
+}
+
 interface ListExercisesProps {
   setExerciseID: (value: string) => void;
   editMenuIsOpen: boolean;
@@ -133,7 +137,7 @@ export function ListExercises({
     dispatch({
       type: ListExerciseActionKind.ADD_EXERCISES,
       payload: {
-        exercises: userExercises,
+        exercises: getListExercises(),
       },
     });
   }, []);
@@ -157,7 +161,7 @@ export function ListExercises({
             setExerciseID={setExerciseID}
             editMenuIsOpen={editMenuIsOpen}
             setEditMenuIsOpen={setEditMenuIsOpen}
-            selectedExercise={listExerciseState.selectedExercise}
+            selectedExercise={"-1" === listExerciseState.selectedExercise}
             setSelectedExercise={(value) =>
               dispatch({
                 type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
@@ -168,16 +172,16 @@ export function ListExercises({
             }
           ></ShowExercise>
         ) : null}
-        {Object.keys(listExerciseState.listExercises).map((value, index) =>
-          value === "-1" ? null : (
+        {Object.keys(listExerciseState.listExercises).map((key, index) =>
+          key === "-1" ? null : (
             <ShowExercise
               key={index}
               position={(index + 1).toString()}
-              exercise={listExerciseState.listExercises[value]}
+              exercise={listExerciseState.listExercises[key]}
               setExerciseID={setExerciseID}
               editMenuIsOpen={editMenuIsOpen}
               setEditMenuIsOpen={setEditMenuIsOpen}
-              selectedExercise={listExerciseState.selectedExercise}
+              selectedExercise={key === listExerciseState.selectedExercise}
               setSelectedExercise={(value) =>
                 dispatch({
                   type: ListExerciseActionKind.SET_SELECTED_EXERCISE,

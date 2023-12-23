@@ -3,10 +3,6 @@ import { ImgPos } from "../Exercise/Header/ExHeader";
 import "./EditExercise.css";
 import { EditHeader } from "../Exercise/Header/EditHeader";
 import {
-  ListExerciseActionKind,
-  useListExerciseContext,
-} from "../ListExercises/ListExerciseContext";
-import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
@@ -260,19 +256,16 @@ interface EditState {
 //------------------------------------//
 
 interface EditExerciseProps {
-  exerciseID: string;
-  setExerciseID: (value: string) => void;
-  setEditMenuIsOpen: (value: boolean) => void;
+  exercise: Exercise;
+  saveExercise: (state: EditState) => void;
+  cancelEditExercise: (state: EditState) => void;
 }
 
 export function EditExercise({
-  exerciseID,
-  setExerciseID,
-  setEditMenuIsOpen,
+  exercise,
+  saveExercise,
+  cancelEditExercise,
 }: EditExerciseProps) {
-  const { dispatch, listExerciseState } = useListExerciseContext();
-
-  let exercise = listExerciseState.listExercises[exerciseID];
   let solution = InitResolutionDataEx(exercise);
 
   let initState: EditState = { exercise: exercise, solution: solution };
@@ -285,38 +278,7 @@ export function EditExercise({
           <label className="flex text-title-1">Editar</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => {
-              if (exerciseID === "-1") {
-                // <<< RETIRAR ESTE IF >>>
-                // TEMPORARIO ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                // PARA SE SABER O ID DO NOVO EXERCICIO
-                dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
-                  payload: {
-                    exercise: {
-                      ...state.exercise,
-                      identity: {
-                        ...state.exercise.identity,
-                        id: "novo id 1000",
-                        visibility: state.exercise.identity?.visibility ?? "",
-                        specialistId:
-                          state.exercise.identity?.specialistId ?? "",
-                      },
-                    },
-                  },
-                });
-                // <<< RETIRAR ESTE IF (final)>>>
-              } else {
-                // <<< MANTER >>>
-                dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
-                  payload: { exercise: state.exercise },
-                });
-                // <<< MANTER (final)>>>
-              }
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
+            onClick={() => saveExercise(state)}
           >
             Guardar e fechar
           </button>
@@ -341,52 +303,13 @@ export function EditExercise({
         <div className="flex gap-2">
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => {
-              if (exerciseID === "-1") {
-                // <<< RETIRAR ESTE IF >>>
-                // TEMPORARIO ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                // PARA SE SABER O ID DO NOVO EXERCICIO
-                dispatch({
-                  type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
-                  payload: {
-                    exercise: {
-                      ...state.exercise,
-                      identity: {
-                        ...state.exercise.identity,
-                        id: "novo id 1000",
-                        visibility: state.exercise.identity?.visibility ?? "",
-                        specialistId:
-                          state.exercise.identity?.specialistId ?? "",
-                      },
-                    },
-                  },
-                });
-                // <<< RETIRAR ESTE IF (final)>>>
-              } else {
-                // <<< MANTER >>>
-                dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
-                  payload: { exercise: state.exercise },
-                });
-                // <<< MANTER (final)>>>
-              }
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
+            onClick={() => saveExercise(state)}
           >
             Guardar e fechar
           </button>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => {
-              if (exerciseID === "-1")
-                dispatch({
-                  type: ListExerciseActionKind.REMOVE_EXERCISE,
-                  payload: { selectedExercise: exerciseID },
-                });
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
+            onClick={() => cancelEditExercise(state)}
           >
             Cancelar
           </button>

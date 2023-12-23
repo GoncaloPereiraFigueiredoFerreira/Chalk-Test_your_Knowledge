@@ -70,6 +70,20 @@ export interface ResolutionItem {
 
 //------------------------------------//
 //                                    //
+//            Resolutions             //
+//                                    //
+//------------------------------------//
+
+export interface Resolutions {
+  [exerciseID: string]: {
+    solution: Resolution;
+    cotation: number;
+    studentRes: { [resolutionID: string]: Resolution };
+  };
+}
+
+//------------------------------------//
+//                                    //
 //             Exercise               //
 //                                    //
 //------------------------------------//
@@ -155,6 +169,7 @@ export interface ExerciseIdentity {
 //                                    //
 //------------------------------------//
 
+// REDUNDANTE -> importar de Test
 export interface ExerciseGroup {
   exercises: Exercise[];
   groupInstructions: string;
@@ -257,6 +272,12 @@ export function ExerciseComponent({
     }
   }
 }
+
+//------------------------------------//
+//                                    //
+//      Init exercise functions       //
+//                                    //
+//------------------------------------//
 
 export function InitExercise(type: ExerciseType): Exercise {
   let newExercise: Exercise;
