@@ -23,15 +23,23 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
     @Query(value = "SELECT e.tags FROM Exercise e WHERE e.id = :exerciseId")
     java.util.Set<Tag> getExerciseTags(@Param("exerciseId") String exerciseId);
 
+    /* TODO - está mal!
+    Usar esta query como exemplo:
+    select id from (select products.id as id,COUNT(tags.id) FROM products join products_tags on products.id = products_tags.product_id
+                                                                join tags on products_tags.tag_id = tags.id
+                                                                WHERE tags.id IN :tags_ids_list
+                                                                GROUP BY products.id
+                                                                HAVING COUNT(tags.id) = :tags_list_size) s LIMIT :pageSize OFFSET (:page - 1) * :pageSize;
+     */
     @Query("SELECT e FROM Exercise e JOIN e.tags t WHERE" +
             " CASE WHEN :matchAllTags = true THEN (:tagIDS is null or t = (SELECT t FROM Tag t WHERE t.id IN :tagIDS))"+
             " ELSE (:tagIDS is null or t IN (SELECT t FROM Tag t WHERE t.id IN :tagIDS)) END and"+
-            " :visibilityType is null or e.visibility = :visibilityType and" +
-            " :institutionId is null or e.institution = (SELECT i FROM Institution i WHERE i.name=:institutionId) and" +
-            " :courseId is null or e.course = (SELECT c FROM Course c WHERE c.id=:courseId) and" +
-            " :specialistID is null or e.specialist = (SELECT s FROM Specialist s WHERE s.id=:specialistID) and" +
-            " :title is null or e.title = :title and" +
-            " :exerciseType is null or e.exerciseType = :exerciseType")
+            " (:visibilityType is null or e.visibility = :visibilityType) and" +
+            " (:institutionId is null or e.institution.name=:institutionId) and" +
+            " (:courseId is null or e.course.id=:courseId) and" +
+            " (:specialistID is null or e.specialist.id=:specialistID) and" +
+            " (:title is null or e.title = :title) and" +
+            " (:exerciseType is null or e.exerciseType = :exerciseType)")
     Page<Exercise> getExercises(Pageable pageable,
                                    @Param("tagIDS") java.util.List<String> tagIDS, @Param("matchAllTags")  boolean matchAllTags,
                                    @Param("visibilityType") Visibility visibilityType,

@@ -2,9 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +20,9 @@ import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.*;
+import pt.uminho.di.chalktyk.models.tests.TestExercise.ConcreteExercise;
+import pt.uminho.di.chalktyk.models.tests.TestExercise.ReferenceExercise;
+import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.repositories.ExerciseResolutionDAO;
@@ -81,7 +82,7 @@ public class TestsService implements ITestsService {
      * @return page of tests
      **/
     @Override
-    public List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
+    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
         Visibility visibility;
         if (visibilityType != null) {
             visibility = Visibility.fromValue(visibilityType);
@@ -91,18 +92,20 @@ public class TestsService implements ITestsService {
 
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
-                throw new NotFoundException("Theres no course with the given id");
+                throw new NotFoundException("There is no course with the given id");
         }
 
         if(verifyParams && institutionId!=null) {
             if(!institutionsService.existsInstitutionById(institutionId))
-                throw new NotFoundException("Theres no institution with the given id");
+                throw new NotFoundException("There is no institution with the given id");
         }
 
         if (verifyParams && specialistId != null) {
             if(!specialistsService.existsSpecialistById(specialistId))
-                throw new NotFoundException("Theres no specialist with the given id");
+                throw new NotFoundException("There is no specialist with the given id");
         }
+
+        //TODO - getTests
         //Page<TestSQL> testSQLS = testSqlDAO.getTests(PageRequest.of(page, itemsPerPage),tags, tags.size(), matchAllTags,visibility,institutionId,courseId,specialistId,title);
         //return exercisesSqlToNoSql(testSQLS);
         return null;
@@ -118,19 +121,22 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional
-    public String createTest(Visibility visibility, Test body) throws BadInputException, NotFoundException {
+    public String createTest(Test body) throws BadInputException, NotFoundException {
         if (body == null)
             throw new BadInputException("Cannot create test: test is null.");
 
+        body.calculatePoints(); // updates global/group points
+        body.setCreationDate(LocalDateTime.now()); // set creation date
         body.verifyProperties();
         body.setId(null);                       // to prevent overwrite attacks
-        body.setCreationDate(LocalDateTime.now()); // set creation date
 
+        // ACHO QUE NAO É PRECISO
         // check visibility
-        if (visibility == null)
-            throw new BadInputException("Can't create test: Visibility can't be null");
-        if (!visibility.isValid())
-            throw new BadInputException("Can't create test: Visibility is invalid");
+        //Visibility visibility = body.getVisibility();
+        //if (visibility == null)
+        //    throw new BadInputException("Can't create test: Visibility can't be null");
+        //if (!visibility.isValid())
+        //    throw new BadInputException("Can't create test: Visibility is invalid");
 
         // check owner (specialist) id
         String specialistId = body.getSpecialistId();
@@ -138,13 +144,6 @@ public class TestsService implements ITestsService {
             throw new BadInputException("Can't create test: A test must have an owner.");
         if (!specialistsService.existsSpecialistById(specialistId))
             throw new BadInputException("Can't create test: A test must have a valid specialist.");
-
-        // get owner's institution id
-        try {
-            Institution inst = institutionsService.getSpecialistInstitution(specialistId);
-            body.setInstitution(inst);
-        }
-        catch (NotFoundException ignored){}
 
         // check course
         String courseId = body.getCourseId();
@@ -158,24 +157,24 @@ public class TestsService implements ITestsService {
         }
 
         // check visibility constraints
-        if (body.getInstitutionId() == null && visibility.equals(Visibility.INSTITUTION))
+        if (body.getInstitutionId() == null && body.getVisibility().equals(Visibility.INSTITUTION))
             throw new BadInputException("Can't create test: can't set visibility to INSTITUTION");
-        if (body.getCourseId() == null && visibility.equals(Visibility.COURSE))
+        if (body.getCourseId() == null && body.getVisibility().equals(Visibility.COURSE))
             throw new BadInputException("Can't create test: can't set visibility to COURSE");
-        
-        // check test group
-        // TODO: check if any exercise appears more than once
-        Map<String, Integer> tagsCounter = new HashMap<>();
 
+        List<TestExercise> exercises = body.getGroups().values().stream().flatMap(g -> g.getExercises().values().stream()).toList();
 
-        List<TestGroup> groups = body.getGroups().values().stream().toList();
-        for (TestGroup tg: groups){
-            tg.verifyProperties();
+        for(TestExercise te : exercises){
+            if(te instanceof ReferenceExercise re){
+                // Duplicates the exercise
+                String dupExerciseId = exercisesService.duplicateExerciseById(specialistId,re.getId());
+                // Sets exercise visibility to test
+                // Sets exercise points
+                // TODO - acabar
+            }else if (te instanceof ConcreteExercise ce){
+
+            }
         }
-        List<String> exerciseIds = groups.stream()
-                .flatMap(e -> e.getExercises().values().stream())
-                .flatMap(List::stream)
-                .toList();
 
         for (String exerciseId: exerciseIds){
             Exercise exercise = exercisesService.getExerciseById(exerciseId);
@@ -218,14 +217,6 @@ public class TestsService implements ITestsService {
             }
         }
 
-        // TODO: check points in groups
-
-        // persist the test in nosql database
-        body = testDAO.save(body);
-
-        // persists the test in sql database
-        Institution inst = body.getInstitutionId() != null ? entityManager.getReference(Institution.class, body.getInstitutionId()) : null;
-        body.setInstitution(inst);
 
         Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
         body.setCourse(course);
@@ -233,7 +224,14 @@ public class TestsService implements ITestsService {
         Specialist specialist = entityManager.getReference(Specialist.class, specialistId);
         body.setSpecialist(specialist);
 
-        testDAO.save(body);
+        // get owner's institution id
+        try {
+            Institution inst = institutionsService.getSpecialistInstitution(specialistId);
+            body.setInstitution(inst);
+        }
+        catch (NotFoundException ignored){}
+
+        body = testDAO.save(body);
         createTestTags(tagsCounter, body);
 
         return body.getId();
@@ -595,5 +593,16 @@ public class TestsService implements ITestsService {
         // changes visibility of exercise from TEST to private
         // cant be done if after publish date
         return null;
+    }
+
+    @Override
+    public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
+        // TODO
     }
 }
