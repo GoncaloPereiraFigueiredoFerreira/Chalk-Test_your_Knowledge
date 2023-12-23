@@ -1,7 +1,5 @@
 package pt.uminho.di.chalktyk.models.tests;
 
-import java.sql.Time;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -38,14 +36,14 @@ public class LiveTest extends Test {
 	private LocalDateTime startDate;
 
 	@Column(name="Duration")
-	private Time duration;
+	private long duration; // in seconds
 
 	@Column(name="StartTolerance")
-	private Time startTolerance;
+	private long startTolerance; // in seconds
 
 	public LiveTest(String id, String title, String globalInstructions, Float globalPoints, String conclusion, LocalDateTime creationDate, LocalDateTime publishDate,
 					Specialist specialist, Visibility visibility, Course course, Institution institution, Map<Integer,TestGroup> groups,
-					LocalDateTime startDate, Time duration, Time startTolerance){
+					LocalDateTime startDate, long duration, long startTolerance){
 		super(id, title, globalInstructions, globalPoints, conclusion, creationDate, publishDate,
 					specialist, visibility, course, institution, groups);
 		this.setStartDate(startDate);
@@ -57,14 +55,11 @@ public class LiveTest extends Test {
 		super.verifyProperties();
 		if (super.getPublishDate().isAfter(getStartDate()))
 			throw new BadInputException("Cannot create test: Start date is invalid - occurs before publish date");
-
-		// TODO: convert to duration
-		/* 
-		if (getDuration().isNegative() || getDuration().isZero())
-			throw new BadInputException("Cannot create test: Test duration is invalid - non-positive duration");
 		
-		if (getStartTolerance().isNegative())
-			throw new BadInputException("Cannot create test: Test start tolerance is negative");
-		*/
+		if (getDuration() <= 0)
+			throw new BadInputException("Cannot create test: Test duration is invalid. The test duration is represented in seconds and must be a positive number.");
+		
+		if (getStartTolerance() <= 0 || getStartTolerance() > getDuration())
+			throw new BadInputException("Cannot create test: Test start tolerance is invalid. The test start tolerance is represented in seconds and must be a positive number that is equal or less than the the test duration.");
 	}
 }
