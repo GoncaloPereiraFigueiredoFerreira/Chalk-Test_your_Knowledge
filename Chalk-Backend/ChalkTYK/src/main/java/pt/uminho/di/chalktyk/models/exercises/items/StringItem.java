@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.items;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonTypeName("string")
 public class StringItem extends Item {
 	private String text;
 	@Override

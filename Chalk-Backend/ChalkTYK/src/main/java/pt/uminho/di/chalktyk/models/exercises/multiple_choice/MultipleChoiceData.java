@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.multiple_choice;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,10 +53,12 @@ public class MultipleChoiceData extends ExerciseResolutionData implements Serial
 		return new MultipleChoiceData(itemsCloned);
 	}
 
+	@JsonIgnore
 	public Set<Integer> getIds(){
-		return items.keySet();
+		return items != null ? items.keySet() : null;
 	}
 
+	@JsonIgnore
 	public MultipleChoiceResolutionItem getItemById(int id){
 		return items != null ? items.get(id) : null;
 	}

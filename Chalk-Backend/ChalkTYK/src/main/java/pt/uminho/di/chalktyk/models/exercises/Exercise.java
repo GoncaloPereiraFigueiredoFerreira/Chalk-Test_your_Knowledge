@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.models.exercises;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
@@ -10,6 +11,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceData;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
+import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerData;
+import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
@@ -25,6 +33,12 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @Setter
 @DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "Type")
+@JsonSubTypes({
+		@JsonSubTypes.Type(name = "MC", value = MultipleChoiceExercise.class),
+		@JsonSubTypes.Type(name = "OA", value = OpenAnswerExercise.class),
+		@JsonSubTypes.Type(name = "FTB", value = FillTheBlanksExercise.class),
+		@JsonSubTypes.Type(name = "FTBO", value = FillTheBlanksOptionsExercise.class)
+})
 @NamedEntityGraph(
 		name = "Exercise.NoRubricNoSolution",
 		attributeNodes = {
@@ -139,10 +153,8 @@ public abstract class Exercise {
 	 */
 	public abstract ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException;
 
-	//TODO verificar ids
 	public abstract void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException;
 
-	//TODO verificar ids
 	public abstract void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException;
 
 	/**
@@ -178,4 +190,14 @@ public abstract class Exercise {
 	 * @return exercise of the same class, with data of the exercise cloned, ignoring metadata or association related information.
 	 */
 	public abstract Exercise cloneExerciseDataOnly();
+
+	@Override
+	public String toString() {
+		return "Exercise{" +
+				"id='" + id + '\'' +
+				", title='" + title + '\'' +
+				", exerciseType='" + exerciseType + '\'' +
+				", visibility=" + visibility +
+				'}';
+	}
 }
