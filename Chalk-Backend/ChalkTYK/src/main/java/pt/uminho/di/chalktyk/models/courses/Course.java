@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,6 +53,21 @@ public class Course {
 	@JoinColumn(name="InstitutionID", referencedColumnName="ID")
 	private Institution institution;
 
+	/**
+	 * Creates a course with id, where the rest of the parameters are null.
+	 */
+	public Course(String id){
+		this.id=id;
+	}
+
+	public Course(String id, String name, String description, String ownerId, Set<Specialist> specialists) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.ownerId = ownerId;
+		this.specialists = specialists;
+	}
+
 	public void addSpecialist(Specialist s){
 		if(specialists == null)
 			specialists = new HashSet<>();
@@ -74,11 +90,11 @@ public class Course {
 		return duplicatedCourse;
 	}
 
-	/**
-	 * Creates a course with id, where the rest of the parameters are null.
-	 */
-	public Course(String id){
-		 this.id=id;
+	@JsonIgnore
+	public String getInstitutionId(){
+		if(institution == null)
+			return null;
+		else
+			return institution.getName();
 	}
-
 }

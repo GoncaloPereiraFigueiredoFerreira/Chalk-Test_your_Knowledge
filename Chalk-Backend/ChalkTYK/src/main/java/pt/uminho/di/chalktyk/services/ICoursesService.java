@@ -68,9 +68,12 @@ public interface ICoursesService {
 
     /**
      * Update course basic information
-     * @param course basic course information
+     *
+     * @param courseId
+     * @param name
+     * @param description
      */
-    void updateCourse(Course course) throws BadInputException, NotFoundException;
+    void updateCourseBasicProperties(String courseId, String name, String description) throws BadInputException, NotFoundException;
 
     /**
      * Get list of students that are associated with a specific course.

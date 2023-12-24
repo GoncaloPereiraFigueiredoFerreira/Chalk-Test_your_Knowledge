@@ -169,35 +169,30 @@ public class CoursesService implements ICoursesService {
     }
 
     /**
-     * Update course basic information. Owner cannot be updated here.
+     * Update course basic information.
      *
-     * @param course basic course information
+     * @param courseId
+     * @param name
+     * @param description
      */
     @Override
     @Transactional
-    public void updateCourse(Course course) throws BadInputException, NotFoundException {
-        if(course == null)
-            throw new BadInputException("Cannot update course: course is null.");
+    public void updateCourseBasicProperties(String courseId, String name, String description) throws BadInputException, NotFoundException {
+        Course course = getCourseById(courseId);
 
         if(course.getId() == null)
             throw new BadInputException("Cannot update course: identifier of the course is null");
 
-        Course origCourse = courseDAO.findById(course.getId()).orElse(null);
-        if(origCourse == null)
-            throw new NotFoundException("Cannot update course: course does not exist.");
-
         // check name
-        String name = course.getName();
         if(name == null || name.isEmpty())
             throw new BadInputException("Cannot update course: A name of a course cannot be empty or null.");
-        boolean nameUpdated = origCourse.getName().equals(name);
 
         // update course fields
-        origCourse.setName(course.getName());
-        origCourse.setDescription(course.getDescription());
+        course.setName(course.getName());
+        course.setDescription(course.getDescription());
 
         // update the course in database
-        courseDAO.save(origCourse);
+        courseDAO.save(course);
     }
 
     /**
