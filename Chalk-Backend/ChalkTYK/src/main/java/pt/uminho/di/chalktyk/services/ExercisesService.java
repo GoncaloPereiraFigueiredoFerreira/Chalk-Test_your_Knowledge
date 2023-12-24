@@ -818,24 +818,24 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * @param userId           identifier of the user that made the request. Necessary to check authorization.
-     * @param page             index of the page
-     * @param itemsPerPage     number of items per page
-     * @param tags             list of tags to filter exercises
-     * @param matchAllTags     if 'false' an exercise will match if at least one tag of the exercise matches one of the given list.
-     *                         if 'true' the exercise must have all the tags present in the list
-     * @param visibilityType   type of visibility
-     * @param courseId         to search for an exercise from a specific course
-     * @param institutionId    to search for and exercise from a specific institution
-     * @param specialistId     to search for the exercises created by a specific specialist
-     * @param title            to search for an exercise title
-     * @param exerciseType     to search for an exercise of a certain type
-     * @param verifyParams     if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
-     *                         'false' does not verify database logic
+     * @param userId         identifier of the user that made the request. Necessary to check authorization.
+     * @param page           index of the page
+     * @param itemsPerPage   number of items per page
+     * @param tags           list of tags to filter exercises
+     * @param matchAllTags   if 'false' an exercise will match if at least one tag of the exercise matches one of the given list.
+     *                       if 'true' the exercise must have all the tags present in the list
+     * @param visibilityType type of visibility
+     * @param courseId       to search for an exercise from a specific course
+     * @param institutionId  to search for and exercise from a specific institution
+     * @param specialistId   to search for the exercises created by a specific specialist
+     * @param title          to search for an exercise title
+     * @param exerciseType   to search for an exercise of a certain type
+     * @param verifyParams   if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
+     *                       'false' does not verify database logic
      * @return list of exercises that match the given filters
      */
     @Override
-    public List<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
+    public Page<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
         Visibility visibility= null;
         if (visibilityType != null) {
             visibility = Visibility.fromValue(visibilityType);
@@ -856,9 +856,18 @@ public class ExercisesService implements IExercisesService{
         if (verifyParams && specialistId != null) {
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("Theres no specialist with the given id");
-        } //TODO verificação das tags
-        Page<Exercise> exerciseS = exerciseDAO.getExercises(PageRequest.of(page, itemsPerPage),tags,matchAllTags,visibility,institutionId,courseId,specialistId,title,exerciseType);
-        return exercisesToNo(exerciseS);
+        }
+
+        Page<Exercise> exercises;
+        if(matchAllTags && tags != null && !tags.isEmpty())
+            exercises = exerciseDAO.getExercisesMatchAllTags(tags, tags.size(), visibility, institutionId,
+                                                             courseId, specialistId, title, exerciseType,
+                                                             PageRequest.of(page, itemsPerPage));
+        else
+            exercises = exerciseDAO.getExercisesMatchAnyGivenTag(tags,visibility,institutionId,courseId,
+                                                                 specialistId,title,exerciseType,
+                                                                 PageRequest.of(page, itemsPerPage));
+        return exercises;
     }
 
     /**

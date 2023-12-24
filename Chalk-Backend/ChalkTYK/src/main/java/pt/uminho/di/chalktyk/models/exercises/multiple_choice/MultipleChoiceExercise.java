@@ -48,8 +48,7 @@ public class MultipleChoiceExercise extends Exercise {
 	public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
 		if(!(rubric instanceof MultipleChoiceRubric multipleChoiceRubric))
 			throw new BadInputException("Exercise rubric does not match exercise type (multiple choice).");
-		if(multipleChoiceRubric.getJustificationsRubrics().size() != items.size())
-			throw new BadInputException("Exercise rubric justification size must be the same as the number of items");
+		// TODO - FUTURE WORK -> check if there is an openanswer rubric for each question that needs justification.
 		if(multipleChoiceRubric.getMaxPointsSum()!=super.getPoints())
 			throw new BadInputException("Exercise rubric maximum points (points*number of items) must be equals to exercise points");
 		multipleChoiceRubric.verifyProperties();
