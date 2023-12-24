@@ -1,4 +1,5 @@
 package pt.uminho.di.chalktyk.Services;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +36,17 @@ public class ExercisesServiceTest {
     private final IStudentsService studentsService;
     private final ITagsService iTagsService;
     private final Seed seed;
+    private final EntityManager entityManager;
 
     @Autowired
-    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService iTagsService){
+    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService iTagsService, EntityManager entityManager){
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
         this.exercisesService = exercisesService;
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.iTagsService = iTagsService;
+        this.entityManager = entityManager;
         this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService,exercisesService);
     }
 
@@ -288,7 +291,7 @@ public class ExercisesServiceTest {
 
         exercisesService.createExerciseResolution(studentId,exerciseId,createHalfWrongMCResolution());
         ExerciseResolutionData rightMC = createRightMCResolution();
-        exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone()); //todo este clone tem magia negra
+        exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone());
         assertEquals(2,exercisesService.countExerciseResolutions(exerciseId,true));
         assertEquals(1,exercisesService.countExerciseResolutions(exerciseId,false));
 
