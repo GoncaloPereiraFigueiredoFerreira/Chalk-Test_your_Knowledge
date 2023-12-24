@@ -3,13 +3,11 @@ package pt.uminho.di.chalktyk.models.tests;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.hibernate.type.descriptor.jdbc.JsonJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,7 +61,7 @@ public class TestResolution {
 
 	@Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb", name = "Groups")
-	private Map<Integer,TestResolutionGroup> groups;
+	private Map<Integer, TestResolutionGroup> groups;
 
 	public void updateSum() {
 		totalPoints = groups.values().stream()
@@ -71,5 +69,22 @@ public class TestResolution {
 				.filter(Objects::nonNull) // Filter out null values
 				.reduce(Float::sum)
 				.orElse(0.0f);
+	}
+
+	public void verifyProperties() throws BadInputException {
+		// check submission nr
+		if (submissionNr < 0)
+			throw new BadInputException ("Cannot create test resolution: submission nr must be non-negative");
+
+		// check groups
+		if (totalPoints != null){
+			Float points = 0.0F;
+			for (TestResolutionGroup trg: groups.values()){
+				points += trg.getGroupPoints();
+			}
+
+			if (totalPoints != points)
+				throw new BadInputException ("Cannot create test resolution: total points don't correspond with group points");
+		}
 	}
 }

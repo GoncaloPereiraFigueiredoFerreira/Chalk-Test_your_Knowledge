@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.Pair;
 
 @Getter
 @Setter
@@ -14,5 +13,5 @@ import org.apache.commons.lang3.tuple.Pair;
 @AllArgsConstructor
 public class TestResolutionGroup {
 	private Float groupPoints;
-	private Map<Integer, Pair<String,String>> resolutions;
+	private Map<Integer, String> resolutions;
 }

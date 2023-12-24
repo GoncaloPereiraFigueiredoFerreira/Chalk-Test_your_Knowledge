@@ -3,7 +3,6 @@ package pt.uminho.di.chalktyk.services;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -442,7 +441,7 @@ public class TestsService implements ITestsService {
         test.setGroups(groups);
         // update points
         test.calculatePoints();
-        
+
         testDAO.save(test);
     }
 
@@ -575,34 +574,57 @@ public class TestsService implements ITestsService {
     public TestResolution createTestResolution(String testId, TestResolution resolution) throws BadInputException, NotFoundException {
         // check test
         if (testId == null)
-            throw new BadInputException("Cannot create test resolution: resolution must belong to a test.");
-        if (!testDAO.existsById(testId))
-            throw new NotFoundException("Cannot create test resolution: couldn't find test.");
-
+            throw new BadInputException("Cannot create test resolution: resolution must belong to a test");
+        Test test = getTestById(testId);
+        if (test == null)
+            throw new NotFoundException("Cannot create test resolution: couldn't find test");
         if (resolution == null)
-            throw new BadInputException("Cannot create a test resolution with a 'null' body.");
+            throw new BadInputException("Cannot create a test resolution with a 'null' body");
 
-        Test test = testDAO.getReferenceById(testId);
         resolution.setTest(test);
+        resolution.verifyProperties();
 
-        // TODO: check if test is ongoing
-        // TODO: check visibility
-        // TODO: check course and visibility
-        // TODO: check if student belongs to course
-        // TODO: check resolution status
-        // TODO: check points in groups
+        // check time constraints
+        LocalDateTime startDate = resolution.getStartDate();
+        LocalDateTime submissionDate = resolution.getSubmissionDate();
+        if (startDate != null && submissionDate != null && startDate.isAfter(submissionDate))
+            throw new BadInputException("Cannot create a test resolution: submission date occurs before start date");
+
+        LocalDateTime testCreationDate = test.getCreationDate();
+        LocalDateTime testPublishDate = test.getPublishDate();
+        if (testCreationDate == null || testPublishDate == null)
+            throw new BadInputException("Cannot create a test resolution: test hasn't been created or published");
+        if (testCreationDate.isAfter(startDate) || testPublishDate.isAfter(startDate))
+            throw new BadInputException("Cannot create a test resolution: start date needs to be after test creation or publication");
+
+        if (test instanceof DeliverDateTest ddt){
+            LocalDateTime testDeliverDate = ddt.getDeliverDate();
+            if (testDeliverDate != null && testDeliverDate.isAfter(startDate))
+                throw new BadInputException("Cannot create a test resolution: start date needs to be after test deliver date");
+        }
+        else if (test instanceof LiveTest lt) {
+            LocalDateTime testStartDate = lt.getStartDate();
+            if (testStartDate != null && testStartDate.isAfter(startDate))
+                throw new BadInputException("Cannot create a test resolution: start date needs to be after test start");
+        }
 
         //set the identifier to null to avoid overwrite attacks
         resolution.setId(null);
 
-        // TODO: check other resolutions made by the student and update the submission nr
         // check student
-        String studentId = resolution.getStudent().getId();
-        if (studentId == null)
-            throw new BadInputException("Cannot create test resolution: resolution must belong to a student.");
-        if (!studentsService.existsStudentById(studentId))
-            throw new BadInputException("Cannot create test resolution: resolution must belong to a valid student.");
-        Student student = entityManager.getReference(Student.class, studentId);
+        Student student = resolution.getStudent();
+        if (student == null)
+            throw new BadInputException("Cannot create test resolution: resolution must belong to a student");
+        if (!studentsService.existsStudentById(student.getId()))
+            throw new BadInputException("Cannot create test resolution: resolution must belong to a valid student");
+        
+        // check visibililty constraints
+        if (test.getVisibility().equals(Visibility.COURSE) && !coursesService.checkStudentInCourse(test.getCourseId(), student.getId()))
+            throw new BadInputException("Cannot create test resolution: student must belong to course");
+        if (test.getVisibility().equals(Visibility.INSTITUTION) && !institutionsService.isStudentOfInstitution(student.getId(), test.getInstitutionId()))
+            throw new BadInputException("Cannot create test resolution: student must belong to institution");
+
+        student = entityManager.getReference(Student.class, student.getId());
         resolution.setStudent(student);
 
         return resolutionDAO.save(resolution);
@@ -620,12 +642,95 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public void updateTestResolution(String testResId, TestResolution resolution) throws BadInputException, NotFoundException {
-        TestResolution tr = getTestResolutionById(testResId);
-        
-        if (resolution != null){
-            resolutionDAO.save(tr);
+    public void updateTestResolutionStartDate(String testResId, LocalDateTime startDate) throws NotFoundException, BadInputException {
+        TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Couldn't update resolution start date: Resolution \'" + testResId + "\'was not found");
+
+        Test test = getTestById(resolution.getTest().getId());
+        if (test == null)
+            throw new NotFoundException("Couldn't update resolution start date: couldn't fetch test");
+
+        // check time constraints
+        LocalDateTime submissionDate = resolution.getSubmissionDate();
+        if (submissionDate != null && startDate.isAfter(submissionDate))
+            throw new BadInputException("Couldn't update resolution start date: submission date occurs before start date");
+
+        LocalDateTime testCreationDate = test.getCreationDate();
+        LocalDateTime testPublishDate = test.getPublishDate();
+        if (testCreationDate.isAfter(startDate) || testPublishDate.isAfter(startDate))
+            throw new BadInputException("Couldn't update resolution start date: start date needs to be after test creation or publication");
+
+        if (test instanceof DeliverDateTest ddt){
+            LocalDateTime testDeliverDate = ddt.getDeliverDate();
+            if (testDeliverDate != null && startDate.isAfter(testDeliverDate))
+                throw new BadInputException("Couldn't update resolution start date: start date needs to be before test deliver date");
         }
+        else if (test instanceof LiveTest lt) {
+            LocalDateTime testStartDate = lt.getStartDate();
+            if (testStartDate != null && testStartDate.isAfter(startDate))
+                throw new BadInputException("Couldn't update resolution start date: start date needs to be after test start");
+            
+            LocalDateTime tolerance = testStartDate.plusSeconds(lt.getStartTolerance());
+            if (testStartDate != null && startDate.isAfter(tolerance))
+                throw new BadInputException("Couldn't update resolution start date: start date occurs after test start tolerance");
+        }
+
+        resolution.setStartDate(startDate);
+        resolutionDAO.save(resolution);
+    }
+
+    @Override
+    public void updateTestResolutionSubmissionDate(String testResId, LocalDateTime submissionDate) throws NotFoundException, BadInputException {
+        TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Couldn't update resolution submission date: Resolution \'" + testResId + "\'was not found");
+
+        Test test = getTestById(resolution.getTest().getId());
+        if (test == null)
+            throw new NotFoundException("Couldn't update resolution submission date: couldn't fetch test");
+
+        // check time constraints
+        if (resolution.getStartDate().isAfter(submissionDate))
+            throw new NotFoundException("Couldn't update resolution submission date: submission date needs to occur after resolution start date");
+        if (test instanceof DeliverDateTest ddt){
+            LocalDateTime testDeliverDate = ddt.getDeliverDate();
+            if (testDeliverDate != null && submissionDate.isAfter(testDeliverDate))
+                throw new BadInputException("Couldn't update resolution submission date: submission date needs to be after test deliver date");
+        }
+        else if (test instanceof LiveTest lt) {
+            LocalDateTime resStartDate = resolution.getStartDate();
+            LocalDateTime resEndDate = resStartDate.plusSeconds(lt.getDuration());
+
+            if (submissionDate.isAfter(resEndDate))
+                throw new BadInputException("Couldn't update resolution submission date: submission date needs to be before the end of the test");
+        }
+        
+        resolution.setSubmissionDate(submissionDate);
+        resolutionDAO.save(resolution);
+    }
+
+    @Override
+    public void updateTestResolutionSubmissionNr(String testResId, int submissionNr) throws NotFoundException, BadInputException {
+        TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Couldn't update resolution submission number: Resolution \'" + testResId + "\'was not found");
+
+        if (submissionNr <= 0)
+            throw new BadInputException("Couldn't update resolution submission number: submission number needs to be higher than 0");
+
+        resolution.setSubmissionNr(submissionNr);
+        resolutionDAO.save(resolution);
+    }
+
+    @Override
+    public void updateTestResolutionStatus(String testResId, TestResolutionStatus status) throws NotFoundException {
+        TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Couldn't update resolution: Resolution \'" + testResId + "\'was not found");
+
+        resolution.setStatus(status);
+        resolutionDAO.save(resolution);
     }
 
     @Override
@@ -650,7 +755,6 @@ public class TestsService implements ITestsService {
             if (!institutionsService.isStudentOfInstitution(studentId, test.getInstitutionId()))
                 return false;
         }
-        // TODO: the fuck is "TEST" visibility
 
         // check time constraints
         if (test.getPublishDate().isAfter(LocalDateTime.now()))
@@ -738,14 +842,15 @@ public class TestsService implements ITestsService {
         TestResolution updatedTR = getTestResolutionById(testResId);
         Map<Integer, TestResolutionGroup> updatedGroups = updatedTR.getGroups();
 
-        for(TestResolutionGroup testResolutionGroup:updatedGroups.values()){
-            for (String resolutionId: testResolutionGroup.getResolutions().values().stream().map(Pair::getRight).toList()){
+        for(TestResolutionGroup testResolutionGroup: updatedGroups.values()){
+            for (String resolutionId: testResolutionGroup.getResolutions().values()){
                 if(Objects.equals(resolutionId, exeResId)){
                     //work the difference in points
                     testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints()+points-oldPoints);
                 }
             }
         }
+
         updatedTR.setGroups(updatedGroups);
         updatedTR.updateSum();
         resolutionDAO.save(updatedTR);

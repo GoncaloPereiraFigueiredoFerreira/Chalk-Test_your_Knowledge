@@ -11,6 +11,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -159,7 +160,7 @@ public interface ITestsService {
      * @throws BadInputException if any property of the test is not valid.
      * @throws NotFoundException if no test was found with the given id
      **/
-    void updateTestGroups(String testId, Map<Integer,TestGroup> groups) throws NotFoundException, BadInputException;
+    void updateTestGroups(String testId, Map<Integer, TestGroup> groups) throws NotFoundException, BadInputException;
 
     /**
      * Updates a test's deliver date
@@ -274,14 +275,43 @@ public interface ITestsService {
     void deleteTestResolutionById(String resolutionId) throws NotFoundException;
 
     /**
-     * Update a test resolution
+     * Update a test resolution's start date
      *
      * @param  testResId
-     * @param  resolution
+     * @param  startDate
+     * @throws NotFoundException if no test resolution was found with the given id
      * @throws BadInputException if any property of the test resolution is not valid.
+     **/
+    void updateTestResolutionStartDate(String testResId, LocalDateTime startDate) throws NotFoundException, BadInputException;
+
+    /**
+     * Update a test resolution's submission date
+     *
+     * @param  testResId
+     * @param  submissionDate
+     * @throws NotFoundException if no test resolution was found with the given id
+     * @throws BadInputException if any property of the test resolution is not valid.
+     **/
+    void updateTestResolutionSubmissionDate(String testResId, LocalDateTime submissionDate) throws NotFoundException, BadInputException;
+
+    /**
+     * Update a test resolution's submission number
+     *
+     * @param  testResId
+     * @param  submissionNr
+     * @throws NotFoundException if no test resolution was found with the given id
+     * @throws BadInputException if any property of the test resolution is not valid.
+     **/
+    void updateTestResolutionSubmissionNr(String testResId, int submissionNr) throws NotFoundException, BadInputException;
+
+    /**
+     * Update a test resolution's status
+     *
+     * @param  testResId
+     * @param  status
      * @throws NotFoundException if no test resolution was found with the given id
      **/
-    void updateTestResolution(String testResId, TestResolution resolution) throws BadInputException, NotFoundException;
+    void updateTestResolutionStatus(String testResId, TestResolutionStatus status) throws NotFoundException;
 
     /**
      * Allows to check if the student can submit a resolution for the test
