@@ -599,7 +599,7 @@ public class TestsService implements ITestsService {
 
         if (test instanceof DeliverDateTest ddt){
             LocalDateTime testDeliverDate = ddt.getDeliverDate();
-            if (testDeliverDate != null && testDeliverDate.isAfter(startDate))
+            if (testDeliverDate != null && startDate.isAfter(testDeliverDate))
                 throw new BadInputException("Cannot create a test resolution: start date needs to be after test deliver date");
         }
         else if (test instanceof LiveTest lt) {
@@ -857,10 +857,72 @@ public class TestsService implements ITestsService {
 	}
 
     @Override
-    public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution)
-            throws NotFoundException {
+    public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'uploadResolution'");
+    }
+
+    // TODO: adicionar à interface
+    public void createTestConcreteExercise(String testId, String exerciseId, Integer groupIndex, Integer exIndex, String groupInstructions) throws NotFoundException, BadInputException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't add exercise to test: couldn't find test with id \'" + testId + "\'");
+
+        Exercise exercise = exercisesService.getExerciseById(exerciseId);
+        if (exercise == null)
+            throw new NotFoundException("Couldn't add exercise to test: couldn't find exercise with id \'" + exerciseId + "\'");
+
+        ConcreteExercise cExe = new ConcreteExercise(exercise);
+        Map<Integer, TestGroup> groups = test.getGroups();
+        if (groups.containsKey(groupIndex)){
+            TestGroup tg = groups.get(groupIndex);
+            Map<Integer, TestExercise> exes = tg.getExercises();
+            exes.put(exIndex, cExe);
+            tg.setExercises(exes);
+            tg.calculateGroupPoints();
+            groups.put(groupIndex, tg);
+        }
+        else{
+            Map<Integer, TestExercise> exes = new HashMap<>();
+            exes.put(exIndex, cExe);
+            TestGroup tg = new TestGroup(groupInstructions, null, exes);
+            tg.calculateGroupPoints();
+            groups.put(groupIndex, tg);
+        }
+
+        test.setGroups(groups);
+        testDAO.save(test);
+    }
+
+    public void createTestReferenceExercise(String testId, String exerciseId, Integer groupIndex, Integer exIndex, String groupInstructions, Float points) throws NotFoundException, BadInputException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't add exercise to test: couldn't find test with id \'" + testId + "\'");
+
+        Exercise exercise = exercisesService.getExerciseById(exerciseId);
+        if (exercise == null)
+            throw new NotFoundException("Couldn't add exercise to test: couldn't find exercise with id \'" + exerciseId + "\'");
+
+        TestExercise tExe = new ReferenceExercise(exerciseId, points);
+        Map<Integer, TestGroup> groups = test.getGroups();
+        if (groups.containsKey(groupIndex)){
+            TestGroup tg = groups.get(groupIndex);
+            Map<Integer, TestExercise> exes = tg.getExercises();
+            exes.put(exIndex, tExe);
+            tg.setExercises(exes);
+            tg.calculateGroupPoints();
+            groups.put(groupIndex, tg);
+        }
+        else{
+            Map<Integer, TestExercise> exes = new HashMap<>();
+            exes.put(exIndex, tExe);
+            TestGroup tg = new TestGroup(groupInstructions, null, exes);
+            tg.calculateGroupPoints();
+            groups.put(groupIndex, tg);
+        }
+
+        test.setGroups(groups);
+        testDAO.save(test);
     }
 
     @Override

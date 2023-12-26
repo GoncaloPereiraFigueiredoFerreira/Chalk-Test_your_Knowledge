@@ -106,19 +106,19 @@ public class Test {
 	public void verifyProperties() throws BadInputException {
         // check title
 		if (title == null || title.isEmpty())
-			throw new BadInputException("Cannot create test: A title of a test cannot be empty or null.");
+			throw new BadInputException("Cannot create test: A title of a test cannot be empty or null");
 
 		// check if creation date is before publish date
-		if (creationDate.isAfter(publishDate))
-            throw new BadInputException("Cannot create test: Publish date occurs before creation.");
+		if (publishDate.isBefore(creationDate))
+            throw new BadInputException("Cannot create test: Publish date occurs before creation");
 
 		// check publish date
 		if (!publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
-            throw new BadInputException("Cannot create test: Publish date is outdated.");
+            throw new BadInputException("Cannot create test: Publish date is outdated");
 
 		// check global points
-		if (globalPoints <= 0)
-			throw new BadInputException("Cannot create test: Global points must be positive.");
+		if (globalPoints < 0)
+			throw new BadInputException("Cannot create test: Global points must be non-negative");
 
 		if (groups != null) {
 			for (TestGroup tg : groups.values()) {
