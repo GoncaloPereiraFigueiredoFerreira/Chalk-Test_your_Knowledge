@@ -295,7 +295,7 @@ public class ExercisesService implements IExercisesService{
      * To delete it, a specific delete method should be invoked.
      *
      * @param exerciseId   identifier of the exercise to be updated
-     * @param exercise     new exercise body
+     * @param newBody     new exercise body
      * @param rubric       new exercise rubric
      * @param solution     new exercise solution
      * @param tagsIds      new list of tags
@@ -304,47 +304,49 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     @Transactional
-    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
-        if(!exerciseExists(exerciseId))
-            throw new NotFoundException("No exercise with the given id exists.");
-        if(exercise!=null) {
-            if(exercise.getId() == null)
-                exercise.setId(exerciseId);
-            if (!Objects.equals(exerciseId, exercise.getId()))
-                throw new BadInputException("ExerciseId must be the same as the one given in the exercise");
-            updateExerciseBody(exercise, rubric == null, solution == null); //if rubric or solution are not null, then they will verify exercise
-        }
+    public void updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
+        // gets exercise using the identifier, or throws not found exception
+        Exercise exercise = _getExerciseById(exerciseId);
+
+        // checks if body is valid and updates it in the case it is valid
+        if(newBody != null)
+            //if rubric or solution are not null, then they will verify exercise
+            exercise = _updateExerciseBody(exercise, newBody, rubric == null, solution == null);
+
         if(rubric!=null)
-            updateExerciseRubric(exerciseId,rubric);
+            _createExerciseRubric(exercise,rubric); // this method is used to create/update the rubric of an exercise.
         if(solution!=null)
-            updateExerciseSolution(exerciseId,solution);
+            _createExerciseSolution(exercise,solution); // this method is used to create/update the solution of an exercise.
         if(tagsIds!=null)
-            updateExerciseTags(exerciseId,tagsIds);
+            _updateExerciseTags(exercise,tagsIds);
         if(visibility!=null)
-            updateExerciseVisibility(exerciseId,visibility);
+            _updateExerciseVisibility(exercise,visibility);
     }
 
+    @Override
+    public void updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        _updateExerciseBody(exercise, newBody, false, false);
+    }
 
-    // TODO - ver se existe update exercise's course and owner
+// TODO - ver se existe update exercise's course and owner
     /**
      * Updates an exercise body.
      *
+     * @param exercise the actual exercise instance retrieved from the database
      * @param newBody new exercise body
      * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
      * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
-     * @throws NotFoundException if the test wasn't found
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
      * course was not found,
      * the rubric or solution don't belong to the new exercise body
      */
-    @Transactional
-    public void updateExerciseBody(Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws NotFoundException, BadInputException {
-        String exerciseId = newBody.getId();
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if (exercise == null)
-            throw new NotFoundException("Couldn't update exercise: exercise with id \'" + exerciseId + "\' wasn't found");
+    private Exercise _updateExerciseBody(Exercise exercise, Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
+        String exerciseId = exercise.getId();
 
         // Check new body properties
+        if(newBody == null)
+            throw new BadInputException("Could not update exercise body: body is null.");
         newBody.verifyInsertProperties();
         
         // copies exercise related data to the original exercise
@@ -384,6 +386,8 @@ public class ExercisesService implements IExercisesService{
             exerciseRubricDAO.deleteById(rubric.getId());
         if(deleteSolution)
             exerciseSolutionDAO.deleteById(solution.getId());
+
+        return exercise;
     }
 
     /**
@@ -394,11 +398,14 @@ public class ExercisesService implements IExercisesService{
      */
     @Transactional
     public void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        _updateExerciseTags(exercise, tagsIds);
+    }
+
+    private void _updateExerciseTags(Exercise exercise, List<String> tagsIds) throws BadInputException, NotFoundException{
         for (String id:tagsIds)
             if(iTagsService.getTagById(id)==null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise!=null;
 
         Set<String> setTagsIds = new HashSet<>(tagsIds);
         Set<Tag> tags = new HashSet<>();
@@ -412,40 +419,28 @@ public class ExercisesService implements IExercisesService{
         exerciseDAO.save(exercise);
     }
 
+    @Override
+    public void updateExerciseVisibility(String exerciseId, Visibility visibility) throws NotFoundException, BadInputException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        _updateExerciseVisibility(exercise, visibility);
+    }
 
     /**
-     * Updates and exercise visibility. Assumes that the exercise exists
+     * Updates the exercise visibility.
      *
-     * @param exerciseId   identifier of the exercise to be updated
+     * @param exercise   exercise. Assumed not null
      * @param visibility   new visibility
      * @throws BadInputException if there's something wrong with the text
      */
-    private void updateExerciseVisibility(String exerciseId, Visibility visibility) throws BadInputException {
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        assert exercise != null;
-
-        // Checks if specialist exists and gets the institution where it belongs
-        Institution institution;
-        try { institution = institutionsService.getSpecialistInstitution(exercise.getSpecialist().getId()); }
-        catch (NotFoundException nfe){ throw new BadInputException("Cannot create exercise: Specialist does not exist."); }
-
+    private void _updateExerciseVisibility(Exercise exercise, Visibility visibility) throws BadInputException {
         // If the specialist that owns the exercise does not have an institution,
         // then the exercise's visibility cannot be set to institution.
-        if (visibility == Visibility.INSTITUTION && institution == null)
-            throw new BadInputException("Cannot set visibility to INSTITUTION");
-
-        // Check if course is valid
-        String courseId = exercise.getCourse().getId();
-        try {
-            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialist().getId()))
-                throw new BadInputException("Cannot create exercise: course not found.");
-        } catch (NotFoundException nfe){
-            throw new BadInputException("Cannot create exercise: Specialist does not belong to the given course.");
-        }
+        if (visibility == Visibility.INSTITUTION && exercise.getInstitution() == null)
+            throw new BadInputException("Cannot set visibility to INSTITUTION because the exercise does not have any institution associated.");
 
         // Cannot set visibility to COURSE without a course associated
-        if (courseId == null && visibility == Visibility.COURSE)
-            throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
+        if (visibility == Visibility.COURSE && exercise.getCourse() == null)
+            throw new BadInputException("Cannot set visibility to COURSE because the exercise does not have a course associated.");
         exercise.setVisibility(visibility);
         exerciseDAO.save(exercise);
     }
@@ -475,11 +470,17 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException {
-        // finds exercise
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if (exercise == null)
-            throw new NotFoundException("Cannot create exercise rubric: exercise does not exist.");
+        Exercise exercise = _getExerciseById(exerciseId);
+        _createExerciseRubric(exercise, rubric);
+    }
 
+    /**
+     * Used to create or update the rubric of an exercise.
+     * @param exercise the exercise that should get its rubric updated. Cannot be null.
+     * @param rubric the new rubric
+     * @throws BadInputException if the rubric is not valid.
+     */
+    public void _createExerciseRubric(Exercise exercise, ExerciseRubric rubric) throws BadInputException {
         // checks if rubric is not null
         if (rubric == null)
             throw new BadInputException("Cannot create exercise rubric: rubric is null.");
@@ -532,11 +533,17 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void createExerciseSolution(String exerciseId, ExerciseSolution solution) throws NotFoundException, BadInputException {
-        // finds exercise
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if (exercise == null)
-            throw new NotFoundException("Cannot create exercise solution: exercise does not exist.");
+        Exercise exercise = _getExerciseById(exerciseId);
+        _createExerciseSolution(exercise, solution);
+    }
 
+    /**
+     * Used to create or update the solution of an exercise.
+     * @param exercise the exercise that should get its solution updated. Cannot be null.
+     * @param solution the new solution
+     * @throws BadInputException if the solution is not valid.
+     */
+    public void _createExerciseSolution(Exercise exercise, ExerciseSolution solution) throws BadInputException {
         // checks if solution is not null
         if (solution == null)
             throw new BadInputException("Cannot create exercise solution: solution is null.");

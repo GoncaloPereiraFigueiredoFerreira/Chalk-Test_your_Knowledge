@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @SpringBootTest
+@Transactional
 public class TestCourses {
     private final EntityManager entityManager;
     private final IInstitutionsService institutionsService;
@@ -41,7 +42,6 @@ public class TestCourses {
     }
 
     @Test
-    @Transactional
     void createCourse() throws BadInputException, NotFoundException {
         try {
             // creates an institution
@@ -80,7 +80,6 @@ public class TestCourses {
     }
 
     @Test
-    @Transactional
     void createCourseNoInstitution() {
         try {
             Specialist specialist = new Specialist(null, "Ze", "ze.png", "ze@hotmail.com", "Lindo", null);
@@ -106,7 +105,6 @@ public class TestCourses {
     }
 
     @Test
-    @Transactional
     void existsCourse(){
         try {
             Specialist specialist = new Specialist(null, "Ze", "ze.png", "ze@hotmail.com", "Lindo", null);
@@ -118,8 +116,8 @@ public class TestCourses {
             assert false;
         }
     }
+
     @Test
-    @Transactional
     void addSpecialistToAndRemoveSpecialistFromCourse(){
         try {
             Specialist specialist = new Specialist(null, "Ze", "ze.png", "ze@hotmail.com", "Lindo", null);
@@ -189,7 +187,6 @@ public class TestCourses {
     }
 
     @Test
-    @Transactional
     void addStudentToAndRemoveStudentFromCourse(){
         try {
             Specialist specialist = new Specialist(null, "Ze", "ze.png", "ze@hotmail.com", "Lindo", null);
@@ -241,6 +238,42 @@ public class TestCourses {
             // checks that they were effectively removed
             assert !coursesService.checkStudentInCourse(courseId, studentId)
                     && !coursesService.checkStudentInCourse(courseId, student2Id);
+        }catch (Exception ignored){
+            assert false;
+        }
+    }
+
+    @Test
+    void updateCourseBasicProperties() throws BadInputException, NotFoundException {
+        try {
+            // creates a specialist
+            Specialist specialist = new Specialist(null, "Ze", "ze.png", "ze@hotmail.com", "Lindo");
+            specialistsService.createSpecialist(specialist);
+
+            // creates the course
+            Course course = new Course(null, "Basic Japanese", "hiragana, katakana and basic sentences.", specialist.getId(), Set.of(specialist), null);
+            String courseId = coursesService.createCourse(course);
+
+            assert coursesService.existsCourseById(courseId);
+
+            // update course
+            String newName = "BASIC JAPANESE", newDescription = "some description.";
+            coursesService.updateCourseBasicProperties(courseId, newName, newDescription);
+
+            // gets course
+            try {
+                course = coursesService.getCourseById(courseId);
+            } catch (NotFoundException nfe) {
+                // should not enter here
+                assert false;
+            }
+
+            assert course != null;
+            System.out.println(course.getName());
+            assert course.getName().equals(newName);
+            assert course.getDescription().equals(newDescription);
+            assert Objects.equals(course.getOwnerId(), specialist.getId());
+            assert course.getInstitution() == null;
         }catch (Exception ignored){
             assert false;
         }

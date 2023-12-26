@@ -28,26 +28,27 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 public class ExercisesServiceTest {
     private final ICoursesService coursesService;
     private final ISpecialistsService specialistsService;
     private final IExercisesService exercisesService;
     private final IInstitutionsService institutionsService;
     private final IStudentsService studentsService;
-    private final ITagsService iTagsService;
+    private final ITagsService tagsService;
     private final Seed seed;
     private final EntityManager entityManager;
 
     @Autowired
-    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService iTagsService, EntityManager entityManager){
+    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService tagsService, EntityManager entityManager){
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
         this.exercisesService = exercisesService;
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
-        this.iTagsService = iTagsService;
+        this.tagsService = tagsService;
         this.entityManager = entityManager;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService,exercisesService);
+        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, tagsService,exercisesService);
     }
 
 
@@ -191,19 +192,28 @@ public class ExercisesServiceTest {
         return new FillTheBlanksRubric(1.0F,0.0F);
     }
 
-    
     @Test
-    @Transactional
+    public void getExerciseFailWithNotFound(){
+        try {
+            exercisesService.getExerciseById("DoesNotExistID");
+            assert false;
+        } catch (NotFoundException e) {
+            assert true;
+        }
+    }
+
+    @Test
     public void createOAExercise() throws BadInputException {
         ExerciseSolution exerciseSolution = createOASolution();
         ExerciseRubric exerciseRubric = createOARubric();
         Exercise exercise = createOAExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
+        Tag tag1 = tagsService.createTag("Espanol","/");
+        Tag tag2 = tagsService.createTag("NewEspanol","/");
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId()));
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
     @Test
-    @Transactional
     public void createMCExercise() throws BadInputException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
@@ -213,7 +223,6 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    @Transactional
     public void createFTBExercise() throws BadInputException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
@@ -224,7 +233,6 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    @Transactional
     public void createDuplicate() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
@@ -236,7 +244,6 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    @Transactional
     public void deleteExercise() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
@@ -250,7 +257,6 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    @Transactional
     public void updateExerciseFail() throws NotFoundException {
         boolean exceptionOcurred = false;
         try {
@@ -267,7 +273,6 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    @Transactional
     public void deleteRubricAndSolution() throws NotFoundException, BadInputException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
@@ -282,7 +287,6 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    @Transactional
     public void createResolutionAndCorrect() throws BadInputException, NotFoundException, UnauthorizedException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
@@ -311,10 +315,4 @@ public class ExercisesServiceTest {
         assertEquals(ExerciseResolutionStatus.REVISED,exerciseResolution.getStatus());
     }
 
-    @Test
-    @Transactional
-    public void alexTest() throws BadInputException, NotFoundException {
-        //System.out.println(seed.addSpecialistWhitman());
-        //System.out.println(specialistsService.getSpecialistById("657d7ecce74d6353504d0d13"));
-    }
 }

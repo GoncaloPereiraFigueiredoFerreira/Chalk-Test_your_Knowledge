@@ -84,16 +84,16 @@ public interface IExercisesService{
     /**
      * Updates an exercise body.
      *
-     * @param newBody new exercise body
-     * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
-     * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
+     * @param exerciseId
+     * @param newBody    new exercise body
      * @throws NotFoundException if the test wasn't found
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
-     * course was not found,
-     * the rubric or solution don't belong to the new exercise body
+     *                           course was not found,
+     *                           the rubric or solution don't belong to the new exercise body
      */
-    @Transactional
-    public void updateExerciseBody(Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws NotFoundException, BadInputException;
+    void updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException;
+
+    void updateExerciseVisibility(String exerciseId, Visibility visibility) throws NotFoundException, BadInputException;
 
     /**
      * Retrieves the rubric of an exercise.

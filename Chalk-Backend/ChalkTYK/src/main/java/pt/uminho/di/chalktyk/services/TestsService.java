@@ -153,7 +153,7 @@ public class TestsService implements ITestsService {
                 exe = exercisesService.getExerciseById(dupExerciseId);
                 exe.setVisibility(Visibility.TEST);
                 exe.setPoints(re.getPoints());
-                exercisesService.updateExerciseBody(exe, false, false);
+                exercisesService.updateExerciseBody(exe.getId(), exe);
             }
             else if (te instanceof ConcreteExercise ce){
                 exe = ce.getExercise();
