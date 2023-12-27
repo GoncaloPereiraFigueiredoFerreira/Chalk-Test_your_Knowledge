@@ -1013,6 +1013,15 @@ public class ExercisesService implements IExercisesService{
             throw new NotFoundException("Exercise does not exist.");
     }
 
+    @Override
+    public void deleteExerciseResolutionById(String exeResId) throws NotFoundException {
+        ExerciseResolution resolution = exerciseResolutionDAO.findById(exeResId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Couldn't delete exercise resolution: Resolution \'" + exeResId + "\'was not found");
+
+        exerciseResolutionDAO.delete(resolution);
+    }
+
 
     /* **** Auxiliary methods **** */
 

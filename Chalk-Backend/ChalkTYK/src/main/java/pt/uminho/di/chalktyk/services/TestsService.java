@@ -88,10 +88,7 @@ public class TestsService implements ITestsService {
                 throw new NotFoundException("There is no specialist with the given id");
         }
 
-        //TODO - getTests
-        //Page<TestSQL> testSQLS = testSqlDAO.getTests(PageRequest.of(page, itemsPerPage),tags, tags.size(), matchAllTags,visibility,institutionId,courseId,specialistId,title);
-        //return exercisesSqlToNoSql(testSQLS);
-        return null;
+        return testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, Visibility.fromValue(visibilityType), institutionId, courseId, specialistId, title);
     }
 
     @Override
@@ -149,21 +146,24 @@ public class TestsService implements ITestsService {
         for (TestGroup tg: tgs){
             List<TestExercise> newExes = new ArrayList<>();
             for (TestExercise exe: tg.getExercises()){
-                // duplicate exercise
+                // duplicate or persist exercise
+                String dupExerciseId = "";
+                Float points = 0.0F;
                 if (exe instanceof ReferenceExercise re){
-                    String dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
+                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
                     Exercise ref = exercisesService.getExerciseById(dupExerciseId);
                     ref.setVisibility(Visibility.TEST);
                     exercisesService.updateExerciseBody(dupExerciseId, ref);
-                    ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, re.getPoints());
-                    newExes.add(newExe);
+                    points = re.getPoints();
                 }
                 else if (exe instanceof ConcreteExercise ce){
-                    // TODO: persistir em vez de duplicar
-                    String dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
-                    ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, ce.getPoints());
-                    newExes.add(newExe);
+                    Exercise tmp = ce.getExercise();
+                    List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
+                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tmp.getVisibility(), tagIds);
+                    points = ce.getPoints();
                 }
+                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, points);
+                newExes.add(newExe);
 
                 // count tags
                 Exercise tagExercise = exercisesService.getExerciseById(exe.getId());
@@ -218,11 +218,9 @@ public class TestsService implements ITestsService {
     public void deleteTestById(String testId) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found in the non-relational database");
-        Test testSQL = testDAO.findById(testId).orElse(null);
-        if (testSQL == null)
-            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found in the relational database");
+            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found in the database");
 
+        // delete test resolutions
         List<TestResolution> trs = resolutionDAO.getTestResolutions(testId);
         if (trs != null){
             for (TestResolution tr: trs){
@@ -230,12 +228,20 @@ public class TestsService implements ITestsService {
             }
         }
 
+        // delete test tags
         List<TestTag> tags = testTagsDAO.getTestTags(testId);
         if (tags != null){
             testTagsDAO.deleteAll(tags);
         }
 
-        // TODO: delete test exercises
+        // delete test exercises
+        List<TestGroup> tgs = test.getGroups();
+        for (TestGroup tg: tgs){
+            for (TestExercise exe: tg.getExercises()){
+                exercisesService.deleteExerciseById(exe.getId());
+            }
+        }
+
         testDAO.delete(test);
     }
 
@@ -535,6 +541,7 @@ public class TestsService implements ITestsService {
 
     @Override
     public void automaticCorrection(String testId, String correctionType) {
+        // TODO
         throw new UnsupportedOperationException("Unimplemented method 'automaticCorrection'");
     }
 
@@ -653,8 +660,13 @@ public class TestsService implements ITestsService {
         if (resolution == null)
             throw new NotFoundException("Couldn't delete resolution: Resolution \'" + resolutionId + "\'was not found");
 
-        // TODO: delete test resolutions
-        //exercisesService.deleteAllExerciseResolutionByTestResolutionId(resolutionId);
+        // delete exercise resolutions
+        for (TestResolutionGroup trg: resolution.getGroups()){
+            for (Map.Entry<String, String> res: trg.getResolutions().entrySet()){
+                if (res.getValue() != null || !res.getValue().equals(""))
+                    exercisesService.deleteExerciseResolutionById(res.getValue());
+            }
+        }
         resolutionDAO.delete(resolution);
     }
 
@@ -782,8 +794,9 @@ public class TestsService implements ITestsService {
         }
         else if (test instanceof LiveTest lt){
             if (lt.getStartDate().isAfter(LocalDateTime.now()))
-                // TODO: convert to duration  
-                //LocalDateTime.now().isAfter(lt.getStartDate().plus(lt.getDuration()).plus(lt.getStartTolerance())))
+                return false;
+            LocalDateTime endOfTest = lt.getStartDate().plusSeconds(lt.getDuration()).plusSeconds(lt.getStartTolerance());
+            if (LocalDateTime.now().isAfter(endOfTest))
                 return false;
         }
 
@@ -875,7 +888,7 @@ public class TestsService implements ITestsService {
 
     @Override
     public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException {
-        // TODO Auto-generated method stub
+        // TODO
         throw new UnsupportedOperationException("Unimplemented method 'uploadResolution'");
     }
 
@@ -957,19 +970,5 @@ public class TestsService implements ITestsService {
         // changes visibility of exercise from TEST to private
         // cant be done if after publish date
         return null;
-    }
-
-
-    @Override
-    public ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getExerciseResolution'");
-    }
-
-
-    @Override
-    public void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAllExerciseResolutionByTestResolutionId'");
     }
 }

@@ -3,9 +3,6 @@ package pt.uminho.di.chalktyk.models.tests;
 import java.io.Serializable;
 import java.util.*;
 
-import org.hibernate.annotations.Type;
-
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

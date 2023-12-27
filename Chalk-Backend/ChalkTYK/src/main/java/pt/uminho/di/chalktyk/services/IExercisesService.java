@@ -238,6 +238,14 @@ public interface IExercisesService{
     ExerciseResolution getExerciseResolution(String resolutionId) throws NotFoundException;
 
     /**
+     * Delete exercise resolution by its id
+     *
+     * @param  exeResId
+     * @throws NotFoundException if no exercise resolution was found with the given id
+     **/
+    void deleteExerciseResolutionById(String exeResId) throws NotFoundException;
+
+    /**
      * Used to set the points of an exercise resolution.
      * @param resolutionId identifier of the resolution
      * @param points points to set
