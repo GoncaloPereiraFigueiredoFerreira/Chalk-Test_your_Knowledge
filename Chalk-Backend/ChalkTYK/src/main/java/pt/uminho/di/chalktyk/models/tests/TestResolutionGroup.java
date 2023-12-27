@@ -13,5 +13,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TestResolutionGroup {
 	private Float groupPoints;
-	private Map<Integer, String> resolutions;
+	private Map<String, String> resolutions;
 }

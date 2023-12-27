@@ -11,7 +11,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @AllArgsConstructor
 @JsonTypeName("concrete")
 @ToString
-public class ConcreteExercise extends TestExercise{
+public class ConcreteExercise extends TestExercise {
     private Exercise exercise;
 
     @Override

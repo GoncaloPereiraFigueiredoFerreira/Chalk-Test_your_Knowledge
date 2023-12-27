@@ -10,6 +10,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.courses.Course;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -47,7 +48,7 @@ import lombok.Setter;
 @DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("basic")
 @JsonTypeName("basic")
-public class Test {
+public class Test implements Serializable {
 	@Column(name="ID")
 	@Id	
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -91,7 +92,7 @@ public class Test {
 
 	@Type(JsonBinaryType.class)
     @Column(name = "Groups", columnDefinition = "jsonb")
-	private Map<Integer, TestGroup> groups;
+	private List<TestGroup> groups;
 
 	/**
 	 * Calculates and updates global and group points.
@@ -99,7 +100,7 @@ public class Test {
 	 */
 	public void calculatePoints() throws BadInputException {
 		globalPoints = 0.0f;
-		for (TestGroup group : groups.values())
+		for (TestGroup group : groups)
 			globalPoints += group.calculateGroupPoints();
 	}
 
@@ -121,7 +122,7 @@ public class Test {
 			throw new BadInputException("Cannot create test: Global points must be non-negative");
 
 		if (groups != null) {
-			for (TestGroup tg : groups.values()) {
+			for (TestGroup tg : groups) {
 				tg.verifyProperties();
 			}
 		}
@@ -164,32 +165,31 @@ public class Test {
 
 		// Duplicate groups if present
 		if (this.groups != null) {
-			Map<Integer, TestGroup> duplicatedGroups = new HashMap<>();
-			for (Map.Entry<Integer, TestGroup> entry : this.groups.entrySet()) {
-				duplicatedGroups.put(entry.getKey(), entry.getValue().clone());
+			List<TestGroup> duplicatedGroups = new ArrayList<>();
+			for (TestGroup entry : this.groups) {
+				duplicatedGroups.add(entry.clone());
 			}
 			duplicatedTest.setGroups(duplicatedGroups);
 		}
 		return duplicatedTest;
 	}
 
-	public Map<Integer, TestResolutionGroup> createEmptyResolutionGroups(){
-		Map<Integer, TestResolutionGroup> resolutionGroups = new HashMap<>();
+	public List<TestResolutionGroup> createEmptyResolutionGroups(){
+		List<TestResolutionGroup> resolutionGroups = new ArrayList<>();
 
 		if (groups != null){
-			for(Map.Entry<Integer, TestGroup> entryTG: groups.entrySet()){
-				Map<Integer, String> resolutionGroupAnswers = new HashMap<>();
+			for(TestGroup entryTG: groups){
+				Map<String, String> resolutionGroupAnswers = new HashMap<>();
 
-				for(Map.Entry<Integer, TestExercise> entry : entryTG.getValue().getExercises().entrySet()){
-					TestExercise exercise = entry.getValue();
-					assert exercise != null; // exercise cannot be empty or null
-					String exerciseId = exercise.getId();
+				for(TestExercise entry : entryTG.getExercises()){
+					assert entry != null; // exercise cannot be empty or null
+					String exerciseId = entry.getId();
 					assert exerciseId != null; // exercise id cannot be null
 
-					resolutionGroupAnswers.put(entry.getKey(), exerciseId);
+					resolutionGroupAnswers.put(exerciseId, "");
 				}
 
-				resolutionGroups.put(entryTG.getKey(), new TestResolutionGroup(null, resolutionGroupAnswers));
+				resolutionGroups.add(new TestResolutionGroup(null, resolutionGroupAnswers));
 			}
 		}
 

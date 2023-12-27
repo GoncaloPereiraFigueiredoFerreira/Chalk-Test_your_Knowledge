@@ -6,7 +6,7 @@ import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -61,10 +61,10 @@ public class TestResolution {
 
 	@Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb", name = "Groups")
-	private Map<Integer, TestResolutionGroup> groups;
+	private List<TestResolutionGroup> groups;
 
 	public void updateSum() {
-		totalPoints = groups.values().stream()
+		totalPoints = groups.stream()
 				.map(TestResolutionGroup::getGroupPoints)
 				.filter(Objects::nonNull) // Filter out null values
 				.reduce(Float::sum)
@@ -79,7 +79,7 @@ public class TestResolution {
 		// check groups
 		if (totalPoints != null){
 			Float points = 0.0F;
-			for (TestResolutionGroup trg: groups.values()){
+			for (TestResolutionGroup trg: groups){
 				points += trg.getGroupPoints();
 			}
 
