@@ -2,10 +2,8 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.util.Pair;
-import org.springframework.transaction.annotation.Transactional;
 
 import pt.uminho.di.chalktyk.models.exercises.*;
-import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -78,7 +76,6 @@ public interface IExercisesService{
      * @throws UnauthorizedException if the exercise is not owned by the specialist
      * @throws NotFoundException if the exercise was not found
      */
-    // TODO - criar metodos privados para update individual de cada componente
     public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility)  throws NotFoundException, BadInputException;
 
     /**
@@ -261,9 +258,9 @@ public interface IExercisesService{
 
     void deleteExerciseSolution(String exerciseId);
 
-    String getExerciseCourse(String exerciseId) throws NotFoundException; // TODO implementar (Bronze) 
+    String getExerciseCourse(String exerciseId) throws NotFoundException;
     
-    Institution getExerciseInstitution(String exerciseId) throws NotFoundException; // TODO implementar (Bronze)
+    String getExerciseInstitution(String exerciseId) throws NotFoundException;
 
     /**
      * @param exerciseId identifier of the exercise
@@ -271,4 +268,9 @@ public interface IExercisesService{
      * @throws NotFoundException if the exercise does not exist
      */
     String getExerciseVisibility(String exerciseId) throws NotFoundException;
+
+    void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException;
+
+    void updateExercisePoints(String exerciseId, float points) throws NotFoundException, BadInputException;
+    void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException;
 }

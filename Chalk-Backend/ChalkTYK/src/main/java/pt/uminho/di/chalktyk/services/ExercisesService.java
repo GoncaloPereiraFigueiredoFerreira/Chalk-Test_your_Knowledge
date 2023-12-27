@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
@@ -220,7 +221,6 @@ public class ExercisesService implements IExercisesService{
             exerciseRubricDAO.deleteById(exercise.getRubricId());
     }
 
-    // TODO - verificar se existe metodo para dar update a visibilidade, ao curso e à cotacao de um exercicio.
     /**
      * Duplicates the exercise that contains the given identifier.
      * The id of the specialist, and if existent, the institution identifier
@@ -324,12 +324,12 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
+    @Transactional
     public void updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _updateExerciseBody(exercise, newBody, false, false);
     }
 
-// TODO - ver se existe update exercise's course and owner
     /**
      * Updates an exercise body.
      *
@@ -397,6 +397,7 @@ public class ExercisesService implements IExercisesService{
      * @param tagsIds      new list of tags
      */
     @Transactional
+    @Override
     public void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
         Exercise exercise = _getExerciseById(exerciseId);
         _updateExerciseTags(exercise, tagsIds);
@@ -420,6 +421,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
+    @Transactional
     public void updateExerciseVisibility(String exerciseId, Visibility visibility) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _updateExerciseVisibility(exercise, visibility);
@@ -442,6 +444,47 @@ public class ExercisesService implements IExercisesService{
         if (visibility == Visibility.COURSE && exercise.getCourse() == null)
             throw new BadInputException("Cannot set visibility to COURSE because the exercise does not have a course associated.");
         exercise.setVisibility(visibility);
+        exerciseDAO.save(exercise);
+    }
+
+    @Override
+    @Transactional
+    public void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        _updateExerciseCourse(exercise, courseId);
+    }
+
+    /**
+     * Updates the exercise course.
+     *
+     * @param exercise   exercise. Assumed not null
+     * @param courseId   identifier of the new course
+     * @throws NotFoundException if the exercise or the course do no exist.
+     */
+    private void _updateExerciseCourse(Exercise exercise, String courseId) throws NotFoundException {
+        Course course = coursesService.getCourseById(courseId);
+        exercise.setCourse(course);
+        exerciseDAO.save(exercise);
+    }
+
+    @Override
+    @Transactional
+    public void updateExercisePoints(String exerciseId, float points) throws NotFoundException, BadInputException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        _updateExercisePoints(exercise, points);
+    }
+
+    /**
+     * Updates the exercise points.
+     *
+     * @param exercise   exercise. Assumed not null
+     * @param points   new points
+     * @throws BadInputException if the points are not positive.
+     */
+    private void _updateExercisePoints(Exercise exercise, float points) throws BadInputException {
+        if(points <= 0.0f)
+            throw new BadInputException("Points must be positive.");
+        exercise.setPoints(points);
         exerciseDAO.save(exercise);
     }
 
@@ -603,21 +646,15 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public String getExerciseCourse(String exerciseId) throws NotFoundException {
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise==null)
-            throw new NotFoundException("There is no exercise for the given id");
-        if(exercise.getCourse()==null)
-            return null;
-        return exercise.getCourse().getId();
+        Exercise exercise = _getExerciseById(exerciseId);
+        return exercise.getCourseId();
     }
 
     @Override
     @Transactional
-    public Institution getExerciseInstitution(String exerciseId) throws NotFoundException {
-        Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
-        if(exercise == null)
-            throw new NotFoundException("There is no exercise for the given id");
-        return exercise.getInstitution();
+    public String getExerciseInstitution(String exerciseId) throws NotFoundException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        return exercise.getInstitutionId();
     }
 
     /**
@@ -990,18 +1027,6 @@ public class ExercisesService implements IExercisesService{
         return specialistId.equals(exerciseDAO.getExerciseSpecialistId(exerciseId));
     }
 
-    private Specialist verifyOwnershipAuthorization(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException {
-        if(!exerciseDAO.existsById(exerciseId))
-            throw new NotFoundException("Exercise not found");
-        if(!specialistsService.existsSpecialistById(specialistId))
-            throw new NotFoundException("Specialist not found");
-
-        Exercise relExerciseToBeCopied = exerciseDAO.getReferenceById(exerciseId);
-        Specialist specialist = relExerciseToBeCopied.getSpecialist();
-        if(specialist==null || !specialist.getId().equals(specialistId)) //TODO maybe mudar isto
-            throw new UnauthorizedException("The specialist is not the owner of the exercise");
-        return specialist;
-    }
 
     /**
      * Delete all resolutions associated with an exercise
@@ -1041,7 +1066,6 @@ public class ExercisesService implements IExercisesService{
         return exerciseList;
     }
 
-    // TODO - meter a rubrica e a solucao como transient no concrete exercise?
     /**
      * Automatically corrects the not revised resolutions of an exercise.
      * @param exercise concrete exercise
