@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.tests;
 
+import java.io.Serializable;
 import java.util.*;
 
 import lombok.AllArgsConstructor;
@@ -14,10 +15,10 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestGroup {
+public class TestGroup implements Serializable {
 	private String groupInstructions;
 	private Float groupPoints;
-	private Map<Integer, TestExercise> exercises;
+	private List<TestExercise> exercises;
 
 	/**
 	 * Calculates and updates the group points.
@@ -26,7 +27,7 @@ public class TestGroup {
 	 */
 	public float calculateGroupPoints() throws BadInputException {
 		float points = 0;
-		for (TestExercise te: exercises.values()) {
+		for (TestExercise te: exercises) {
 			float tePoints = te.getPoints();
 			if(tePoints <= 0)
 				throw new BadInputException("The points of an exercise must be a positive number.");
@@ -53,15 +54,15 @@ public class TestGroup {
 
 		// Duplicate exercises if present
 		if (this.exercises != null) {
-			Map<Integer, TestExercise> duplicatedExercises = new HashMap<>();
+			List<TestExercise> duplicatedExercises = new ArrayList<>();
 
 			// clones reference exercises and converts concrete exercises into reference exercises
-			for (Map.Entry<Integer, TestExercise> entry : this.exercises.entrySet()) {
-				TestExercise t = entry.getValue();
+			for (TestExercise entry : this.exercises) {
+				TestExercise t = entry;
 				assert t != null;
 				String id = t.getId();
 				assert id != null;
-				duplicatedExercises.put(entry.getKey(), new ReferenceExercise(id, t.getPoints()));
+				duplicatedExercises.add(new ReferenceExercise(id, t.getPoints()));
 			}
 			duplicatedGroup.setExercises(duplicatedExercises);
 		}

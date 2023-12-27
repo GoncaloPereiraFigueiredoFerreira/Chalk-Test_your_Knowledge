@@ -1,7 +1,7 @@
 package pt.uminho.di.chalktyk.models.tests;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.Column;
@@ -34,7 +34,7 @@ public class DeliverDateTest extends Test {
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime deliverDate;
 
-	public DeliverDateTest(String id, String title, String globalInstructions, Float globalPoints, String conclusion, LocalDateTime creationDate, LocalDateTime publishDate, Specialist specialist, Visibility visibility, Course course, Institution institution, Map<Integer,TestGroup> groups, LocalDateTime deliverDate) {
+	public DeliverDateTest(String id, String title, String globalInstructions, Float globalPoints, String conclusion, LocalDateTime creationDate, LocalDateTime publishDate, Specialist specialist, Visibility visibility, Course course, Institution institution, List<TestGroup> groups, LocalDateTime deliverDate) {
 		super(id, title, globalInstructions, globalPoints, conclusion, creationDate, publishDate, specialist, visibility, course, institution, groups);
 		this.deliverDate = deliverDate;
 	}

@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
@@ -12,6 +11,7 @@ import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
+import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
@@ -160,7 +160,7 @@ public interface ITestsService {
      * @throws BadInputException if any property of the test is not valid.
      * @throws NotFoundException if no test was found with the given id
      **/
-    void updateTestGroups(String testId, Map<Integer, TestGroup> groups) throws NotFoundException, BadInputException;
+    void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException;
 
     /**
      * Updates a test's deliver date
@@ -375,6 +375,19 @@ public interface ITestsService {
     void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException;
 
     /**
+     * Add an exercise to a given test
+     * 
+     * @param  testId
+     * @param  exercise
+     * @param  groupIndex        index of the TestGroup to add the exercise to
+     * @param  exeIndex          position in the TestGroup
+     * @param  groupInstructions instructions to add if the test groups is new
+     * @throws NotFoundException if no test or exercise were found
+     * @throws BadInputException if any property of the exercise is not valid.
+     */
+    void createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException;
+
+    /**
      * If an exercise belongs to a test removes it from the test,
      * and deletes it.
      *
@@ -394,21 +407,4 @@ public interface ITestsService {
      * @throws NotFoundException if the exercise does not exist
      */
     String removeExerciseFromTest(String exerciseId) throws NotFoundException;
-    
-    /**
-     * Gets the exercise resolution identified from the test resolution and the exercise.
-     * @param exerciseId    identifier of the exercise
-     * @param testResId     identifier of the test resolution
-     * @return the exercise resolution identified by the given identifier.
-     * @throws NotFoundException if the resolution does not exist
-     */
-    ExerciseResolution getExerciseResolution(String exerciseId, String testResId) throws NotFoundException;
-
-    /**
-     * Delete all exercise resolutions related to a certain test resolution.
-     *
-     * @param  testResId            identifier of the test resolution
-     * @throws NotFoundException    if the test resolution was not found
-     */
-    void deleteAllExerciseResolutionByTestResolutionId(String testResId) throws NotFoundException;
 }
