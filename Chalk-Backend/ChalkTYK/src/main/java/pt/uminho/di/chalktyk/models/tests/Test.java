@@ -109,13 +109,15 @@ public class Test implements Serializable {
 		if (title == null || title.isEmpty())
 			throw new BadInputException("Cannot create test: A title of a test cannot be empty or null");
 
-		// check if creation date is before publish date
-		if (publishDate.isBefore(creationDate))
-            throw new BadInputException("Cannot create test: Publish date occurs before creation");
-
-		// check publish date
-		if (!publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
-            throw new BadInputException("Cannot create test: Publish date is outdated");
+		if (publishDate != null){
+			// check if creation date is before publish date
+			if (publishDate.isBefore(creationDate))
+        	    throw new BadInputException("Cannot create test: Publish date occurs before creation");
+			
+			// check publish date
+			if (!publishDate.isAfter(LocalDateTime.of(2023, 12, 10, 0, 0)))
+        	    throw new BadInputException("Cannot create test: Publish date is outdated");
+		}
 
 		// check global points
 		if (globalPoints < 0)

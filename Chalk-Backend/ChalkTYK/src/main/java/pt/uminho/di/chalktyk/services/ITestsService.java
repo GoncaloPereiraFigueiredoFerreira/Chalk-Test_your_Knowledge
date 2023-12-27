@@ -391,20 +391,21 @@ public interface ITestsService {
      * If an exercise belongs to a test removes it from the test,
      * and deletes it.
      *
+     * @param testId     test identifier
      * @param exerciseId exercise identifier
-     * @return identifier of the exercise from where it was removed, or
-     * 'null' if it does not belong to any test.
-     * @throws NotFoundException if the exercise does not exist
+     * @throws NotFoundException if the test or exercise were not found
+     * @throws BadInputException if the test has already been published (can't be changed)
      */
-    String deleteExerciseFromTest(String exerciseId) throws NotFoundException;
+    void deleteExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException;
 
     /**
      * If an exercise belongs to a test removes it from the test.
      * The exercise is not deleted. Its visibility is changed to "private".
+     * 
+     * @param testId     test identifier
      * @param exerciseId exercise identifier
-     * @return identifier of the exercise from where it was removed, or
-     * 'null' if it does not belong to any test.
-     * @throws NotFoundException if the exercise does not exist
+     * @throws NotFoundException if the test or exercise were not found
+     * @throws BadInputException if the test has already been published (can't be changed)
      */
-    String removeExerciseFromTest(String exerciseId) throws NotFoundException;
+    void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException;
 }

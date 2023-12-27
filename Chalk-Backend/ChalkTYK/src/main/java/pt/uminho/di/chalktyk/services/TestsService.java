@@ -159,7 +159,7 @@ public class TestsService implements ITestsService {
                 else if (exe instanceof ConcreteExercise ce){
                     Exercise tmp = ce.getExercise();
                     List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
-                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tmp.getVisibility(), tagIds);
+                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), Visibility.TEST, tagIds);
                     points = ce.getPoints();
                 }
                 ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, points);
@@ -266,8 +266,37 @@ public class TestsService implements ITestsService {
         ogTest.setVisibility(Visibility.PRIVATE);
         ogTest.setInstitution(specialist.getInstitution());
         ogTest.setCourse(null);
+        ogTest.setCreationDate(LocalDateTime.now());
+        ogTest.setPublishDate(null);
 
-        duplicateExercises(specialistId,ogTest);
+        // duplicate exercises
+        List<TestGroup> tgs = ogTest.getGroups();
+        List<TestGroup> newTGs = new ArrayList<>();
+        for (TestGroup tg: tgs){
+            List<TestExercise> newExes = new ArrayList<>();
+            for (TestExercise exe: tg.getExercises()){
+                String dupExerciseId = "";
+                Float points = 0.0F;
+                if (exe instanceof ReferenceExercise re){
+                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
+                    Exercise ref = exercisesService.getExerciseById(dupExerciseId);
+                    ref.setVisibility(Visibility.TEST);
+                    exercisesService.updateExerciseBody(dupExerciseId, ref);
+                    points = re.getPoints();
+                }
+                else if (exe instanceof ConcreteExercise ce){
+                    Exercise tmp = ce.getExercise();
+                    List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
+                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tmp.getVisibility(), tagIds);
+                    points = ce.getPoints();
+                }
+                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, points);
+                newExes.add(newExe);
+            }
+            TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
+            newTGs.add(newTG);
+        }
+        ogTest.setGroups(newTGs);
         Test newTest = testDAO.save(ogTest);
 
         List<TestTag> tags = testTagsDAO.getTestTags(testId);
@@ -278,40 +307,6 @@ public class TestsService implements ITestsService {
             testTagsDAO.save(testTag);
         }
         return newTest.getId();
-    }
-
-    @Transactional
-    protected void duplicateExercises(String specialistId, Test oldTest) throws NotFoundException {
-        List<TestGroup> groups = oldTest.getGroups();
-        List<TestGroup> newGroups = new ArrayList<>();
-        if (groups != null){
-                            /* 
-
-            for (Map.Entry<Integer,TestGroup> entryGroups: groups.entrySet()){
-                // TODO: duplicate exercises
-                TestGroup olgTg = entryGroups.getValue();
-                Map<Integer, List<String>> exeIdMap = olgTg.getExercises();
-                Map<Integer, List<String>> newExeMap = new HashMap<>();
-
-                if (exeIdMap != null){
-                    for (Map.Entry<Integer,List<String>> entryIds: exeIdMap.entrySet()){
-                        // duplicate exercise
-                        List<String> newList = new ArrayList<>();
-                        for (String exeId:entryIds.getValue()){
-                            String cloneId = exercisesService.duplicateExerciseById(specialistId,exeId);
-                            newList.add(cloneId);
-                        }
-                        newExeMap.put(entryIds.getKey(),newList);
-                    }
-                }
-
-                TestGroup newTg = new TestGroup(olgTg.getGroupInstructions(), olgTg.getGroupPoints(), newExeMap);
-                newGroups.put(entryGroups.getKey(),newTg);
-            }
-                            */
-
-        }
-        oldTest.setGroups(newGroups);
     }
 
     @Override
@@ -455,13 +450,17 @@ public class TestsService implements ITestsService {
         if (test == null)
             throw new NotFoundException("Couldn't update test: couldn't find test with id \'" + testId + "\'");
 
+        LocalDateTime publishDate = test.getPublishDate();
+        if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
+            throw new BadInputException("Couldn't update test: can't change test after it has already been published.");
+
         // verify test group properties
         for (TestGroup entry: groups){
             entry.verifyProperties();
         }
 
-        test.setGroups(groups);
         // update points
+        test.setGroups(groups);
         test.calculatePoints();
 
         testDAO.save(test);
@@ -897,6 +896,10 @@ public class TestsService implements ITestsService {
         if (test == null)
             throw new NotFoundException("Couldn't add exercise to test: couldn't find test with id \'" + testId + "\'");
 
+        LocalDateTime publishDate = test.getPublishDate();
+        if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
+            throw new BadInputException("Couldn't add exercise to test: can't change test after it has already been published.");
+
         // retrieve and/or duplicate exercise
         String dupExeId = "";
         Float points = 0.0F;
@@ -948,27 +951,93 @@ public class TestsService implements ITestsService {
             testTagsDAO.save(testTag);
         }
         
-        // TODO: what to do about ongoing resolutions?
-
         // save test
-        test.calculatePoints(); 
         test.setGroups(groups);
+        test.calculatePoints(); 
         testDAO.save(test);
     }
 
     @Override
-    public String deleteExerciseFromTest(String exerciseId) throws NotFoundException {
-        //TODO
-        // cant be done if after publish date
-        // if there is no publish date, then, resolutions of the exercise must be deleted
-        return null;
+    public void deleteExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't delete exercise from test: couldn't find test with id \'" + testId + "\'");
+
+        LocalDateTime publishDate = test.getPublishDate();
+        if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
+            throw new BadInputException("Couldn't delete exercise from test: can't change test after it has already been published.");
+
+        // searching for exercise
+        boolean found = false;
+        List<TestGroup> groups = test.getGroups();
+        for (TestGroup tg: groups){
+            List<TestExercise> exes = tg.getExercises();
+            for (TestExercise exe: exes){
+                if (exe.getId().equals(exerciseId)){
+                    // remove exercise from test
+                    exes.remove(exe);
+                    found = true;
+                    break;
+                }
+            }
+            if (found){
+                if (exes.size() == 0)
+                    groups.remove(tg);
+                tg.calculateGroupPoints();
+                break;
+            }
+        }
+        if (found)
+            // delete exercise
+            exercisesService.deleteExerciseById(exerciseId);
+        else
+            throw new NotFoundException("Couldn't delete exercise from test: couldn't find exercise with id \'" + exerciseId + "\'");
+
+        // save test
+        test.setGroups(groups);
+        test.calculatePoints(); 
+        testDAO.save(test);
     }
 
     @Override
-    public String removeExerciseFromTest(String exerciseId) throws NotFoundException{
-        //TODO
-        // changes visibility of exercise from TEST to private
-        // cant be done if after publish date
-        return null;
+    public void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't remove exercise from test: couldn't find test with id \'" + testId + "\'");
+
+        LocalDateTime publishDate = test.getPublishDate();
+        if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
+            throw new BadInputException("Couldn't remove exercise from test: can't change test after it has already been published.");
+
+        // searching for exercise
+        boolean found = false;
+        List<TestGroup> groups = test.getGroups();
+        for (TestGroup tg: groups){
+            List<TestExercise> exes = tg.getExercises();
+            for (TestExercise exe: exes){
+                if (exe.getId().equals(exerciseId)){
+                    // remove exercise from test
+                    exes.remove(exe);
+                    found = true;
+                    break;
+                }
+            }
+            if (found){
+                if (exes.size() == 0)
+                    groups.remove(tg);
+                tg.calculateGroupPoints();
+                break;
+            }
+        }
+        if (found)
+            // change visibility to PRIVATE
+            exercisesService.updateExerciseVisibility(exerciseId, Visibility.PRIVATE);
+        else
+            throw new NotFoundException("Couldn't delete exercise from test: couldn't find exercise with id \'" + exerciseId + "\'");
+
+        // save test
+        test.setGroups(groups);
+        test.calculatePoints(); 
+        testDAO.save(test);
     }
 }
