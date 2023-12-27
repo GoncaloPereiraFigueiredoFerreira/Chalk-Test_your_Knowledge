@@ -30,6 +30,7 @@ import pt.uminho.di.chalktyk.repositories.TestResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.TestTagsDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Service("testsService")
 public class TestsService implements ITestsService {
@@ -345,6 +346,10 @@ public class TestsService implements ITestsService {
         if (test.getCreationDate().isAfter(publishDate))
             throw new BadInputException("Couldn't update test publish date: publish date occurs before creation date");
 
+        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
+        if (resolutions.size() > 0)
+            throw new BadInputException("Couldn't update test publish date: some tests were already resolved");
+
         test.setPublishDate(publishDate);
         testDAO.save(test);
     }
@@ -539,9 +544,42 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public void automaticCorrection(String testId, String correctionType) {
-        // TODO
-        throw new UnsupportedOperationException("Unimplemented method 'automaticCorrection'");
+    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id \'" + testId + "\'");
+
+        // issue exercise corrections
+        for (TestGroup tg: test.getGroups()){
+            for (TestExercise exe: tg.getExercises()){
+                exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
+            }
+        }
+
+        // calculate points
+        // check if everything has been revised
+        boolean isRevised = true;
+        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
+        for (TestResolution resolution: resolutions){
+            for (TestResolutionGroup trg: resolution.getGroups()){
+                Float points = 0.0F;
+                for (Map.Entry<String, String> entry: trg.getResolutions().entrySet()){
+                    if (entry.getValue() != null && !entry.getValue().equals("")){
+                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(entry.getValue());
+                        if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
+                            isRevised = false;
+                        points += exeRes.getPoints();
+                    }
+                }
+                trg.setGroupPoints(points);
+            }
+            resolution.updateSum();
+            if (isRevised)
+                resolution.setStatus(TestResolutionStatus.REVISED);
+            else
+                resolution.setStatus(TestResolutionStatus.ONGOING);
+            resolutionDAO.save(resolution);
+        }
     }
 
     @Override
@@ -839,7 +877,7 @@ public class TestsService implements ITestsService {
                 res = resolutionDAO.findById(ids.get(k)).orElse(null);
 
             if (res == null)
-                throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": error finding resolution in non-relational DB.");
+                throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": error finding resolution in DB.");
             else {
                 for (int i = k; i < ids.size(); i++){
                     TestResolution tmp = resolutionDAO.findById(ids.get(i)).orElse(null);
@@ -886,9 +924,28 @@ public class TestsService implements ITestsService {
 	}
 
     @Override
-    public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException {
-        // TODO
-        throw new UnsupportedOperationException("Unimplemented method 'uploadResolution'");
+    public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
+        TestResolution testRes = getTestResolutionById(testResId);
+
+        boolean found = false;
+        for (TestResolutionGroup trg: testRes.getGroups()){
+            Map<String, String> mapExeRes = trg.getResolutions();
+            for (Map.Entry<String, String> entry: mapExeRes.entrySet()){
+                if (entry.getKey().equals(exeId)){
+                    ExerciseResolution exeRes = exercisesService.createExerciseResolution(testResId, exeId, resolution.getData());
+                    mapExeRes.put(entry.getKey(), exeRes.getId());
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+                trg.setResolutions(mapExeRes);
+        }
+
+        if (found)
+            resolutionDAO.save(testRes);
+        else
+            throw new NotFoundException("Cannot upload resolution for exercise with id \'" + exeId + "\'' in test resolution with id \'" + testResId + "\': couldn't find the exercise");
     }
 
     public void createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException {
