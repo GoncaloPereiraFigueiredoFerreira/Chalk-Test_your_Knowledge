@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.*;
-import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor

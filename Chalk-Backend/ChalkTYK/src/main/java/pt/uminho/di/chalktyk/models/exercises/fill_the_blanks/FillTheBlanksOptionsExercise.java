@@ -10,6 +10,7 @@ import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,5 +45,19 @@ public class FillTheBlanksOptionsExercise extends FillTheBlanksExercise {
 			}
 		}
 		super.verifyInsertProperties();
+	}
+
+	@Override
+	public boolean equalsDataOnly(Object o) {
+		if (!super.equalsDataOnly(o)) return false;
+		FillTheBlanksOptionsExercise that = (FillTheBlanksOptionsExercise) o;
+		return Objects.equals(options, that.options);
+	}
+
+	@Override
+	public boolean equalsWithoutAssociations(Object o) {
+		if (!super.equalsWithoutAssociations(o)) return false;
+		FillTheBlanksOptionsExercise that = (FillTheBlanksOptionsExercise) o;
+		return Objects.equals(options, that.options);
 	}
 }

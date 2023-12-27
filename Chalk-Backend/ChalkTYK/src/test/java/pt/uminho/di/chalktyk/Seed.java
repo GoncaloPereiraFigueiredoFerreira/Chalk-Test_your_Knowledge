@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import pt.uminho.di.chalktyk.models.courses.Course;
+import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseStatement;
@@ -32,6 +33,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.DeliverDateTest;
 import pt.uminho.di.chalktyk.models.tests.LiveTest;
+import pt.uminho.di.chalktyk.models.tests.TestExercise.ReferenceExercise;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.tests.TestResolutionGroup;
@@ -107,31 +109,30 @@ public class Seed {
         Tag tag2 = tagsService.createTag("NewEspanol","/");
         Tag tag3 = tagsService.createTag("OldEspanol","/");
 
-        /* 
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
-        ConcreteExercise ex1 = createMCExercise(s1, c1, tag1);
-        ConcreteExercise ex2 = createMCExercise(s1, c1, tag2);
-        ConcreteExercise ex3 = createMCExercise(s1, c1, tag3);
-        exercisesService.createExercise(ex1, exerciseSolution, exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
-        exercisesService.createExercise(ex2, exerciseSolution, exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
-        exercisesService.createExercise(ex3, exerciseSolution, exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
-        */
+        Exercise ex1 = createMCExercise(s1, c1, tag1);
+        Exercise ex2 = createMCExercise(s1, c1, tag2);
+        Exercise ex3 = createMCExercise(s1, c1, tag3);
+        exercisesService.createExercise(ex1, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), Visibility.PUBLIC, List.of(tag1.getId()));
+        exercisesService.createExercise(ex2, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), Visibility.PUBLIC, List.of(tag1.getId(), tag3.getId()));
+        exercisesService.createExercise(ex3, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId(), tag3.getId()));
 
+        /* // TODO - fix the seed
         // tests
-        TestGroup tg1 = new TestGroup("instructions1", Float.valueOf(1), new HashMap<>());
-        TestGroup tg2 = new TestGroup("instructions2", Float.valueOf(2), new HashMap<>());
+        TestGroup tg1 = new TestGroup("instructions1", Float.valueOf(1), Map.of(1, new ReferenceExercise(ex1.getId(), 10.0f)));
+        TestGroup tg2 = new TestGroup("instructions2", Float.valueOf(2), Map.of(1, new ReferenceExercise(ex2.getId(), 10.0f)));
 
         pt.uminho.di.chalktyk.models.tests.Test t1 = new pt.uminho.di.chalktyk.models.tests.Test(null, "TEST #1", "instructions 1", 
             20.0F, "", LocalDateTime.now(), LocalDateTime.now().plusDays(1), s1, Visibility.PUBLIC, c1, null, Map.of(0, tg1, 1, tg2));
 
 
         LiveTest t2 = new LiveTest(null, "TEST #2", "instructions 2", 
-                    100.0F, "", LocalDateTime.now(), LocalDateTime.now().plusMinutes(10), s2, Visibility.PRIVATE, c2, null, new HashMap<>(),
+                    10.0F, "", LocalDateTime.now(), LocalDateTime.now().plusMinutes(10), s2, Visibility.PRIVATE, c2, null, Map.of(0, tg1),
                     LocalDateTime.now().plusDays(1), 60, 5);//Duration.ofHours(1), Duration.ofMinutes(5));
 
         DeliverDateTest t3 = new DeliverDateTest(null, "TEST #3", "instructions 3", 
-                    5.0F, "", LocalDateTime.now(), LocalDateTime.now().plusHours(1), s3, Visibility.NOT_LISTED, c3, null, Map.of(0, tg1),
+                    10.0F, "", LocalDateTime.now(), LocalDateTime.now().plusHours(1), s3, Visibility.NOT_LISTED, c3, null, Map.of(0, tg2),
                     LocalDateTime.now().plusDays(4));
         String test1 = testsService.createTest(t1);
         String test2 = testsService.createTest(t2);
@@ -150,6 +151,7 @@ public class Seed {
         testsService.createTestResolution(test1, tr1);
         testsService.createTestResolution(test2, tr2);
         testsService.createTestResolution(test3, tr3);
+        */
     }
 
 
@@ -179,6 +181,11 @@ public class Seed {
         return studentsService.createStudent(st);
     }
 
+    public String addStudentGeorge() throws BadInputException {
+        Student st = new Student(null, "George Janko", "grugle.com/images/george_janko.jpg", "george_janko@gmail.com", "student #2");
+        return studentsService.createStudent(st);
+    }
+
     public String addSpecialistWhitman() throws BadInputException {
         Specialist s = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg",
                 "whitman@yahoo.com", "#3", null);
@@ -190,6 +197,10 @@ public class Seed {
         return coursesService.createCourse(c1);
     }
 
+    public String addCourse2(String specialist) throws BadInputException {
+        Course c = new Course(null, "Espanol", "no hablo espanol", specialist, null, null);
+        return coursesService.createCourse(c);
+    }
 
     // exercício
     private ExerciseSolution createMCSolution(){
@@ -210,7 +221,7 @@ public class Seed {
         mcRubricMap.put(2,createOARubric());
         mcRubricMap.put(3,createOARubric());
 
-        return new MultipleChoiceRubric(0.0F, 1.0F, mcRubricMap);
+        return new MultipleChoiceRubric(1.0F, 0.0F, mcRubricMap);
     }
 
     private OpenAnswerRubric createOARubric(){

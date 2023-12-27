@@ -3,13 +3,17 @@ package pt.uminho.di.chalktyk.models.exercises.open_answer;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.util.Objects;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 @JsonTypeName("OA")
 public class OpenAnswerData extends ExerciseResolutionData {
 	private String text;

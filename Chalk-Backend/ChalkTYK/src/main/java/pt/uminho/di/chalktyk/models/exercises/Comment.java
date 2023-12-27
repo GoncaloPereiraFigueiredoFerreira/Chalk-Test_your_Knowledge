@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.models.exercises;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,4 +39,21 @@ public class Comment {
 			return "Comment is null or empty.";
 		return null;
 	}
+
+	public Comment clone(){
+		if(items == null)
+			return new Comment();
+		else
+			return new Comment(items.stream().map(Item::clone).toList());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Comment comment = (Comment) o;
+
+        return Objects.equals(items, comment.items);
+    }
 }

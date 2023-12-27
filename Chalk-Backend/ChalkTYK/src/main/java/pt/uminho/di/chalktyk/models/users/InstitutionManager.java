@@ -23,6 +23,10 @@ public class InstitutionManager extends User {
 		setInstitution(institution);
 	}
 
+	public InstitutionManager(String id, String name, String photoPath, String email, String description) {
+		super(id, name, photoPath, email, description);
+	}
+
 	@Override
 	public String checkSubscription() {
 		// TODO - checkSubscription
