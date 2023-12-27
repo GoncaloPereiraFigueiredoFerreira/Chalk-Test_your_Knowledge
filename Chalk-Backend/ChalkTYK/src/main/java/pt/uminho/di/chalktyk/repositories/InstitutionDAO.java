@@ -13,19 +13,19 @@ import pt.uminho.di.chalktyk.models.institutions.Institution;
 
 @Repository
 public interface InstitutionDAO extends JpaRepository<Institution, String> {
-    @Modifying
+    @Modifying(flushAutomatically = true)
     @Query(value = "UPDATE Specialist s SET s.institution = (SELECT i FROM Institution i WHERE i.name=:institutionId) WHERE s.id = :specialistId")
     void addSpecialistToInstitution(@Param("specialistId") String specialistId, @Param("institutionId") String institutionId);
 
-    @Modifying
+    @Modifying(flushAutomatically = true)
     @Query(value = "UPDATE Student s SET s.institution = (SELECT i FROM Institution i WHERE i.name=:institutionId) WHERE s.id = :studentId")
     void addStudentToInstitution(@Param("studentId") String studentId, @Param("institutionId") String institutionId);
 
-    @Modifying
+    @Modifying(flushAutomatically = true)
     @Query(value = "UPDATE Specialist s SET s.institution = null WHERE s.id = :specialistId and s.institution.name =:institutionId")
     void removeSpecialistFromInstitution(@Param("specialistId") String specialistId, @Param("institutionId") String institutionId);
 
-    @Modifying
+    @Modifying(flushAutomatically = true)
     @Query(value = "UPDATE Student s SET s.institution = null WHERE s.id = :studentId and s.institution.name =:institutionId")
     void removeStudentFromInstitution(@Param("studentId") String studentId, @Param("institutionId") String institutionId);
 

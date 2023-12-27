@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises;
 
+import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -11,12 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
-import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceData;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
-import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerData;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.users.Specialist;
@@ -27,7 +25,6 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -58,7 +55,7 @@ public abstract class Exercise {
 	private String title;
 
 	@Column(name = "Type", insertable = false, updatable = false, nullable = false)
-	private String exerciseType;
+	private String exerciseType = getExerciseType();
 
 	@Column(name="Points")
 	private Float points;
@@ -93,6 +90,21 @@ public abstract class Exercise {
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseRubric.class, orphanRemoval = true)
 	@JoinColumn(name = "RubricID", referencedColumnName = "ID")
 	private ExerciseRubric rubric;
+
+	public Exercise(String id, String title, Float points, Visibility visibility, ExerciseStatement statement, Course course, Specialist specialist, Institution institution, Set<Tag> tags, ExerciseSolution solution, ExerciseRubric rubric) {
+		this.id = id;
+		this.title = title;
+		this.exerciseType = getExerciseType();
+		this.points = points;
+		this.visibility = visibility;
+		this.statement = statement;
+		this.course = course;
+		this.specialist = specialist;
+		this.institution = institution;
+		this.tags = tags;
+		this.solution = solution;
+		this.rubric = rubric;
+	}
 
 	public void verifyInsertProperties() throws BadInputException {
 		if(points == null || points <= 0)
@@ -142,6 +154,10 @@ public abstract class Exercise {
 			solution.setId(solutionId);
 	}
 
+	public void setExerciseType(String ignored) {
+		this.exerciseType = getExerciseType();
+	}
+
 	/**
 	 * Evaluates the resolution of an exercise.
 	 *
@@ -165,31 +181,79 @@ public abstract class Exercise {
 		this.setExerciseType(this.getClass().getAnnotation(DiscriminatorValue.class).value());
 	}
 
+	/**
+	 * Copies exercise data and its identifier to the instance given as argument.
+	 * Exercise data refers to the data needed by a student to start solving the exercise
+	 * (points, visibility are examples of information that is not required).
+	 * @param exercise exercise that will receive the data.
+	 */
 	protected void _copyExerciseDataOnlyTo(Exercise exercise){
 		assert exercise != null;
+		exercise.setId(id);
 		exercise.setExerciseType(exerciseType);
 		exercise.setTitle(title);
-		exercise.setPoints(points);
 		exercise.setStatement(statement.clone());
 	}
 
 	/**
-	 * Copies exercise data to the instance given as argument.
+	 * Copies exercise data and its identifier to the instance given as argument.
+	 * Exercise data refers to the data needed by a student to start solving the exercise
+	 * (points, visibility are examples of information that is not required).
 	 * The exercise instance that calls this method needs to
 	 * be of the same class as the instance given as argument.
-	 * Subclasses should call the '_copyExerciseDataOnlyTo(Exercise exercise)' method from the super class.
+	 * Subclasses should call the method '_copyExerciseDataOnlyTo(Exercise exercise)' from the super class.
 	 * @param exercise exercise that will receive the data.
-	 * @throws BadInputException If the exercise instance given as argument is not of the same class.
+	 * @throws BadInputException If the exercise instance given as argument is not of the same class, or if it is null.
 	 */
 	public abstract void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException;
 
 	/**
-	 * Should clone everything that is related to the data of the exercise: title, statement, exercise type, points, and specific data of each exercise.
-	 * Properties like identifier, associations with other entities, visibility, should be null, or empty.
+	 * Clones exercise data and its identifier.
+	 * Exercise data refers to the data needed by a student to start solving the exercise
+	 * (points, visibility are example of information that is not required).
+	 * Properties like associations with other entities, points, visibility, should be null, or empty.
 	 * Subclasses should call the '_copyExerciseDataOnlyTo(Exercise exercise)' method from the super class.
 	 * @return exercise of the same class, with data of the exercise cloned, ignoring metadata or association related information.
 	 */
 	public abstract Exercise cloneExerciseDataOnly();
+
+	/**
+	 * Copies additional properties to the exercise instance given.
+	 * Properties that are considered additional data are: points and visibility.
+	 * @param exercise exercise that should get the additional data copied
+	 */
+	protected void _copyAdditionalPropertiesTo(Exercise exercise){
+		exercise.setPoints(points);
+		exercise.setVisibility(visibility);
+	}
+
+	/**
+	 * Copies exercise data, identifier and additional properties to the instance given as argument.
+	 * Exercise data refers to the data needed by a student to start solving the exercise
+	 * (points, visibility are examples of information that is not required).
+	 * Additional properties refers to everything that is not considered 'exercise data' and is not an association.
+	 * The exercise instance that calls this method needs to
+	 * be of the same class as the instance given as argument.
+	 * Subclasses should call the method '_copyWithAdditionalDataTo(Exercise exercise)' from the super class.
+	 * @param exercise exercise that will receive the data.
+	 * @throws BadInputException If the exercise instance given as argument is not of the same class, or if it is null.
+	 */
+	public void copyWithAdditionalPropertiesTo(Exercise exercise) throws BadInputException{
+		copyExerciseDataOnlyTo(exercise);
+		_copyAdditionalPropertiesTo(exercise);
+	}
+
+	/**
+	 * Clones exercise data, identifier and additional properties.
+	 * Exercise data refers to the data needed by a student to start solving the exercise
+	 * (points, visibility are examples of information that is not required).
+	 * Additional properties refers to everything that is not considered 'exercise data' and is not an association.
+	 */
+	public Exercise cloneWithAdditionalDataTo(){
+		Exercise exercise = this.cloneExerciseDataOnly();
+		_copyAdditionalPropertiesTo(exercise);
+		return exercise;
+	}
 
 	@Override
 	public String toString() {
@@ -200,4 +264,32 @@ public abstract class Exercise {
 				", visibility=" + visibility +
 				'}';
 	}
+
+	public boolean equalsDataOnly(Object o){
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Exercise exercise = (Exercise) o;
+
+		if (!Objects.equals(id, exercise.id)) return false;
+		if (!Objects.equals(title, exercise.title)) return false;
+		if (!Objects.equals(exerciseType, exercise.exerciseType))
+			return false;
+		return Objects.equals(statement, exercise.statement);
+	}
+
+	public boolean equalsWithoutAssociations(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Exercise exercise = (Exercise) o;
+
+		if (!Objects.equals(id, exercise.id)) return false;
+		if (!Objects.equals(title, exercise.title)) return false;
+		if (!Objects.equals(exerciseType, exercise.exerciseType))
+			return false;
+		if (!Objects.equals(points, exercise.points)) return false;
+		if (visibility != exercise.visibility) return false;
+        return Objects.equals(statement, exercise.statement);
+    }
 }

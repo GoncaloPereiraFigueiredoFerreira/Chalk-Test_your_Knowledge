@@ -111,7 +111,7 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException {
-        if(exercise == null)
+        if (exercise == null)
             throw new BadInputException("Cannot create exercise: Exercise is null");
 
         // Check if specialist is valid
@@ -119,13 +119,13 @@ public class ExercisesService implements IExercisesService{
         try {
             specialist = specialistsService.getSpecialistById(exercise.getSpecialistId());
             exercise.setSpecialist(specialist);
-        }catch (NotFoundException nfe){
+        } catch (NotFoundException nfe) {
             throw new BadInputException("Cannot create exercise: Specialist does not exist.");
         }
 
         // Check if tags are valid
         Set<Tag> tags = new HashSet<>();
-        for (String id:tagsIds) {
+        for (String id : tagsIds) {
             Tag tag = iTagsService.getTagById(id);
             if (tag == null)
                 throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
@@ -134,11 +134,12 @@ public class ExercisesService implements IExercisesService{
         exercise.setTags(tags);
 
         // Check if visibility is valid
-        if(visibility == null)
+        if (visibility == null)
             throw new BadInputException("Cannot create exercise: Visibility cant be null");
 
         // Checks if specialist exists and gets the institution where it belongs
         Institution institution = specialist.getInstitution();
+        // the exercise's institution is the same has its owner
         exercise.setInstitution(institution);
 
         // If the specialist that owns the exercise does not have an institution,
@@ -149,9 +150,17 @@ public class ExercisesService implements IExercisesService{
         // Check if course is valid
         String courseId = exercise.getCourseId();
         try {
-            if (courseId != null && !coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
-                throw new BadInputException("Cannot create exercise: specialist does not belong to the given course.");
-        } catch (NotFoundException nfe){
+            if (courseId != null) {
+                // the owner of the exercise must be associated with the course
+                if (!coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+                    throw new BadInputException("Cannot create exercise: specialist does not belong to the given course.");
+                else {
+                    Course course = coursesService.getCourseById(courseId);
+                    exercise.setCourse(course);
+                }
+            }
+            else exercise.setCourse(null);
+        } catch (NotFoundException nfe) {
             throw new BadInputException("Cannot create exercise: course not found.");
         }
 
@@ -168,19 +177,12 @@ public class ExercisesService implements IExercisesService{
         exercise.verifyInsertProperties();
 
         // Check solution
-        if (solution != null) {
-            solution.verifyInsertProperties();
-            exercise.verifyResolutionProperties(solution.getData());
-            solution = exerciseSolutionDAO.save(solution);
-            exercise.setSolution(solution);
-        }
+        if(solution != null)
+            _createExerciseSolution(exercise, solution);
 
         // Check rubric
-        if (rubric != null) {
-            exercise.verifyRubricProperties(rubric);
-            rubric = exerciseRubricDAO.save(rubric);
-            exercise.setRubric(rubric);
-        }
+        if(rubric != null)
+            _createExerciseRubric(exercise, rubric);
 
         // persists the exercise in database
         exercise = exerciseDAO.save(exercise);
@@ -294,17 +296,18 @@ public class ExercisesService implements IExercisesService{
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
      *
-     * @param exerciseId   identifier of the exercise to be updated
-     * @param newBody     new exercise body
-     * @param rubric       new exercise rubric
-     * @param solution     new exercise solution
-     * @param tagsIds      new list of tags
-     * @param visibility   new visibility
-     * @throws NotFoundException     if the exercise was not found
+     * @param exerciseId identifier of the exercise to be updated
+     * @param newBody    new exercise body
+     * @param rubric     new exercise rubric
+     * @param solution   new exercise solution
+     * @param tagsIds    new list of tags
+     * @param visibility new visibility
+     * @param points new points. Must be a positive value, or 'null' if it shouldn't be updated.
+     * @throws NotFoundException if the exercise was not found
      */
     @Override
     @Transactional
-    public void updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
+    public void updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility, Float points) throws NotFoundException, BadInputException {
         // gets exercise using the identifier, or throws not found exception
         Exercise exercise = _getExerciseById(exerciseId);
 
@@ -321,6 +324,11 @@ public class ExercisesService implements IExercisesService{
             _updateExerciseTags(exercise,tagsIds);
         if(visibility!=null)
             _updateExerciseVisibility(exercise,visibility);
+        if(points != null){
+            // TODO - ter cotacao aqui e na rúbrica não faz sentido porque atualizar num lado leva a ser necessário atualizar noutro. Na rubrica mudar para porcentagens?
+            if(points <= 0)
+                throw new BadInputException("Points must be a positive value.");
+        }
     }
 
     @Override
@@ -347,6 +355,7 @@ public class ExercisesService implements IExercisesService{
         // Check new body properties
         if(newBody == null)
             throw new BadInputException("Could not update exercise body: body is null.");
+        newBody.setId(exerciseId); // needed to avoid override attacks
         newBody.verifyInsertProperties();
         
         // copies exercise related data to the original exercise
@@ -380,7 +389,7 @@ public class ExercisesService implements IExercisesService{
                 exercise.verifyResolutionProperties(solution.getData());
         }
 
-        exerciseDAO.save(newBody);
+        exerciseDAO.save(exercise);
         
         if(deleteRubric)
             exerciseRubricDAO.deleteById(rubric.getId());
@@ -541,10 +550,6 @@ public class ExercisesService implements IExercisesService{
         rubric.setId(oldRubricID);
         rubric = exerciseRubricDAO.save(rubric);
 
-        // sets new rubric and persists the exercise to save the association
-        exercise.setRubric(rubric);
-        exerciseDAO.save(exercise);
-
         // if the exercise did not have a rubric,
         // then the association needs to be created
         if (!update) {
@@ -603,10 +608,6 @@ public class ExercisesService implements IExercisesService{
         // persists solution
         solution.setId(oldSolutionID);
         solution = exerciseSolutionDAO.save(solution);
-
-        // sets new solution and persists the exercise to save the association
-        exercise.setSolution(solution);
-        exerciseDAO.save(exercise);
 
         // if the exercise did not have a solution,
         // then the association needs to be created
@@ -842,7 +843,7 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the exercise does not exist
      */
     @Override
-    public List<ExerciseResolution> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException {
+    public List<ExerciseResolution> getStudentListOfExerciseResolutions(String exerciseId, String studentId) throws NotFoundException {
         return exerciseResolutionDAO.findAllByExercise_IdAndStudent_Id(exerciseId, studentId);
     }
 
@@ -979,7 +980,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     @Transactional
-    public void setExerciseResolutionPoints(String resolutionId, float points) throws NotFoundException, BadInputException {
+    public void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException {
         // checks if the resolution exists
         ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
         if (resolution == null)
@@ -996,6 +997,7 @@ public class ExercisesService implements IExercisesService{
 
         // sets the points and persists the document
         resolution.setPoints(points);
+        resolution.setStatus(ExerciseResolutionStatus.REVISED);
         exerciseResolutionDAO.save(resolution);
     }
 
@@ -1005,12 +1007,9 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the exercise does not exist
      */
     @Override
-    public String getExerciseVisibility(String exerciseId) throws NotFoundException {
-        Optional<Exercise> exercise = exerciseDAO.findById(exerciseId);
-        if(exercise.isPresent())
-            return exercise.get().getVisibility().toString();
-        else
-            throw new NotFoundException("Exercise does not exist.");
+    public Visibility getExerciseVisibility(String exerciseId) throws NotFoundException {
+        Exercise exercise = _getExerciseById(exerciseId);
+        return exercise.getVisibility();
     }
 
 
@@ -1054,19 +1053,6 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Converts a page of Exercise to a list of Exercise(No)s
-     * @param exercisePage page of exercises
-     * @return a list of Exercise(No)s
-     * @throws NotFoundException if one of the exercises, on the page, was not found
-     */
-    private List<Exercise> exercisesToNo(Page<Exercise> exercisePage) throws NotFoundException {
-        List<Exercise> exerciseList = new ArrayList<>();
-        for(var exercise : exercisePage)
-            exerciseList.add(this.getExerciseById(exercise.getId()));
-        return exerciseList;
-    }
-
-    /**
      * Automatically corrects the not revised resolutions of an exercise.
      * @param exercise concrete exercise
      * @param rubric rubric of the exercise
@@ -1078,7 +1064,6 @@ public class ExercisesService implements IExercisesService{
         String exerciseId = exercise.getId();
 
         // Get number of resolutions not revised
-        /* 
         long resolutionsCount = exerciseResolutionDAO.countByExerciseIdAndStatus(exerciseId, ExerciseResolutionStatus.NOT_REVISED);
 
         // Iterates over all resolutions that are not revised, and corrects them
@@ -1094,7 +1079,6 @@ public class ExercisesService implements IExercisesService{
             for (ExerciseResolution res : page)
                 automaticExerciseResolutionCorrection(res, exercise, rubric, solution);
         }
-        */
     }
 
     /**

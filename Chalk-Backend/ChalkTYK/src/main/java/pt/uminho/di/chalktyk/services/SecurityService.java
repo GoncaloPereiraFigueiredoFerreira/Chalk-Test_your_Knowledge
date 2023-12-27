@@ -120,7 +120,7 @@ public class SecurityService {
 
     public Boolean studentCanSeeExercise(String studentId, String exerciseId) throws NotFoundException, UnauthorizedException{
         Boolean ret = false;
-        String vis = exercisesService.getExerciseVisibility(exerciseId);
+        String vis = exercisesService.getExerciseVisibility(exerciseId).toString();
 
         switch (vis) {
             case "public":
@@ -153,7 +153,7 @@ public class SecurityService {
 
     public Boolean specialistCanSeeExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException{
         Boolean ret = false;
-        String vis = exercisesService.getExerciseVisibility(exerciseId);
+        String vis = exercisesService.getExerciseVisibility(exerciseId).toString();
 
         switch (vis) {
             case "public":

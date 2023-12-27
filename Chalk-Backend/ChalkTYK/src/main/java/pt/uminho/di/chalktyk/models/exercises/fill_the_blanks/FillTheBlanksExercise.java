@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.models.exercises.fill_the_blanks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
@@ -94,5 +95,19 @@ public class FillTheBlanksExercise extends Exercise {
 			throw new BadInputException("Exercise is not of the same type.");
 		_copyExerciseDataOnlyTo(ftbe);
 		ftbe.setTextSegments(new ArrayList<>(textSegments));
+	}
+
+	@Override
+	public boolean equalsDataOnly(Object o){
+		if (!super.equalsDataOnly(o)) return false;
+		FillTheBlanksExercise that = (FillTheBlanksExercise) o;
+		return Objects.equals(textSegments, that.textSegments);
+	}
+
+	@Override
+	public boolean equalsWithoutAssociations(Object o) {
+		if (!super.equalsWithoutAssociations(o)) return false;
+		FillTheBlanksExercise that = (FillTheBlanksExercise) o;
+		return Objects.equals(textSegments, that.textSegments);
 	}
 }

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,4 +26,14 @@ public class StringItem extends Item {
 	public Item clone() {
 		return new StringItem(text);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		StringItem that = (StringItem) o;
+
+        return Objects.equals(text, that.text);
+    }
 }

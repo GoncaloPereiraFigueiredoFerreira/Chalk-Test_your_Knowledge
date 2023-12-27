@@ -67,16 +67,18 @@ public interface IExercisesService{
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
+     *
      * @param exerciseId identifier of the exercise to be updated
-     * @param exercise new exercise body
-     * @param rubric new exercise rubric
-     * @param solution new exercise solution
-     * @param tagsIds new list of tags
+     * @param exercise   new exercise body
+     * @param rubric     new exercise rubric
+     * @param solution   new exercise solution
+     * @param tagsIds    new list of tags
      * @param visibility new visibility
+     * @param points
      * @throws UnauthorizedException if the exercise is not owned by the specialist
-     * @throws NotFoundException if the exercise was not found
+     * @throws NotFoundException     if the exercise was not found
      */
-    public void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility)  throws NotFoundException, BadInputException;
+    void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility, Float points)  throws NotFoundException, BadInputException;
 
     /**
      * Updates an exercise body.
@@ -183,7 +185,7 @@ public interface IExercisesService{
      * @return list of metadata of all the resolutions a student has made for an exercise.
      * @throws NotFoundException if the exercise does not exist
      */
-    List<ExerciseResolution> getStudentListOfExerciseResolutionsMetadataByExercise(String exerciseId, String studentId) throws NotFoundException;
+    List<ExerciseResolution> getStudentListOfExerciseResolutions(String exerciseId, String studentId) throws NotFoundException;
 
     /**
      * @param exerciseId identifier of the exercise
@@ -244,7 +246,7 @@ public interface IExercisesService{
      * @throws NotFoundException if the resolution does not exist
      * @throws BadInputException if the points exceed the max points for the exercise.
      */
-    void setExerciseResolutionPoints(String resolutionId, float points) throws NotFoundException, BadInputException;
+    void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException;
 
     void deleteExerciseRubric(String exerciseId);
 
@@ -267,7 +269,7 @@ public interface IExercisesService{
      * @return visibility of an exercise
      * @throws NotFoundException if the exercise does not exist
      */
-    String getExerciseVisibility(String exerciseId) throws NotFoundException;
+    Visibility getExerciseVisibility(String exerciseId) throws NotFoundException;
 
     void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException;
 

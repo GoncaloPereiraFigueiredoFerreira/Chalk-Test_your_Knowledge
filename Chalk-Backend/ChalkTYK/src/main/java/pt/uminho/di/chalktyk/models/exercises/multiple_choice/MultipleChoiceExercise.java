@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.models.exercises.multiple_choice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
-import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
+import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
@@ -149,5 +150,21 @@ public class MultipleChoiceExercise extends Exercise {
 		mce.items = new HashMap<>();
 		for(Map.Entry<Integer, Item> entry : items.entrySet())
 			mce.items.put(entry.getKey(), entry.getValue().clone());
+	}
+
+	@Override
+	public boolean equalsDataOnly(Object o) {
+		if (!super.equalsDataOnly(o)) return false;
+		MultipleChoiceExercise that = (MultipleChoiceExercise) o;
+		if (mctype != that.mctype) return false;
+		return Objects.equals(items, that.items);
+	}
+
+	@Override
+	public boolean equalsWithoutAssociations(Object o) {
+		if (!super.equalsWithoutAssociations(o)) return false;
+		MultipleChoiceExercise that = (MultipleChoiceExercise) o;
+		if (mctype != that.mctype) return false;
+		return Objects.equals(items, that.items);
 	}
 }
