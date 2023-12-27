@@ -154,7 +154,7 @@ public class TestsService implements ITestsService {
                     String dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
                     Exercise ref = exercisesService.getExerciseById(dupExerciseId);
                     ref.setVisibility(Visibility.TEST);
-                    exercisesService.updateExerciseBody(ref, false, false);
+                    exercisesService.updateExerciseBody(dupExerciseId, ref);
                     ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, re.getPoints());
                     newExes.add(newExe);
                 }

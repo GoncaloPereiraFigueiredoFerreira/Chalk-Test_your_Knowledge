@@ -135,9 +135,9 @@ public class SecurityService {
                 }
                 break;
             case "institution":
-                Institution studentInstitution = institutionsService.getStudentInstitution(studentId);
-                Institution exerciseInstitution = exercisesService.getExerciseInstitution(exerciseId);
-                if(studentInstitution.equals(exerciseInstitution)){
+                String studentInstitutionId = institutionsService.getStudentInstitution(studentId).getName();
+                String exerciseInstitutionId = exercisesService.getExerciseInstitution(exerciseId);
+                if(studentInstitutionId.equals(exerciseInstitutionId)){
                     ret = true;
                 }else{
                   throw new UnauthorizedException("The student can not see the institution's exercise");  
@@ -168,9 +168,9 @@ public class SecurityService {
                 }
                 break;
             case "institution":
-                Institution specialistInstitution = institutionsService.getSpecialistInstitution(specialistId);
-                Institution exerciseInstitution = exercisesService.getExerciseInstitution(exerciseId);
-                if(specialistInstitution.equals(exerciseInstitution)){
+                String specialistInstitutionId = institutionsService.getSpecialistInstitution(specialistId).getName();
+                String exerciseInstitutionId = exercisesService.getExerciseInstitution(exerciseId);
+                if(specialistInstitutionId.equals(exerciseInstitutionId)){
                     ret = true;
                 }else{
                   throw new UnauthorizedException("The specialist can not see the institution's exercise");  

@@ -178,18 +178,18 @@ public class CoursesService implements ICoursesService {
     @Override
     @Transactional
     public void updateCourseBasicProperties(String courseId, String name, String description) throws BadInputException, NotFoundException {
-        Course course = getCourseById(courseId);
-
-        if(course.getId() == null)
+        if(courseId == null)
             throw new BadInputException("Cannot update course: identifier of the course is null");
+
+        Course course = getCourseById(courseId);
 
         // check name
         if(name == null || name.isEmpty())
             throw new BadInputException("Cannot update course: A name of a course cannot be empty or null.");
 
         // update course fields
-        course.setName(course.getName());
-        course.setDescription(course.getDescription());
+        course.setName(name);
+        course.setDescription(description);
 
         // update the course in database
         courseDAO.save(course);
