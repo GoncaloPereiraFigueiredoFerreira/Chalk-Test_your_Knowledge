@@ -33,7 +33,7 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
             " (:institutionId is null or e.institution.name=:institutionId) and" +
             " (:courseId is null or e.course.id=:courseId) and" +
             " (:specialistID is null or e.specialist.id=:specialistID) and" +
-            " (:title is null or e.title = :title) and" +
+            " (:title is null or e.title LIKE :title) and" +
             " (:exerciseType is null or e.exerciseType = :exerciseType))")
     Page<Exercise> getExercisesMatchAllTags(@Param("tagIDS") List<String> tagIDS,
                                             @Param("sizeTagIDS") int sizeTagIDS,
@@ -46,16 +46,14 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
                                             Pageable pageable);
 
     @EntityGraph(attributePaths = "tags", type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT e FROM Exercise e WHERE (:tagIDS is null or e.id IN (" +
-            "SELECT e1.id FROM Exercise e1 " +
-            "JOIN e1.tags t WHERE " +
-            "t.id IN :tagIDS) and " +
+    @Query("SELECT e FROM Exercise e WHERE " +
+            "(:tagIDS is null or e.id IN (SELECT e1.id FROM Exercise e1 JOIN e1.tags t WHERE t.id IN :tagIDS)) and " +
             " (:visibilityType is null or e.visibility = :visibilityType) and" +
             " (:institutionId is null or e.institution.name=:institutionId) and" +
             " (:courseId is null or e.course.id=:courseId) and" +
             " (:specialistID is null or e.specialist.id=:specialistID) and" +
-            " (:title is null or e.title = :title) and" +
-            " (:exerciseType is null or e.exerciseType = :exerciseType))")
+            " (:title is null or e.title LIKE :title) and" +
+            " (:exerciseType is null or e.exerciseType = :exerciseType)")
     Page<Exercise> getExercisesMatchAnyGivenTag(@Param("tagIDS") List<String> tagIDS,
                                                 @Param("visibilityType") Visibility visibilityType,
                                                 @Param("institutionId") String institutionId,
@@ -64,6 +62,15 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
                                                 @Param("title")  String title,
                                                 @Param("exerciseType")  String exerciseType,
                                                 Pageable pageable);
+
+    //@Query("SELECT e FROM Exercise e WHERE " +
+    //        " (:visibilityType is null or e.visibility = :visibilityType) and" +
+    //        " (:institutionId is null or e.institution.name=:institutionId) and" +
+    //        " (:courseId is null or e.course.id=:courseId) and" +
+    //        " (:specialistID is null or e.specialist.id=:specialistID) and" +
+    //        " (:title is null or e.title LIKE :title) and" +
+    //        " (:exerciseType is null or e.exerciseType = :exerciseType) and" +
+    //        " (:tagIDS is null or e.id IN (SELECT e1.id FROM Exercise e1 JOIN e1.tags t WHERE t.id IN :tagIDS))")
 
     /**
      * Get the identifier of the specialist that owns the exercise.

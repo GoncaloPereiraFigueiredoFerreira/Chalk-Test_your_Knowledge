@@ -168,6 +168,9 @@ public class ExercisesService implements IExercisesService{
         if (courseId == null && visibility == Visibility.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
 
+        // set visibility
+        exercise.setVisibility(visibility);
+
         // Prevent overrides
         exercise.setId(null);
         exercise.setRubric(null);
@@ -863,7 +866,6 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * @param userId         identifier of the user that made the request. Necessary to check authorization.
      * @param page           index of the page
      * @param itemsPerPage   number of items per page
      * @param tags           list of tags to filter exercises
@@ -880,13 +882,7 @@ public class ExercisesService implements IExercisesService{
      * @return list of exercises that match the given filters
      */
     @Override
-    public Page<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
-        Visibility visibility= null;
-        if (visibilityType != null) {
-            visibility = Visibility.fromValue(visibilityType);
-            if (visibility == null)
-                throw new BadInputException("Visibility type not found");
-        }
+    public Page<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
 
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
@@ -903,13 +899,16 @@ public class ExercisesService implements IExercisesService{
                 throw new NotFoundException("Theres no specialist with the given id");
         }
 
+        // adds the sql wildcards before and after the title
+        title = title != null ? '%' + title + '%' : null;
+
         Page<Exercise> exercises;
         if(matchAllTags && tags != null && !tags.isEmpty())
-            exercises = exerciseDAO.getExercisesMatchAllTags(tags, tags.size(), visibility, institutionId,
+            exercises = exerciseDAO.getExercisesMatchAllTags(tags, tags.size(), visibilityType, institutionId,
                                                              courseId, specialistId, title, exerciseType,
                                                              PageRequest.of(page, itemsPerPage));
         else
-            exercises = exerciseDAO.getExercisesMatchAnyGivenTag(tags,visibility,institutionId,courseId,
+            exercises = exerciseDAO.getExercisesMatchAnyGivenTag(tags,visibilityType,institutionId,courseId,
                                                                  specialistId,title,exerciseType,
                                                                  PageRequest.of(page, itemsPerPage));
         return exercises;
@@ -1017,12 +1016,8 @@ public class ExercisesService implements IExercisesService{
         ExerciseResolution resolution = exerciseResolutionDAO.findById(exeResId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Couldn't delete exercise resolution: Resolution \'" + exeResId + "\'was not found");
-
         exerciseResolutionDAO.delete(resolution);
     }
-
-
-    /* **** Auxiliary methods **** */
 
     /**
      * Checks if a specialist is the owner of an exercise.
@@ -1030,11 +1025,12 @@ public class ExercisesService implements IExercisesService{
      * @param specialistId identifier of the specialist
      * @return 'true' if a specialist is the owner of the exercise
      */
-    private boolean isExerciseOwner(String exerciseId, String specialistId){
+    public boolean isExerciseOwner(String exerciseId, String specialistId){
         if(specialistId == null) return false;
         return specialistId.equals(exerciseDAO.getExerciseSpecialistId(exerciseId));
     }
 
+    /* **** Auxiliary methods **** */
 
     /**
      * Delete all resolutions associated with an exercise
@@ -1080,7 +1076,7 @@ public class ExercisesService implements IExercisesService{
         for(int pageIndex = 0, i = 0; i < resolutionsCount; pageIndex++, i += 5){
             // gets page
             Page<ExerciseResolution> page =
-                    exerciseResolutionDAO.findAllByExerciseIdAndStatus(exerciseId,
+                    exerciseResolutionDAO.findAllByExercise_IdAndStatus(exerciseId,
                                                                     ExerciseResolutionStatus.NOT_REVISED,
                                                                     PageRequest.of(pageIndex, 5));
 

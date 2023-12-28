@@ -25,7 +25,7 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
      * @param pageable page request information
      * @return page of resolutions, with a given status, of a specific exercise
      */
-    Page<ExerciseResolution> findAllByExerciseIdAndStatus(String exerciseId, ExerciseResolutionStatus status, Pageable pageable);
+    Page<ExerciseResolution> findAllByExercise_IdAndStatus(String exerciseId, ExerciseResolutionStatus status, Pageable pageable);
     
     /**
      * @param exerciseId identifier of the exercise

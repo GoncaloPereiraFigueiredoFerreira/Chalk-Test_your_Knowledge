@@ -20,6 +20,9 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.InstitutionManager;
 import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.repositories.ExerciseDAO;
+import pt.uminho.di.chalktyk.repositories.SpecialistDAO;
+import pt.uminho.di.chalktyk.repositories.StudentDAO;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -57,6 +60,12 @@ public class ExercisesServiceTest {
     private String specialistId, specialist2Id,
                    courseId, course2Id,
                    studentId, student2Id;
+    @Autowired
+    private SpecialistDAO specialistDAO;
+    @Autowired
+    private StudentDAO studentDAO;
+    @Autowired
+    private ExerciseDAO exerciseDAO;
 
     @BeforeEach
     public void setup() throws BadInputException {
@@ -167,7 +176,7 @@ public class ExercisesServiceTest {
     private ExerciseResolutionData createWrongMCResolution(){
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,true);
         HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
         itemResolutions.put(1,option1);
         itemResolutions.put(2,option2);
@@ -244,6 +253,7 @@ public class ExercisesServiceTest {
         Tag tag2 = tagsService.createTag("NewEspanol","/");
         String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId()));
         assertTrue(exercisesService.exerciseExists(exerciseId));
+        assert exercisesService.isExerciseOwner(exerciseId, specialistId);
     }
 
     @Test
@@ -542,15 +552,55 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createResolutionAndAutoCorrect() throws BadInputException, NotFoundException, UnauthorizedException {
+    public void createResolutionAndAutoCorrectAndDelete() throws BadInputException, NotFoundException, UnauthorizedException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
         String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
 
-        var er1 = exercisesService.createExerciseResolution(studentId,exerciseId,createHalfWrongMCResolution());
+        ExerciseResolutionData rightMC = createRightMCResolution();
+        var er1 = exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone());
+
+        //Verify that the resolution was correctly inserted
+        ExerciseResolution exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(exerciseId,studentId);
+        assertTrue(rightMC.equals(exerciseResolution.getData()));
+        assertNull(exerciseResolution.getPoints());
+        assertEquals(1,exerciseResolution.getSubmissionNr());
+        assertEquals(ExerciseResolutionStatus.NOT_REVISED,exerciseResolution.getStatus());
+
+        //Issue the correction of this exercise resolution specifically
+        exercisesService.issueExerciseResolutionCorrection(exerciseResolution.getId(),"auto");
+
+        // checks that the points were correctly assigned
+        exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(exerciseId,studentId);
+        assertEquals(3.0F,exerciseResolution.getPoints());
+        assertEquals(ExerciseResolutionStatus.REVISED,exerciseResolution.getStatus());
+
+        // deletes the resolution
+        String resId = exerciseResolution.getId();
+        exercisesService.deleteExerciseResolutionById(resId);
+        try{
+            exercisesService.getExerciseResolution(resId);
+            assert false; // should not reach this point
+        }catch (Exception e){
+            assert true;
+        }
+    }
+
+    @Test
+    public void createResolutionsAndAutoCorrect() throws BadInputException, NotFoundException, UnauthorizedException {
+        ExerciseSolution exerciseSolution = createMCSolution();
+        ExerciseRubric exerciseRubric = createMCRubric();
+        Exercise exercise = createMCExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
+        float maxPoints = exercise.getPoints();
+
+        ExerciseResolutionData wrongMC = createWrongMCResolution();
+        var er1 = exercisesService.createExerciseResolution(studentId,exerciseId,wrongMC.clone());
+        String er1Id = er1.getId();
         ExerciseResolutionData rightMC = createRightMCResolution();
         var er2 = exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone());
+        String er2Id = er2.getId();
         assertEquals(2,exercisesService.countExerciseResolutions(exerciseId,true));
         assertEquals(1,exercisesService.countExerciseResolutions(exerciseId,false));
 
@@ -582,13 +632,18 @@ public class ExercisesServiceTest {
         assertEquals(2,exerciseResolution.getSubmissionNr());
         assertEquals(ExerciseResolutionStatus.NOT_REVISED,exerciseResolution.getStatus());
 
-        //
-        exercisesService.issueExerciseResolutionCorrection(exerciseResolution.getId(),"auto");
+        // issues automatic correction of the exercise
+        exercisesService.issueExerciseResolutionsCorrection(exerciseId,"auto");
         exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(exerciseId,studentId);
+        assert exerciseResolution.getId().equals(er2Id);
         assertFalse(rightMC.equals(exerciseResolution.getData()));
-        assertEquals(3.0F,exerciseResolution.getPoints());
+        assertEquals(maxPoints,exerciseResolution.getPoints());
         assertEquals(2,exerciseResolution.getSubmissionNr());
         assertEquals(ExerciseResolutionStatus.REVISED,exerciseResolution.getStatus());
+
+        // checks that the points of the first resolution equal to 0
+        exerciseResolution = exercisesService.getExerciseResolution(er1Id);
+        assertEquals(0.0f, exerciseResolution.getPoints());
     }
 
     @Test
@@ -631,5 +686,76 @@ public class ExercisesServiceTest {
 
         // asserts that there is no comment anymore
         assert exercisesService.getExerciseResolution(resolutionId).getComment() == null;
+    }
+
+    @Test
+    public void testGetExercises() throws BadInputException, NotFoundException {
+        Tag tag1 = tagsService.createTag("tag1","/"),
+            tag2 = tagsService.createTag("tag2","/"),
+            tag3 = tagsService.createTag("tag3","/");
+        Exercise exercise1 = createOAExercise(specialistId, courseId),
+                 exercise2 = createMCExercise(specialist2Id, course2Id),
+                 exercise3 = createFTBExercise(specialistId, null),
+                 exercise4 = createOA2Exercise(specialist2Id, course2Id);
+        String exercise1Id = exercisesService.createExercise(exercise1, null, null, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId(), tag3.getId()));
+        String exercise2Id = exercisesService.createExercise(exercise2, null, null, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId()));
+        String exercise3Id = exercisesService.createExercise(exercise3, null, null, Visibility.PUBLIC, List.of(tag1.getId()));
+        String exercise4Id = exercisesService.createExercise(exercise4, null, null, Visibility.COURSE, List.of(tag3.getId()));
+
+        // no filters. All 4 exercises should be received
+        List<String> list = exercisesService.getExercises(0, 10, null, false, null, null, null, null, null, null, false)
+                                            .stream().map(Exercise::getId).toList();
+        assert list.size() == 4 && list.containsAll(List.of(exercise1Id, exercise2Id, exercise3Id, exercise4Id));
+
+        // exercises should have all 3 tags. Only ex1 should be received
+        list = exercisesService.getExercises(0, 10, List.of(tag1.getId(), tag2.getId(), tag3.getId()), true, null, null, null, null, null, null, false)
+                               .stream().map(Exercise::getId).toList();
+        assert list.size() == 1 && list.contains(exercise1Id);
+
+        // exercises should have tag1 and tag2. ex1 and ex2 should be received
+        list = exercisesService.getExercises(0, 10, List.of(tag1.getId(), tag2.getId()), true, null, null, null, null, null, null, false)
+                               .stream().map(Exercise::getId).toList();
+        assert list.size() == 2 && list.containsAll(List.of(exercise1Id, exercise2Id));
+
+        // exercises should have tag1. ex1, ex2 and ex3 should be received
+        list = exercisesService.getExercises(0, 10, List.of(tag1.getId()), true, null, null, null, null, null, null, false)
+                               .stream().map(Exercise::getId).toList();
+        assert list.size() == 3 && list.containsAll(List.of(exercise1Id, exercise2Id, exercise3Id));
+
+        // exercises should have one of the following tags: tag2, tag3. ex1, ex2 and ex4 should be received
+        list = exercisesService.getExercises(0, 10, List.of(tag2.getId(), tag3.getId()), false, null, null, null, null, null, null, false)
+                               .stream().map(Exercise::getId).toList();
+        assert list.size() == 3 && list.containsAll(List.of(exercise1Id, exercise2Id, exercise4Id));
+
+        // should have visibility "COURSE". ex4 should be received
+        list = exercisesService.getExercises(0, 10, null, false, Visibility.COURSE, null, null, null, null, null, false)
+                .stream().map(Exercise::getId).toList();
+        String vis = Visibility.COURSE.toString();
+        assert list.size() == 1 && list.contains(exercise4Id);
+
+        // should have visibility "PUBLIC". ex1, ex2 and ex3 should be received
+        list = exercisesService.getExercises(0, 10, null, false, Visibility.PUBLIC, null, null, null, null, null, false)
+                .stream().map(Exercise::getId).toList();
+        assert list.size() == 3 && list.containsAll(List.of(exercise1Id, exercise2Id, exercise3Id));
+
+        // should belong to course2. ex2 and ex4 should be received
+        list = exercisesService.getExercises(0, 10, null, false, null, course2Id, null, null, null, null, false)
+                .stream().map(Exercise::getId).toList();
+        assert list.size() == 2 && list.containsAll(List.of(exercise2Id, exercise4Id));
+
+        // should have as owner the specialist with id equal to specialistId. ex1 and ex3 should be received
+        list = exercisesService.getExercises(0, 10, null, false, null, null, null, specialistId, null, null, false)
+                .stream().map(Exercise::getId).toList();
+        assert list.size() == 2 && list.containsAll(List.of(exercise1Id, exercise3Id));
+
+        // should have title similar to 'Patinhos sabem nadar'. ex3 should be received
+        list = exercisesService.getExercises(0, 10, null, false, null, null, null, null, "Patinhos sabem nadar", null, false)
+                .stream().map(Exercise::getId).toList();
+        assert list.size() == 1 && list.contains(exercise3Id);
+
+        // should be of type 'OA'. ex1 and ex4 should be received
+        list = exercisesService.getExercises(0, 10, null, false, null, null, null, null, null, "OA", false)
+                .stream().map(Exercise::getId).toList();
+        assert list.size() == 2 && list.containsAll(List.of(exercise1Id, exercise4Id));
     }
 }

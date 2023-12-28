@@ -195,7 +195,6 @@ public interface IExercisesService{
     ExerciseResolution getLastExerciseResolutionByStudent(String exerciseId, String studentId);
 
     /**
-     * @param userId         identifier of the user that made the request. Necessary to check authorization.
      * @param page           index of the page
      * @param itemsPerPage   number of items per page
      * @param tags           list of tags to filter exercises
@@ -211,7 +210,7 @@ public interface IExercisesService{
      *                       'false' does not verify database logic
      * @return list of exercises that match the given filters
      */
-    Page<Exercise> getExercises(String userId, Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, String visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
+    Page<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
 
     /**
      * Adds a comment to an exercise resolution.
@@ -283,4 +282,6 @@ public interface IExercisesService{
 
     void updateExercisePoints(String exerciseId, float points) throws NotFoundException, BadInputException;
     void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException;
+
+    boolean isExerciseOwner(String exerciseId, String specialistId);
 }
