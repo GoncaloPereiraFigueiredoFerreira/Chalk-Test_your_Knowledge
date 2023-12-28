@@ -12,13 +12,17 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @ToString
 public class ReferenceExercise extends TestExercise {
     private String id;
-    private float points;
+
+    public ReferenceExercise(String id, float points) {
+        super(points);
+        this.id = id;
+    }
 
     @Override
     public void verifyInsertProperties() throws BadInputException {
         if(id == null)
             throw new BadInputException("Id of an exercise must not be null.");
-        if(points <= 0)
+        if(getPoints() <= 0)
             throw new BadInputException("The points of an exercise must be positive.");
     }
 }

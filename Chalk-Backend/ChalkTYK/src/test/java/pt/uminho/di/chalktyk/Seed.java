@@ -221,14 +221,14 @@ public class Seed {
         mcRubricMap.put(2,createOARubric());
         mcRubricMap.put(3,createOARubric());
 
-        return new MultipleChoiceRubric(1.0F, 0.0F, mcRubricMap);
+        return new MultipleChoiceRubric(0.0F, mcRubricMap);
     }
 
     private OpenAnswerRubric createOARubric(){
-        OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",2.0F);
+        OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",100.0F);
         OAStandard oaStandardMin = new OAStandard("Ni siquiera intentó resolver","No puedo robar tanto",0.0F);
         List<OAStandard> oaStandards = Arrays.asList(oaStandardMin,oaStandardMax);
-        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado", oaStandards)));
+        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado", 100f, oaStandards)));
     }
 
     private MultipleChoiceExercise createMCExercise(Specialist specialist, Course course, Tag tag){
@@ -240,7 +240,6 @@ public class Seed {
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION, itemResolutions);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español MC");
-        exercise.setPoints(3.0F);
         exercise.setSpecialist(specialist);
         exercise.setCourse(course);
         exercise.setTags(Set.of(tag));

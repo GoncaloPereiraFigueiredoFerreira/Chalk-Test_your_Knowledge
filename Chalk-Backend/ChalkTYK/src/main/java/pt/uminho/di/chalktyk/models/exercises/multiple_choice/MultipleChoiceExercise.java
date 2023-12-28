@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
-import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
@@ -50,8 +50,6 @@ public class MultipleChoiceExercise extends Exercise {
 		if(!(rubric instanceof MultipleChoiceRubric multipleChoiceRubric))
 			throw new BadInputException("Exercise rubric does not match exercise type (multiple choice).");
 		// TODO - FUTURE WORK -> check if there is an openanswer rubric for each question that needs justification.
-		if(multipleChoiceRubric.getMaxPointsSum()!=super.getPoints())
-			throw new BadInputException("Exercise rubric maximum points (points*number of items) must be equals to exercise points");
 		multipleChoiceRubric.verifyProperties();
 	}
 
@@ -91,7 +89,7 @@ public class MultipleChoiceExercise extends Exercise {
 				&& mctype != Mctype.TRUE_FALSE_NO_JUSTIFICATION)
 			throw new UnauthorizedException("Justifications cannot be corrected automatically.");
 
-		float points = 0;
+		float points = 0.0f;
 
 		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry : solutionData.getItems().entrySet()){
 			Integer id = entry.getKey();
@@ -105,15 +103,18 @@ public class MultipleChoiceExercise extends Exercise {
 				// else if the resolution value does not match the solution value, then
 				// The student should receive a penalty
 			else if(resolutionItem.getValue() != solutionItem.getValue()) {
-				points -= mcRubric.getPenalty();
-				resolutionItem.setPoints(-mcRubric.getPenalty());
+				points -= getPointsPerQuestion() * mcRubric.getPenalty();
+				resolutionItem.setPoints(-getPointsPerQuestion() * mcRubric.getPenalty());
 			}
 			// else the student's resolution value matches the solution value
 			else{
-				points += mcRubric.getChoicePoints();
-				resolutionItem.setPoints(mcRubric.getChoicePoints());
+				points += getPointsPerQuestion();
+				resolutionItem.setPoints(getPointsPerQuestion());
 			}
 		}
+
+		// points should not be a negative number
+		points = Math.max(points, 0.0f);
 
 		// update resolution fields
 		resolution.setStatus(ExerciseResolutionStatus.REVISED);
@@ -166,5 +167,15 @@ public class MultipleChoiceExercise extends Exercise {
 		MultipleChoiceExercise that = (MultipleChoiceExercise) o;
 		if (mctype != that.mctype) return false;
 		return Objects.equals(items, that.items);
+	}
+
+	@JsonIgnore
+	private int getNumberOfQuestions(){
+		return items.size();
+	}
+
+	@JsonIgnore
+	private float getPointsPerQuestion(){
+		return 100.0f / getNumberOfQuestions();
 	}
 }

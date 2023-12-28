@@ -27,27 +27,35 @@ import java.util.Objects;
 @Getter
 @Setter
 public class MultipleChoiceRubric extends ExerciseRubric{
-	@Column(name = "ChoicePoints")
-	private Float choicePoints;
+
+	/*
+        Let's consider an exercise where each question equals to 25 points.
+        If the student fails the question, he loses the 25 points and also
+         gets points deducted based on the penalty. If the penalty equals to 100
+         (it's a percentage of each question points), then the additional
+          points deducted for each question equals to:
+               (question points) * penalty / 100
+              = 25 * 100 / 100
+              = 25.
+         */
 
 	@Column(name = "Penalty")
-	private Float penalty;
+	private float penalty;
 
 	@Type(JsonBinaryType.class)
 	@Column(name = "JustificationsRubrics", columnDefinition = "jsonb")
 	private Map<Integer, OpenAnswerRubric> justificationsRubrics;
 
-	public MultipleChoiceRubric(String id, Float choicePoints, Float penalty, Map<Integer, OpenAnswerRubric> justificationsRubrics) {
+	public MultipleChoiceRubric(String id, Float penalty, Map<Integer, OpenAnswerRubric> justificationsRubrics) {
 		super(id);
-		this.choicePoints = choicePoints;
 		this.penalty = penalty;
 		this.justificationsRubrics = justificationsRubrics;
 	}
 
 	@Override
 	public void verifyProperties() throws BadInputException {
-		if (penalty == null || choicePoints == null || penalty < 0 || choicePoints < 0)
-			throw new BadInputException("Cannot create MultipleChoiceRubric: The points or penalty of a rubric cannot be null or negative.");
+		if (penalty < 0)
+			throw new BadInputException("Cannot create MultipleChoiceRubric: The penalty of a rubric cannot be negative.");
 		if(justificationsRubrics!=null){
 			for (OpenAnswerRubric openAnswerRubric : justificationsRubrics.values())
 				openAnswerRubric.verifyProperties();
@@ -64,8 +72,6 @@ public class MultipleChoiceRubric extends ExerciseRubric{
 			if(!justificationsRubrics.get(i).equals(multipleChoiceRubric.getJustificationsRubrics().get(i)))
 				return false;
 		}
-		if(!(Objects.equals(multipleChoiceRubric.getChoicePoints(), choicePoints)))
-			return false;
 		if(!(Objects.equals(multipleChoiceRubric.getPenalty(), penalty)))
 			return false;
 		return true;
@@ -76,10 +82,6 @@ public class MultipleChoiceRubric extends ExerciseRubric{
 		Map<Integer, OpenAnswerRubric> jrCloned = new HashMap<>();
 		for(Map.Entry<Integer, OpenAnswerRubric> entry : justificationsRubrics.entrySet())
 			jrCloned.put(entry.getKey(), entry.getValue().clone());
-		return new MultipleChoiceRubric(getId(), choicePoints, penalty, jrCloned);
-	}
-
-	public float getMaxPointsSum() {
-		return choicePoints * justificationsRubrics.size();
+		return new MultipleChoiceRubric(getId(), penalty, jrCloned);
 	}
 }

@@ -240,12 +240,12 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException {
-        return duplicateExerciseById(specialistId, exerciseId, null, null, null);
+        return duplicateExerciseById(specialistId, exerciseId, null, null);
     }
 
     @Override
     @Transactional
-    public String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Float points, Visibility visibility) throws NotFoundException {
+    public String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException {
         // checks if the specialist exists
         Specialist specialist = specialistsService.getSpecialistById(specialistId);
 
@@ -281,7 +281,6 @@ public class ExercisesService implements IExercisesService{
         // and sets other information
         Exercise copy = source.cloneExerciseDataOnly();
         copy.setVisibility(visibility == null ? Visibility.PRIVATE : visibility);
-        copy.setPoints(points == null || points <= 0.0f ? 1.0f : points);
         copy.setTags(new HashSet<>(source.getTags()));
         copy.setInstitution(institution);
         copy.setSpecialist(specialist);
@@ -305,12 +304,11 @@ public class ExercisesService implements IExercisesService{
      * @param solution   new exercise solution
      * @param tagsIds    new list of tags
      * @param visibility new visibility
-     * @param points new points. Must be a positive value, or 'null' if it shouldn't be updated.
      * @throws NotFoundException if the exercise was not found
      */
     @Override
     @Transactional
-    public void updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility, Float points) throws NotFoundException, BadInputException {
+    public void updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
         // gets exercise using the identifier, or throws not found exception
         Exercise exercise = _getExerciseById(exerciseId);
 
@@ -327,11 +325,6 @@ public class ExercisesService implements IExercisesService{
             _updateExerciseTags(exercise,tagsIds);
         if(visibility!=null)
             _updateExerciseVisibility(exercise,visibility);
-        if(points != null){
-            // TODO - ter cotacao aqui e na rúbrica não faz sentido porque atualizar num lado leva a ser necessário atualizar noutro. Na rubrica mudar para porcentagens?
-            if(points <= 0)
-                throw new BadInputException("Points must be a positive value.");
-        }
     }
 
     @Override
@@ -478,28 +471,6 @@ public class ExercisesService implements IExercisesService{
         exercise.setCourse(course);
         exerciseDAO.save(exercise);
     }
-
-    @Override
-    @Transactional
-    public void updateExercisePoints(String exerciseId, float points) throws NotFoundException, BadInputException {
-        Exercise exercise = _getExerciseById(exerciseId);
-        _updateExercisePoints(exercise, points);
-    }
-
-    /**
-     * Updates the exercise points.
-     *
-     * @param exercise   exercise. Assumed not null
-     * @param points   new points
-     * @throws BadInputException if the points are not positive.
-     */
-    private void _updateExercisePoints(Exercise exercise, float points) throws BadInputException {
-        if(points <= 0.0f)
-            throw new BadInputException("Points must be positive.");
-        exercise.setPoints(points);
-        exerciseDAO.save(exercise);
-    }
-
 
     /**
      * Retrieves the rubric of an exercise.
@@ -985,14 +956,9 @@ public class ExercisesService implements IExercisesService{
         if (resolution == null)
             throw new NotFoundException("Could not set resolution points: Resolution does not exist.");
 
-        // finds the max points for the exercise
-        Exercise exercise = exerciseDAO.findById(resolution.getExerciseId()).orElse(null);
-        assert exercise != null;
-        float maxPoints = exercise.getPoints();
-
-        // points cannot be higher than the defined points for the question
-        if (points > maxPoints)
-            throw new BadInputException("Could not set resolution points: Points exceed the max points of the exercise");
+        // points cannot be higher than 100 and cannot be lower than 0
+        if (points < 0.0f || points > 100.0f)
+            throw new BadInputException("Could not set resolution points: Points is a percentage so it needs to be a value between 0 and 100.");
 
         // sets the points and persists the document
         resolution.setPoints(points);

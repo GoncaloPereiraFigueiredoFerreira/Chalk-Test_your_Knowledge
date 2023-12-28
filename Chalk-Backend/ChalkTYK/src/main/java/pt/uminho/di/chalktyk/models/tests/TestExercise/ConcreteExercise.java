@@ -14,6 +14,11 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 public class ConcreteExercise extends TestExercise {
     private Exercise exercise;
 
+    public ConcreteExercise(float points, Exercise exercise) {
+        super(points);
+        this.exercise = exercise;
+    }
+
     @Override
     public String getId() {
         String id = null;
@@ -23,18 +28,11 @@ public class ConcreteExercise extends TestExercise {
     }
 
     @Override
-    public float getPoints() {
-        float points = -1;
-        if(exercise != null)
-            points = exercise.getPoints();
-        return points;
-    }
-
-    @Override
     public void verifyInsertProperties() throws BadInputException {
         if(exercise == null)
             throw new BadInputException("The concrete exercise data must not be null.");
-        else
-            exercise.verifyInsertProperties();
+        if(getPoints() <= 0)
+            throw new BadInputException("The points of an exercise must be positive.");
+        exercise.verifyInsertProperties();
     }
 }

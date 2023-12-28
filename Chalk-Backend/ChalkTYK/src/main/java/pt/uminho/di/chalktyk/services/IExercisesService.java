@@ -62,7 +62,7 @@ public interface IExercisesService{
      */
     String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
 
-    String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Float points, Visibility visibility) throws NotFoundException;
+    String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException;
 
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
@@ -74,11 +74,10 @@ public interface IExercisesService{
      * @param solution   new exercise solution
      * @param tagsIds    new list of tags
      * @param visibility new visibility
-     * @param points
      * @throws UnauthorizedException if the exercise is not owned by the specialist
      * @throws NotFoundException     if the exercise was not found
      */
-    void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility, Float points)  throws NotFoundException, BadInputException;
+    void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility)  throws NotFoundException, BadInputException;
 
     /**
      * Updates an exercise body.
@@ -280,7 +279,6 @@ public interface IExercisesService{
 
     void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException;
 
-    void updateExercisePoints(String exerciseId, float points) throws NotFoundException, BadInputException;
     void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException;
 
     boolean isExerciseOwner(String exerciseId, String specialistId);

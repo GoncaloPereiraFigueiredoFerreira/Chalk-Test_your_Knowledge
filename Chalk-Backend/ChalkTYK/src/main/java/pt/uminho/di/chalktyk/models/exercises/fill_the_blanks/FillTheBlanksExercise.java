@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
@@ -26,6 +27,7 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @DiscriminatorValue("FTB")
 @JsonTypeName("FTB")
 public class FillTheBlanksExercise extends Exercise {
+	// between each text segment a blank is supposed to be filled.
 	@Type(JsonBinaryType.class)
 	@Column(name = "TextSegments", columnDefinition = "jsonb")
 	private List<String> textSegments;
@@ -33,18 +35,15 @@ public class FillTheBlanksExercise extends Exercise {
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
 		if(!(exerciseResolutionData instanceof FillTheBlanksData fillTheBlanksData))
-			throw new BadInputException("Exercise resolution does not match exercise type (fill the blanks).");
+			throw new BadInputException("Exercise solution/resolution does not match exercise type (fill the blanks).");
 		fillTheBlanksData.verifyInsertProperties();
-		if(numberOfAnswers()!=fillTheBlanksData.getFillings().size())
-			throw new BadInputException("Exercise resolution fillings do not match exercise text segments (fillings size = (text segments size -1)).");
+		if(getNumberOfBlanks() != fillTheBlanksData.getFillings().size())
+			throw new BadInputException("Exercise solution/resolution does not have enough fillings. The number of fillings should equal the number of text segments minus 1.");
 	}
 	@Override
 	public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
 		if(!(rubric instanceof FillTheBlanksRubric fillTheBlanksRubric))
 			throw new BadInputException("Exercise rubric does not match exercise type (fill the blanks).");
-
-		if(numberOfAnswers()*fillTheBlanksRubric.getFillingPoints()!=super.getPoints())
-			throw new BadInputException("Exercise rubric maximum points (fillingPoints * numberOfAnswers) must match the exercise points.");
 		fillTheBlanksRubric.verifyProperties();
 	}
 
@@ -77,8 +76,14 @@ public class FillTheBlanksExercise extends Exercise {
 		super.verifyInsertProperties();
 	}
 
-	private int numberOfAnswers(){
-		return textSegments.size()-1;
+	@JsonIgnore
+	private int getNumberOfBlanks(){
+		return textSegments.size() - 1;
+	}
+
+	@JsonIgnore
+	private float getPointsPerBlank(){
+		return 100.0f / getNumberOfBlanks();
 	}
 
 	@Override

@@ -16,15 +16,15 @@ import java.util.Objects;
 public class OAStandard  implements Serializable {
 	private String title;
 	private String description;
-	private Float points;
+	private float percentage;
 	
 	public void verifyProperties() throws BadInputException {
-		if(title==null)
+		if(title == null)
 			throw new BadInputException("Cannot create exercise: The rubric Standard's title cannot be null.");
-		else if(description==null)
+		else if(description == null)
 			throw new BadInputException("Cannot create exercise: The rubric Standard's description cannot be null.");
-		else if(points <0)
-			throw new BadInputException("Cannot create exercise: The rubric Standard's points cannot be negative.");
+		else if(percentage < 0)
+			throw new BadInputException("Cannot create exercise: The rubric Standard's percentage needs to be a value between 0 (exclusive) and 100 (inclusive).");
 	}
 
 	public boolean equals(OAStandard oaStandard){
@@ -32,11 +32,11 @@ public class OAStandard  implements Serializable {
 			return false;
 		if(!Objects.equals(oaStandard.getDescription(), description))
 			return false;
-		if(!Objects.equals(oaStandard.getPoints(), points))
+		if(!Objects.equals(oaStandard.getPercentage(), percentage))
 			return false;
 		return true;
 	}
 	public OAStandard clone(){
-		return new OAStandard(title,description, points);
+		return new OAStandard(title,description, percentage);
 	}
 }

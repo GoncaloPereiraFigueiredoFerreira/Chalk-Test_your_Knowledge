@@ -83,7 +83,6 @@ public class ExercisesServiceTest {
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español OA");
-        exercise.setPoints(2.0F);
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         return exercise;
@@ -103,17 +102,16 @@ public class ExercisesServiceTest {
     }
 
     private OpenAnswerRubric createOARubric(){
-        OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",2.0F);
+        OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",100.0F);
         OAStandard oaStandardMin = new OAStandard("Ni siquiera intentó resolver","No puedo robar tanto",0.0F);
         List<OAStandard> oaStandards = Arrays.asList(oaStandardMin,oaStandardMax);
-        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado",oaStandards)));
+        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado", 100f, oaStandards)));
     }
 
     private OpenAnswerExercise createOA2Exercise(String specialistId, String courseId){
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement("¿dos más dos?",null,null));
         exercise.setTitle("Pregunta 2 de Español OA");
-        exercise.setPoints(4.0F);
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         return exercise;
@@ -125,10 +123,10 @@ public class ExercisesServiceTest {
     }
 
     private OpenAnswerRubric createOA2Rubric(){
-        OAStandard oaStandardMax = new OAStandard("Acertou","Se escreveu 'cuatro', recebe todos os pontos.",4.0F);
+        OAStandard oaStandardMax = new OAStandard("Acertou","Se escreveu 'cuatro', recebe todos os pontos.",100.0F);
         OAStandard oaStandardMin = new OAStandard("Falhou","Se não escreveu 'cuatro', não recebe pontos",0.0F);
         List<OAStandard> oaStandards = Arrays.asList(oaStandardMin,oaStandardMax);
-        return new OpenAnswerRubric(List.of(new OACriterion("Desempenho",oaStandards)));
+        return new OpenAnswerRubric(List.of(new OACriterion("Desempenho",100f, oaStandards)));
     }
 
 
@@ -144,7 +142,6 @@ public class ExercisesServiceTest {
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
         exercise.setTitle("Pregunta de Español MC");
-        exercise.setPoints(3.0F);
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         return exercise;
@@ -200,14 +197,13 @@ public class ExercisesServiceTest {
         mcRubricMap.put(1,createOARubric());
         mcRubricMap.put(2,createOARubric());
         mcRubricMap.put(3,createOARubric());
-        return new MultipleChoiceRubric(1.0F,0.0F,mcRubricMap);
+        return new MultipleChoiceRubric(0.0F,mcRubricMap);
     }
 
     private FillTheBlanksExercise createFTBExercise(String specialistId, String courseId){
         FillTheBlanksExercise fillTheBlanksExercise = new FillTheBlanksExercise(Arrays.asList("Todos os ", " sabem bem ",""));
         fillTheBlanksExercise.setStatement(new ExerciseStatement("Preenche com a música dos patinhos","",""));
         fillTheBlanksExercise.setTitle("Patinhos sabem nadar FTB");
-        fillTheBlanksExercise.setPoints(2.0F);
         fillTheBlanksExercise.setSpecialist(new Specialist(specialistId));
         fillTheBlanksExercise.setCourse(new Course(courseId));
         return fillTheBlanksExercise;
@@ -229,7 +225,7 @@ public class ExercisesServiceTest {
     }
 
     private ExerciseRubric createFTBRubric(){
-        return new FillTheBlanksRubric(1.0F,0.0F);
+        return new FillTheBlanksRubric(0.0F);
     }
 
     /* ****** TESTS ****** */
@@ -361,7 +357,7 @@ public class ExercisesServiceTest {
             assert !solution.getData().equals(solutionBackup);
 
             // updates the exercise
-            exercisesService.updateAllOnExercise(exerciseId, exercise2, rubric2, solution2, List.of(tag1Id), Visibility.PRIVATE, 2.0f);
+            exercisesService.updateAllOnExercise(exerciseId, exercise2, rubric2, solution2, List.of(tag1Id), Visibility.PRIVATE);
 
             // flush and clear entity manager
             // to cleanly retrieve the exercise from the database
@@ -386,7 +382,6 @@ public class ExercisesServiceTest {
             assert exercise.equalsDataOnly(exerciseBackup);
             assert exercise.getVisibility().equals(Visibility.PRIVATE);
             assert exercisesService.getExerciseVisibility(exerciseId).equals(Visibility.PRIVATE);
-            assert exercise.getPoints().equals(2.0f);
             assert rubric.clone().equals(rubricBackup);
             assert solution.getData().clone().equals(solutionBackup);
 
@@ -445,7 +440,6 @@ public class ExercisesServiceTest {
             exercisesService.updateExerciseSolution(exerciseId, solution2);
             exercisesService.updateExerciseTags(exerciseId, List.of(tag1Id));
             exercisesService.updateExerciseVisibility(exerciseId, Visibility.PRIVATE);
-            exercisesService.updateExercisePoints(exerciseId, 2.0f);
 
             // flush and clear entity manager
             // to cleanly retrieve the exercise from the database
@@ -469,7 +463,6 @@ public class ExercisesServiceTest {
             // assert that the updates were successful
             assert exercise.equalsDataOnly(exerciseBackup);
             assert exercise.getVisibility().equals(Visibility.PRIVATE);
-            assert exercise.getPoints().equals(2.0f);
             assert rubric.clone().equals(rubricBackup);
             assert solution.getData().clone().equals(solutionBackup);
 
@@ -503,7 +496,7 @@ public class ExercisesServiceTest {
             // updates everything about the exercise
             Exercise exercise2 = createOA2Exercise(specialistId, courseId);
             ExerciseStatement statement2Backup = exercise2.getStatement().clone();
-            exercisesService.updateAllOnExercise(exerciseId, exercise2, null, null, null, null, null);
+            exercisesService.updateAllOnExercise(exerciseId, exercise2, null, null, null, null);
 
             // flush and clear entity manager
             // to cleanly retrieve the exercise from the database
@@ -529,9 +522,10 @@ public class ExercisesServiceTest {
             ExerciseRubric exerciseRubric = createFTBRubric();
             Exercise exercise = createFTBExercise(specialistId,courseId);
             String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
-            exercisesService.updateAllOnExercise(exerciseId,null,null,createOASolution(),null,null, null);
+            exercisesService.updateAllOnExercise(exerciseId,null,null,createOASolution(),null,null);
         } catch (BadInputException bie){
-            if(Objects.equals(bie.getMessage(), "Exercise resolution does not match exercise type (fill the blanks)."))
+            System.out.println(bie.getMessage());
+            if(Objects.equals(bie.getMessage(), "Exercise solution/resolution does not match exercise type (fill the blanks)."))
                 exceptionOcurred=true;
         }
         assertTrue(exceptionOcurred);
@@ -573,7 +567,7 @@ public class ExercisesServiceTest {
 
         // checks that the points were correctly assigned
         exerciseResolution = exercisesService.getLastExerciseResolutionByStudent(exerciseId,studentId);
-        assertEquals(3.0F,exerciseResolution.getPoints());
+        assertEquals(100.0F,exerciseResolution.getPoints());
         assertEquals(ExerciseResolutionStatus.REVISED,exerciseResolution.getStatus());
 
         // deletes the resolution
@@ -593,7 +587,7 @@ public class ExercisesServiceTest {
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
         String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
-        float maxPoints = exercise.getPoints();
+        float maxPoints = 100f;
 
         ExerciseResolutionData wrongMC = createWrongMCResolution();
         var er1 = exercisesService.createExerciseResolution(studentId,exerciseId,wrongMC.clone());
@@ -662,7 +656,7 @@ public class ExercisesServiceTest {
         assert er1.getPoints() == null;
         assert er1.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED);
 
-        float maxPoints = exercise.getPoints();
+        float maxPoints = 100f;
 
         exercisesService.addCommentToExerciseResolution(resolutionId, comment.clone());
         exercisesService.manuallyCorrectExerciseResolution(resolutionId, maxPoints);

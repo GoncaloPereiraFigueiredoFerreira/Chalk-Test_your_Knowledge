@@ -37,9 +37,13 @@ public class OpenAnswerRubric extends ExerciseRubric {
 		if(criteria == null || criteria.isEmpty())
 			throw new BadInputException("Cannot create OpenAnswerRubric: The rubric list of a open answer exercise cannot be null or empty.");
 		else {
+			float points = 0.0f;
 			for (OACriterion criterion:  criteria){
 				criterion.verifyProperties();
+				points += criterion.getPoints();
 			}
+			if(points != 100.0f)
+				throw new BadInputException("The sum of the points of all open answer criteria needs to be equal to 100.");
 		}
 	}
 

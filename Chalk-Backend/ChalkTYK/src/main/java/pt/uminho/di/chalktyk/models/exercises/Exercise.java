@@ -57,9 +57,6 @@ public abstract class Exercise {
 	@Column(name = "Type", insertable = false, updatable = false, nullable = false)
 	private String exerciseType = getExerciseType();
 
-	@Column(name="Points")
-	private Float points;
-
 	@Column(name = "Visibility")
 	private Visibility visibility;
 
@@ -91,11 +88,10 @@ public abstract class Exercise {
 	@JoinColumn(name = "RubricID", referencedColumnName = "ID")
 	private ExerciseRubric rubric;
 
-	public Exercise(String id, String title, Float points, Visibility visibility, ExerciseStatement statement, Course course, Specialist specialist, Institution institution, Set<Tag> tags, ExerciseSolution solution, ExerciseRubric rubric) {
+	public Exercise(String id, String title, Visibility visibility, ExerciseStatement statement, Course course, Specialist specialist, Institution institution, Set<Tag> tags, ExerciseSolution solution, ExerciseRubric rubric) {
 		this.id = id;
 		this.title = title;
 		this.exerciseType = getExerciseType();
-		this.points = points;
 		this.visibility = visibility;
 		this.statement = statement;
 		this.course = course;
@@ -107,8 +103,6 @@ public abstract class Exercise {
 	}
 
 	public void verifyInsertProperties() throws BadInputException {
-		if(points == null || points <= 0)
-			throw new BadInputException("Cannot create exercise: The points of an exercise cannot be null, and must be positive.");
 		if(title == null || title.isEmpty())
 			throw new BadInputException("Cannot create concrete exercise: A title of a exercise cannot be empty or null.");
 		if(statement!=null)
@@ -164,7 +158,7 @@ public abstract class Exercise {
 	 * @param resolution resolution data that will be evaluated
 	 * @param solution   solution of the exercise
 	 * @param rubric     rubric of the exercise
-	 * @return points to be attributed to the resolution
+	 * @return resolution with its points updated. The points can range from 0 (inclusive) to 100 (inclusive).
 	 * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
 	 */
 	public abstract ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException;
@@ -184,7 +178,7 @@ public abstract class Exercise {
 	/**
 	 * Copies exercise data and its identifier to the instance given as argument.
 	 * Exercise data refers to the data needed by a student to start solving the exercise
-	 * (points, visibility are examples of information that is not required).
+	 * ( visibility are examples of information that is not required).
 	 * @param exercise exercise that will receive the data.
 	 */
 	protected void _copyExerciseDataOnlyTo(Exercise exercise){
@@ -198,7 +192,7 @@ public abstract class Exercise {
 	/**
 	 * Copies exercise data and its identifier to the instance given as argument.
 	 * Exercise data refers to the data needed by a student to start solving the exercise
-	 * (points, visibility are examples of information that is not required).
+	 * ( visibility are examples of information that is not required).
 	 * The exercise instance that calls this method needs to
 	 * be of the same class as the instance given as argument.
 	 * Subclasses should call the method '_copyExerciseDataOnlyTo(Exercise exercise)' from the super class.
@@ -210,8 +204,8 @@ public abstract class Exercise {
 	/**
 	 * Clones exercise data and its identifier.
 	 * Exercise data refers to the data needed by a student to start solving the exercise
-	 * (points, visibility are example of information that is not required).
-	 * Properties like associations with other entities, points, visibility, should be null, or empty.
+	 * ( visibility are example of information that is not required).
+	 * Properties like associations with other entities,  visibility, should be null, or empty.
 	 * Subclasses should call the '_copyExerciseDataOnlyTo(Exercise exercise)' method from the super class.
 	 * @return exercise of the same class, with data of the exercise cloned, ignoring metadata or association related information.
 	 */
@@ -219,18 +213,17 @@ public abstract class Exercise {
 
 	/**
 	 * Copies additional properties to the exercise instance given.
-	 * Properties that are considered additional data are: points and visibility.
+	 * Properties that are considered additional data are: visibility.
 	 * @param exercise exercise that should get the additional data copied
 	 */
 	protected void _copyAdditionalPropertiesTo(Exercise exercise){
-		exercise.setPoints(points);
 		exercise.setVisibility(visibility);
 	}
 
 	/**
 	 * Copies exercise data, identifier and additional properties to the instance given as argument.
 	 * Exercise data refers to the data needed by a student to start solving the exercise
-	 * (points, visibility are examples of information that is not required).
+	 * ( visibility are examples of information that is not required).
 	 * Additional properties refers to everything that is not considered 'exercise data' and is not an association.
 	 * The exercise instance that calls this method needs to
 	 * be of the same class as the instance given as argument.
@@ -246,7 +239,7 @@ public abstract class Exercise {
 	/**
 	 * Clones exercise data, identifier and additional properties.
 	 * Exercise data refers to the data needed by a student to start solving the exercise
-	 * (points, visibility are examples of information that is not required).
+	 * ( visibility are examples of information that is not required).
 	 * Additional properties refers to everything that is not considered 'exercise data' and is not an association.
 	 */
 	public Exercise cloneWithAdditionalDataTo(){
@@ -279,16 +272,8 @@ public abstract class Exercise {
 	}
 
 	public boolean equalsWithoutAssociations(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
+		if (!equalsDataOnly(o)) return false;
 		Exercise exercise = (Exercise) o;
-
-		if (!Objects.equals(id, exercise.id)) return false;
-		if (!Objects.equals(title, exercise.title)) return false;
-		if (!Objects.equals(exerciseType, exercise.exerciseType))
-			return false;
-		if (!Objects.equals(points, exercise.points)) return false;
 		if (visibility != exercise.visibility) return false;
         return Objects.equals(statement, exercise.statement);
     }
