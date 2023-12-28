@@ -14,6 +14,7 @@ import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 public interface ITestsService {
     /**
@@ -211,9 +212,12 @@ public interface ITestsService {
      * Issue the automatic correction of the test resolutions
      *
      * @param testId
-     * @param correctionType Type of correction ("auto" or "ai")
+     * @param correctionType         Type of correction ("auto" or "ai")
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the test or any exercise were not found
+     * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void automaticCorrection(String testId, String correctionType);
+    void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
 
     /**
      * Retrieves the number of students that submitted a resolution for a specific test
@@ -371,8 +375,9 @@ public interface ITestsService {
      * @param  exeId
      * @param  resolution
      * @throws NotFoundException if no test or exercise were found
+     * @throws BadInputException if any property of the resolution is not valid
      */
-    void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException;
+    void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
 
     /**
      * Add an exercise to a given test
