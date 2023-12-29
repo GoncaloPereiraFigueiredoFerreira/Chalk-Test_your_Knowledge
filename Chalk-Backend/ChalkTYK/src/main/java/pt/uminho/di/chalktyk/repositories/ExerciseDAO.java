@@ -28,9 +28,9 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
     /**
      * For a list of exercises, counts occurrences of tags.
      * @param exercisesIds list with ids of exercises
-     * @return pair with tag id and the number of occurrences across all the exercises present in the list.
+     * @return pair with tag and the number of occurrences across all the exercises present in the list.
      */
-    @Query("SELECT t.id, COUNT(e.id) FROM Exercise e JOIN e.tags t WHERE e.id IN :exercisesIds GROUP BY t.id")
+    @Query("SELECT t, COUNT(e.id) FROM Exercise e JOIN e.tags t WHERE e.id IN :exercisesIds GROUP BY t.id")
     Set<Object[]> countTagsOccurrencesForExercisesList(@Param("exercisesIds") List<String> exercisesIds);
 
     @EntityGraph(attributePaths = "tags", type = EntityGraph.EntityGraphType.LOAD)

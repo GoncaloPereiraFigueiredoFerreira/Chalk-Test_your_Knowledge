@@ -289,8 +289,9 @@ public interface IExercisesService{
 
     /**
      * For a list of exercises, counts occurrences of tags.
+     *
      * @param exercisesIds list with ids of exercises
      * @return pair with tag id and the number of occurrences across all the exercises present in the list.
      */
-    Set<Pair<String,Long>> countTagsOccurrencesForExercisesList(List<String> exercisesIds);
+    Set<Pair<Tag, Long>> countTagsOccurrencesForExercisesList(List<String> exercisesIds);
 }

@@ -782,7 +782,7 @@ public class ExercisesServiceTest {
         var set = exercisesService.countTagsOccurrencesForExercisesList(List.of(exercise1Id, exercise2Id, exercise3Id, exercise4Id));
         System.out.println(set);
         for(var pair : set){
-            String tagId = pair.getLeft();
+            String tagId = pair.getLeft().getId();
             Long count = pair.getRight();
 
             if (tagId.equals(tag1.getId()))

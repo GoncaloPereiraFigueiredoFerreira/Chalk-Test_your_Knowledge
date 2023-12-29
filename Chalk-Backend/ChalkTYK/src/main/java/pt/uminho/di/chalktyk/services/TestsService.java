@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,15 +159,14 @@ public class TestsService implements ITestsService {
         if (courseId == null && visibility == Visibility.COURSE)
             throw new BadInputException("Cannot create test: cannot set visibility to COURSE without a course associated.");
 
-        // count tags
         // check and duplicate exercises
-        Map<String, Integer> tagsCounter = new HashMap<>();
         List<TestGroup> tgs = body.getGroups();
         List<TestGroup> newTGs = new ArrayList<>();
+        List<String> allNewExesIds = new ArrayList<>();
 
         for (TestGroup tg: tgs){
             List<TestExercise> newExes = new ArrayList<>();
-            List<String> newExesIds = new ArrayList<>();
+
             for (TestExercise exe: tg.getExercises()){
                 // duplicate or persist exercise
                 String dupExerciseId;
@@ -188,19 +188,7 @@ public class TestsService implements ITestsService {
                 }
                 ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
                 newExes.add(newExe);
-                newExesIds.add(dupExerciseId);
-            }
-
-            // count group tags
-            Set<Pair<String,Long>> groupTagsCounter = exercisesService.countTagsOccurrencesForExercisesList(newExesIds);
-            for (Pair<String,Long> pair : groupTagsCounter){
-                String tagId = pair.getLeft();
-                Long count = pair.getRight();
-
-                if (tagsCounter.containsKey(tagId))
-                    tagsCounter.put(tagId, tagsCounter.get(tagId) + count.intValue());
-                else
-                    tagsCounter.put(tagId, count.intValue());
+                allNewExesIds.add(dupExerciseId);
             }
 
             TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
@@ -208,17 +196,20 @@ public class TestsService implements ITestsService {
         }
         body.setGroups(newTGs);
 
+        // persist test
         body = testDAO.save(body);
-        createTestTags(tagsCounter, body);
+
+        // count and create tags
+        createTestTags(exercisesService.countTagsOccurrencesForExercisesList(allNewExesIds), body);
 
         return body.getId();
     }
 
-    private void createTestTags(Map<String, Integer> tags, Test test){
-        for (Map.Entry<String, Integer> entry: tags.entrySet()){
-            Tag tag = tagsService.getTagById(entry.getKey());
+    private void createTestTags(Set<Pair<Tag,Long>> tags, Test test){
+        for (Pair<Tag,Long> pair: tags){
+            Tag tag = pair.getLeft();
             TestTagPK testTagPK = new TestTagPK(tag, test);
-            TestTag testTag = new TestTag(entry.getValue(), testTagPK);
+            TestTag testTag = new TestTag(pair.getRight().intValue(), testTagPK);
             testTagsDAO.save(testTag);
         }
     }
@@ -238,11 +229,7 @@ public class TestsService implements ITestsService {
             }
         }
 
-        // delete test tags
-        List<TestTag> tags = testTagsDAO.getTestTags(testId);
-        if (tags != null){
-            testTagsDAO.deleteAll(tags);
-        }
+        deleteTestTags(testId);
 
         // delete test exercises
         List<TestGroup> tgs = test.getGroups();
@@ -417,11 +404,11 @@ public class TestsService implements ITestsService {
         testDAO.save(test);
     }
 
-    // TODO -
-    //  1. Nao se esta a comparar com os grupos anteriores. É necessário eliminar exercicios que já nao sao usados.
-    //  2. Necessário criar os novos exercícios.
     @Override
     public void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException {
+        if(groups == null)
+            throw new NotFoundException("Couldn't update test: no groups were given.");
+
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
@@ -431,15 +418,80 @@ public class TestsService implements ITestsService {
             throw new BadInputException("Couldn't update test: can't change test after it has already been published.");
 
         // verify test group properties
-        for (TestGroup entry: groups){
-            entry.verifyProperties();
+        for (TestGroup g: groups){
+            g.verifyProperties();
         }
+
+        String specialistId = test.getSpecialistId();
+
+        // Set of ids of exercises on the current version of the test.
+        // This set is need to delete exercises that are no longer being used.
+        Set<String> ogExercisesIds =
+                test.getGroups().stream()
+                        .flatMap(g -> g.getExercises().stream())
+                        .map(TestExercise::getId).collect(Collectors.toSet());
+
+        // check and duplicate exercises
+        List<TestGroup> newTGs = new ArrayList<>();
+        List<String> allNewExesIds = new ArrayList<>();
+        boolean exercisesCollectionChanged = false; // if the global collection of exercises changed, then the tags need to be updated.
+
+        for (TestGroup tg: groups){
+            List<TestExercise> newExes = new ArrayList<>();
+
+            for (TestExercise exe: tg.getExercises()){
+                // duplicate or persist exercise
+                String exerciseId;
+
+                // if the exercise is a concrete exercise, the exercise must be persisted
+                // and a reference, with the id of the persisted exercise, needs to be created.
+                // This allows the exercises to be persisted independently of the test.
+                if (exe instanceof ConcreteExercise ce){
+                    Exercise tmp = ce.getExercise();
+                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                    exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                    exercisesCollectionChanged = true;
+                }
+                // Else the exercise is a reference to an existing exercise.
+                // First we need to check if it was already an exercise of the
+                // test. If it isn't the exercise needs to be duplicated and
+                // a new reference, containing the id of the duplicate,
+                // needs to be created.
+                else {
+                    // checks if exercise belonged to the test already
+                    if(ogExercisesIds.contains(exe.getId())){
+                        exerciseId = exe.getId();
+                        ogExercisesIds.remove(exe.getId());
+                    } else {
+                        exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                        exercisesCollectionChanged = true;
+                    }
+                }
+                ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
+                newExes.add(newExe);
+                allNewExesIds.add(exerciseId);
+            }
+
+            TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
+            newTGs.add(newTG);
+        }
+        test.setGroups(newTGs);
 
         // update points
         test.setGroups(groups);
         test.calculatePoints();
 
-        testDAO.save(test);
+        test = testDAO.save(test);
+
+        // count and create tags if there was an update regarding the exercises
+        if(exercisesCollectionChanged) {
+            deleteTestTags(testId);
+            createTestTags(exercisesService.countTagsOccurrencesForExercisesList(allNewExesIds), test);
+        }
+
+        // delete all exercises that are no longer used
+        for(String exId : ogExercisesIds)
+            exercisesService.deleteExerciseById(exId);
     }
 
     @Override
@@ -1063,5 +1115,12 @@ public class TestsService implements ITestsService {
         test.setGroups(groups);
         test.calculatePoints(); 
         testDAO.save(test);
+    }
+
+    private void deleteTestTags(String testId){
+        List<TestTag> tags = testTagsDAO.getTestTags(testId);
+        if (tags != null){
+            testTagsDAO.deleteAll(tags);
+        }
     }
 }

@@ -1004,11 +1004,11 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    public Set<Pair<String, Long>> countTagsOccurrencesForExercisesList(List<String> exercisesIds) {
+    public Set<Pair<Tag, Long>> countTagsOccurrencesForExercisesList(List<String> exercisesIds) {
         if(exercisesIds == null)
             return null;
         Set<Object[]> objects = exerciseDAO.countTagsOccurrencesForExercisesList(exercisesIds);
-        return objects.stream().map(o -> Pair.of((String) o[0], (Long) o[1])).collect(Collectors.toSet());
+        return objects.stream().map(o -> Pair.of((Tag) o[0], (Long) o[1])).collect(Collectors.toSet());
     }
 
     /* **** Auxiliary methods **** */
