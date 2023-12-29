@@ -29,6 +29,7 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,6 +86,7 @@ public class ExercisesServiceTest {
         exercise.setTitle("Pregunta de Español OA");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
         return exercise;
     }
 
@@ -114,6 +116,7 @@ public class ExercisesServiceTest {
         exercise.setTitle("Pregunta 2 de Español OA");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
         return exercise;
     }
 
@@ -144,6 +147,7 @@ public class ExercisesServiceTest {
         exercise.setTitle("Pregunta de Español MC");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
         return exercise;
     }
 
@@ -206,6 +210,7 @@ public class ExercisesServiceTest {
         fillTheBlanksExercise.setTitle("Patinhos sabem nadar FTB");
         fillTheBlanksExercise.setSpecialist(new Specialist(specialistId));
         fillTheBlanksExercise.setCourse(new Course(courseId));
+        fillTheBlanksExercise.setVisibility(Visibility.PUBLIC);
         return fillTheBlanksExercise;
     }
 
@@ -247,9 +252,14 @@ public class ExercisesServiceTest {
         Exercise exercise = createOAExercise(specialistId,courseId);
         Tag tag1 = tagsService.createTag("Espanol","/");
         Tag tag2 = tagsService.createTag("NewEspanol","/");
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId()));
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, List.of(tag1.getId(), tag2.getId()));
         assertTrue(exercisesService.exerciseExists(exerciseId));
         assert exercisesService.isExerciseOwner(exerciseId, specialistId);
+        Set<String> s1 = Set.of(tag1.getId(), tag2.getId()),
+                    s2 = exercisesService.getExerciseTags(exerciseId)
+                                         .stream().map(Tag::getId)
+                                         .collect(Collectors.toSet());
+        assert s1.containsAll(s2) && s2.containsAll(s1);
     }
 
     @Test
@@ -259,7 +269,7 @@ public class ExercisesServiceTest {
         Exercise exercise = createOAExercise(specialistId,courseId);
         Tag tag1 = tagsService.createTag("Espanol","/");
         Tag tag2 = tagsService.createTag("NewEspanol","/");
-        String exerciseId = exercisesService.createExercise(exercise,null,null, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId()));
+        String exerciseId = exercisesService.createExercise(exercise,null,null, List.of(tag1.getId(), tag2.getId()));
         assertTrue(exercisesService.exerciseExists(exerciseId));
         exercisesService.createExerciseSolution(exerciseId, exerciseSolution);
         exercisesService.createExerciseRubric(exerciseId, exerciseRubric);
@@ -276,7 +286,7 @@ public class ExercisesServiceTest {
         entityManager.clear();
 
         Exercise exercise = createOAExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,null,null, Visibility.PUBLIC, new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,null,null, new ArrayList<>());
         assert exercisesService.getExerciseById(exerciseId).getInstitution().getName().equals("UM");
         assert exercisesService.getExerciseInstitution(exerciseId).equals("UM");
     }
@@ -286,7 +296,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -296,7 +306,7 @@ public class ExercisesServiceTest {
         ExerciseRubric exerciseRubric = createFTBRubric();
         Exercise exercise = createFTBExercise(specialistId,courseId);
 
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, Arrays.asList());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Arrays.asList());
         assertTrue(exercisesService.exerciseExists(exerciseId));
     }
 
@@ -305,7 +315,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         Exercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));
@@ -317,7 +327,7 @@ public class ExercisesServiceTest {
         ExerciseRubric exerciseRubric = createFTBRubric();
         Exercise exercise = createFTBExercise(specialistId,courseId);
 
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, List.of());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, List.of());
         assertTrue(exercisesService.exerciseExists(exerciseId));
 
         exercisesService.deleteExerciseById(exerciseId);
@@ -331,7 +341,7 @@ public class ExercisesServiceTest {
             Exercise exercise = createOAExercise(specialistId, courseId);
             ExerciseSolution solution = createOASolution();
             ExerciseRubric rubric = createOARubric();
-            String exerciseId = exercisesService.createExercise(exercise, solution, rubric, Visibility.PUBLIC, new ArrayList<>());
+            String exerciseId = exercisesService.createExercise(exercise, solution, rubric, new ArrayList<>());
 
             // create some tags
             Tag tag1 = tagsService.createTag("Espanol", "/");
@@ -409,7 +419,7 @@ public class ExercisesServiceTest {
             Exercise exercise = createOAExercise(specialistId, courseId);
             ExerciseSolution solution = createOASolution();
             ExerciseRubric rubric = createOARubric();
-            String exerciseId = exercisesService.createExercise(exercise, solution, rubric, Visibility.PUBLIC, new ArrayList<>());
+            String exerciseId = exercisesService.createExercise(exercise, solution, rubric, new ArrayList<>());
 
             // create some tags
             Tag tag1 = tagsService.createTag("Espanol", "/");
@@ -491,7 +501,7 @@ public class ExercisesServiceTest {
             ExerciseSolution solution = createOASolution();
             ExerciseRubric rubric = createOARubric();
             ExerciseStatement statementBackup = exercise.getStatement().clone();
-            String exerciseId = exercisesService.createExercise(exercise, solution, rubric, Visibility.PUBLIC, new ArrayList<>());
+            String exerciseId = exercisesService.createExercise(exercise, solution, rubric, new ArrayList<>());
 
             // updates everything about the exercise
             Exercise exercise2 = createOA2Exercise(specialistId, courseId);
@@ -521,7 +531,7 @@ public class ExercisesServiceTest {
             ExerciseSolution exerciseSolution = createFTBSolution();
             ExerciseRubric exerciseRubric = createFTBRubric();
             Exercise exercise = createFTBExercise(specialistId,courseId);
-            String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
+            String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
             exercisesService.updateAllOnExercise(exerciseId,null,null,createOASolution(),null,null);
         } catch (BadInputException bie){
             System.out.println(bie.getMessage());
@@ -536,7 +546,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         Exercise exercise = createFTBExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
         exercisesService.deleteExerciseRubric(exerciseId);
         exercisesService.deleteExerciseSolution(exerciseId);
 
@@ -550,7 +560,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
 
         ExerciseResolutionData rightMC = createRightMCResolution();
         var er1 = exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone());
@@ -586,7 +596,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC, new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
         float maxPoints = 100f;
 
         ExerciseResolutionData wrongMC = createWrongMCResolution();
@@ -606,13 +616,13 @@ public class ExercisesServiceTest {
         var pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, false);
         assert pairsOfStudentAndResolutions.size() == 2;
         listOfResolutionsIdsWithGet =
-                pairsOfStudentAndResolutions.stream().filter(p -> p.getFirst().getId().equals(studentId))
-                                                     .map(p -> p.getSecond().getId()).toList();
+                pairsOfStudentAndResolutions.stream().filter(p -> p.getLeft().getId().equals(studentId))
+                                                     .map(p -> p.getRight().getId()).toList();
         assert listOfResolutionsIds.containsAll(listOfResolutionsIdsWithGet) && listOfResolutionsIdsWithGet.containsAll(listOfResolutionsIds);
 
         pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, true);
         assert pairsOfStudentAndResolutions.size() == 1;
-        assert pairsOfStudentAndResolutions.get(0).getSecond().getId().equals(er2.getId());
+        assert pairsOfStudentAndResolutions.get(0).getRight().getId().equals(er2.getId());
 
         assert exercisesService.countExerciseResolutionsByStudent(exerciseId, studentId) == 2;
 
@@ -645,7 +655,7 @@ public class ExercisesServiceTest {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
-        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, Visibility.PUBLIC,new ArrayList<>());
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
         ExerciseResolutionData rightMC = createRightMCResolution();
         var er1 = exercisesService.createExerciseResolution(studentId,exerciseId,rightMC.clone());
         String resolutionId = er1.getId();
@@ -691,10 +701,11 @@ public class ExercisesServiceTest {
                  exercise2 = createMCExercise(specialist2Id, course2Id),
                  exercise3 = createFTBExercise(specialistId, null),
                  exercise4 = createOA2Exercise(specialist2Id, course2Id);
-        String exercise1Id = exercisesService.createExercise(exercise1, null, null, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId(), tag3.getId()));
-        String exercise2Id = exercisesService.createExercise(exercise2, null, null, Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId()));
-        String exercise3Id = exercisesService.createExercise(exercise3, null, null, Visibility.PUBLIC, List.of(tag1.getId()));
-        String exercise4Id = exercisesService.createExercise(exercise4, null, null, Visibility.COURSE, List.of(tag3.getId()));
+        exercise4.setVisibility(Visibility.COURSE);
+        String exercise1Id = exercisesService.createExercise(exercise1, null, null, List.of(tag1.getId(), tag2.getId(), tag3.getId()));
+        String exercise2Id = exercisesService.createExercise(exercise2, null, null, List.of(tag1.getId(), tag2.getId()));
+        String exercise3Id = exercisesService.createExercise(exercise3, null, null, List.of(tag1.getId()));
+        String exercise4Id = exercisesService.createExercise(exercise4, null, null, List.of(tag3.getId()));
 
         // no filters. All 4 exercises should be received
         List<String> list = exercisesService.getExercises(0, 10, null, false, null, null, null, null, null, null, false)
@@ -751,5 +762,35 @@ public class ExercisesServiceTest {
         list = exercisesService.getExercises(0, 10, null, false, null, null, null, null, null, "OA", false)
                 .stream().map(Exercise::getId).toList();
         assert list.size() == 2 && list.containsAll(List.of(exercise1Id, exercise4Id));
+    }
+
+    @Test
+    public void testCountTags() throws BadInputException {
+        Tag tag1 = tagsService.createTag("tag1", "/"),
+            tag2 = tagsService.createTag("tag2", "/"),
+            tag3 = tagsService.createTag("tag3", "/");
+        Exercise exercise1 = createOAExercise(specialistId, courseId),
+                exercise2 = createMCExercise(specialist2Id, course2Id),
+                exercise3 = createFTBExercise(specialistId, null),
+                exercise4 = createOA2Exercise(specialist2Id, course2Id);
+        exercise4.setVisibility(Visibility.COURSE);
+        String exercise1Id = exercisesService.createExercise(exercise1, null, null, List.of(tag1.getId(), tag2.getId(), tag3.getId()));
+        String exercise2Id = exercisesService.createExercise(exercise2, null, null, List.of(tag1.getId(), tag2.getId()));
+        String exercise3Id = exercisesService.createExercise(exercise3, null, null, List.of(tag1.getId()));
+        String exercise4Id = exercisesService.createExercise(exercise4, null, null, List.of(tag3.getId()));
+
+        var set = exercisesService.countTagsOccurrencesForExercisesList(List.of(exercise1Id, exercise2Id, exercise3Id, exercise4Id));
+        System.out.println(set);
+        for(var pair : set){
+            String tagId = pair.getLeft();
+            Long count = pair.getRight();
+
+            if (tagId.equals(tag1.getId()))
+                assert count == 3;
+            else if (tagId.equals(tag2.getId()))
+                assert count == 2;
+            else if (tagId.equals(tag3.getId()))
+                assert count == 2;
+        }
     }
 }

@@ -1,9 +1,10 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
-import org.springframework.data.util.Pair;
 
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -11,6 +12,7 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IExercisesService{
 
@@ -39,7 +41,7 @@ public interface IExercisesService{
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
      */
-    String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException;
+    String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, List<String> tagsIds) throws BadInputException;
 
     /**
      * Delete exercise by id.
@@ -282,4 +284,13 @@ public interface IExercisesService{
     void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException;
 
     boolean isExerciseOwner(String exerciseId, String specialistId);
+
+    Set<Tag> getExerciseTags(String exerciseId);
+
+    /**
+     * For a list of exercises, counts occurrences of tags.
+     * @param exercisesIds list with ids of exercises
+     * @return pair with tag id and the number of occurrences across all the exercises present in the list.
+     */
+    Set<Pair<String,Long>> countTagsOccurrencesForExercisesList(List<String> exercisesIds);
 }

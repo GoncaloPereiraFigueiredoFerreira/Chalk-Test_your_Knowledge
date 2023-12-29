@@ -12,8 +12,8 @@ import pt.uminho.di.chalktyk.models.tests.Test;
 @Repository
 public interface TestDAO extends JpaRepository<Test, String> {
     @Query("SELECT test FROM Test test WHERE" +
-            " CASE WHEN :matchAllTags = true THEN (:tagIDS is null or test.id IN (SELECT tgs.testTagPK.test.id FROM TestTag tgs WHERE tgs.testTagPK.tag.id IN :tagIDS GROUP BY tgs.testTagPK.test.id HAVING COUNT(DISTINCT tgs.testTagPK.test.id) = :tagsSize))"+
-            " ELSE (:tagIDS is null or test.id IN (SELECT tgs.testTagPK.test.id FROM TestTag tgs WHERE tgs.testTagPK.tag.id IN :tagIDS GROUP BY tgs.testTagPK.test.id HAVING COUNT(DISTINCT tgs.testTagPK.test.id) > 0)) END and"+
+            " CASE WHEN :matchAllTags = true THEN (:tagIDS is null or test.id IN (SELECT tgs.testTagPK.test.id FROM TestTag tgs WHERE tgs.testTagPK.tag.id IN :tagIDS GROUP BY tgs.testTagPK.test.id HAVING COUNT(tgs.testTagPK.tag.id) = :tagsSize))"+
+            " ELSE (:tagIDS is null or test.id IN (SELECT tgs.testTagPK.test.id FROM TestTag tgs WHERE tgs.testTagPK.tag.id IN :tagIDS)) END and"+
             " :visibilityType is null or test.visibility = :visibilityType and" +
             " :institutionId is null or test.institution = (SELECT i FROM Institution i WHERE i.name=:institutionId) and" +
             " :courseId is null or test.course = (SELECT c FROM Course c WHERE c.id=:courseId) and" +

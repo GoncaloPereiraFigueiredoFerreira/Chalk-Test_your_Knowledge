@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.services;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -111,32 +112,51 @@ public class TestsService implements ITestsService {
         body.verifyProperties();
         body.setId(null);                       // to prevent overwrite attacks
 
-        // check owner (specialist) id
+        // Check if specialist is valid
         String specialistId = body.getSpecialistId();
-        if (specialistId == null)
-            throw new BadInputException("Can't create test: A test must have an owner.");
-        if (!specialistsService.existsSpecialistById(specialistId))
-            throw new BadInputException("Can't create test: A test must have a valid specialist.");
-
-        // check course
-        String courseId = body.getCourseId();
-        if (courseId != null){
-            if (!coursesService.existsCourseById(courseId))
-                throw new BadInputException("Can't create test: A test must belong to a valid course.");
-
-            // check if specialist belongs to course
-            try{ coursesService.checkSpecialistInCourse(courseId, specialistId); }
-            catch (NotFoundException nfe){ throw new BadInputException("Can't create test: The test's owner must belong to the course specified."); } 
+        Specialist specialist;
+        try {
+            specialist = specialistsService.getSpecialistById(specialistId);
+            body.setSpecialist(specialist);
+        } catch (NotFoundException nfe) {
+            throw new BadInputException("Cannot create test: Specialist does not exist.");
         }
 
-        // check visibility constraints
+        // Check if visibility is valid
         Visibility visibility = body.getVisibility();
         if (visibility == null)
-            throw new BadInputException("Can't create test: Visibility can't be null");
-        if (body.getInstitutionId() == null && body.getVisibility().equals(Visibility.INSTITUTION))
-            throw new BadInputException("Can't create test: can't set visibility to INSTITUTION");
-        if (body.getCourseId() == null && body.getVisibility().equals(Visibility.COURSE))
-            throw new BadInputException("Can't create test: can't set visibility to COURSE");
+            throw new BadInputException("Cannot create test: Visibility cant be null");
+
+        // Checks if specialist exists and gets the institution where it belongs
+        Institution institution = specialist.getInstitution();
+        // the test's institution is the same has its owner
+        body.setInstitution(institution);
+
+        // If the specialist that owns the test does not have an institution,
+        // then the test's visibility cannot be set to institution.
+        if (visibility == Visibility.INSTITUTION && institution == null)
+            throw new BadInputException("Cannot create test: cannot set visibility to INSTITUTION");
+
+        // Check if course is valid
+        String courseId = body.getCourseId();
+        try {
+            if (courseId != null) {
+                // the owner of the test must be associated with the course
+                if (!coursesService.checkSpecialistInCourse(courseId, body.getSpecialistId()))
+                    throw new BadInputException("Cannot create test: specialist does not belong to the given course.");
+                else {
+                    Course course = coursesService.getCourseById(courseId);
+                    body.setCourse(course);
+                }
+            }
+            else body.setCourse(null);
+        } catch (NotFoundException nfe) {
+            throw new BadInputException("Cannot create test: course not found.");
+        }
+
+        // Cannot set visibility to COURSE without a course associated
+        if (courseId == null && visibility == Visibility.COURSE)
+            throw new BadInputException("Cannot create test: cannot set visibility to COURSE without a course associated.");
 
         // count tags
         // check and duplicate exercises
@@ -146,59 +166,47 @@ public class TestsService implements ITestsService {
 
         for (TestGroup tg: tgs){
             List<TestExercise> newExes = new ArrayList<>();
+            List<String> newExesIds = new ArrayList<>();
             for (TestExercise exe: tg.getExercises()){
                 // duplicate or persist exercise
-                String dupExerciseId = "";
-                Float points = 0.0F;
-                if (exe instanceof ReferenceExercise re){
-                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
-                    Exercise ref = exercisesService.getExerciseById(dupExerciseId);
-                    ref.setVisibility(Visibility.TEST);
-                    exercisesService.updateExerciseBody(dupExerciseId, ref);
-                    points = re.getPoints();
-                }
-                else if (exe instanceof ConcreteExercise ce){
+                String dupExerciseId;
+
+                // if the exercise is a concrete exercise, the exercise must be persisted
+                // and a reference, with the id of the persisted exercise, needs to be created.
+                // This allows the exercises to be persisted independently of the test.
+                if (exe instanceof ConcreteExercise ce){
                     Exercise tmp = ce.getExercise();
                     List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
-                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), Visibility.TEST, tagIds);
-                    points = ce.getPoints();
+                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                 }
-                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, points);
+                // Else the exercise is a reference to an existing exercise,
+                // therefore the exercise needs to be duplicated and
+                // a new reference, containing the id of the duplicate,
+                // needs to be created.
+                else {
+                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                }
+                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
                 newExes.add(newExe);
-
-                // count tags
-                Exercise tagExercise = exercisesService.getExerciseById(exe.getId());
-                Set<Tag> tags = tagExercise.getTags();
-                if (tags != null){
-                    for (Tag tag : tags){
-                        if (tagsService.getTagById(tag.getId()) == null)
-                            throw new BadInputException("Can't create test: There isn't a tag with id \"" + tag.getId() + "\".");
-                        if (tagsCounter.containsKey(tag.getId()))
-                            tagsCounter.put(tag.getId(), tagsCounter.get(tag.getId()) + 1);
-                        else
-                            tagsCounter.put(tag.getId(), 1);
-                    }
-                }
+                newExesIds.add(dupExerciseId);
             }
+
+            // count group tags
+            Set<Pair<String,Long>> groupTagsCounter = exercisesService.countTagsOccurrencesForExercisesList(newExesIds);
+            for (Pair<String,Long> pair : groupTagsCounter){
+                String tagId = pair.getLeft();
+                Long count = pair.getRight();
+
+                if (tagsCounter.containsKey(tagId))
+                    tagsCounter.put(tagId, tagsCounter.get(tagId) + count.intValue());
+                else
+                    tagsCounter.put(tagId, count.intValue());
+            }
+
             TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
             newTGs.add(newTG);
         }
         body.setGroups(newTGs);
-
-        // set course
-        Course course = courseId != null ? entityManager.getReference(Course.class, courseId) : null;
-        body.setCourse(course);
-
-        // set specialist
-        Specialist specialist = entityManager.getReference(Specialist.class, specialistId);
-        body.setSpecialist(specialist);
-
-        // get owner's institution id
-        try {
-            Institution inst = institutionsService.getSpecialistInstitution(specialistId);
-            body.setInstitution(inst);
-        }
-        catch (NotFoundException ignored){}
 
         body = testDAO.save(body);
         createTestTags(tagsCounter, body);
@@ -216,10 +224,11 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void deleteTestById(String testId) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found in the database");
+            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found.");
 
         // delete test resolutions
         List<TestResolution> trs = resolutionDAO.getTestResolutions(testId);
@@ -288,7 +297,7 @@ public class TestsService implements ITestsService {
                 else if (exe instanceof ConcreteExercise ce){
                     Exercise tmp = ce.getExercise();
                     List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
-                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tmp.getVisibility(), tagIds);
+                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                     points = ce.getPoints();
                 }
                 ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, points);
@@ -699,9 +708,9 @@ public class TestsService implements ITestsService {
 
         // delete exercise resolutions
         for (TestResolutionGroup trg: resolution.getGroups()){
-            for (Map.Entry<String, String> res: trg.getResolutions().entrySet()){
-                if (res.getValue() != null || !res.getValue().equals(""))
-                    exercisesService.deleteExerciseResolutionById(res.getValue());
+            for (String res: trg.getResolutions().values()){
+                if (res != null && !res.isEmpty())
+                    exercisesService.deleteExerciseResolutionById(res);
             }
         }
         resolutionDAO.delete(resolution);
@@ -964,7 +973,7 @@ public class TestsService implements ITestsService {
         if (exercise instanceof ConcreteExercise ce){
             Exercise exe = ce.getExercise();
             tagIds = exe.getTags().stream().map(t -> t.getId()).toList();
-            dupExeId = exercisesService.createExercise(exe, exe.getSolution(), exe.getRubric(), Visibility.TEST, tagIds);
+            dupExeId = exercisesService.createExercise(exe, exe.getSolution(), exe.getRubric(), tagIds);
             points = ce.getPoints();
         }
         else if (exercise instanceof ReferenceExercise re){

@@ -1,12 +1,10 @@
 package pt.uminho.di.chalktyk;
 
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -30,14 +28,6 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OAStandard;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
-import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
-import pt.uminho.di.chalktyk.models.tests.DeliverDateTest;
-import pt.uminho.di.chalktyk.models.tests.LiveTest;
-import pt.uminho.di.chalktyk.models.tests.TestExercise.ReferenceExercise;
-import pt.uminho.di.chalktyk.models.tests.TestGroup;
-import pt.uminho.di.chalktyk.models.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.tests.TestResolutionGroup;
-import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.users.InstitutionManager;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.Student;
@@ -114,9 +104,9 @@ public class Seed {
         Exercise ex1 = createMCExercise(s1, c1, tag1);
         Exercise ex2 = createMCExercise(s1, c1, tag2);
         Exercise ex3 = createMCExercise(s1, c1, tag3);
-        exercisesService.createExercise(ex1, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), Visibility.PUBLIC, List.of(tag1.getId()));
-        exercisesService.createExercise(ex2, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), Visibility.PUBLIC, List.of(tag1.getId(), tag3.getId()));
-        exercisesService.createExercise(ex3, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), Visibility.PUBLIC, List.of(tag1.getId(), tag2.getId(), tag3.getId()));
+        exercisesService.createExercise(ex1, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), List.of(tag1.getId()));
+        exercisesService.createExercise(ex2, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), List.of(tag1.getId(), tag3.getId()));
+        exercisesService.createExercise(ex3, new ExerciseSolution(null, exerciseSolution.getData().clone()), exerciseRubric.clone(), List.of(tag1.getId(), tag2.getId(), tag3.getId()));
 
         /* // TODO - fix the seed
         // tests

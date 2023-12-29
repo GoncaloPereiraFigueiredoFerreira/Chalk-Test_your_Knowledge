@@ -2,9 +2,9 @@ package pt.uminho.di.chalktyk.services;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.courses.Course;
@@ -23,6 +23,7 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("exercisesService")
 public class ExercisesService implements IExercisesService{
@@ -98,11 +99,10 @@ public class ExercisesService implements IExercisesService{
     /**
      * Creates an exercise.
      *
-     * @param exercise   body of the exercise to be created. Regarding the metadata should
-     *                   contain, at least, the specialist identifier but may contain the institutionId and courseId
+     * @param exercise body of the exercise to be created. Regarding the metadata should
+     *                 contain, at least, the specialist identifier but may contain the institutionId and courseId
      * @param solution
      * @param rubric
-     * @param visibility
      * @param tagsIds
      * @return new exercise identifier
      * @throws BadInputException if the exercise is not formed correctly
@@ -110,7 +110,7 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     @Transactional
-    public String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, Visibility visibility, List<String> tagsIds) throws BadInputException {
+    public String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, List<String> tagsIds) throws BadInputException {
         if (exercise == null)
             throw new BadInputException("Cannot create exercise: Exercise is null");
 
@@ -134,6 +134,7 @@ public class ExercisesService implements IExercisesService{
         exercise.setTags(tags);
 
         // Check if visibility is valid
+        Visibility visibility = exercise.getVisibility();
         if (visibility == null)
             throw new BadInputException("Cannot create exercise: Visibility cant be null");
 
@@ -167,9 +168,6 @@ public class ExercisesService implements IExercisesService{
         // Cannot set visibility to COURSE without a course associated
         if (courseId == null && visibility == Visibility.COURSE)
             throw new BadInputException("Cannot create exercise: cannot set visibility to COURSE without a course associated.");
-
-        // set visibility
-        exercise.setVisibility(visibility);
 
         // Prevent overrides
         exercise.setId(null);
@@ -994,6 +992,19 @@ public class ExercisesService implements IExercisesService{
     public boolean isExerciseOwner(String exerciseId, String specialistId){
         if(specialistId == null) return false;
         return specialistId.equals(exerciseDAO.getExerciseSpecialistId(exerciseId));
+    }
+
+    @Override
+    public Set<Tag> getExerciseTags(String exerciseId) {
+        return exerciseDAO.getExerciseTags(exerciseId);
+    }
+
+    @Override
+    public Set<Pair<String, Long>> countTagsOccurrencesForExercisesList(List<String> exercisesIds) {
+        if(exercisesIds == null)
+            return null;
+        Set<Object[]> objects = exerciseDAO.countTagsOccurrencesForExercisesList(exercisesIds);
+        return objects.stream().map(o -> Pair.of((String) o[0], (Long) o[1])).collect(Collectors.toSet());
     }
 
     /* **** Auxiliary methods **** */
