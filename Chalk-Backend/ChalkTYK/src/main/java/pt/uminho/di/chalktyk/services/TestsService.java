@@ -176,7 +176,7 @@ public class TestsService implements ITestsService {
                 // This allows the exercises to be persisted independently of the test.
                 if (exe instanceof ConcreteExercise ce){
                     Exercise tmp = ce.getExercise();
-                    List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
+                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
                     dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                 }
                 // Else the exercise is a reference to an existing exercise,
@@ -228,7 +228,7 @@ public class TestsService implements ITestsService {
     public void deleteTestById(String testId) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't delete test \'" + testId + "\': test was not found.");
+            throw new NotFoundException("Couldn't delete test '" + testId + "': test was not found.");
 
         // delete test resolutions
         List<TestResolution> trs = resolutionDAO.getTestResolutions(testId);
@@ -257,27 +257,40 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional
-    public String duplicateTestById(String specialistId, String testId) throws BadInputException, NotFoundException {
-        // check if the specialist exists
-        if (!specialistsService.existsSpecialistById(specialistId))
-            throw new NotFoundException("Can't duplicate test: couldn't find specialist with id \'" + specialistId + "\' .");
-        Specialist specialist = specialistsService.getSpecialistById(specialistId);
-        assert specialist!=null;
-        // check if the test exists
-        if (!testDAO.existsById(testId))
-            throw new NotFoundException("Can't duplicate test: couldn't find test with id \'" + testId + "\' .");
-
+    public String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException {
+        // if test does not exist, a not found exception will be thrown
         // fetch original models
         Test ogTest = getTestById(testId);
-        if (ogTest == null)
-            throw new NotFoundException("Can't duplicate test: couldn't fetch test with id \'" + testId + "\' from database.");
-        ogTest.setId(null);
-        ogTest.setSpecialist(specialist);
-        ogTest.setVisibility(Visibility.PRIVATE);
-        ogTest.setInstitution(specialist.getInstitution());
-        ogTest.setCourse(null);
-        ogTest.setCreationDate(LocalDateTime.now());
-        ogTest.setPublishDate(null);
+
+        // Copies the basic information, and sets the visibility
+        Test newTest = new Test(null, ogTest.getTitle(), ogTest.getGlobalInstructions(),
+                                ogTest.getGlobalPoints(), ogTest.getConclusion(),
+                                LocalDateTime.now(), null, null,
+                                visibility != null ? visibility : Visibility.PRIVATE,
+                                null, null, null);
+
+        // if specialist does not exist, a not found exception will be thrown
+        Specialist specialist = specialistsService.getSpecialistById(specialistId);
+        newTest.setSpecialist(specialist);
+
+        // Gets the specialist's institution
+        Institution institution = specialist.getInstitution();
+        newTest.setInstitution(institution);
+
+        // Check if course is valid
+        try {
+            if (courseId != null) {
+                // the owner of the test must be associated with the course
+                if (!coursesService.checkSpecialistInCourse(courseId, specialistId))
+                    throw new BadInputException("Cannot duplicate test: specialist does not belong to the given course.");
+                else {
+                    Course course = coursesService.getCourseById(courseId);
+                    newTest.setCourse(course);
+                }
+            }
+        } catch (NotFoundException nfe) {
+            throw new BadInputException("Cannot duplicate test: course not found.");
+        }
 
         // duplicate exercises
         List<TestGroup> tgs = ogTest.getGroups();
@@ -285,34 +298,25 @@ public class TestsService implements ITestsService {
         for (TestGroup tg: tgs){
             List<TestExercise> newExes = new ArrayList<>();
             for (TestExercise exe: tg.getExercises()){
-                String dupExerciseId = "";
-                Float points = 0.0F;
-                if (exe instanceof ReferenceExercise re){
-                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId());
-                    Exercise ref = exercisesService.getExerciseById(dupExerciseId);
-                    ref.setVisibility(Visibility.TEST);
-                    exercisesService.updateExerciseBody(dupExerciseId, ref);
-                    points = re.getPoints();
-                }
-                else if (exe instanceof ConcreteExercise ce){
-                    Exercise tmp = ce.getExercise();
-                    List<String> tagIds = tmp.getTags().stream().map(t -> t.getId()).toList();
-                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
-                    points = ce.getPoints();
-                }
-                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, points);
+                // Persisted tests can only contain reference exercises.
+                // Asserts that the retrieved test does not have a concrete exercise
+                assert !(exe instanceof ConcreteExercise);
+                String dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
                 newExes.add(newExe);
             }
             TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
             newTGs.add(newTG);
         }
-        ogTest.setGroups(newTGs);
-        Test newTest = testDAO.save(ogTest);
+        newTest.setGroups(newTGs);
+
+        // persists new test
+        newTest = testDAO.save(newTest);
 
         List<TestTag> tags = testTagsDAO.getTestTags(testId);
         for (TestTag tmp: tags){
-            Tag tag = tagsService.getTagById(tmp.getTestTagPK().getTag().getId());
-            TestTagPK testTagPK = new TestTagPK(tag, ogTest);
+            Tag tag = tmp.getTestTagPK().getTag();
+            TestTagPK testTagPK = new TestTagPK(tag, newTest);
             TestTag testTag = new TestTag(tmp.getNExercises(), testTagPK);
             testTagsDAO.save(testTag);
         }
@@ -320,44 +324,48 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void updateTestTitle(String testId, String title) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test title: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test title: couldn't find test with id '" + testId + "'");
         test.setTitle(title);
         testDAO.save(test);
     }
 
     @Override
+    @Transactional
     public void updateTestGlobalInstructions(String testId, String globalInstructions) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test global instructions: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test global instructions: couldn't find test with id '" + testId + "'");
         test.setGlobalInstructions(globalInstructions);
         testDAO.save(test);
     }
 
     @Override
+    @Transactional
     public void updateTestConclusion(String testId, String conclusion) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test conclusion: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test conclusion: couldn't find test with id '" + testId + "'");
         test.setConclusion(conclusion);
         testDAO.save(test);
     }
 
     @Override
+    @Transactional
     public void updateTestPublishDate(String testId, LocalDateTime publishDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test publish date: couldn't find test with id \'" + testId + "\'");
-
-        if (test.getCreationDate().isAfter(publishDate))
-            throw new BadInputException("Couldn't update test publish date: publish date occurs before creation date");
+            throw new NotFoundException("Couldn't update test publish date: couldn't find test with id '" + testId + "'");
 
         List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
-        if (resolutions.size() > 0)
-            throw new BadInputException("Couldn't update test publish date: some tests were already resolved");
+        if (!resolutions.isEmpty())
+            throw new BadInputException("Couldn't update test publish date: there are already some test resolutions.");
+
+        if (test.getCreationDate().isAfter(publishDate))
+            publishDate = test.getCreationDate();
 
         test.setPublishDate(publishDate);
         testDAO.save(test);
@@ -365,28 +373,24 @@ public class TestsService implements ITestsService {
 
 
     @Override
+    @Transactional
     public void updateTestVisibility(String testId, Visibility visibility) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test visibility: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test visibility: couldn't find test with id '" + testId + "'");
 
-        Specialist specialist = test.getSpecialist();
         // check course constraints
-        Course course = test.getCourse();
-        if (course == null && visibility.equals(Visibility.COURSE))
-            throw new BadInputException("Couldn't update test visibility: course is null");
-        if (course != null && specialist != null && visibility.equals(Visibility.COURSE)){
-            if (!coursesService.checkSpecialistInCourse(course.getId(), specialist.getId()))
-                throw new BadInputException("Couldn't update test visibility: current specialist must belong to course");
+        if(visibility.equals(Visibility.COURSE)){
+            Course course = test.getCourse();
+            if (course == null)
+                throw new BadInputException("Couldn't update test visibility: course is null");
         }
 
         // check institution constraints
-        Institution institution = test.getInstitution();
-        if (institution == null && visibility.equals(Visibility.INSTITUTION))
-            throw new BadInputException("Couldn't update test visibility: institution is null");
-        if (institution != null && specialist != null && visibility.equals(Visibility.INSTITUTION)){
-            if (!institutionsService.isSpecialistOfInstitution(specialist.getId(), institution.getName()))
-                throw new BadInputException("Couldn't update test visibility: current specialist must belong to institution");
+        if(visibility.equals(Visibility.INSTITUTION)){
+            Institution institution = test.getInstitution();
+            if (institution == null)
+                throw new BadInputException("Couldn't update test visibility: institution is null");
         }
         
         test.setVisibility(visibility);
@@ -394,40 +398,15 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    public void updateTestSpecialist(String testId, String specialistId) throws NotFoundException, BadInputException {
-        Test test = testDAO.findById(testId).orElse(null);
-        if (test == null)
-            throw new NotFoundException("Couldn't update test specialist: couldn't find test with id \'" + testId + "\'");
-
-        // retrieve specialist
-        Specialist specialist = specialistsService.getSpecialistById(specialistId);
-        if (specialist == null)
-            throw new NotFoundException("Couldn't update test specialist: couldn't find specialist with id \'" + specialistId + "\'");
-        
-        // check course constraints
-        Course course = test.getCourse();
-        if (course != null && !coursesService.checkSpecialistInCourse(course.getId(), specialistId))
-            throw new BadInputException("Couldn't update test specialist: specialist must belong to course");
-
-        // check institution constraints
-        Institution institution = test.getInstitution();
-        if (institution != null && !institutionsService.isSpecialistOfInstitution(specialistId, institution.getName()))
-            throw new BadInputException("Couldn't update test specialist: specialist must belong to institution");
-
-        test.setSpecialist(specialist);
-        testDAO.save(test);
-    }
-
-    @Override
     public void updateTestCourse(String testId, String courseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test course: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test course: couldn't find test with id '" + testId + "'");
 
         // retrieve course
         Course course = coursesService.getCourseById(courseId);
         if (course == null)
-            throw new NotFoundException("Couldn't update test course: couldn't find course with id \'" + courseId + "\'");
+            throw new NotFoundException("Couldn't update test course: couldn't find course with id '" + courseId + "'");
 
         // check specialist constraints
         Specialist specialist = test.getSpecialist();
@@ -438,31 +417,14 @@ public class TestsService implements ITestsService {
         testDAO.save(test);
     }
 
-    @Override
-    public void updateTestInstitution(String testId, String institutionId) throws NotFoundException, BadInputException {
-        Test test = testDAO.findById(testId).orElse(null);
-        if (test == null)
-            throw new NotFoundException("Couldn't update test institution: couldn't find test with id \'" + testId + "\'");
-
-        // retrieve institution
-        Institution institution = institutionsService.getInstitutionById(institutionId);
-        if (institution == null)
-            throw new NotFoundException("Couldn't update test institution: couldn't find institution with id \'" + institutionId + "\'");
-
-        // check specialist constraints
-        Specialist specialist = test.getSpecialist();
-        if (specialist != null && institutionsService.isSpecialistOfInstitution(specialist.getId(), institutionId))
-            throw new BadInputException("Couldn't update test institution: specialist must belong to institution");
-
-        test.setInstitution(institution);
-        testDAO.save(test);
-    }
-
+    // TODO -
+    //  1. Nao se esta a comparar com os grupos anteriores. É necessário eliminar exercicios que já nao sao usados.
+    //  2. Necessário criar os novos exercícios.
     @Override
     public void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
 
         LocalDateTime publishDate = test.getPublishDate();
         if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
@@ -484,16 +446,15 @@ public class TestsService implements ITestsService {
     public void updateTestDeliverDate(String testId, LocalDateTime deliverDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
 
-        // check if it is deliver date test
-        if (!(test instanceof DeliverDateTest))
-            throw new BadInputException("Couldn't update test deliver date: test with id \'" + testId + "\' is not a deliver date test");
+        // check if it is a "deliver date" test
+        if (!(test instanceof DeliverDateTest lt))
+            throw new BadInputException("Couldn't update test deliver date: test with id '" + testId + "' is not a deliver date test");
 
         if (test.getPublishDate().isAfter(deliverDate))
             throw new BadInputException("Couldn't update test deliver date: deliver date occurs before publish date");
 
-        DeliverDateTest lt = (DeliverDateTest) test;
         lt.setDeliverDate(deliverDate);
         testDAO.save(lt);
     }
@@ -502,16 +463,15 @@ public class TestsService implements ITestsService {
     public void updateTestStartDate(String testId, LocalDateTime startDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
 
         // check if it is live test
-        if (!(test instanceof LiveTest))
-            throw new BadInputException("Couldn't update test start date: test with id \'" + testId + "\' is not a live test");
+        if (!(test instanceof LiveTest lt))
+            throw new BadInputException("Couldn't update test start date: test with id '" + testId + "' is not a live test");
 
         if (test.getPublishDate().isAfter(startDate))
             throw new BadInputException("Couldn't update test start date: test hasn't been published yet");
 
-        LiveTest lt = (LiveTest) test;
         lt.setStartDate(startDate);
         testDAO.save(lt);
     }
@@ -520,16 +480,15 @@ public class TestsService implements ITestsService {
     public void updateTestDuration(String testId, long duration) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
 
         // check if it is live test
-        if (!(test instanceof LiveTest))
-            throw new BadInputException("Couldn't update test duration: test with id \'" + testId + "\' is not a live test");
+        if (!(test instanceof LiveTest lt))
+            throw new BadInputException("Couldn't update test duration: test with id '" + testId + "' is not a live test");
 
         if (duration <= 0)
             throw new BadInputException("Couldn't update test duration: duration must be positive");
 
-        LiveTest lt = (LiveTest) test;
         lt.setDuration(duration);
         testDAO.save(lt);
     }
@@ -538,16 +497,15 @@ public class TestsService implements ITestsService {
     public void updateTestStartTolerance(String testId, long startTolerance) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't update test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
 
         // check if it is live test
-        if (!(test instanceof LiveTest))
-            throw new BadInputException("Couldn't update test start tolerance: test with id \'" + testId + "\' is not a live test");
+        if (!(test instanceof LiveTest lt))
+            throw new BadInputException("Couldn't update test start tolerance: test with id '" + testId + "' is not a live test");
 
         if (startTolerance < 0)
             throw new BadInputException("Couldn't update test start tolerance: start tolerance can't be negative");
 
-        LiveTest lt = (LiveTest) test;
         lt.setStartTolerance(startTolerance);
         testDAO.save(lt);
     }

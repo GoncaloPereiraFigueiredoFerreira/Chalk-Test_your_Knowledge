@@ -55,6 +55,10 @@ public class ExercisesService implements IExercisesService{
         this.exerciseResolutionDAO = exerciseResolutionDAO;
     }
 
+    //TODO - update do corpo de um exercicio que já tem resolucoes dá asneira. Como resolver?
+    // 1. Eliminar resolucoes?
+    // 2. Duplicar exercicio e definir o original como eliminado?
+
     /**
      * Get Exercise by ID
      *

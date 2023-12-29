@@ -21,7 +21,7 @@ public interface TestResolutionDAO extends JpaRepository<TestResolution,String> 
     @Query(value = "SELECT COUNT(*) FROM TestResolution tr where tr.test.id = :testId")
     int countTotalSubmissionsForTest(@Param("testId") String testId);
 
-    @Query(value = "SELECT COUNT(*) FROM (SELECT DISTINCT studentid FROM test_resolution WHERE testid = :testId)", nativeQuery = true)
+    @Query(value = "SELECT COUNT(DISTINCT studentid) FROM test_resolution WHERE testid = :testId", nativeQuery = true)
     int countDistinctSubmissionsForTest(@Param("testId") String testId);
 
     @Query(value = "SELECT COUNT(*) FROM test_resolution WHERE studentid = :studentId AND testid = :testId", nativeQuery = true)
@@ -29,4 +29,7 @@ public interface TestResolutionDAO extends JpaRepository<TestResolution,String> 
 
     @Query(value = "SELECT id FROM test_resolution WHERE studentid = :studentId AND testid = :testId", nativeQuery = true)
     List<String> getStudentTestResolutionsIds(@Param("testId") String testId, @Param("studentId") String studentId);
+
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM TestResolution r WHERE r.id = :testId")
+    boolean existsTestResolutions(@Param("testId") String testId);
 }

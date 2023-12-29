@@ -70,11 +70,13 @@ public interface ITestsService {
      *
      * @param specialistId
      * @param testId
+     * @param visibility
+     * @param courseId
      * @return duplicate identifier
      * @throws BadInputException if an error occurs when replicating any entity
      * @throws NotFoundException if no test or specialist were found with the given ids
      **/
-    String duplicateTestById(String specialistId, String testId) throws BadInputException, NotFoundException;
+    String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException;
 
     /**
      * Updates a test's title
@@ -124,16 +126,6 @@ public interface ITestsService {
     void updateTestVisibility(String testId, Visibility visibility) throws NotFoundException, BadInputException;
     
     /**
-     * Updates a test's specialist
-     *
-     * @param testId
-     * @param specialistId
-     * @throws BadInputException if any property of the test is not valid.
-     * @throws NotFoundException if no test was found with the given id
-     **/
-    void updateTestSpecialist(String testId, String specialistId) throws NotFoundException, BadInputException;
-    
-    /**
      * Updates a test's course
      *
      * @param testId
@@ -142,16 +134,6 @@ public interface ITestsService {
      * @throws NotFoundException if no test was found with the given id
      **/
     void updateTestCourse(String testId, String courseId) throws NotFoundException, BadInputException;
-    
-    /**
-     * Updates a test's institution
-     *
-     * @param testId
-     * @param institutionId
-     * @throws BadInputException if any property of the test is not valid.
-     * @throws NotFoundException if no test was found with the given id
-     **/
-    void updateTestInstitution(String testId, String institutionId) throws NotFoundException, BadInputException;
     
     /**
      * Updates a test's groups
