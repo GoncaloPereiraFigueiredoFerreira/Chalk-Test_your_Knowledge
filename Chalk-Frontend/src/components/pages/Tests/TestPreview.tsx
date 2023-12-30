@@ -52,7 +52,39 @@ function renderGroup(
   setShowExID: Function
 ) {
   return (
-       
+    <div
+      key={index}
+      className="rounded-lg w-full p-4 bg-3-1 cursor-pointer"
+      onClick={() => {
+        setSelectedGroup(index == selectedGroup ? -1 : index);
+        setSelectedEx(-1);
+        setShowExID("");
+      }}
+    >
+      <div className="flex justify-between mb-4 z-10">
+        <label className="text-xl font-medium">Grupo {index + 1}</label>
+        <p>Cotação do Grupo: {group.groupCotation}</p>
+      </div>
+      {selectedGroup == index ? (
+        <div>
+          <h2>{group.groupInstructions}</h2>
+          <div className="space-y-4">
+            {group.exercises.map((exercise, exId) => {
+              return renderExercise(
+                exercise,
+                exId,
+                index,
+                selectedEx,
+                setSelectedEx,
+                setShowExID
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+    </div>
   );
 }
 
