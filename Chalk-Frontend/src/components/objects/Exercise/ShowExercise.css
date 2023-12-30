@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+
+@layer base {
+  .btn-options-exercise {
+    @apply flex
+    flex-col
+    gap-1
+    items-center;
+  }
+
+  .caracteristics-exercise {
+    @apply flex
+    gap-2
+    items-center
+    justify-end;
+  }
+
+  .tag-exercise {
+    @apply min-w-max
+    px-2.5
+    py-0.5
+    rounded-lg;
+  }
+
+  .grid-layout-exercise {
+    display: grid;
+    grid-template-columns: min-content min-content auto;
+  }
+
+  .header-textarea {
+    @apply block
+    p-4
+    pb-5
+    w-3/4
+    h-28
+    text-gray-900
+    bg-gray-50
+    rounded-lg
+    border
+    border-gray-300
+    focus:ring-blue-500
+    focus:border-blue-500
+    dark:bg-gray-700
+    dark:border-gray-600
+    dark:placeholder-gray-400
+    dark:text-white
+    dark:focus:ring-blue-500
+    dark:focus:border-blue-500;
+  }
+
+  .radio-green {
+    @apply relative
+    h-5
+    w-5
+    cursor-pointer
+    appearance-none
+    rounded-full
+    focus:ring-0
+    border
+    text-green-500
+    transition-all
+    before:absolute
+    before:top-2/4
+    before:left-2/4
+    before:block
+    before:h-12
+    before:w-12
+    before:-translate-y-2/4
+    before:-translate-x-2/4
+    before:rounded-full
+    before:opacity-0
+    before:transition-opacity
+    checked:border-green-500
+    checked:before:bg-green-500
+    hover:before:opacity-10
+    !important;
+  }
+
+  .radio-red {
+    @apply relative
+    h-5
+    w-5
+    cursor-pointer
+    appearance-none
+    rounded-full
+    focus:ring-0
+    border
+    text-red-500
+    transition-all
+    before:absolute
+    before:top-2/4
+    before:left-2/4
+    before:block
+    before:h-12
+    before:w-12
+    before:-translate-y-2/4
+    before:-translate-x-2/4
+    before:rounded-full
+    
+    before:opacity-0
+    before:transition-opacity
+    checked:border-red-700
+    checked:before:bg-red-500
+    hover:before:opacity-10
+    !important;
+  }
+
+  .radio-blue {
+    @apply relative
+    h-5
+    w-5
+    cursor-pointer
+    appearance-none
+    rounded-full
+    focus:ring-0
+    border
+    text-blue-500
+    active:border-blue-700
+    transition-all
+    
+    before:absolute
+    before:block
+    before:h-12
+    before:w-12
+    before:top-2/4
+    before:left-2/4
+    before:-translate-y-2/4
+    before:-translate-x-2/4
+    before:rounded-full
+    before:opacity-0
+    before:transition-opacity
+    before:checked:bg-blue-500
+    before:group-hover:opacity-20
+    !important;
+  }
+
+  .basic-input-text {
+    @apply p-3
+    w-full
+    resize-none
+    text-black
+    bg-white
+    rounded-lg
+    border-2
+    border-gray-300
+    focus:ring-0
+    focus:border-gray-300;
+  }
+}
+@tailwind utilities;
