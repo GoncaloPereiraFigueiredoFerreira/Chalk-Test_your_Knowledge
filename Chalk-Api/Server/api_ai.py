@@ -13,6 +13,7 @@ model = "gpt-3.5-turbo"
 requests_sem = Semaphore(int(os.getenv("N_REQ",3)))  
 
 def send_request(message,temperature = 0,presence = 0,frequency = 0):
+    print(message,flush=True)
     requests_sem.acquire()
     tokens = 1000 #Todo 
 
@@ -29,6 +30,21 @@ def send_request(message,temperature = 0,presence = 0,frequency = 0):
     Timer(60,lambda: requests_sem.release()).start()
 
     return stream.choices[0].message.content
+
+def send_request_json(message,temperature = 0,presence = 0,frequency = 0):
+    count = 0
+    flag = True
+    ret = None
+
+    while count < 3 and flag:
+        try:
+            ret = send_request(message,temperature,presence,frequency)
+            ret = json.loads(ret)
+            flag = False
+        except:
+            count= count + 1
+
+    return ret
 
 def num_tokens_from_messages(messages):
   """Returns the number of tokens used by a list of messages."""
@@ -57,8 +73,7 @@ def send_open_answer(answers,question,answer_critiria,answer_topics = None,answe
 
     for i in answers:
         user_pronpt = gen_user_open_answer(i[1])
-        resp = send_request([sys_pronpt,user_pronpt[0]])
-        resp = json.loads(resp)
+        resp = send_request_json([sys_pronpt,user_pronpt[0]])
         ret.append((i[0],resp["category"]))
 
     return ret
@@ -69,8 +84,7 @@ def send_create_mult(text,questions,user_input = ""):
 
     pronpt = [text] + questions
 
-    resp = send_request(pronpt,1,0.5,0.5)
-    resp = json.loads(resp)
+    resp = send_request_json(pronpt,1,0.5,0.5)
 
     return resp
 
@@ -82,9 +96,8 @@ def send_create_open(text,questions,user_input = ""):
 
     print(pronpt)
 
-    resp = send_request(pronpt,1,0.5,0.5)
+    resp = send_request_json(pronpt,1,0.5,0.5)
     print(resp)
-    resp = json.loads(resp)
 
     return resp
 
@@ -94,19 +107,18 @@ def send_create_true_false(text,questions,user_input = ""):
 
     pronpt = [text] + questions
 
-    resp = send_request(pronpt,1,0.5,0.5)
-    resp = json.loads(resp)
+    resp = send_request_json(pronpt,1,0.5,0.5)
 
     return resp
 
 def send_oral(text):
-    resp = send_request(text,1,0.5,0.5)
+    resp = send_request_json(text,1,0.5,0.5)
     return resp
 
 def send_eval_oral(topics,text):
     sys_pronpt = {"role":"system","content":gen_sys_eval_oral(topics)}
 
-    resp = send_request([sys_pronpt] + text)
+    resp = send_request_json([sys_pronpt] + text)
 
     return resp
 

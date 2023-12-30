@@ -15,11 +15,11 @@ cache_timeout = 600 # 10 min
     "Topics":[str] #opcional
     "Rubric":[{description:str,cotation:float}]
     "Auxiliar":str #opcional (texto associados a pergunta) #opcional
-    "Answers":[{id_user: str,answer:str}]
+    "Answers":[{id_user: str,Answer:str}]
 }
 
 {
-    [{"id_user":str,"Cotation":int}]
+    {"Evaluation":[{"id_user":str,"Cotation":int}]}
 }
 '''
 
@@ -49,6 +49,8 @@ def open_answer():
     cot = api_ai.send_open_answer(answers,question,criteria_aux,topics,auxiliar)
 
     cot = [{"id_user":i[0],"Cotation":criteria[i[1]][1]} for i in cot]
+
+    cot = {"Evaluation":cot}
 
     return json.dumps(cot)
 
