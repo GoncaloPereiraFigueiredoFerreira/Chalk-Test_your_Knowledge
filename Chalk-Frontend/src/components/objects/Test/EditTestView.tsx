@@ -1,8 +1,17 @@
 import { useState } from "react";
-import { useCreateTestContext } from "./CreateTestContext";
-import type { DragDropGroupPreview } from "./DragDropGroupPreview";
+import {
+  CreateTestActionKind,
+  useCreateTestContext,
+} from "./CreateTestContext";
+import { DragDropGroupPreview } from "./DragDropGroupPreview";
+import { CreateNewExercisePopUp } from "../ListExercises/CreateNewExercisePopUp";
+import { ExerciseType } from "../Exercise/Exercise";
 
 interface EditTestViewProps {
+  exerciseID: {
+    groupPosition: number;
+    exercisePosition: number;
+  };
   setExerciseID: (value: {
     groupPosition: number;
     exercisePosition: number;
@@ -12,11 +21,12 @@ interface EditTestViewProps {
 }
 
 export function EditTestView({
+  exerciseID,
   setExerciseID,
   selectedMenu,
   setSelectedMenu,
 }: EditTestViewProps) {
-  const [newExercisePopUp, setNewExercisePopUp] = useState(false);
+  const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
   const { testState, dispatch } = useCreateTestContext();
 
   return (
@@ -26,6 +36,10 @@ export function EditTestView({
           {testState.test.title ? testState.test.title : "Novo Teste"}
         </div>
         <div className="flex space-x-4">
+          <div className="flex flex-col">
+            <label>group:{exerciseID.groupPosition}</label>
+            <label>exercise:{exerciseID.exercisePosition}</label>
+          </div>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
             onClick={() => setSelectedMenu("dd-list-exercises")}
@@ -49,7 +63,7 @@ export function EditTestView({
       <div className="flex flex-col">
         <div className="ml-4 mt-4">
           <h2 className="text-xl">Informações Gerais do Teste:</h2>
-          <table className="text-md ml-4">
+          <div className="text-md ml-4">
             <h3>
               <strong>Autor: </strong>
               {testState.test.author}
@@ -62,14 +76,40 @@ export function EditTestView({
               <strong>Instruções do Teste: </strong>
               {testState.test.globalInstructions}
             </h3>
-          </table>
+          </div>
         </div>
       </div>
-      <DragDropGroupPreview
-        test={test}
-        setShowExID={() => {}}
-        showExId={""}
-      ></DragDropGroupPreview>
+      {testState.test.groups.map((_, index) => (
+        <DragDropGroupPreview
+          key={index}
+          exerciseGroupID={index}
+          exerciseID={exerciseID}
+          setExerciseID={setExerciseID}
+          selectedMenu={selectedMenu}
+          setSelectedMenu={setSelectedMenu}
+          setNewExercisePopUp={(value: number) => setNewExercisePopUp(value)}
+        ></DragDropGroupPreview>
+      ))}
+      <CreateNewExercisePopUp
+        show={newExercisePopUp != -1}
+        closePopUp={() => setNewExercisePopUp(-1)}
+        createNewExercise={(newExerciseType: ExerciseType) => {
+          setExerciseID({
+            groupPosition: newExercisePopUp,
+            exercisePosition:
+              testState.test.groups[newExercisePopUp].exercises.length,
+          });
+          dispatch({
+            type: CreateTestActionKind.CREATE_NEW_EXERCISE,
+            group: {
+              groupPosition: newExercisePopUp,
+              exerciseType: newExerciseType,
+            },
+          });
+          setNewExercisePopUp(-1);
+          setSelectedMenu("create-exercise");
+        }}
+      />
     </div>
   );
 }

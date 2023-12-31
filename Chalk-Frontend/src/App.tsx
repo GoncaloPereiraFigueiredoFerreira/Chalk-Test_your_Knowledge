@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Login } from "./components/pages/Login&Register/Login";
 import { Register } from "./components/pages/Login&Register/Register";
 import { HomePage } from "./components/pages/HomePage/HomePage";
-import "./App.css";
 import { UserContext } from "./UserContext";
 import { useContext } from "react";
 import { ExerciseBankPage } from "./components/pages/ExerciseBankPage/ExerciseBankPage";
@@ -21,6 +20,8 @@ import { AlunosPage } from "./components/pages/Groups/AlunosPage";
 import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
 import { Correction } from "./components/pages/Tests/Correction/Correction";
 import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
+import "./App.css";
+import "./components/interactiveElements/Icon.css";
 
 function App() {
   const { user } = useContext(UserContext);

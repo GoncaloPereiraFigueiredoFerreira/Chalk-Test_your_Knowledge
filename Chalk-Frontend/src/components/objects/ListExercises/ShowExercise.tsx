@@ -89,9 +89,7 @@ export function ShowExercise({
       case ExerciseType.CHAT:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <div className="h-full scale-125">
-              <PiChatsBold />
-            </div>
+            <PiChatsBold className="size-4" />
             Chat Question
           </label>
         );

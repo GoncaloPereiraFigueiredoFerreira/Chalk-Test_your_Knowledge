@@ -159,7 +159,7 @@ export function ListExercises({
 
   useEffect(() => {
     dispatch({
-      type: ListExerciseActionKind.ADD_EXERCISES,
+      type: ListExerciseActionKind.ADD_LIST_EXERCISES,
       payload: {
         exercises: getListExercises(),
       },
@@ -218,26 +218,22 @@ export function ListExercises({
           )
         )}
       </div>
-      <PopUp
-        show={newExercisePopUp}
-        closePopUp={() => setNewExercisePopUp(false)}
-        children={
-          <CreateNewExercisePopUp
-            createNewExercise={(newExerciseType: ExerciseType) => {
-              dispatch({
-                type: ListExerciseActionKind.ADD_NEW_EXERCISE,
-                payload: {
-                  newExerciseType: newExerciseType,
-                },
-              });
-              if (!editMenuIsOpen) {
-                setEditMenuIsOpen(true);
-                setExerciseID("-1");
-              }
-              setNewExercisePopUp(false);
-            }}
-          />
-        }
+      <CreateNewExercisePopUp
+        newExercisePopUp={newExercisePopUp}
+        setNewExercisePopUp={() => setNewExercisePopUp(false)}
+        createNewExercise={(newExerciseType: ExerciseType) => {
+          dispatch({
+            type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
+            payload: {
+              newExerciseType: newExerciseType,
+            },
+          });
+          if (!editMenuIsOpen) {
+            setEditMenuIsOpen(true);
+            setExerciseID("-1");
+          }
+          setNewExercisePopUp(false);
+        }}
       />
     </>
   );

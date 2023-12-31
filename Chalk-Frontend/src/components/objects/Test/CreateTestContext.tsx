@@ -1,6 +1,6 @@
 import { useContext, createContext } from "react";
 import { ExerciseGroup, Test } from "./Test";
-import { Exercise } from "../Exercise/Exercise";
+import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 
 //------------------------------------//
 //                                    //
@@ -10,9 +10,10 @@ import { Exercise } from "../Exercise/Exercise";
 
 export enum CreateTestActionKind {
   EDIT_TEST_INFO = "EDIT_TEST_INFO",
-  ADD_EXERCISE = "ADD_EXERCISE",
+  CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE", // Add a new exercise to a given group
+  ADD_EXERCISE = "ADD_EXERCISE", // Add an exercise from User Exercise List
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
-  EDIT_EXERCISE = "EDIT_EXERCISE",
+  EDIT_EXERCISE = "EDIT_EXERCISE", // Edit an exercise
   ADD_GROUP = "ADD_GROUP",
   REMOVE_GROUP = "REMOVE_GROUP",
   EDIT_GROUP = "EDIT_GROUP",
@@ -32,6 +33,7 @@ export interface CreateTestAction {
   group?: {
     groupPosition: number;
     groupInstructions?: string;
+    exerciseType?: ExerciseType;
   };
   exercise?: {
     exercisePosition: number;
@@ -63,6 +65,28 @@ export function CreateTestStateReducer(
           ...state,
           test: { ...state.test, ...action.testInfo },
         };
+      throw new Error("Invalid Action");
+
+    case CreateTestActionKind.CREATE_NEW_EXERCISE:
+      if (action.group && action.group.exerciseType) {
+        let newGroups = [...state.test.groups];
+        let newExerciseGroup = {
+          ...newGroups[action.group.groupPosition],
+          exercises: [
+            ...newGroups[action.group.groupPosition].exercises,
+            InitExercise(action.group.exerciseType),
+          ],
+        } as ExerciseGroup;
+        newGroups[action.group.groupPosition] = newExerciseGroup;
+        return {
+          exercisePosition: newExerciseGroup.exercises.length - 1,
+          groupPosition: action.group.groupPosition,
+          test: {
+            ...state.test,
+            groups: newGroups,
+          } as Test,
+        } as CreateTestState;
+      }
       throw new Error("Invalid Action");
 
     case CreateTestActionKind.ADD_EXERCISE:

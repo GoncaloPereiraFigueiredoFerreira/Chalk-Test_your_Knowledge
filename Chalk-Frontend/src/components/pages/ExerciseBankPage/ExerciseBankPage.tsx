@@ -47,7 +47,7 @@ export function ExerciseBankPage() {
                   // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
                   // PARA SE SABER O ID DO NOVO EXERCICIO
                   dispatch({
-                    type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
+                    type: ListExerciseActionKind.ADD_EXERCISE,
                     payload: {
                       exercise: {
                         ...state.exercise,

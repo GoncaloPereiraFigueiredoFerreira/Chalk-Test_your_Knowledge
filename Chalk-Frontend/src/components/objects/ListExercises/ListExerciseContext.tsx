@@ -9,10 +9,10 @@ import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 
 // Type of actions allowed on the state
 export enum ListExerciseActionKind {
-  ADD_EXERCISES = "ADD_EXERCISES",
-  ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE",
-  EDIT_EXERCISE = "EDIT_EXERCISE",
+  ADD_LIST_EXERCISES = "ADD_LIST_EXERCISES",
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE",
+  EDIT_EXERCISE = "EDIT_EXERCISE",
+  ADD_EXERCISE = "ADD_EXERCISE",
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   SET_SELECTED_EXERCISE = "SET_SELECTED_EXERCISE",
 }
@@ -40,7 +40,7 @@ export function ListExerciseStateReducer(
   action: ListExerciseAction
 ) {
   switch (action.type) {
-    case ListExerciseActionKind.ADD_EXERCISES:
+    case ListExerciseActionKind.ADD_LIST_EXERCISES:
       if (action.payload)
         if (action.payload.exercises) {
           let newListExercises = { ...listExerciseState.listExercises };
@@ -51,7 +51,7 @@ export function ListExerciseStateReducer(
         } else throw new Error("No data provided in action.payload.exercises");
       else throw new Error("No data provided in action.payload");
 
-    case ListExerciseActionKind.ADD_NEW_EXERCISE:
+    case ListExerciseActionKind.CREATE_NEW_EXERCISE:
       if (action.payload)
         if (action.payload.newExerciseType) {
           let newExercise: Exercise = InitExercise(
@@ -72,7 +72,7 @@ export function ListExerciseStateReducer(
           );
       else throw new Error("No data provided in action.payload");
 
-    case ListExerciseActionKind.CREATE_NEW_EXERCISE:
+    case ListExerciseActionKind.ADD_EXERCISE:
       if (action.payload)
         if (action.payload.exercise) {
           let { ["-1"]: removedItem, ...cleanListExercises } =

@@ -34,7 +34,11 @@ export function CreateTest({ test }: CreateTestProps) {
 
   return (
     <CreateTestContext.Provider value={{ testState, dispatch }}>
-      <div className="flex flex-row divide-x-2 border-gray-2-2">
+      <div
+        className={`${
+          selectedMenu === "" ? "" : "divide-x-2"
+        } flex flex-row border-gray-2-2`}
+      >
         <div
           className={`${
             selectedMenu === "dd-list-exercises" ? "w-full" : "w-0"
@@ -51,6 +55,7 @@ export function CreateTest({ test }: CreateTestProps) {
         </div>
         <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
           <EditTestView
+            exerciseID={exerciseID}
             setExerciseID={(value) => setExerciseID(value)}
             selectedMenu={selectedMenu}
             setSelectedMenu={(value) => setSelectedMenu(value)}
@@ -68,8 +73,8 @@ export function CreateTest({ test }: CreateTestProps) {
           selectedMenu === "create-exercise" ? (
             <EditExercise
               exercise={
-                testState.test.groups[exerciseID.groupPosition].exercises[
-                  exerciseID.exercisePosition
+                testState.test.groups[testState.groupPosition].exercises[
+                  testState.exercisePosition
                 ]
               }
               saveExercise={(state) => {
@@ -80,8 +85,8 @@ export function CreateTest({ test }: CreateTestProps) {
                   dispatch({
                     type: CreateTestActionKind.EDIT_EXERCISE,
                     exercise: {
-                      groupPosition: exerciseID.groupPosition,
-                      exercisePosition: exerciseID.exercisePosition,
+                      groupPosition: testState.groupPosition,
+                      exercisePosition: testState.exercisePosition,
                       exercise: {
                         ...state.exercise,
                         identity: {
@@ -100,8 +105,8 @@ export function CreateTest({ test }: CreateTestProps) {
                   dispatch({
                     type: CreateTestActionKind.EDIT_EXERCISE,
                     exercise: {
-                      groupPosition: exerciseID.groupPosition,
-                      exercisePosition: exerciseID.exercisePosition,
+                      groupPosition: testState.groupPosition,
+                      exercisePosition: testState.exercisePosition,
                       exercise: state.exercise,
                     },
                   });
@@ -114,15 +119,11 @@ export function CreateTest({ test }: CreateTestProps) {
                   dispatch({
                     type: CreateTestActionKind.REMOVE_EXERCISE,
                     exercise: {
-                      groupPosition: exerciseID.groupPosition,
-                      exercisePosition: exerciseID.exercisePosition,
+                      groupPosition: testState.groupPosition,
+                      exercisePosition: testState.exercisePosition,
                       exerciseID: state.exercise.identity.id,
                     },
                   });
-                setExerciseID({
-                  groupPosition: 0,
-                  exercisePosition: 0,
-                });
                 setSelectedMenu("");
               }}
             ></EditExercise>
