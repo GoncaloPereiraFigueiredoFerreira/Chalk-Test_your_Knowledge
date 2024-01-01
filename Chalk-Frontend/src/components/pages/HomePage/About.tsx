@@ -1,26 +1,89 @@
+import { useEffect, useRef, useState } from "react";
+import { useIsVisible } from "./HomePage";
+
 export function About() {
+  const ref1 = useRef(null);
+  const isVisible1 = useIsVisible(ref1);
+  const [triggered1, setTriggered1] = useState(false);
+
+  useEffect(() => {
+    if (isVisible1) setTriggered1(true);
+  }, [ref1, isVisible1]);
+
+  const ref2 = useRef(null);
+  const isVisible2 = useIsVisible(ref2);
+  const [triggered2, setTriggered2] = useState(false);
+
+  useEffect(() => {
+    if (isVisible2) setTriggered2(true);
+  }, [ref2, isVisible2]);
+
+  const ref3 = useRef(null);
+  const isVisible3 = useIsVisible(ref3);
+  const [triggered3, setTriggered3] = useState(false);
+
+  useEffect(() => {
+    if (isVisible3) setTriggered3(true);
+  }, [ref3, isVisible3]);
+
+  const ref4 = useRef(null);
+  const isVisible4 = useIsVisible(ref4);
+  const [triggered4, setTriggered4] = useState(false);
+
+  useEffect(() => {
+    if (isVisible4) setTriggered4(true);
+  }, [ref4, isVisible4]);
+
+  const ref5 = useRef(null);
+  const isVisible5 = useIsVisible(ref5);
+  const [triggered5, setTriggered5] = useState(false);
+
+  useEffect(() => {
+    if (isVisible5) setTriggered5(true);
+  }, [ref5, isVisible5]);
+
   return (
     <>
-      {" "}
-      <div className="min-w-full container my-24 mx-0 px-0" id="about">
+      <div
+        className="min-w-full container my-24 mx-0 px-0 flex justify-center"
+        id="about"
+      >
         {/**<!-- Section: Design Block -->*/}
-        <section className=" text-center ">
-          <div className="flex justify-center px-4">
-            <div className="max-w-full text-center">
-              <h2 className="mb-6 text-center text-3xl font-bold">
-                Why is Chalk so{" "}
-                <u className="text-primary dark:text-primary-400">great?</u>
+        <section className=" text-left flex flex-row text-xl w-3/4">
+          <div
+            ref={ref1}
+            className={`flex justify-center px-4 w-1/4 transform transition-all ease-in-out duration-1000 ${
+              isVisible1 || triggered1
+                ? " translate-x-0 opacity-100"
+                : " translate-x-full opacity-0"
+            }`}
+          >
+            <div className="max-w-full">
+              <h2 className="mb-6 text-3xl font-bold">
+                Why is{" "}
+                <text className="font-pacifico mb-6 text-3xl font-bold">
+                  Chalk
+                </text>{" "}
+                so <u className="text-primary dark:text-primary-400">great</u>
+                <p>at what it does?</p>
               </h2>
               <p className="mb-16 text-neutral-500 dark:text-neutral-900">
-                Minus fuga aliquid vero facere ducimus quos, quisquam nemo?
-                Molestias ullam provident vitae error aliquam dolorum
-                temporibus? Doloremque, quasi
+                It's because we care about providing the most suitable services
+                to our customers needs reliably and at anytime
               </p>
             </div>
           </div>
 
-          <div className="grid gap-y-0 grid-cols-1 lg:justify-around ">
-            <div className="pb-12 md:mb-0 bg-gray-100 px-4">
+          <div className="grid gap-y-0 grid-cols-1 lg:justify-around  w-3/4">
+            <div
+              ref={ref2}
+              className={` m-3 py-3 py-3 md:mb-0 bg-gray-100 px-4 flex flex-row rounded-lg hover:scale-105 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-300
+            transform duration-1000 transition-all animate-slide_in ${
+              isVisible2
+                ? " translate-x-0 opacity-100"
+                : " translate-x-full opacity-0"
+            }`}
+            >
               <div className=" inline-block rounded-full bg-primary-100 p-4 text-primary text-orange-400 shadow-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +91,7 @@ export function About() {
                   viewBox="0 0 24 24"
                   strokeWidth="2"
                   stroke="currentColor"
-                  className="h-6 w-6"
+                  className="h-14 w-14"
                 >
                   <path
                     strokeLinecap="round"
@@ -37,16 +100,26 @@ export function About() {
                   />
                 </svg>
               </div>
-              <h5 className="mb-4 text-lg font-bold text-orange-400">
-                Support 24/7
-              </h5>
-              <p className="text-neutral-500 dark:text-neutral-900">
-                Laudantium totam quas cumque pariatur at doloremque hic quos
-                quia eius. Reiciendis optio minus mollitia rerum labore
-              </p>
+              <div className="flex flex-col">
+                <h5 className="mb-2 text-3xl font-bold text-orange-400  text-left">
+                  Support 24/7
+                </h5>
+                <p className="text-neutral-500 dark:text-neutral-900">
+                  Laudantium totam quas cumque pariatur at doloremque hic quos
+                  quia eius. Reiciendis optio minus mollitia rerum labore
+                </p>
+              </div>
             </div>
 
-            <div className="pb-12 md:mb-0 bg-white px-4">
+            <div
+              ref={ref3}
+              className={` m-3 py-3 md:mb-0 bg-gray-100 px-4 flex flex-row rounded-lg
+                         transform duration-1000 transition-all animate-slide_in ${
+                           isVisible3
+                             ? " translate-x-0 opacity-100 hover:scale-105 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-300"
+                             : " translate-x-full opacity-0"
+                         }`}
+            >
               <div className=" inline-block rounded-full bg-primary-100 p-4 text-primary text-green-400 shadow-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +127,7 @@ export function About() {
                   viewBox="0 0 24 24"
                   strokeWidth="2"
                   stroke="currentColor"
-                  className="h-6 w-6"
+                  className="h-14 w-14"
                 >
                   <path
                     strokeLinecap="round"
@@ -63,16 +136,26 @@ export function About() {
                   />
                 </svg>
               </div>
-              <h5 className="mb-4 text-lg font-bold text-green-400">
-                Safe and solid
-              </h5>
-              <p className="text-neutral-500 dark:text-neutral-900">
-                Eum nostrum fugit numquam, voluptates veniam neque quibusdam
-                ullam aspernatur odio soluta, quisquam dolore animi
-              </p>
+              <div className="flex flex-col">
+                <h5 className="mb-2 text-3xl font-bold text-green-400  text-left">
+                  Safe and solid
+                </h5>
+                <p className="text-neutral-500 dark:text-neutral-900">
+                  Eum nostrum fugit numquam, voluptates veniam neque quibusdam
+                  ullam aspernatur odio soluta, quisquam dolore animi
+                </p>
+              </div>
             </div>
 
-            <div className="pb-12 md:mb-0 bg-gray-100 px-4">
+            <div
+              ref={ref4}
+              className={` m-3 py-3 md:mb-0 bg-gray-100 px-4 flex flex-row rounded-lg hover:scale-105 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-300
+            transform duration-1000 transition-all animate-slide_in ${
+              isVisible4
+                ? " translate-x-0 opacity-100"
+                : " translate-x-full opacity-0"
+            }`}
+            >
               <div className=" inline-block rounded-full bg-primary-100 text-yellow-300  p-4 text-primary shadow-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +163,7 @@ export function About() {
                   viewBox="0 0 24 24"
                   strokeWidth="2"
                   stroke="currentColor"
-                  className="h-6 w-6"
+                  className="h-14 w-14"
                 >
                   <path
                     strokeLinecap="round"
@@ -89,16 +172,26 @@ export function About() {
                   />
                 </svg>
               </div>
-              <h5 className="mb-4 text-yellow-300 text-lg font-bold">
-                Extremely fast
-              </h5>
-              <p className="text-neutral-500 dark:text-neutral-900">
-                Enim cupiditate, minus nulla dolor cumque iure eveniet facere
-                ullam beatae hic voluptatibus dolores exercitationem
-              </p>
+              <div className="flex flex-col">
+                <h5 className="mb-2 text-3xl font-bold text-yellow-300 text-left">
+                  Extremely fast
+                </h5>
+                <p className="text-neutral-500 dark:text-neutral-900">
+                  Enim cupiditate, minus nulla dolor cumque iure eveniet facere
+                  ullam beatae hic voluptatibus dolores exercitationem
+                </p>
+              </div>
             </div>
 
-            <div className="mb-12 md:mb-0 px-4">
+            <div
+              ref={ref5}
+              className={` m-3 py-3 md:mb-0 bg-gray-100 px-4 flex flex-row rounded-lg hover:scale-105 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-300
+            transform duration-1000 transition-all animate-slide_in ${
+              isVisible5
+                ? " translate-x-0 opacity-100"
+                : " translate-x-full opacity-0"
+            }`}
+            >
               <div className=" inline-block rounded-full bg-primary-100 p-4 text-primary text-blue-300 shadow-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +199,7 @@ export function About() {
                   viewBox="0 0 24 24"
                   strokeWidth="2"
                   stroke="currentColor"
-                  className="h-6 w-6"
+                  className="h-14 w-14"
                 >
                   <path
                     strokeLinecap="round"
@@ -120,13 +213,15 @@ export function About() {
                   />
                 </svg>
               </div>
-              <h5 className="mb-4 text-lg font-bold text-blue-300">
-                Live analytics
-              </h5>
-              <p className="text-neutral-500 dark:text-neutral-300">
-                Illum doloremque ea, blanditiis sed dolor laborum praesentium
-                maxime sint, consectetur atque ipsum ab adipisci
-              </p>
+              <div className="flex flex-col">
+                <h5 className="mb-2 text-3xl font-bold text-blue-300  text-left">
+                  Live analytics
+                </h5>
+                <p className="text-neutral-500 dark:text-neutral-300">
+                  Illum doloremque ea, blanditiis sed dolor laborum praesentium
+                  maxime sint, consectetur atque ipsum ab adipisci
+                </p>
+              </div>
             </div>
           </div>
         </section>

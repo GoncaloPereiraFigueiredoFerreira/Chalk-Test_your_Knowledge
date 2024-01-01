@@ -1,12 +1,27 @@
 import { Link } from "react-router-dom";
 import "./NavBar.css";
+import { useEffect, useRef, useState } from "react";
+import { useIsVisible } from "../../pages/HomePage/HomePage";
 
 export function NavBar() {
+  const ref1 = useRef(null);
+  const isVisible1 = useIsVisible(ref1);
+  const [triggered1, setTriggered1] = useState(false);
+
+  useEffect(() => {
+    if (isVisible1) setTriggered1(true);
+  }, [ref1, isVisible1]);
+
   return (
     <>
-      <nav className="bg-white fixed w-screen z-10 px-2 sm:px-6 lg:px-8 flex h-16 items-center justify-between drop-shadow overflow-visible">
+      <nav
+        ref={ref1}
+        className={` bg-white fixed w-screen z-50 px-2 sm:px-6 lg:px-8 flex h-16 items-center justify-between drop-shadow shadow-inner overflow-visible transform transition-opacity ease-in-out duration-[2s] ${
+          isVisible1 || triggered1 ? " opacity-100" : " opacity-0"
+        }`}
+      >
         <div className="flex flex-1 items-center sm:items-stretch justify-start">
-          <div className="flex flex-shrink-0 items-center left-0">
+          <div className="flex flex-shrink-0 items-center left-0 hover:scale-150 transition-all duration-50">
             <Link to="/">
               <img
                 className="h-8 w-auto"
@@ -18,29 +33,29 @@ export function NavBar() {
           <div className="hidden sm:ml-6 sm:block">
             <div className="flex space-x-4">
               <a
-                href="#"
-                className="bg-gray-900 text-white rounded-md px-3 py-2 text-md font-medium font-pacifico"
+                href="/webapp"
+                className="bg-gray-900 text-white rounded-md px-3 py-2 text-md font-medium font-pacifico hover:scale-110 transition-all duration-50"
                 aria-current="page"
               >
-                <Link to="/webapp">Chalk</Link>
+                Chalk
               </a>
               <a
-                href="#about"
+                href="/#features"
                 className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
               >
-                <Link to="/#about">About</Link>
+                About
               </a>
               <a
-                href="#team"
+                href="/#team"
                 className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
               >
-                <Link to="/#team">Team</Link>
+                Team
               </a>
               <a
-                href="#contacts"
+                href="/#contacts"
                 className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
               >
-                <Link to="/#contacts">Contacts</Link>
+                Contacts
               </a>
             </div>
           </div>
