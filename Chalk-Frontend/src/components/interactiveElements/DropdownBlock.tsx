@@ -1,13 +1,6 @@
-import { useState } from "react";
 import { DownArrowIcon, UpArrowIcon } from "../objects/SVGImages/SVGImages";
 import "./DropdownBlock.css";
-import { CustomFlowbiteTheme, Dropdown, theme } from "flowbite-react";
-
-const customTheme: CustomFlowbiteTheme["button"] = {
-  color: {
-    primary: "bg-red-500 hover:bg-red-600",
-  },
-};
+import { Dropdown } from "flowbite-react";
 
 interface DropdownBlockProps {
   style?: string;
@@ -28,8 +21,6 @@ export function DropdownBlock({
   clearOption,
   placement,
 }: DropdownBlockProps) {
-  const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
-
   return (
     <Dropdown
       label=""
@@ -55,7 +46,6 @@ export function DropdownBlock({
           }}
           onClick={() => {
             setChosenOption(null);
-            setDropdownIsOpen(false);
           }}
         >
           <span>{clearOption}</span>
@@ -71,7 +61,6 @@ export function DropdownBlock({
             key={index}
             onClick={() => {
               setChosenOption(value);
-              setDropdownIsOpen(false);
             }}
           >
             <span>{value}</span>

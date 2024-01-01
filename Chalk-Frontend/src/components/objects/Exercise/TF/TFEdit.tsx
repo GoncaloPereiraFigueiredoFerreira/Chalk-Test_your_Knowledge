@@ -1,16 +1,26 @@
 import { useState } from "react";
-import { Exercise, ExerciseJustificationKind } from "../Exercise";
+import {
+  CreateEditProps,
+  ExerciseJustificationKind,
+  ExerciseType,
+  ResolutionData,
+  TFExercise,
+} from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
 interface TFEditProps {
-  dispatch: React.Dispatch<EditAction>;
-  state: Exercise;
+  context: CreateEditProps;
+  exercise: TFExercise;
 }
-export function TFEdit({ dispatch, state }: TFEditProps) {
+
+export function TFEdit({ exercise, context }: TFEditProps) {
   const [openJustificationkind, setOpenJustificationkind] = useState(
-    state.justifyKind != ExerciseJustificationKind.NO_JUSTIFICATION
+    exercise.props.justifyType !== ExerciseJustificationKind.NO_JUSTIFICATION
   );
+  console.log(openJustificationkind);
+  console.log(exercise.props.justifyType);
+
   return (
     <>
       <p className="block mb-2 text-sm text-gray-900 dark:text-white">
@@ -25,12 +35,13 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(state.items!).map((value, index) => (
+          {Object.keys(exercise.props.items).map((value, index) => (
             <TFStatementEdit
               key={index}
+              position={index}
               id={value}
-              state={state}
-              dispatch={dispatch}
+              dispatch={context.dispatch}
+              solution={context.solutionData}
             ></TFStatementEdit>
           ))}
         </tbody>
@@ -42,14 +53,15 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
         onClick={() => {
           for (
             let newID = 0;
-            newID < Object.keys(state.items!).length;
+            newID < Object.keys(exercise.props.items).length + 1;
             newID++
           ) {
-            if (state.items![newID.toString()] === undefined) {
-              dispatch({
+            if (exercise.props.items[newID.toString()] === undefined) {
+              context.dispatch({
                 type: EditActionKind.ADD_ITEM,
-                data: { id: newID.toString() },
+                dataString: newID.toString(),
               });
+              break;
             }
           }
         }}
@@ -61,6 +73,16 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
             onChange={() => {
+              if (openJustificationkind)
+                context.dispatch({
+                  type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                  dataJK: ExerciseJustificationKind.NO_JUSTIFICATION,
+                });
+              else
+                context.dispatch({
+                  type: EditActionKind.CHANGE_JUSTIFY_KIND,
+                  dataJK: ExerciseJustificationKind.JUSTIFY_ALL,
+                });
               setOpenJustificationkind(!openJustificationkind);
             }}
             checked={openJustificationkind}
@@ -82,14 +104,13 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
               ExerciseJustificationKind.JUSTIFY_ALL,
               ExerciseJustificationKind.JUSTIFY_FALSE,
               ExerciseJustificationKind.JUSTIFY_TRUE,
-              ExerciseJustificationKind.NO_JUSTIFICATION,
             ]}
             text="Posição"
-            chosenOption={state.justifyKind}
+            chosenOption={exercise.props.justifyType}
             setChosenOption={(justifyKind) =>
-              dispatch({
+              context.dispatch({
                 type: EditActionKind.CHANGE_JUSTIFY_KIND,
-                justifyKind: justifyKind,
+                dataJK: justifyKind,
               })
             }
             style="rounded-lg h-full"
@@ -101,69 +122,87 @@ export function TFEdit({ dispatch, state }: TFEditProps) {
   );
 }
 
-function TFStatementEdit(props: any) {
-  let name = "radio-button-" + props.id;
+interface TFStatementEditProps {
+  dispatch: React.Dispatch<EditAction>;
+  id: string;
+  solution: ResolutionData;
+  position: number;
+}
+function TFStatementEdit({
+  dispatch,
+  id,
+  position,
+  solution,
+}: TFStatementEditProps) {
+  const name = "radio-button-" + position;
 
-  return (
-    <>
-      <tr>
-        <td className="p-3">
-          <input
-            className="radio-green"
-            type="radio"
-            name={name}
-            onChange={() => {
-              props.dispatch({
-                type: EditActionKind.CHANGE_ITEM_TF,
-                data: { id: props.id, value: true },
-              });
-              console.log("green");
-            }}
-            checked={props.state.solution.value}
-          ></input>
-        </td>
-        <td className="p-3">
-          <input
-            className="radio-red"
-            type="radio"
-            name={name}
-            onChange={() => {
-              props.dispatch({
-                type: EditActionKind.CHANGE_ITEM_TF,
-                data: { id: props.id, value: false },
-              });
-              console.log("red");
-            }}
-            checked={!props.state.solution.value}
-          ></input>
-        </td>
-        <td>
-          <input
-            type="text"
-            className="basic-input-text"
-            onChange={(e) =>
-              props.dispatch({
-                type: EditActionKind.CHANGE_ITEM_TEXT,
-                data: { id: props.id, text: e.target.value },
-              })
-            }
-            value={props.state.items[props.id].text}
-          ></input>
-        </td>
-        <td>
-          <input
-            className="edit-btn"
-            type="button"
-            onClick={() =>
-              props.dispatch({
-                type: EditActionKind.REMOVE_ITEM,
-                data: { id: props.id },
-              })
-            }
-            value="Remove"
-          ></input>
-        </td>
-      </tr>
-    </>
-  );
+  if (solution.type === ExerciseType.TRUE_OR_FALSE) {
+    const solutionItem = solution.items[id];
+
+    return (
+      <>
+        <tr>
+          <td className="p-3">
+            <input
+              className="radio-green"
+              type="radio"
+              name={name}
+              onChange={() => {
+                dispatch({
+                  type: EditActionKind.CHANGE_ITEM_TF,
+                  dataString: id,
+                  dataItem: { value: true },
+                });
+              }}
+              checked={solutionItem.value}
+            ></input>
+          </td>
+          <td className="p-3">
+            <input
+              className="radio-red"
+              type="radio"
+              name={name}
+              onChange={() => {
+                dispatch({
+                  type: EditActionKind.CHANGE_ITEM_TF,
+                  dataString: id,
+                  dataItem: { value: false },
+                });
+              }}
+              checked={!solutionItem.value}
+            ></input>
+          </td>
+          <td>
+            <input
+              type="text"
+              className="basic-input-text"
+              onChange={(e) =>
+                dispatch({
+                  type: EditActionKind.CHANGE_ITEM_TEXT,
+                  dataString: id,
+                  dataItem: {
+                    text: e.target.value,
+                  },
+                })
+              }
+              value={solutionItem.text}
+            ></input>
+          </td>
+          <td>
+            <input
+              className="edit-btn"
+              type="button"
+              onClick={() =>
+                dispatch({
+                  type: EditActionKind.REMOVE_ITEM,
+                  dataString: id,
+                })
+              }
+              value="Remove"
+            ></input>
+          </td>
+        </tr>
+      </>
+    );
+  } else <></>;
 }

@@ -12,6 +12,8 @@
     overflow-y-auto
     py-5
     w-64
+    transition
+    duration-75
     px-3;
   }
 

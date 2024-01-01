@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Login } from "./components/pages/Login&Register/Login";
 import { Register } from "./components/pages/Login&Register/Register";
 import { HomePage } from "./components/pages/HomePage/HomePage";
-import "./App.css";
 import { UserContext } from "./UserContext";
 import { useContext } from "react";
 import { ExerciseBankPage } from "./components/pages/ExerciseBankPage/ExerciseBankPage";
@@ -11,7 +10,7 @@ import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/Tests/TestList/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
 import { Subscription } from "./components/pages/HomePage/Subscription/Subscription";
-//import { CreateTest } from "./components/pages/CreateTest/CreateTest";
+import { CreateTest } from "./components/pages/CreateTest/CreateTest";
 import { SearchList } from "./components/pages/SearchList/SearchList";
 import { SolveTest } from "./components/pages/Tests/SolveTest/SolveTest";
 import { GroupsPage } from "./components/pages/Groups/GroupsPage";
@@ -19,9 +18,10 @@ import { AvaliacoesPage } from "./components/pages/Groups/AvaliacoesPage";
 import { TestesPartilhadosPage } from "./components/pages/Groups/TestesPartilhadosPage";
 import { AlunosPage } from "./components/pages/Groups/AlunosPage";
 import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
-import { TestPreview } from "./components/pages/Tests/TestPreview";
 import { Correction } from "./components/pages/Tests/Correction/Correction";
 import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
+import "./App.css";
+import "./components/interactiveElements/Icon.css";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -41,7 +41,7 @@ function App() {
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
           <Route path="exercise-bank" element={<ExerciseBankPage />} />
-          {/*<Route path="create-test" element={<CreateTest />} />*/}
+          <Route path="create-test" element={<CreateTest />} />
           <Route path="tests">
             <Route index path="" element={<TestPage />} />
             <Route path="preview" element={<PreviewTest />} />

@@ -5,12 +5,14 @@ import {
   ExerciseGroup,
   ExerciseJustificationKind,
   ExerciseType,
+  InitResolutionDataEx,
+  InitResolutionDataType,
   Resolution,
   ResolutionData,
   ResolutionItems,
-  ResolutionStatus,
   SolveProps,
 } from "../../../objects/Exercise/Exercise";
+import { exampleTest } from "../Preview/PreviewTest";
 
 export interface Test {
   type: string;
@@ -23,200 +25,7 @@ export interface Test {
   groups: ExerciseGroup[];
 }
 
-const basictest: Test = {
-  type: "basic",
-  conclusion: "",
-  author: "JCR",
-  title: "Teste de Avaliação de Geografia",
-  creationDate: "22/08/2023",
-  globalCotation: 20.0,
-  globalInstructions: "Teste muito dificil. Tais todos fodidos!",
-  groups: [
-    {
-      exercises: [
-        {
-          id: "11111",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "22222",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com França?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "Portugal" },
-            2: { text: "Polo norte" },
-            3: { text: "Pigs" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.TRUE_OR_FALSE,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "3333",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.TRUE_OR_FALSE,
-          justifyKind: ExerciseJustificationKind.JUSTIFY_FALSE,
-        },
-      ],
-      groupCotation: 3,
-      groupInstructions:
-        "Neste grupo serão apresentadas 2 exercícios de geografia!Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus mollis ante vitae felis efficitur blandit. Etiam maximus aliquet nisi eget lacinia. Quisque iaculis ligula purus, ac euismod arcu ultrices sit amet. Pellentesque id tortor pulvinar, fringilla dolor quis, molestie nibh. Donec molestie massa ut eros sollicitudin vehicula. Duis convallis, eros sit amet cursus pellentesque, ipsum orci vestibulum leo, at sodales massa lorem vitae ipsum. Nullam pharetra ullamcorper nisi id cursus. Morbi at mauris vitae risus consectetur ultrices pulvinar eu metus. Nullam pellentesque dictum hendrerit. Nunc felis nisi, auctor vitae dapibus sit amet, hendrerit vitae mauris. Cras in tempus sem. Ut vehicula risus at arcu eleifend eleifend.",
-    },
-    {
-      exercises: [
-        {
-          id: "11111",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "22222",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com França?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "Portugal" },
-            2: { text: "Polo norte" },
-            3: { text: "Pigs" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "3333",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.MULTIPLE_CHOICE,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-      ],
-      groupCotation: 16,
-      groupInstructions:
-        "Neste grupo serão apresentadas 2 exercícios de geografia!Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus mollis ante vitae felis efficitur blandit. Etiam maximus aliquet nisi eget lacinia. Quisque iaculis ligula purus, ac euismod arcu ultrices sit amet. Pellentesque id tortor pulvinar, fringilla dolor quis, molestie nibh. Donec molestie massa ut eros sollicitudin vehicula. Duis convallis, eros sit amet cursus pellentesque, ipsum orci vestibulum leo, at sodales massa lorem vitae ipsum. Nullam pharetra ullamcorper nisi id cursus. Morbi at mauris vitae risus consectetur ultrices pulvinar eu metus. Nullam pellentesque dictum hendrerit. Nunc felis nisi, auctor vitae dapibus sit amet, hendrerit vitae mauris. Cras in tempus sem. Ut vehicula risus at arcu eleifend eleifend.",
-    },
-    {
-      exercises: [
-        {
-          id: "11111",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "22222",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com França?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "Portugal" },
-            2: { text: "Polo norte" },
-            3: { text: "Pigs" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.OPEN_ANSWER,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-        {
-          id: "3333",
-          specialistId: "JCR",
-          cotation: 1,
-          visibility: "public",
-          statement: {
-            text: "Qual o país que faz fronteira com Portugal?",
-          },
-          title: "Vizinhos",
-          items: {
-            1: { text: "França" },
-            2: { text: "Espanha" },
-            3: { text: "Argentina" },
-            4: { text: "Setúbal" },
-          },
-          type: ExerciseType.MULTIPLE_CHOICE,
-          justifyKind: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-      ],
-      groupCotation: 1,
-      groupInstructions:
-        "Neste grupo serão apresentadas 2 exercícios de geografia!Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus mollis ante vitae felis efficitur blandit. Etiam maximus aliquet nisi eget lacinia. Quisque iaculis ligula purus, ac euismod arcu ultrices sit amet. Pellentesque id tortor pulvinar, fringilla dolor quis, molestie nibh. Donec molestie massa ut eros sollicitudin vehicula. Duis convallis, eros sit amet cursus pellentesque, ipsum orci vestibulum leo, at sodales massa lorem vitae ipsum. Nullam pharetra ullamcorper nisi id cursus. Morbi at mauris vitae risus consectetur ultrices pulvinar eu metus. Nullam pellentesque dictum hendrerit. Nunc felis nisi, auctor vitae dapibus sit amet, hendrerit vitae mauris. Cras in tempus sem. Ut vehicula risus at arcu eleifend eleifend.",
-    },
-  ],
-};
+const basictest: Test = exampleTest;
 
 function CountExercises(test: Test) {
   let result: number = 0;
@@ -326,7 +135,7 @@ function SolveTestExercise({ endTest }: any) {
 
       <div className=" relative ml-8 dark:text-white">
         <p className="absolute right-4 top-3 text-xl ">
-          Cotação do Exercício: {exerciseData.cotation} valores
+          Cotação do Exercício: {exerciseData.identity.cotation} valores
         </p>
       </div>
       <div className="mb-10">
@@ -412,47 +221,7 @@ function initResolutions(test: Test): ResolutionData[][] {
     initResolution.push(groupRes);
 
     group.exercises.map((exercise) => {
-      switch (exercise.type) {
-        case ExerciseType.MULTIPLE_CHOICE:
-          let tempItemsMC: ResolutionItems = {};
-
-          Object.keys(exercise.items!).map((key) => {
-            tempItemsMC[key] = {
-              text: exercise.items![key].text,
-              justification: "",
-              value: false,
-            };
-          });
-
-          initResolution[groupID].push({
-            type: ExerciseType.MULTIPLE_CHOICE,
-            items: tempItemsMC,
-          });
-          break;
-
-        case ExerciseType.TRUE_OR_FALSE:
-          let tempItemsTF: ResolutionItems = {};
-
-          Object.keys(exercise.items!).map((key) => {
-            tempItemsTF[key] = {
-              text: exercise.items![key].text,
-              justification: "",
-            };
-          });
-
-          initResolution[groupID].push({
-            type: ExerciseType.TRUE_OR_FALSE,
-            items: tempItemsTF,
-          });
-          break;
-
-        case ExerciseType.OPEN_ANSWER:
-          initResolution[groupID].push({
-            type: ExerciseType.OPEN_ANSWER,
-            text: "",
-          });
-          break;
-      }
+      initResolution[groupID].push(InitResolutionDataEx(exercise));
     });
   });
   return initResolution;

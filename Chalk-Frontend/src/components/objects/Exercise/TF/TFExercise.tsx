@@ -1,56 +1,67 @@
-import { ExerciseComponentProps, ExerciseContext } from "../Exercise";
+import {
+  CreateEditProps,
+  ExerciseComponentProps,
+  ExerciseContext,
+  PreviewProps,
+  SolveProps,
+  TFExercise,
+} from "../Exercise";
+import { TFEdit } from "./TFEdit";
 import { TFPreview } from "./TFPreview";
 import { TFSolve } from "./TFSolve";
 
-export function TFExercise({
+export function TFExerciseComp({
+  exercise,
   position,
   context,
-  exercise,
 }: ExerciseComponentProps) {
   let exerciseDisplay = <></>;
-  if (exercise.items && exercise.justifyKind)
-    switch (context.context) {
-      case ExerciseContext.SOLVE:
-        exerciseDisplay = (
-          <TFSolve
-            id={exercise.id}
-            position={position}
-            items={exercise.items}
-            statement={exercise.statement}
-            justifyKind={exercise.justifyKind}
-            resolution={context.resolutionData}
-            setResolution={context.setExerciseSolution}
-          />
-        );
-        break;
 
-      case ExerciseContext.PREVIEW:
-        exerciseDisplay = (
-          <TFPreview
-            id={exercise.id}
-            position={position}
-            items={exercise.items}
-            statement={exercise.statement}
-            justifyKind={exercise.justifyKind}
-          />
-        );
-        break;
+  switch (context.context) {
+    case ExerciseContext.SOLVE:
+      exerciseDisplay = (
+        <TFSolve
+          context={context as SolveProps}
+          exercise={exercise as TFExercise}
+          position={position}
+        />
+      );
+      break;
 
-      case ExerciseContext.EDIT:
-        exerciseDisplay = <></>;
-        break;
+    case ExerciseContext.PREVIEW:
+      exerciseDisplay = (
+        <TFPreview
+          context={context as PreviewProps}
+          exercise={exercise as TFExercise}
+          position={position}
+        />
+      );
+      break;
 
-      case ExerciseContext.GRADING:
-        exerciseDisplay = <></>;
-        break;
+    case ExerciseContext.EDIT:
+      exerciseDisplay = (
+        <TFEdit
+          context={context as CreateEditProps}
+          exercise={exercise as TFExercise}
+        />
+      );
+      break;
 
-      case ExerciseContext.REVIEW:
-        exerciseDisplay = <></>;
-        break;
-    }
+    case ExerciseContext.GRADING:
+      exerciseDisplay = <></>;
+      break;
+
+    case ExerciseContext.REVIEW:
+      exerciseDisplay = <></>;
+      break;
+  }
   return (
     <>
-      <div className="m-5 text-title-2">{position + ") " + exercise.title}</div>
+      {context.context !== ExerciseContext.EDIT ? (
+        <div className="m-5 text-title-2">
+          {position + ") " + exercise.base.title}
+        </div>
+      ) : null}
       <div className="m-5 text-lg">{exerciseDisplay}</div>
     </>
   );

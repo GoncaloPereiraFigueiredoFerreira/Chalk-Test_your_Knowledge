@@ -10,7 +10,9 @@ interface EditHeaderProps {
 }
 
 export function EditHeader({ dispatch, state }: EditHeaderProps) {
-  const [addImg, setAddImg] = useState(state.statement.imagePath != undefined);
+  const [addImg, setAddImg] = useState(
+    state.base.statement.imagePath != undefined
+  );
 
   return (
     <>
@@ -26,11 +28,11 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
             id="header"
             className="header-textarea"
             placeholder="Escreva aqui o enunciado..."
-            value={state.statement.text}
+            value={state.base.statement.text}
             onChange={(e) =>
               dispatch({
                 type: EditActionKind.CHANGE_STATEMENT,
-                statement: { text: e.target.value },
+                dataString: e.target.value,
               })
             }
           ></textarea>
@@ -40,8 +42,18 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
             id="putImg"
             type="checkbox"
             className="p-2 rounded outline-0 bg-input-2"
+            onChange={() => {
+              if (addImg)
+                dispatch({
+                  type: EditActionKind.REMOVE_IMG,
+                });
+              else
+                dispatch({
+                  type: EditActionKind.ADD_IMG,
+                });
+              setAddImg(!addImg);
+            }}
             checked={addImg}
-            onChange={() => setAddImg(!addImg)}
           ></input>
           <label
             htmlFor="putImg"
@@ -67,11 +79,11 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
                   placeholder="Imagem"
                   type="url"
                   className="flex rounded-lg bg-input-1"
-                  value={state.statement.imagePath}
+                  value={state.base.statement.imagePath}
                   onChange={(e) =>
                     dispatch({
                       type: EditActionKind.CHANGE_IMG_URL,
-                      statement: { imagePath: e.target.value },
+                      dataString: e.target.value,
                     })
                   }
                 ></input>
@@ -87,11 +99,11 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
                 <DropdownBlock
                   options={Object.values(ImgPos)}
                   text="Posição"
-                  chosenOption={state.statement.imagePosition}
+                  chosenOption={state.base.statement.imagePosition}
                   setChosenOption={(position) =>
                     dispatch({
                       type: EditActionKind.CHANGE_IMG_POS,
-                      statement: { imagePosition: position },
+                      dataImgPos: position,
                     })
                   }
                   style="rounded-lg"
