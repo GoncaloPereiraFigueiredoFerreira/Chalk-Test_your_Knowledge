@@ -140,7 +140,7 @@ public class AIService implements IAIService {
 
         Object[] evaluations =  response.getJsonArray("Evaluation").toArray();
 
-        Float cotation = new Float( ((JsonObject)evaluations[0]).get("Cotation").toString());
+        Float cotation = Float.parseFloat( ((JsonObject)evaluations[0]).get("Cotation").toString());
 
         return cotation;
     }
