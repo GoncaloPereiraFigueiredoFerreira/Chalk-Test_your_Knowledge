@@ -89,7 +89,7 @@ public class AIServiceTest {
         OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",100.0F);
         OAStandard oaStandardMin = new OAStandard("Ni siquiera intentó resolver","No puedo robar tanto",0.0F);
         List<OAStandard> oaStandards = Arrays.asList(oaStandardMin,oaStandardMax);
-        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado", 100f, oaStandards)));
+        return new OpenAnswerRubric(List.of(new OACriterion("Há intentado", 50f, oaStandards),new OACriterion("Há intentado", 50f, oaStandards)));
     }
 
     private OpenAnswerExercise createOAExercise(String specialistId, String courseId){
