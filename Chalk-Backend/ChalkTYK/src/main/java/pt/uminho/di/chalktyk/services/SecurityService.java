@@ -98,9 +98,21 @@ public class SecurityService implements ISecurityService{
 
     @Override
     @Transactional
-    public String getUserId(String jwtToken) throws UnauthorizedException {
-        JWT jwt = parseJWT(jwtToken);
-        return checkAndUpdateLogin(jwt);
+    public JWT checkAndUpdateJWT(String jwtTokenString) throws UnauthorizedException {
+        JWT jwt = parseJWT(jwtTokenString);
+        checkAndUpdateLogin(jwt);
+        return jwt;
+    }
+
+    @Override
+    public String getUserId(JWT jwtToken) {
+        return jwtToken != null ? (String) jwtToken.getPayloadParam("username") : null;
+    }
+
+    @Override
+    public String getUserRole(JWT jwtToken) {
+        return jwtToken != null ? (String) jwtToken.getPayloadParam("role") : null;
+
     }
 
     @Override

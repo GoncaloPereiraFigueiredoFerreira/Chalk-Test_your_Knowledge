@@ -55,7 +55,8 @@ public class UsersApiController implements UsersApi {
     @Override
     public ResponseEntity<Void> updateBasicProperties(String authToken, UserUpdateDTO userDTO) {
         try {
-            String userId = securityService.getUserId(authToken);
+            JWT jwt = securityService.checkAndUpdateJWT(authToken);
+            String userId = securityService.getUserId(jwt);
             usersService.updateBasicProperties(userId, userDTO.getName(), userDTO.getEmail(), userDTO.getPhotoPath(), userDTO.getDescription());
         } catch (UnauthorizedException | BadInputException | NotFoundException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);

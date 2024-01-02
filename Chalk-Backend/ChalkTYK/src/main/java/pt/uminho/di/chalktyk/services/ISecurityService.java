@@ -1,19 +1,34 @@
 package pt.uminho.di.chalktyk.services;
 
+import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 public interface ISecurityService {
-
     /**
-     * Checks if token is valid and extracts the user id.
-     * @param jwtToken JWT token
-     * @return user id
+     * Checks if the token is valid, and updates the token associated with login
+     * if the token currently associated with the login expired.
+     * @param jwtTokenString JWT token as string
+     * @return jwt token
      * @throws UnauthorizedException if the token is invalid, expired or is blacklisted.
      */
-    String getUserId(String jwtToken) throws UnauthorizedException;
+    JWT checkAndUpdateJWT(String jwtTokenString) throws UnauthorizedException;
+
+    /**
+     * Extracts the user id from the token.
+     * @param jwtToken JWT token
+     * @return user id
+     */
+    String getUserId(JWT jwtToken);
+
+    /**
+     * Extracts the user role from the token.
+     * @param jwtToken JWT token
+     * @return user role
+     */
+    String getUserRole(JWT jwtToken);
 
     /**
      * Logs in the user.
