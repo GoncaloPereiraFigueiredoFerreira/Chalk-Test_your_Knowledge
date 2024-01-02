@@ -14,6 +14,7 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -92,30 +93,8 @@ public class AIService implements IAIService {
     }
 
     public Float evaluateOpenAnswer(Exercise exerciseI, ExerciseRubric rubricI, ExerciseResolution solution) throws NotFoundException, ApiConnectionException, BadInputException{
-        
+        Float total = 0.0f;
         JsonObjectBuilder request = Json.createObjectBuilder();
-
-        // parse Rubric to json 
-        if(rubricI instanceof OpenAnswerRubric rubric){
-            List<OACriterion> criteria = rubric.getCriteria();
-
-            for (OACriterion i : criteria) {
-                List<OAStandard> standart = i.getStandards();
-
-                JsonArrayBuilder jRubric = Json.createArrayBuilder();
-                standart.forEach(s ->{
-                    jRubric.add(
-                            Json.createObjectBuilder()
-                            .add("Description",s.getDescription())
-                            .add("Cotation",s.getPercentage())
-                            );
-                });
-
-                request.add("Rubric",jRubric);
-            }
-        }else{
-            throw new BadInputException("Exercise Rubric given is not of the type OpenAnswerRubric");
-        }
 
         // parse Question to json
         if (exerciseI instanceof OpenAnswerExercise exercise) {
@@ -136,13 +115,38 @@ public class AIService implements IAIService {
             throw new BadInputException("Solution given does not contain a OpenAnswerData");
         }
 
-        JsonObject response = sendRequest("/open_answer", request.build());
+        // parse Rubric to json 
+        if(rubricI instanceof OpenAnswerRubric rubric){
+            List<OACriterion> criteria = rubric.getCriteria();
 
-        Object[] evaluations =  response.getJsonArray("Evaluation").toArray();
+            for (OACriterion i : criteria) {
+                List<OAStandard> standart = i.getStandards();
 
-        Float cotation = Float.parseFloat( ((JsonObject)evaluations[0]).get("Cotation").toString());
+                JsonArrayBuilder jRubric = Json.createArrayBuilder();
+                standart.forEach(s ->{
+                    jRubric.add(
+                            Json.createObjectBuilder()
+                            .add("Description",s.getDescription())
+                            .add("Cotation",s.getPercentage())
+                            );
+                });
 
-        return cotation;
+                request.add("Rubric",jRubric);
+                JsonObject requestJ = request.build();
+
+                JsonObject response = sendRequest("/open_answer", requestJ);
+                request = Json.createObjectBuilder(requestJ);
+
+                Object[] evaluations =  response.getJsonArray("Evaluation").toArray();
+
+                Float percentage = Float.parseFloat( ((JsonObject)evaluations[0]).get("Cotation").toString());
+                total = total + percentage * i.getPoints();
+            }
+        }else{
+            throw new BadInputException("Exercise Rubric given is not of the type OpenAnswerRubric");
+        }
+
+        return total;
     }
     
 }

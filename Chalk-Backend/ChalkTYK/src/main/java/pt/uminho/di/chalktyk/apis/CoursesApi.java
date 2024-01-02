@@ -9,10 +9,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -47,11 +47,11 @@ public interface CoursesApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
         
         @ApiResponse(responseCode = "404", description = "Course not found") })
-    @RequestMapping(value = "/courses/{courseId}",
+    @RequestMapping(value = "/{courseId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Course> getCourse(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-, @CookieValue("chalkauthtoken") String jwt);
+, @RequestHeader("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Update course", description = "Update an existent course in the store", tags={ "course" })
@@ -63,12 +63,12 @@ public interface CoursesApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
         
         @ApiResponse(responseCode = "404", description = "Course not found") })
-    @RequestMapping(value = "/courses/{courseId}",
+    @RequestMapping(value = "/{courseId}",
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> updateCourse(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
 , @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Course body
-, @CookieValue("chalkauthtoken") String jwt);
+, @RequestHeader("chalkauthtoken") String jwt);
 
 
     // TODO: doesn't exist
@@ -89,7 +89,7 @@ public interface CoursesApi {
 , @Parameter(in = ParameterIn.QUERY, description = "Find the courses this student belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "studentId", required = false) String studentId
 , @Parameter(in = ParameterIn.QUERY, description = "Find the courses this specialist belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
 , @Parameter(in = ParameterIn.QUERY, description = "Find the courses of this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-, @CookieValue("chalkauthtoken") String jwt);
+, @RequestHeader("chalkauthtoken") String jwt);
     */
 
 
@@ -98,11 +98,11 @@ public interface CoursesApi {
         @ApiResponse(responseCode = "200", description = "OK"),
         
         @ApiResponse(responseCode = "401", description = "Unauthorized operation") })
-    @RequestMapping(value = "/courses",
+    @RequestMapping(value = "",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<Void> createCourse(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Course body
-, @CookieValue("chalkauthtoken") String jwt);
+, @RequestHeader("chalkauthtoken") String jwt);
 
 }
 
