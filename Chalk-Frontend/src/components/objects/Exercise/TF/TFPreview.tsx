@@ -1,9 +1,5 @@
-import {
-  ExerciseJustificationKind,
-  PreviewProps,
-  TFExercise,
-} from "../Exercise";
-import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
+import { PreviewProps, TFExercise } from "../Exercise";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 
 export interface TFPreviewProps {
   exercise: TFExercise;
@@ -59,7 +55,6 @@ function TFShowStatement(props: any) {
       <div className="">
         <p>{props.text}</p>
       </div>
-      {/*<TFJustify open={openJustify} justifyKind={props.justifyKind}></TFJustify>*/}
     </>
   );
 }

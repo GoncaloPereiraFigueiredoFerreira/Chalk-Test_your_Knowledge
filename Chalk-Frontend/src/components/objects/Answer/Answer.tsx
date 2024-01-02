@@ -34,5 +34,5 @@ export function Answer({ solution }: AnswerProps) {
     }
   }, [solution]);
 
-  return <div>{preview}</div>;
+  return <>{preview}</>;
 }

@@ -171,7 +171,8 @@ html {
   /* Exercise name */
   .text-title-2 {
     @apply text-4xl
-    text-black;
+    text-black
+    dark:text-white;
   }
 
   /* ---------------------- */

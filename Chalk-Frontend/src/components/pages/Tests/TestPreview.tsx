@@ -4,6 +4,7 @@ import {
   ExerciseComponent,
   ExerciseContext,
   ExerciseGroup,
+  ExerciseTypeToString,
 } from "../../objects/Exercise/Exercise";
 import { Test } from "./SolveTest/SolveTest";
 
@@ -26,7 +27,9 @@ function renderExercise(
       }}
     >
       <div className="flex justify-between">
-        <label className="text-md font-medium">Exercício {index + 1}</label>
+        <label className="text-md font-medium">
+          Exercício {index + 1} - {ExerciseTypeToString(exercise.type)}
+        </label>
         <p>Cotação do Exercício: {exercise.identity.cotation}</p>
       </div>
       {index == exerciseSelected ? (

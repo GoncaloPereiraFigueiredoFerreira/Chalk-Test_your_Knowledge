@@ -25,7 +25,8 @@ export function OAPreview(props: OAPreviewProps) {
           <div className="px-4 py-2 rounded-b-lg">
             <TextareaBlock
               toolbar
-              className="w-full focus:ring-0 bg-white"
+              className="w-full focus:ring-0 bg-white pb-2"
+              disabled={true}
             ></TextareaBlock>
           </div>
         </div>

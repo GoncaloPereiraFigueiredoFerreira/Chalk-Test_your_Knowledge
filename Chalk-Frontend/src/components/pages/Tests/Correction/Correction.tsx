@@ -1,6 +1,5 @@
 import "./Correction.css";
 import { useEffect, useState } from "react";
-//import { PopUp } from "../../interactiveElements/PopUp";
 import { FaArrowLeft } from "react-icons/fa6";
 import { Test } from "../SolveTest/SolveTest";
 import { TestPreview } from "../TestPreview";
@@ -12,10 +11,15 @@ import {
 } from "../../../objects/Exercise/Exercise";
 import { exampleTest } from "../Preview/PreviewTest";
 import { Answer } from "../../../objects/Answer/Answer";
+import { Rubric, StardardLevels } from "../../../objects/Rubric/Rubric";
+import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
+import { LuGhost } from "react-icons/lu";
 
 export interface Resolutions {
   [exerciseID: string]: {
-    solution: Resolution;
+    solution?: Resolution;
+    rubric?: Rubric;
+    position?: string;
     cotation: number;
     studentRes: { [resolutionID: string]: Resolution };
   };
@@ -23,17 +27,142 @@ export interface Resolutions {
 
 const exampleRes: Resolutions = {
   "11111": {
-    solution: {
-      id: "12341243",
-      exerciseID: "11111",
-      cotation: 0,
-      type: ResolutionType.SOLUTION,
-      data: {
-        type: ExerciseType.OPEN_ANSWER,
-        text: "Coisas sobre pica",
-      },
+    rubric: {
+      criteria: [
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção de Conteúdo",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+      ],
     },
     cotation: 10,
+    position: "1.1",
     studentRes: {
       "1298401204801248": {
         id: "1233441243",
@@ -67,10 +196,11 @@ const exampleRes: Resolutions = {
           3: { text: "Pigs", value: true },
           4: { text: "Setúbal", value: false },
         },
-        justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+        justifyType: ExerciseJustificationKind.JUSTIFY_FALSE,
       },
     },
     cotation: 10,
+    position: "1.2",
     studentRes: {
       "2134213412": {
         id: "12341243",
@@ -86,11 +216,16 @@ const exampleRes: Resolutions = {
           type: ExerciseType.TRUE_OR_FALSE,
           items: {
             1: { text: "Portugal", value: true },
-            2: { text: "Polo norte", value: false },
+            2: {
+              text: "Polo norte",
+              value: false,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
             3: { text: "Pigs", value: true },
             4: { text: "Setúbal", value: true },
           },
-          justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+          justifyType: ExerciseJustificationKind.JUSTIFY_FALSE,
         },
       },
       "21342134432141212": {
@@ -139,15 +274,140 @@ const exampleRes: Resolutions = {
   },
 
   "33333": {
-    solution: {
-      id: "12341243",
-      exerciseID: "33333",
-      cotation: 0,
-      type: ResolutionType.SOLUTION,
-      data: {
-        type: ExerciseType.CHAT,
-        msgs: [],
-      },
+    position: "1.3",
+    rubric: {
+      criteria: [
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção de Conteúdo",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+        {
+          title: "Correção Ortográfica",
+          points: 2,
+          standarts: [
+            {
+              title: StardardLevels.EXCELENT,
+              description: "Sem erros",
+              percentage: "100",
+            },
+            {
+              title: StardardLevels.WELL_DONE,
+              description: "(1-3) erros",
+              percentage: "80",
+            },
+            {
+              title: StardardLevels.SATISFACTORY,
+              description: "(3-10) erros",
+              percentage: "60",
+            },
+            {
+              title: StardardLevels.INSATISFACTORY,
+              description: "10+ erros",
+              percentage: "0",
+            },
+          ],
+        },
+      ],
     },
     cotation: 10,
     studentRes: {
@@ -214,7 +474,7 @@ function renderResolutionList(resolutions: Resolutions, setExId: Function) {
           return (
             <div key={index1} className="flex-col space-y-4">
               <p className="text-xl font-medium border-b-2 border-slate-700">
-                Exercício {key1}
+                Exercício {resolutions[key1].position ?? key1}
               </p>
               {Object.keys(resolutions[key1].studentRes).map((key2, index2) => {
                 return (
@@ -223,7 +483,7 @@ function renderResolutionList(resolutions: Resolutions, setExId: Function) {
                     className="p-8 rounded-lg bg-3-2 flex cursor-pointer"
                     onClick={() => setExId(key1, key2)}
                   >
-                    Resolução {key2}
+                    Resolução {resolutions[key1].studentRes[key2].student?.name}
                   </div>
                 );
               })}
@@ -250,7 +510,7 @@ function renderResolution(
           >
             <FaArrowLeft />
           </div>
-          <h1 className="text-xl">Resolução {resolution.id}</h1>
+          <h1 className="text-xl">Resolução de {resolution.student?.name}</h1>
         </div>
         <button type="button" className="p-4 bg-yellow-200">
           <p className="text-sm">Assistência na Correção</p>
@@ -261,16 +521,17 @@ function renderResolution(
         <strong>Aluno</strong>: {resolution.student?.name}
       </h2>
       <label className="font-bold">Resposta:</label>
-      <div className="bg-white rounded-lg border-2 border-gray-600 p-4">
+      <div className="bg-white rounded-lg border-2 border-gray-600 p-1">
         <Answer solution={resolution} />
       </div>
       <label className="font-bold">Comentário:</label>
-      <input id={resolution.id + "comment"} type="text"></input>
+      <TextareaBlock className="bg-white rounded-lg border-2 border-gray-600"></TextareaBlock>
+
       <div className="flex space-x-2 items-center">
         <label className="font-bold">Nota:</label>
         <input
           id={resolution.id + "grade"}
-          className=""
+          className="bg-white rounded-lg border-2 border-gray-600"
           type="number"
           max={cotation}
         ></input>
@@ -289,16 +550,33 @@ function renderResolution(
 }
 
 function renderSolution(resolutions: Resolutions, exid: string) {
-  if (exid in resolutions)
-    return <Answer solution={resolutions[exid].solution} />;
-  else return <p>Selecione um exercício para ver a sua resolução</p>;
+  if (exid !== "")
+    return (
+      <>
+        {exid in resolutions && resolutions[exid].rubric ? (
+          Rubric("PREVIEW", resolutions[exid].rubric!)
+        ) : (
+          <div className="flex h-max items-center justify-center">
+            <div className="flex flex-col items-center space-y-4">
+              <LuGhost size={120} />
+              <p className="text-xl">Rúbrica não encontrada!</p>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  else
+    return (
+      <p className="text-gray-600">
+        Selecione um exercício para ver os seus críterios de correção
+      </p>
+    );
 }
 
 export function Correction() {
   const [test, setTest] = useState<Test>(exampleTest);
   const [resolutions, setResolutions] = useState<Resolutions>(exampleRes);
   const [exID, setExID] = useState<string>("");
-  const [showSideMenu, setshowSideMenu] = useState(true);
 
   const [solutionC, setSolutionC] = useState(<></>);
 
@@ -323,25 +601,24 @@ export function Correction() {
               </div>
 
               <div
-                className={`${
-                  showSideMenu ? "w-full" : "w-0"
-                } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
+                className={`w-full flex flex-col h-screen overflow-auto bg-2-1`}
               >
                 <div className="p-4 flex flex-col w-full h-screen space-y-4">
                   {/* Solução se houver */}
-                  <div className="bg-3-1 w-full h-1/3 rounded-lg p-4">
-                    <h3 className="text-xl font-medium">Solução</h3>
+                  <div className="bg-3-1 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto">
+                    <h3 className="text-xl font-medium">
+                      Critérios de Correção
+                    </h3>
                     {renderSolution(resolutions, exID)}
                   </div>
                   {/* Resoluçoes */}
-                  <div className="bg-3-1 w-full h-full rounded-lg p-4 ">
+                  <div className=" bg-3-1 w-full h-full rounded-lg p-4">
                     {Object.keys(resolutions).length !== 0 ? (
                       renderResolutions(resolutions, exID, setExID)
                     ) : (
                       <div className="flex h-full items-center justify-center">
                         <p className="text-xl text-gray-500">
-                          Não existem mais resoluções para corrigir sobre este
-                          exercício
+                          Não existem mais resoluções para corrigir neste teste.
                         </p>
                       </div>
                     )}

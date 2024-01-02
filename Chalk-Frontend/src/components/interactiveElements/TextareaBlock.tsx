@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileUploadIcon } from "../objects/SVGImages/SVGImages";
 
 interface TextareaBlockProps {
@@ -7,6 +7,7 @@ interface TextareaBlockProps {
   placeholder?: string;
   value?: string;
   onChange?: (text: string) => void;
+  disabled?: boolean;
 }
 export function TextareaBlock({
   toolbar,
@@ -14,12 +15,17 @@ export function TextareaBlock({
   placeholder,
   value,
   onChange,
+  disabled,
 }: TextareaBlockProps) {
   let hasToolbar = toolbar ? toolbar : false;
-
   const [text, setText] = useState(value ? value : "");
   const [isFocused, setIsFocused] = useState(false);
+  const [startingValue, setStartingValue] = useState(<></>);
   const spanRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setStartingValue(textToHTML(value ?? ""));
+  }, []);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -34,17 +40,21 @@ export function TextareaBlock({
     if (spanRef.current) {
       // 1: get htmlContent
       var htmlContent = spanRef.current.innerHTML.toString();
+
+      const indexOfFirstP = htmlContent.indexOf("<p>");
       const indexOfFirstDiv = htmlContent.indexOf("<div>");
 
-      if (indexOfFirstDiv > 0) {
-        // Split the string at the first <div>
-        htmlContent =
-          "<div>" +
-          htmlContent.substring(0, indexOfFirstDiv) +
-          "</div>" +
-          htmlContent.substring(indexOfFirstDiv);
-      } else if (indexOfFirstDiv !== 0) {
-        htmlContent = "<div>" + htmlContent + "</div>";
+      if (indexOfFirstP !== 0) {
+        if (indexOfFirstDiv > 0) {
+          // Split the string at the first <div>
+          htmlContent =
+            "<div>" +
+            htmlContent.substring(0, indexOfFirstDiv) +
+            "</div>" +
+            htmlContent.substring(indexOfFirstDiv);
+        } else if (indexOfFirstDiv !== 0) {
+          htmlContent = "<div>" + htmlContent + "</div>";
+        }
       }
 
       // 2: parse htmlContent -> parseContent
@@ -96,7 +106,7 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full mb-4 border-2 rounded-lg ex-1" +
+          "w-full rounded-lg ex-1 pb-2" +
           (className !== undefined ? className : "")
         }
       >
@@ -138,23 +148,20 @@ export function TextareaBlock({
         >
           <p
             ref={spanRef}
-            id="textblock"
             className="block w-max focus:outline-none"
             onFocus={handleFocus}
             onBlur={handleBlur}
             onInput={handleInput}
-            contentEditable
+            contentEditable={!disabled}
             suppressContentEditableWarning={true}
           >
-            {textToHTML(value ?? "<p></p>")}
+            {startingValue}
           </p>
           {text === "" && !isFocused && placeholder !== undefined ? (
             <span className="text-gray-500 pointer-events-none">
               {placeholder}
             </span>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </div>
       </div>
     </>

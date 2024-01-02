@@ -1,9 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  DownloadIcon,
-  FileUploadIcon,
-  ListIcon,
-} from "../../SVGImages/SVGImages";
 import { ExerciseHeaderComp } from "../Header/ExHeader";
 import {
   ExerciseType,

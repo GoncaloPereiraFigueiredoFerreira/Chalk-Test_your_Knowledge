@@ -81,6 +81,20 @@ export enum ExerciseType {
   TRUE_OR_FALSE = "true-or-false",
   CHAT = "chat",
 }
+
+export function ExerciseTypeToString(type: ExerciseType) {
+  switch (type) {
+    case ExerciseType.MULTIPLE_CHOICE:
+      return "Multiple Choice Exercise";
+    case ExerciseType.OPEN_ANSWER:
+      return "Open Answer Exercise";
+    case ExerciseType.TRUE_OR_FALSE:
+      return "True-False Exercise";
+    case ExerciseType.CHAT:
+      return "Chat-Based Exercise";
+  }
+}
+
 export enum ExerciseJustificationKind {
   JUSTIFY_ALL = "Todas",
   JUSTIFY_FALSE = "Apenas Falsas",

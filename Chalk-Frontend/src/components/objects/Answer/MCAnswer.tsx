@@ -1,3 +1,4 @@
+import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
 import {
   ExerciseJustificationKind,
   ExerciseType,
@@ -49,16 +50,13 @@ export function MCAnswer({ solution }: AnswerProps) {
                       } transition-[height] duration-75`}
                     >
                       <div className="h-full px-7 overflow-hidden">
-                        <textarea
+                        <TextareaBlock
+                          disabled={true}
                           className={`${
                             justify ? "" : "hidden"
                           } basic-input-text`}
-                          name={"justification" + index}
-                          rows={3}
-                          placeholder="Justifique a sua resposta"
                           value={value.justification}
-                          disabled
-                        ></textarea>
+                        ></TextareaBlock>
                       </div>
                     </div>
                   )}
