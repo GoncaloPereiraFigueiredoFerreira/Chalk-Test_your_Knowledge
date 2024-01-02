@@ -384,6 +384,7 @@ public class TestsService implements ITestsService {
         testDAO.save(test);
     }
 
+    @Transactional
     @Override
     public void updateTestCourse(String testId, String courseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -404,6 +405,7 @@ public class TestsService implements ITestsService {
         testDAO.save(test);
     }
 
+    @Transactional
     @Override
     public void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException {
         if(groups == null)
@@ -494,6 +496,7 @@ public class TestsService implements ITestsService {
             exercisesService.deleteExerciseById(exId);
     }
 
+    @Transactional
     @Override
     public void updateTestDeliverDate(String testId, LocalDateTime deliverDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -511,6 +514,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
+    @Transactional
     @Override
     public void updateTestStartDate(String testId, LocalDateTime startDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -528,6 +532,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
+    @Transactional
     @Override
     public void updateTestDuration(String testId, long duration) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -545,6 +550,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
+    @Transactional
     @Override
     public void updateTestStartTolerance(String testId, long startTolerance) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -562,16 +568,24 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
+    // TODO - Para corrigir automaticamente um teste, pode ser necessário a combinacao de AI e a correcao automatica.
+    //  Quando isto for invocado, corrigir apenas os que dão para ser corrigidos?
+    @Transactional
     @Override
-    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
+    public void issueTestResolutionsCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testId + "'");
 
         // issue exercise corrections
         for (TestGroup tg: test.getGroups()){
             for (TestExercise exe: tg.getExercises()){
-                exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
+                try {
+                    exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
+                }catch (Exception ignored){
+                    // If an exercise can't be corrected, using the chosen correctionType,
+                    // it just is not corrected.
+                }
             }
         }
 

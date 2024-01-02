@@ -44,10 +44,12 @@ public interface UsersApi {
                         schema = @Schema(oneOf = {Student.class, Specialist.class, InstitutionManager.class}))),
         @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
         @ApiResponse(responseCode = "404", description = "User not found") })
-    @RequestMapping(value = "",
+    @RequestMapping(value = "/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<User> getUser(@RequestHeader(name = "chalkauthtoken") String authToken);
+    ResponseEntity<User> getUserById(
+            @RequestHeader(name = "chalkauthtoken") String authToken,
+            @Parameter(in = ParameterIn.PATH, name = "userId") @PathVariable(value = "userId") String userId);
 
     @Operation(summary = "Login user", description = "", tags={ "user" })
     @ApiResponses(value = {

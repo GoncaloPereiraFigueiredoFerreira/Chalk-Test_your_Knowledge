@@ -6,6 +6,9 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
+/**
+ * Service that knowing about both tests and exercises, limits or enhances the behavior of a method.
+ */
 @Service
 public class ExercisesTestsService implements IExercisesTestsService{
 
@@ -31,4 +34,6 @@ public class ExercisesTestsService implements IExercisesTestsService{
             throw new UnauthorizedException("Cannot delete exercise: exercise belongs to a test.");
         exercisesService.deleteExerciseById(exerciseId);
     }
+
+    // TODO - methods related to exercise correction
 }

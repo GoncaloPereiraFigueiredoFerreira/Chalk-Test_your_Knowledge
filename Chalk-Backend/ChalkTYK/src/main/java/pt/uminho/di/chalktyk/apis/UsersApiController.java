@@ -1,42 +1,18 @@
 package pt.uminho.di.chalktyk.apis;
 
-import io.jsonwebtoken.JwtException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2002;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.UsersBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.UsersBody1;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import jakarta.servlet.http.HttpServletRequest;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.UserUpdateDTO;
-import pt.uminho.di.chalktyk.models.users.InstitutionManager;
-import pt.uminho.di.chalktyk.models.users.Specialist;
-import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.IUsersService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -55,24 +31,34 @@ public class UsersApiController implements UsersApi {
     @Override
     public ResponseEntity<Void> updateBasicProperties(String authToken, UserUpdateDTO userDTO) {
         try {
-            JWT jwt = securityService.checkAndUpdateJWT(authToken);
+            JWT jwt = securityService.validateJWT(authToken);
             String userId = securityService.getUserId(jwt);
             usersService.updateBasicProperties(userId, userDTO.getName(), userDTO.getEmail(), userDTO.getPhotoPath(), userDTO.getDescription());
+            return ResponseEntity.ok(null);
         } catch (UnauthorizedException | BadInputException | NotFoundException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
-        return null;
     }
 
     @Override
-    public ResponseEntity<User> getUser(String authToken) {
-        return null;
+    public ResponseEntity<User> getUserById(String authToken, String userId) {
+        try {
+            JWT jwt = securityService.validateJWT(authToken);
+            if(userId == null)
+                throw new BadInputException("There is no user with a 'null' identifier.");
+            if(!userId.equals(securityService.getUserId(jwt)))
+                throw new UnauthorizedException("The user is not allowed to check another user's information.");
+            userId = securityService.getUserId(jwt);
+            return ResponseEntity.ok(usersService.getUserById(userId));
+        } catch (UnauthorizedException | NotFoundException | BadInputException e) {
+            return new ExceptionResponseEntity<User>().createRequest(e);
+        }
     }
 
     @Override
     public ResponseEntity<User> login(String authToken) {
         try {
-            return new ResponseEntity<>(securityService.login(authToken), HttpStatus.OK);
+            return ResponseEntity.ok(securityService.login(authToken));
         } catch (UnauthorizedException | NotFoundException e) {
             return new ExceptionResponseEntity<User>().createRequest(e);
         }
@@ -80,6 +66,11 @@ public class UsersApiController implements UsersApi {
 
     @Override
     public ResponseEntity<Void> logout(String authToken) {
-        return null;
+        try {
+            securityService.logout(authToken);
+            return ResponseEntity.ok(null);
+        } catch (UnauthorizedException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
     }
 }
