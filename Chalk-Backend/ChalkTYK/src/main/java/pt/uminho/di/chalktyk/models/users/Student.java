@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.models.users;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,11 +31,12 @@ public class Student extends User {
         this.institution = null;
     }
 
+    @JsonIgnore
     @ManyToMany(targetEntity= Course.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Student_Course", joinColumns={ @JoinColumn(name="StudentID") }, inverseJoinColumns={ @JoinColumn(name="CourseID") })
 	private Set<Course> courses;
 
-	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.EAGER)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
 

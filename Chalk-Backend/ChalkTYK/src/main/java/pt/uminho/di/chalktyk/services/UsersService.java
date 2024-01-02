@@ -41,6 +41,11 @@ public class UsersService implements IUsersService{
     }
 
     @Override
+    public boolean existsUserById(String userId) {
+        return userDAO.existsById(userId);
+    }
+
+    @Override
     public void updateBasicProperties(String userId, String name, String email, String photoPath, String description) throws NotFoundException, BadInputException {
         User user = getUserById(userId);
 
@@ -55,17 +60,5 @@ public class UsersService implements IUsersService{
         if(insertError != null)
             throw new BadInputException("Could not update user properties: " + insertError);
         userDAO.save(user);
-    }
-
-    @Override
-    public boolean login(String userId) {
-        //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
-        return false;
-    }
-
-    @Override
-    public boolean logout(String userId) {
-        //TODO - preciso saber como é que o JWT funciona para definir os argumentos e return value
-        return false;
     }
 }
