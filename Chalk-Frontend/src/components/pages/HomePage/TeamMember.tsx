@@ -16,17 +16,20 @@ export function TeamMember({
         <div className="flex justify-center -mt-[75px]">
           <img
             src={photoPath}
-            className="mx-auto rounded-full shadow-lg dark:shadow-black/20 w-[150px]"
+            className="mx-auto rounded-full shadow-lg dark:shadow-black/20 w-[150px] h-[150px] hover:scale-125 transition-all ease-in-out duration-75"
             alt="Avatar"
           />
         </div>
 
         <div className="p-6">
-          <h5 className="mb-4 text-lg font-bold">{name}</h5>
-          <p className="mb-6">{position}</p>
+          <h5 className="mb-4 text-xl font-bold">{name}</h5>
+          <p className="mb-6 text-xl">{position}</p>
           <ul className="mx-auto flex list-inside justify-center">
             {github ? (
-              <a href={github} className="px-2">
+              <a
+                href={github}
+                className="px-2 hover:scale-150 transition-all ease-in-out duration-75"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -42,7 +45,10 @@ export function TeamMember({
               <></>
             )}
             {twitter ? (
-              <a href={twitter} className="px-2">
+              <a
+                href={twitter}
+                className="px-2 hover:scale-150 transition-all ease-in-out duration-75"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -58,7 +64,10 @@ export function TeamMember({
               <></>
             )}
             {linkdin ? (
-              <a href="#!" className="px-2">
+              <a
+                href="#!"
+                className="px-2 hover:scale-150 transition-all ease-in-out duration-75"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -74,7 +83,10 @@ export function TeamMember({
               <></>
             )}
             {instagram ? (
-              <a href={instagram} className="px-2">
+              <a
+                href={instagram}
+                className="px-2 hover:scale-150 transition-all ease-in-out duration-75"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -90,7 +102,10 @@ export function TeamMember({
               <></>
             )}
             {facebook ? (
-              <a href={facebook} className="px-2">
+              <a
+                href={facebook}
+                className="px-2 hover:scale-150 transition-all ease-in-out duration-75"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 text-primary dark:text-primary-400"

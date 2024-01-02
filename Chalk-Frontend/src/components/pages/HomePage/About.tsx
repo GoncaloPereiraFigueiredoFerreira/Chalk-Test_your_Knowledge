@@ -105,8 +105,8 @@ export function About() {
                   Support 24/7
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-900">
-                  Laudantium totam quas cumque pariatur at doloremque hic quos
-                  quia eius. Reiciendis optio minus mollitia rerum labore
+                  Chalk has people working to ensure that you receive any
+                  technical support needed as fast as possible.
                 </p>
               </div>
             </div>
@@ -141,8 +141,8 @@ export function About() {
                   Safe and solid
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-900">
-                  Eum nostrum fugit numquam, voluptates veniam neque quibusdam
-                  ullam aspernatur odio soluta, quisquam dolore animi
+                  You are always Chalk's first priority so we take care of
+                  protecting your data.
                 </p>
               </div>
             </div>
@@ -177,8 +177,7 @@ export function About() {
                   Extremely fast
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-900">
-                  Enim cupiditate, minus nulla dolor cumque iure eveniet facere
-                  ullam beatae hic voluptatibus dolores exercitationem
+                  Chalk is very optimized wink wink.
                 </p>
               </div>
             </div>
@@ -218,8 +217,8 @@ export function About() {
                   Live analytics
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-300">
-                  Illum doloremque ea, blanditiis sed dolor laborum praesentium
-                  maxime sint, consectetur atque ipsum ab adipisci
+                  We provide you updated analytics about your personal use of
+                  the plattaform.
                 </p>
               </div>
             </div>

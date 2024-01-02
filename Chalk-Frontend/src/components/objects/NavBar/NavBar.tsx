@@ -21,10 +21,10 @@ export function NavBar() {
         }`}
       >
         <div className="flex flex-1 items-center sm:items-stretch justify-start">
-          <div className="flex flex-shrink-0 items-center left-0 hover:scale-150 transition-all duration-50">
+          <div className="flex flex-shrink-0 items-center left-0 hover:scale-125 transition-all duration-50">
             <Link to="/">
               <img
-                className="h-8 w-auto"
+                className="h-12 w-auto"
                 src="chalk-logo.svg"
                 alt="Your Company"
               />
@@ -34,26 +34,26 @@ export function NavBar() {
             <div className="flex space-x-4">
               <a
                 href="/webapp"
-                className="bg-gray-900 text-white rounded-md px-3 py-2 text-md font-medium font-pacifico hover:scale-110 transition-all duration-50"
+                className="bg-gray-900 text-white rounded-md px-3 py-2 text-2xl font-medium font-pacifico hover:scale-110 transition-all duration-50"
                 aria-current="page"
               >
                 Chalk
               </a>
               <a
                 href="/#features"
-                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
+                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
               >
                 About
               </a>
               <a
                 href="/#team"
-                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
+                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
               >
                 Team
               </a>
               <a
                 href="/#contacts"
-                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
+                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
               >
                 Contacts
               </a>
@@ -63,13 +63,13 @@ export function NavBar() {
         <div className="absolute hidden sm:flex inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
           <button
             type="button"
-            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
+            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
           >
             <Link to="/login">Login</Link>
           </button>
           <button
             type="button"
-            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-md font-medium"
+            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
           >
             <Link to="/register">Register</Link>
           </button>
@@ -120,7 +120,7 @@ export function NavBar() {
           >
             <a
               href="#"
-              className=" px-4 py-2 text-md text-gray-700"
+              className=" px-4 py-2 text-xl text-gray-700"
               role="menuitem"
               id="user-menu-item-0"
             >
@@ -128,7 +128,7 @@ export function NavBar() {
             </a>
             <a
               href="/settings"
-              className=" px-4 py-2 text-md text-gray-700"
+              className=" px-4 py-2 text-xl text-gray-700"
               role="menuitem"
               id="user-menu-item-1"
             >
@@ -136,7 +136,7 @@ export function NavBar() {
             </a>
             <a
               href="#"
-              className=" px-4 py-2 text-md text-gray-700"
+              className=" px-4 py-2 text-xl text-gray-700"
               role="menuitem"
               id="user-menu-item-2"
             >

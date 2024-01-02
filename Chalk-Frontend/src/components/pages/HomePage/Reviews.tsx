@@ -51,7 +51,7 @@ export function Reviews() {
       >
         <div className="w-full flex justify-center items-center md:flex-row flex-col sm:mb-16 mb-6 relative z-[1]">
           <h2
-            className={`font-poppins font-semibold xs:text-5xl text-5xl text-black xs:leading-[76.8px] leading-[66.8px] w-full transform duration-[2s] transition-all${
+            className={`font-poppins font-semibold pl-28 xs:text-5xl text-5xl text-black xs:leading-[76.8px] leading-[66.8px] w-full transform duration-[2s] transition-all${
               isVisible1 || triggered1
                 ? " scale-100 translate-x-0"
                 : " scale-0 translate-x-full"
@@ -63,7 +63,7 @@ export function Reviews() {
 
         <div
           ref={ref1}
-          className="flex flex-wrap justify-center w-full feedback-container relative z-1"
+          className="flex flex-wrap overflow-x-auto justify-center w-full feedback-container relative z-[1]"
         >
           {reviews.map((review, index) => (
             <div

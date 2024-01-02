@@ -5,7 +5,7 @@ export function CQAnswer({ solution }: AnswerProps) {
   if (solution.data.type === ExerciseType.CHAT) {
     const solDate = solution.data;
     return (
-      <div className="flex flex-col flex-grow  w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden justify-items-center ">
+      <div className="flex flex-col flex-grow w-full bg-white overflow-hidden justify-items-center ">
         <div className="flex flex-col-reverse p-4 overflow-y-scroll h-56 scroll-smooth">
           {solDate.msgs.map((msg, index) => {
             if (solDate.msgs.length % 2 == 0) {

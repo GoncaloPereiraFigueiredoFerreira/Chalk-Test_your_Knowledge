@@ -328,8 +328,8 @@ export function Correction() {
                 } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
               >
                 <div className="p-4 flex flex-col w-full h-screen space-y-4">
-                  {/* Solução se houver */}
-                  <div className="bg-3-1 w-full h-1/3 rounded-lg p-4">
+                  {/* Solução se houver h-1/3*/}
+                  <div className="bg-3-1 w-full border-2 border-black rounded-lg p-4">
                     <h3 className="text-xl font-medium">Solução</h3>
                     {renderSolution(resolutions, exID)}
                   </div>
