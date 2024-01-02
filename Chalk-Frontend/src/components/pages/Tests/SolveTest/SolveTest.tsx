@@ -1,15 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import {
   ExerciseComponent,
   ExerciseContext,
   ExerciseGroup,
-  ExerciseJustificationKind,
-  ExerciseType,
   InitResolutionDataEx,
-  InitResolutionDataType,
   Resolution,
   ResolutionData,
-  ResolutionItems,
   SolveProps,
 } from "../../../objects/Exercise/Exercise";
 import { exampleTest } from "../Preview/PreviewTest";
@@ -252,7 +248,7 @@ export function SolveTest() {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 h-screen">
+      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 h-screen overflow-y-scroll">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2 mt-10">
           <label className="flex text-title-1">Teste de Avaliação</label>
         </div>

@@ -11,7 +11,7 @@ export interface Course {
   name: string;
 }
 
-interface User {
+export interface User {
   email: string;
   name: string;
   profilePic: string;

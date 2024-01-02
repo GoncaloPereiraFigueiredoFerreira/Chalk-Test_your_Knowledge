@@ -6,6 +6,7 @@ import {
 } from "../Exercise";
 import { useEffect, useReducer } from "react";
 import { ExerciseHeaderComp } from "../Header/ExHeader";
+import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 
 //------------------------------------//
 //                                    //
@@ -155,8 +156,9 @@ function TFShowStatement(props: any) {
 }
 
 function TFJustify(props: any) {
-  let justify =
-    props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
+  let justify: boolean =
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL &&
+      "value" in props.state.items[props.index]) ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&
       "value" in props.state.items[props.index] &&
       !props.state.items[props.index].value) ||
@@ -173,20 +175,18 @@ function TFJustify(props: any) {
       } col-span-3 transition-[height] duration-75`}
     >
       <div className="h-full px-7 overflow-hidden">
-        <textarea
+        <TextareaBlock
           className={`${justify ? "" : "hidden"} basic-input-text`}
-          name={"justification" + props.index}
-          rows={1}
           placeholder="Justifique a sua resposta"
           value={props.state.items[props.index].justification}
-          onChange={(e) =>
+          onChange={(text) =>
             props.dispatch({
               type: TFActionKind.JUSTIFY,
               index: props.index,
-              payload: e.target.value,
+              payload: text,
             })
           }
-        ></textarea>
+        ></TextareaBlock>
       </div>
     </div>
   );

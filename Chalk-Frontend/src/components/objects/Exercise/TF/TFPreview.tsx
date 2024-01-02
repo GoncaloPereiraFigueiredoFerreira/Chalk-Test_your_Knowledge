@@ -3,7 +3,6 @@ import {
   PreviewProps,
   TFExercise,
 } from "../Exercise";
-import { useState } from "react";
 import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
 
 export interface TFPreviewProps {
@@ -37,8 +36,6 @@ export function TFPreview({ exercise, position, context }: TFPreviewProps) {
 }
 
 function TFShowStatement(props: any) {
-  const [openJustify, setOpenJustify] = useState("");
-
   return (
     <>
       <div className="flex items-start justify-center">
@@ -46,7 +43,7 @@ function TFShowStatement(props: any) {
           className="radio-green"
           type="radio"
           name={props.name}
-          onChange={() => setOpenJustify("true")}
+          onChange={() => {}}
           disabled
         ></input>
       </div>
@@ -55,7 +52,7 @@ function TFShowStatement(props: any) {
           className="radio-red"
           type="radio"
           name={props.name}
-          onChange={() => setOpenJustify("false")}
+          onChange={() => {}}
           disabled
         ></input>
       </div>
@@ -64,32 +61,5 @@ function TFShowStatement(props: any) {
       </div>
       {/*<TFJustify open={openJustify} justifyKind={props.justifyKind}></TFJustify>*/}
     </>
-  );
-}
-
-function TFJustify(props: any) {
-  let justify =
-    props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
-    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&
-      props.open === "false") ||
-    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_TRUE &&
-      props.open === "true");
-  return props.justifyKind === ExerciseJustificationKind.NO_JUSTIFICATION ? (
-    <div className="col-span-3"></div>
-  ) : (
-    <div
-      className={`${
-        justify ? "h-16" : "h-0"
-      } col-span-3 transition-[height] duration-75`}
-    >
-      <div className=" px-7 overflow-hidden">
-        <textarea
-          className={`${justify ? "" : "hidden"} basic-input-text`}
-          name={"justification"}
-          rows={1}
-          placeholder="Justifique a sua resposta"
-        ></textarea>
-      </div>
-    </div>
   );
 }

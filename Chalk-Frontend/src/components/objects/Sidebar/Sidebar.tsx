@@ -140,7 +140,6 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </button>
           <div className={` ${isOpen ? "" : "hidden"}`}>
             <Link to="/webapp">
-              {" "}
               <MainLogo></MainLogo>
             </Link>
           </div>

@@ -2,11 +2,11 @@ import {
   ExerciseJustificationKind,
   MCExercise,
   MCResolutionData,
-  ResolutionData,
   SolveProps,
 } from "../Exercise";
 import { useEffect, useReducer } from "react";
 import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
+import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 
 export interface MCSolveProps {
   exercise: MCExercise;
@@ -113,11 +113,14 @@ export function MCSolve(props: MCSolveProps) {
 }
 
 function MCJustify(props: any) {
-  let justify =
-    props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL ||
-    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_UNMARKED &&
+  let justify: boolean =
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL &&
+      "value" in props.state.items[props.index]) ||
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&
+      "value" in props.state.items[props.index] &&
       !props.state.items[props.index].value) ||
-    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_MARKED &&
+    (props.justifyKind === ExerciseJustificationKind.JUSTIFY_TRUE &&
+      "value" in props.state.items[props.index] &&
       props.state.items[props.index].value);
 
   return props.justifyKind === ExerciseJustificationKind.NO_JUSTIFICATION ? (
@@ -127,20 +130,18 @@ function MCJustify(props: any) {
       className={`${justify ? "h-28" : "h-0"} transition-[height] duration-75`}
     >
       <div className="h-full px-7 overflow-hidden">
-        <textarea
+        <TextareaBlock
           className={`${justify ? "" : "hidden"} basic-input-text`}
-          name={"justification" + props.index}
-          rows={3}
           placeholder="Justifique a sua resposta"
           value={props.state.items[props.index].justification}
-          onChange={(e) =>
+          onChange={(text: string) =>
             props.dispatch({
               type: MCActionKind.JUSTIFY,
               index: props.index,
-              payload: e.target.value,
+              payload: text,
             })
           }
-        ></textarea>
+        ></TextareaBlock>
       </div>
     </div>
   );

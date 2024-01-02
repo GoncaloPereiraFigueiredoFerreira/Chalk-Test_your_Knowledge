@@ -155,6 +155,8 @@ export function ListTests({ view }: any) {
 
   useEffect(() => {
     // load different test
+    //contactBACK("tests", "GET", { page: "1", itemsPerPage: "20" });
+
     if (currentPage != 1) setTesList([]);
     else setTesList(exampleData);
   }, [currentPage]);

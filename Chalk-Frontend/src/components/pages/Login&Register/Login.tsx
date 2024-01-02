@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MainLogo } from "../../MainLogo";
-import { UserContext } from "../../../UserContext";
+import { User, UserContext } from "../../../UserContext";
 import { useGoogleLogin } from "@react-oauth/google";
 import { APIContext } from "../../../APIContext";
 import { Toast } from "flowbite-react";
@@ -47,7 +47,7 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [error, setErrorState] = useState(ErrorType.NOERROR);
   const { login } = useContext(UserContext);
-  const { authAPI, backendAPI } = useContext(APIContext);
+  const { contactAUTH, contactBACK } = useContext(APIContext);
   const navigate = useNavigate();
 
   const customGoogleLogin = useGoogleLogin({
@@ -58,44 +58,27 @@ export function Login() {
   });
 
   const submitGoogleLogin = (acessToken: any) => {
-    fetch(authAPI + "google", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        acess_token: acessToken,
-      }),
+    contactAUTH("google", "POST", undefined, {
+      acess_token: acessToken,
     }).then((response) => handleUserLogin(response));
   };
 
   const submitNormalLogin = () => {
-    fetch(authAPI + "login", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: email,
-        password: password,
-      }),
+    contactAUTH("login", "POST", undefined, {
+      username: email,
+      password: password,
     }).then((response) => handleUserLogin(response));
   };
 
-  const handleUserLogin = (response: any) => {
+  const handleUserLogin = (response: Response) => {
     switch (response.status) {
       case 200:
         response.json().then((result: any) => {
-          // TODO: Realizar pedido ao backend
-          login({
+          let userInfo: User = {
             email: result.user.username,
             name: result.user.name,
             profilePic:
-              "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg", //vai se buscar ao BE
+              "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg",
             role: result.user.role,
             courses: [
               //vai se buscar ao BE
@@ -103,7 +86,9 @@ export function Login() {
               { id: "2", name: "Turma A" },
               { id: "3", name: "Turma b" },
             ],
-          });
+          };
+          //contactBACK("login","POST",undefined,userInfo).then((response)=>{login(response.body);navigate("/webapp")})
+          login(userInfo);
           navigate("/webapp");
         });
         break;

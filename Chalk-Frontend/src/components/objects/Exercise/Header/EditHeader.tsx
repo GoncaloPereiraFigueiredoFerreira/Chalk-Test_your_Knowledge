@@ -3,6 +3,7 @@ import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { Exercise } from "../Exercise";
 import { useState } from "react";
+import { Textarea } from "flowbite-react";
 
 interface EditHeaderProps {
   dispatch: React.Dispatch<EditAction>;

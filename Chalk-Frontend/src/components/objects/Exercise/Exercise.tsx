@@ -21,6 +21,7 @@ export interface Resolution {
   id: string;
   exerciseID: string;
   cotation: number;
+  comment?: string;
   student?: {
     id: string;
     name: string;

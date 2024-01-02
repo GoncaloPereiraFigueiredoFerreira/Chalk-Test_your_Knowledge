@@ -16,6 +16,7 @@ export function TextareaBlock({
   onChange,
 }: TextareaBlockProps) {
   let hasToolbar = toolbar ? toolbar : false;
+
   const [text, setText] = useState(value ? value : "");
   const [isFocused, setIsFocused] = useState(false);
   const spanRef = useRef<HTMLDivElement>(null);
@@ -143,17 +144,19 @@ export function TextareaBlock({
             onBlur={handleBlur}
             onInput={handleInput}
             contentEditable
+            suppressContentEditableWarning={true}
           >
-            {value}
+            {textToHTML(value ?? "<p></p>")}
           </p>
           {text === "" && !isFocused && placeholder !== undefined ? (
             <span className="text-gray-500 pointer-events-none">
               {placeholder}
             </span>
-          ) : null}
+          ) : (
+            <></>
+          )}
         </div>
       </div>
-      {text}
     </>
   );
 }

@@ -117,7 +117,7 @@ export const exampleTest: Test = {
           },
           type: ExerciseType.TRUE_OR_FALSE,
           props: {
-            justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
+            justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
             items: {
               1: { text: "Portugal" },
               2: { text: "Polo norte" },

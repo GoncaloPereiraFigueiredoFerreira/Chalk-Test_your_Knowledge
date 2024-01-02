@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MainLogo } from "../../MainLogo";
-import { UserContext, UserRole } from "../../../UserContext";
+import { User, UserContext, UserRole } from "../../../UserContext";
 import { useGoogleLogin } from "@react-oauth/google";
 import { HiExclamation } from "react-icons/hi";
 import { APIContext } from "../../../APIContext";
@@ -55,7 +55,7 @@ export function Register() {
   const [cpass, setCPass] = useState("");
   const [role, setRole] = useState("");
   const [error, setErrorState] = useState(ErrorType.NOERROR);
-  const { authAPI, backendAPI } = useContext(APIContext);
+  const { contactAUTH, contactBACK } = useContext(APIContext);
   const { login } = useContext(UserContext);
 
   const navigate = useNavigate();
@@ -68,45 +68,28 @@ export function Register() {
   });
 
   const submitGoogleRegister = (acessToken: any) => {
-    fetch(authAPI + "google", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        acess_token: acessToken,
-        role: role,
-      }),
+    contactAUTH("google", "POST", undefined, {
+      acess_token: acessToken,
+      role: role,
     }).then((response) => handleUserRegister(response));
   };
 
   const submitNormalRegister = () => {
     if (password === cpass) {
-      fetch(authAPI + "register", {
-        method: "POST",
-        mode: "cors",
-        credentials: "include",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          name: name,
-          password: password,
-          role: role,
-        }),
+      contactAUTH("register", "POST", undefined, {
+        email: email,
+        name: name,
+        password: password,
+        role: role,
       }).then((response) => handleUserRegister(response));
     } else setErrorState(ErrorType.NOMATCH);
   };
 
-  const handleUserRegister = (response: any) => {
+  const handleUserRegister = (response: Response) => {
     switch (response.status) {
       case 200:
         response.json().then((result: any) => {
-          // TODO: Register in backend
-          login({
+          let userInfo: User = {
             email: result.user.username,
             name: result.user.name,
             profilePic:
@@ -118,7 +101,9 @@ export function Register() {
               { id: "2", name: "Turma A" },
               { id: "3", name: "Turma b" },
             ],
-          });
+          };
+          //contactBACK("register","POST",undefined,userInfo).then((response)=>{login(response.body);navigate("/webapp")})
+          login(userInfo);
           navigate("/webapp");
         });
         break;

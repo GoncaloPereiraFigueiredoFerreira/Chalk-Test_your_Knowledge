@@ -1,6 +1,6 @@
 import { ShowExercise } from "./ShowExercise";
 import "./ListExercises.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PopUp } from "../../interactiveElements/PopUp";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import { CreateNewExercisePopUp } from "./CreateNewExercisePopUp";
@@ -13,6 +13,7 @@ import {
   ListExerciseActionKind,
   useListExerciseContext,
 } from "./ListExerciseContext";
+import { APIContext } from "../../../APIContext";
 
 const userExercises: Exercise[] = [
   {
@@ -126,10 +127,16 @@ export function ListExercises({
   editMenuIsOpen,
   setEditMenuIsOpen,
 }: ListExercisesProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const onPageChange = (page: number) => setCurrentPage(page);
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
   const { listExerciseState, dispatch } = useListExerciseContext();
+  const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
+    //This dispatch will need to change in order to change a page
+    //contactBACK("exercises", "GET", { page: "1", itemsPerPage: "20" });
+
     dispatch({
       type: ListExerciseActionKind.ADD_EXERCISES,
       payload: {
