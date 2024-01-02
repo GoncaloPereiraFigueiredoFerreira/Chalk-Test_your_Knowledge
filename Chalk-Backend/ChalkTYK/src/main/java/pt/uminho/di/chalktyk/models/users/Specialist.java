@@ -24,7 +24,7 @@ public class Specialist extends User {
         this.institution = institution;
     }
 
-    @ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
+    @ManyToOne(targetEntity= Institution.class, fetch=FetchType.EAGER)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
 

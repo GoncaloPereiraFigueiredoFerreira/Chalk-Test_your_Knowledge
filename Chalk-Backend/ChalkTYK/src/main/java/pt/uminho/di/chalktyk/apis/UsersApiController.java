@@ -1,9 +1,15 @@
 package pt.uminho.di.chalktyk.apis;
 
+import io.jsonwebtoken.JwtException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.tomcat.util.json.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2002;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InstitutionManager;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Specialist;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Student;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.UsersBody;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.UsersBody1;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,80 +18,68 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.servlet.http.HttpServletRequest;
+import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
+import pt.uminho.di.chalktyk.apis.utility.JWT;
+import pt.uminho.di.chalktyk.dtos.UserUpdateDTO;
+import pt.uminho.di.chalktyk.models.users.InstitutionManager;
+import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.models.users.User;
+import pt.uminho.di.chalktyk.services.ISecurityService;
+import pt.uminho.di.chalktyk.services.IUsersService;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+
 import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequestMapping("/users")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class UsersApiController implements UsersApi {
 
-    public ResponseEntity<List<Object>> usersGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-,@Parameter(in = ParameterIn.QUERY, description = "Find users from this institution." ,schema=@Schema()) @Valid @RequestParam(value = "institution", required = false) String institution
-,@Parameter(in = ParameterIn.QUERY, description = "Find users from this course (institution is required)." ,schema=@Schema()) @Valid @RequestParam(value = "course", required = false) String course
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
+    private final ISecurityService securityService;
+    private final IUsersService usersService;
+
+    @Autowired
+    public UsersApiController(ISecurityService securityService, IUsersService usersService) {
+        this.securityService = securityService;
+        this.usersService = usersService;
     }
 
-    public ResponseEntity<List<InstitutionManager>> usersManagersGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-,@Parameter(in = ParameterIn.QUERY, description = "Find managers from this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
+    @Override
+    public ResponseEntity<Void> updateBasicProperties(String authToken, UserUpdateDTO userDTO) {
+        try {
+            JWT jwt = securityService.checkAndUpdateJWT(authToken);
+            String userId = securityService.getUserId(jwt);
+            usersService.updateBasicProperties(userId, userDTO.getName(), userDTO.getEmail(), userDTO.getPhotoPath(), userDTO.getDescription());
+        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+        return null;
     }
 
-    public ResponseEntity<Void> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody UsersBody1 body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
+    @Override
+    public ResponseEntity<User> getUser(String authToken) {
+        return null;
     }
 
-    public ResponseEntity<Void> usersPut(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody UsersBody body
-,
-@Parameter(in = ParameterIn.COOKIE, description = "" ,schema=@Schema()) @CookieValue(value="userId", required=false) String userId, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
+    @Override
+    public ResponseEntity<User> login(String authToken) {
+        try {
+            return new ResponseEntity<>(securityService.login(authToken), HttpStatus.OK);
+        } catch (UnauthorizedException | NotFoundException e) {
+            return new ExceptionResponseEntity<User>().createRequest(e);
+        }
     }
 
-    public ResponseEntity<List<Specialist>> usersSpecialistsGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-,@Parameter(in = ParameterIn.QUERY, description = "Find the specialists that are the owners of the test. " ,schema=@Schema()) @Valid @RequestParam(value = "testId", required = false) String testId
-,@Parameter(in = ParameterIn.QUERY, description = "Find specialists from this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-,@Parameter(in = ParameterIn.QUERY, description = "Find specialists from this course (institution is required). " ,schema=@Schema()) @Valid @RequestParam(value = "courseId", required = false) String courseId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
+    @Override
+    public ResponseEntity<Void> logout(String authToken) {
+        return null;
     }
-
-    public ResponseEntity<List<Student>> usersStudentsGet(@Parameter(in = ParameterIn.QUERY, description = "Find the student that is the owner of the resoluton. " ,schema=@Schema()) @Valid @RequestParam(value = "testResolutionId", required = false) String testResolutionId
-,@Parameter(in = ParameterIn.QUERY, description = "Find the student that is the owner of the resoluton. " ,schema=@Schema()) @Valid @RequestParam(value = "exerciseResolutionId", required = false) String exerciseResolutionId
-,@Parameter(in = ParameterIn.QUERY, description = "Find students from this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-,@Parameter(in = ParameterIn.QUERY, description = "Find students from this course (institution is required). " ,schema=@Schema()) @Valid @RequestParam(value = "courseId", required = false) String courseId
-,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "page", required = false) Integer page
-,@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = false) Integer itemsPerPage
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    public ResponseEntity<Void> usersUserIdDelete(@Parameter(in = ParameterIn.PATH, description = "User identifier", required=true, schema=@Schema()) @PathVariable("userId") String userId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    public ResponseEntity<InlineResponse2002> usersUserIdGet(@Parameter(in = ParameterIn.PATH, description = "User identifier", required=true, schema=@Schema()) @PathVariable("userId") String userId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
-    }
-
 }

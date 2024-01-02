@@ -1,37 +1,159 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.apache.tomcat.util.json.ParseException;
-import org.hibernate.mapping.Set;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.JwtException;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
-import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.login.BlackListedJWT;
+import pt.uminho.di.chalktyk.models.login.Login;
+import pt.uminho.di.chalktyk.models.users.User;
+import pt.uminho.di.chalktyk.repositories.BlackListedJWTDao;
+import pt.uminho.di.chalktyk.repositories.LoginDao;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
-@Service("securatyService") 
-public class SecurityService {
+@Service("securityService")
+public class SecurityService implements ISecurityService{
     private final IUsersService usersService;
     private final IStudentsService studentsService;
     private final ISpecialistsService specialistsService;
     private final IExercisesService exercisesService;
     private final ICoursesService coursesService;
     private final IInstitutionsService institutionsService;
-
+    private final LoginDao loginDao;
+    private final BlackListedJWTDao blackListedJWTDao;
     
     public SecurityService(IUsersService usersService, IStudentsService studentsService,
-            ISpecialistsService specialistsService, IExercisesService exercisesService, ICoursesService coursesService,
-            IInstitutionsService institutionsService) {
+                           ISpecialistsService specialistsService, IExercisesService exercisesService, ICoursesService coursesService,
+                           IInstitutionsService institutionsService, LoginDao loginDao, BlackListedJWTDao blackListedJWTDao) {
         this.usersService = usersService;
         this.studentsService = studentsService;
         this.specialistsService = specialistsService;
         this.exercisesService = exercisesService;
         this.coursesService = coursesService;
         this.institutionsService = institutionsService;
+        this.loginDao = loginDao;
+        this.blackListedJWTDao = blackListedJWTDao;
+    }
+
+    /* ***** Auxiliary methods ***** */
+
+    private JWT parseJWT(String jwtToken) throws UnauthorizedException {
+        try {
+            return new JWT(jwtToken);
+        } catch (JwtException | ParseException e) {
+            throw new UnauthorizedException("Invalid token.");
+        }
+    }
+
+    private boolean isJWTValid(String jwtToken){
+        try {
+            new JWT(jwtToken);
+            return true;
+        } catch (JwtException | ParseException e) {
+            return false;
+        }
+    }
+
+    private String getUserIdFromJWT(JWT jwt){
+        return (String) jwt.getPayloadParam("username");
+    }
+
+    /**
+     * Checks if user is logged in. If the user is logged in but the token expired, updates the token.
+     * @param jwt JWT Token
+     * @return user's id
+     * @throws UnauthorizedException if the user does not exist, of if the user already is logged in with a valid
+     */
+    private String checkAndUpdateLogin(JWT jwt) throws UnauthorizedException{
+        String userId = getUserIdFromJWT(jwt);
+        Login login = loginDao.findById(userId).orElse(null);
+
+        // If the user is not logged in, then a log in operation should be performed first, before using the token,
+        if(login == null)
+            throw new UnauthorizedException("Not logged in.");
+
+        //If the currentTokenString is no longer valid, it needs to be updated
+        String currentTokenString = login.getJwtTokenString();
+        if(isJWTValid(currentTokenString)){
+            // The current token is valid and should not be updated without a new login.
+            // If the current token is valid and the given token is different from the current token,
+            // an Unauthorized exception should be thrown.
+            if(!jwt.getJwsString().equals(currentTokenString))
+                throw new UnauthorizedException("Current token is still valid. Only a new login can update the token.");
+        }else{
+            // current token is invalid, therefore it can be updated
+            login.setJwtTokenString(jwt.getJwsString());
+            loginDao.save(login);
+        }
+
+        return userId;
+    }
+
+    /* ***** Main methods ***** */
+
+    @Override
+    @Transactional
+    public JWT validateJWT(String jwtTokenString) throws UnauthorizedException {
+        JWT jwt = parseJWT(jwtTokenString);
+        checkAndUpdateLogin(jwt);
+        return jwt;
+    }
+
+    @Override
+    public String getUserId(JWT jwtToken) {
+        return jwtToken != null ? (String) jwtToken.getPayloadParam("username") : null;
+    }
+
+    @Override
+    public String getUserRole(JWT jwtToken) {
+        return jwtToken != null ? (String) jwtToken.getPayloadParam("role") : null;
+
+    }
+
+    @Override
+    @Transactional
+    public User login(String jwtToken) throws UnauthorizedException, NotFoundException {
+        JWT jwt = parseJWT(jwtToken);
+        String userId = getUserIdFromJWT(jwt);
+        User user = usersService.getUserById(userId);
+        Login login = loginDao.findById(userId).orElse(null);
+
+        // If the user is not logged in, logs the user in.
+        if(login == null) {
+            loginDao.save(new Login(userId, jwtToken));
+        } else{
+            String currentTokenString = login.getJwtTokenString();
+
+            if(!jwt.getJwsString().equals(currentTokenString)) {
+                // If the current token is valid and is not equal to the given token,
+                // blacklists the current token and sets the given token
+                // as the current one.
+                if(isJWTValid(currentTokenString))
+                    blackListedJWTDao.save(new BlackListedJWT(currentTokenString));
+
+                // updates the login with the new jwt token
+                login.setJwtTokenString(jwt.getJwsString());
+                loginDao.save(login);
+            }
+        }
+
+        return user;
+    }
+
+    @Override
+    @Transactional
+    public void logout(String jwtToken) throws UnauthorizedException {
+        JWT jwt = parseJWT(jwtToken);
+        String userId = checkAndUpdateLogin(jwt);
+        Login login = loginDao.findById(userId).orElse(null);
+        assert login != null; // login is used in checkAndUpdateLogin therefore it should not be null.
+        blackListedJWTDao.save(new BlackListedJWT(login.getJwtTokenString())); // blacklists token
+        loginDao.delete(login); // deletes login information
     }
 
     public Boolean userIsSpecialist(String jwtToken) throws NotFoundException, BadInputException{

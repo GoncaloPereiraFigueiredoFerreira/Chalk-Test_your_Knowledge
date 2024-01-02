@@ -17,8 +17,13 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 public class JWT {
     private final LinkedHashMap<String, Object> header;
     private final LinkedHashMap<String, Object> payload;
-
+    private final String jwsString;
     public JWT(String jws) throws JwtException, ParseException {
+        this.jwsString = jws;
+
+        if(jws.startsWith("Bearer "))
+            jws = jws.substring("Bearer ".length());
+
         Dotenv dotenv = Dotenv.load();
         String secretKeyString = dotenv.get("PRIVATE_JWT_KEY");
 

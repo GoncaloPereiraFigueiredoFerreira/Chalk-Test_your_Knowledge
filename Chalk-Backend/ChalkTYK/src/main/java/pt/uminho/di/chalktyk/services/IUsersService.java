@@ -21,6 +21,8 @@ public interface IUsersService {
      */
     User getUserByEmail(String email) throws NotFoundException;
 
+    boolean existsUserById(String userId);
+
     /**
      * Allows updating the basic information of a user. 'null' fields can be given, but a bad input exception will be thrown if the field does not allow a 'null' value.
      * @param userId user identifier
@@ -32,7 +34,4 @@ public interface IUsersService {
      */
     void updateBasicProperties(String userId, String name, String email, String photoPath, String description) throws NotFoundException, BadInputException;
 
-    boolean login(String userId);
-
-    boolean logout(String userId);
 }
