@@ -568,16 +568,11 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    @Override
-    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
-
-    }
-
     // TODO - Para corrigir automaticamente um teste, pode ser necessário a combinacao de AI e a correcao automatica.
     //  Quando isto for invocado, corrigir apenas os que dão para ser corrigidos?
     @Transactional
     @Override
-    public void issueTestResolutionsCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
+    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testId + "'");
