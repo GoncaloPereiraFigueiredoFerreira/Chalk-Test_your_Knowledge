@@ -8,7 +8,6 @@ import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
-import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
@@ -19,6 +18,7 @@ import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceRubr
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerData;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CreateExerciseDTO {
+public class UpdateExerciseDTO {
     @Schema(description = "exercise body",
             oneOf = {
             MultipleChoiceExercise.class,
@@ -52,6 +52,11 @@ public class CreateExerciseDTO {
     })
     private ExerciseResolutionData solution;
 
+    @Schema(description = "exercise visibility",
+            allowableValues = {"public", "not_listed", "private", "course", "institution"})
+    private Visibility visibility;
+
     @Schema(description = "list of tags")
     private List<String> tagsIds;
+
 }

@@ -456,7 +456,7 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     @Transactional
-    public void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException {
+    public void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _updateExerciseCourse(exercise, courseId);
     }
@@ -468,8 +468,10 @@ public class ExercisesService implements IExercisesService{
      * @param courseId   identifier of the new course
      * @throws NotFoundException if the exercise or the course do no exist.
      */
-    private void _updateExerciseCourse(Exercise exercise, String courseId) throws NotFoundException {
+    private void _updateExerciseCourse(Exercise exercise, String courseId) throws NotFoundException, BadInputException {
         Course course = coursesService.getCourseById(courseId);
+        if(!coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+            throw new BadInputException("Specialist does not belong to the course.");
         exercise.setCourse(course);
         exerciseDAO.save(exercise);
     }
@@ -635,7 +637,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Issue the automatic correction of the exercise resolutions.
+     * Requests that the correction of the exercise resolutions be done autonomously.
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
      *
@@ -670,7 +672,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Issue the automatic correction of the exercise resolutions.
+     * Requests that the correction of the exercise resolution be done autonomously.
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
      *
@@ -820,7 +822,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     public List<ExerciseResolution> getStudentListOfExerciseResolutions(String exerciseId, String studentId) throws NotFoundException {
-        return exerciseResolutionDAO.findAllByExercise_IdAndStudent_Id(exerciseId, studentId);
+        return exerciseResolutionDAO.findAllByExercise_IdAndStudent_IdOrderBySubmissionNrAsc(exerciseId, studentId);
     }
 
     /**

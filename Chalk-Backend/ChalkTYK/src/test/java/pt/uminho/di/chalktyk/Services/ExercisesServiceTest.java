@@ -337,6 +337,9 @@ public class ExercisesServiceTest {
     @Test
     public void updateAllOnExercise(){
         try {
+            // add specialist to course2
+            coursesService.addSpecialistsToCourse(course2Id, List.of(specialistId));
+
             // creates exercise
             Exercise exercise = createOAExercise(specialistId, courseId);
             ExerciseSolution solution = createOASolution();
@@ -408,6 +411,7 @@ public class ExercisesServiceTest {
                    exercisesService.getExerciseById(exerciseId).getCourseId().equals(course2Id) ;
 
         }catch (BadInputException | NotFoundException bie){
+            bie.printStackTrace();
             assert false;
         }
     }
@@ -415,6 +419,9 @@ public class ExercisesServiceTest {
     @Test
     public void updateAllOnExerciseIndividualMethods(){
         try {
+            // add specialist to course2
+            coursesService.addSpecialistsToCourse(course2Id, List.of(specialistId));
+
             // creates exercise
             Exercise exercise = createOAExercise(specialistId, courseId);
             ExerciseSolution solution = createOASolution();

@@ -113,7 +113,7 @@ public interface IExercisesService{
     void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException;
 
     /**
-     * Issue the automatic correction of the exercise resolutions.
+     * Requests that the correction of the exercise resolutions be done autonomously.
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
      *
@@ -126,7 +126,7 @@ public interface IExercisesService{
     void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
 
     /**
-     * Issue the automatic correction of the exercise resolutions.
+     * Requests that the correction of the exercise resolution be done autonomously.
      * The correction can either be automatic or done by AI.
      * For a given exercise, it may support either, both, or none of the correction types.
      *
@@ -279,7 +279,7 @@ public interface IExercisesService{
      */
     Visibility getExerciseVisibility(String exerciseId) throws NotFoundException;
 
-    void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException;
+    void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException, BadInputException;
 
     void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException;
 
