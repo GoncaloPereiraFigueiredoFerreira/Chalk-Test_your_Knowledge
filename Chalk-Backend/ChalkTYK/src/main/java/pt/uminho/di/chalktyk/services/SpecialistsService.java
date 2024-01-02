@@ -36,6 +36,7 @@ public class SpecialistsService implements ISpecialistsService{
 
         //set the identifier to null to avoid overwrite attacks
         specialist.setId(null);
+        specialist.setInstitution(null);
 
         // check for any property format errors
         String inputErrors = specialist.checkInsertProperties();

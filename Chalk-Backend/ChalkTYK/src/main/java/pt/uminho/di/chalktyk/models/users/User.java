@@ -26,7 +26,7 @@ public abstract class User {
 	@Column(name="PhotoPath")
 	private String photoPath;
 
-	@Column(name="Email")
+	@Column(name="Email", unique = true)
 	private String email;
 
 	@Column(name="Description")

@@ -1,5 +1,7 @@
 package pt.uminho.di.chalktyk.models.institutions;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +18,8 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 public class Institution {
 	@Id
 	@Column(name="ID", unique=true)
+	@JsonProperty("id")
+	@JsonAlias("name")
 	private String name;
 
 	@Column(name="Description")

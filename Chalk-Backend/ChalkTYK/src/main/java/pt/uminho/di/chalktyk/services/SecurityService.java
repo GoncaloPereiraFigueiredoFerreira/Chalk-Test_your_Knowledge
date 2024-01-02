@@ -118,6 +118,8 @@ public class SecurityService implements ISecurityService{
     @Override
     @Transactional
     public User login(String jwtToken) throws UnauthorizedException, NotFoundException {
+        if(blackListedJWTDao.existsById(jwtToken))
+            throw new UnauthorizedException("Authentication token is blacklisted.");
         JWT jwt = parseJWT(jwtToken);
         String userId = getUserIdFromJWT(jwt);
         User user = usersService.getUserById(userId);

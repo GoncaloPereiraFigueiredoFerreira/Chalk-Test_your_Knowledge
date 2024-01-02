@@ -2,7 +2,7 @@ package pt.uminho.di.chalktyk.models.users;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +38,8 @@ public class Student extends User {
 
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.EAGER)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
-	private Institution institution;
+    @JsonUnwrapped(prefix = "institution_")
+    private Institution institution;
 
     @Override
     public String checkSubscription() {
