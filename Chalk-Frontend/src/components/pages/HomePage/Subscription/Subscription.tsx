@@ -29,12 +29,12 @@ export function Subscription() {
     <div className="h-screen overflow-auto">
       <NavBar></NavBar>
 
-      <div className="min-h-full py-12 chalkBackground dark:bg-black">
+      <div className="min-h-full py-12 first-section dark:bg-black">
         <div className="w-full pt-16 pb-24 text-center hover:scale-125 transition-all duration-75">
-          <h4 className=" text-4xl text-white font-pacifico">
+          <h4 className=" text-4xl text-black font-pacifico dark:text-white">
             Choose the right plan for you
           </h4>
-          <p className=" text-lg text-white mt-2">
+          <p className=" text-lg text-black mt-2 dark:text-white">
             Pricing built to accomodate all individuals and institutions. Choose
             package that suits your needs.
           </p>
