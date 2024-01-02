@@ -4,11 +4,12 @@
 @tailwind variants;
 
 .first-section {
-  background-image: url(../../../../public/blackboard.jpg);
+  /*background-image: url(../../../../public/blackboard.jpg);*/
+  background-color: #acacff;
 }
 
 .vomit {
-  background: linear-gradient(to right, #4a7b9d 0%, #85bda6 100%);
+  background: linear-gradient(to right, #5555ce 0%, #acacff 100%);
 }
 
 .feature {

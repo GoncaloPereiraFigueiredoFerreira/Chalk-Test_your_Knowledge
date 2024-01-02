@@ -45,7 +45,7 @@ export function About() {
   return (
     <>
       <div
-        className="min-w-full container my-24 mx-0 px-0 flex justify-center"
+        className="min-w-full container py-40 mx-0 px-0 flex justify-center"
         id="about"
       >
         {/**<!-- Section: Design Block -->*/}

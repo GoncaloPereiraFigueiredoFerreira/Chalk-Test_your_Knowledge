@@ -25,12 +25,13 @@ export const features = [
 export function Features() {
   return (
     <>
-      <section id="features" className=" pt-20">
+      <section id="features" className=" pt-40">
         <div className=" text-6xl text-center mb-10">
-          <text className="font-pacifico ">Chalk</text> helps you ...
+          <text className="font-pacifico ">Chalk</text> gives you the ability
+          to...
         </div>
         <div className=" relative w-full h-[250px] bg-[#5555ce] group mb-4">
-          <div className="relative z-10 w-full h h-[250px] items-center text-center text-6xl py-[95px] bg-[#5555ce] group-hover:translate-x-full transform transition-all duration-700">
+          <div className="relative z-10 w-full h h-[250px] items-center text-center text-5xl py-[95px] bg-[#5555ce] group-hover:translate-x-full transform transition-all duration-700">
             Create exercises and tests quickly.
           </div>
           <div className=" absolute w-full z-[5] h-[250px] top-0 left-0 text-white text-center p-16 text-3xl">
@@ -45,7 +46,7 @@ export function Features() {
           </div>
         </div>
         <div className=" relative w-full h-[250px] bg-[#acacff] group mb-4">
-          <div className="relative z-10 w-full h-[250px] items-center text-center text-6xl py-[95px] bg-[#acacff] group-hover:translate-x-full transform transition-all duration-700">
+          <div className="relative z-10 w-full h-[250px] items-center text-center text-5xl py-[95px] bg-[#acacff] group-hover:translate-x-full transform transition-all duration-700">
             Optimize the evaluation process
           </div>
           <div className=" absolute w-full z-[5] h-[250px] top-0 left-0 text-black text-center p-16 text-3xl">
@@ -64,7 +65,7 @@ export function Features() {
           </div>
         </div>
         <div className=" relative w-full h-[250px] bg-[#ffd025] group mb-4">
-          <div className="relative z-10 w-full h-[250px] items-center text-center text-6xl py-[95px] bg-[#ffd025] group-hover:translate-x-full transform transition-all duration-700">
+          <div className="relative z-10 w-full h-[250px] items-center text-center text-5xl py-[95px] bg-[#ffd025] group-hover:translate-x-full transform transition-all duration-700">
             Become Part of the Our Community
           </div>
           <div className=" absolute w-full h-[250px] z-[5] top-0 left-0 text-black text-center  p-16 text-3xl">
