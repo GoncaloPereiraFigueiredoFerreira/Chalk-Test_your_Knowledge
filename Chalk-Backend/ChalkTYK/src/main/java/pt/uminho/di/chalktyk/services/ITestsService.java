@@ -199,7 +199,7 @@ public interface ITestsService {
      * @throws NotFoundException     if the test or any exercise were not found
      * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void issueTestResolutionsCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
+    void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
 
     /**
      * Retrieves the number of students that submitted a resolution for a specific test
