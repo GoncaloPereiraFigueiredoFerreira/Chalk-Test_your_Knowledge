@@ -1,10 +1,8 @@
-import { useState } from "react";
-
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 
 export function GroupNavBar() {
   const { id } = useParams();
-  const [selected, setSelected] = useState();
+
   return (
     <div className="">
       <div className="mb-6">

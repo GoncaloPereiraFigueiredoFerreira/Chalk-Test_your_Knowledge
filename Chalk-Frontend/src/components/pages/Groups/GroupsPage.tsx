@@ -1,14 +1,9 @@
 import { useState, useContext } from "react";
 
-import { Link, useNavigate } from "react-router-dom";
-import { Course, UserContext } from "../../../UserContext.tsx";
-interface Class {
-  id: string;
-  className: string;
-  teacherName: string;
-}
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../UserContext.tsx";
+
 export function GroupsPage() {
-  const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const navigate = useNavigate();
   const { user, logout } = useContext(UserContext);
