@@ -19,6 +19,9 @@ public class JWT {
     private final LinkedHashMap<String, Object> payload;
 
     public JWT(String jws) throws JwtException, ParseException {
+        if(jws.startsWith("Bearer "))
+            jws = jws.substring("Bearer ".length());
+
         Dotenv dotenv = Dotenv.load();
         String secretKeyString = dotenv.get("PRIVATE_JWT_KEY");
 
