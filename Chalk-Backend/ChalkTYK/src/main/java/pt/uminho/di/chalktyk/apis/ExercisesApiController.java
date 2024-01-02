@@ -1,14 +1,14 @@
 package pt.uminho.di.chalktyk.apis;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Comment;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Exercise;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.ExerciseIdRubricBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.ExerciseResolution;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.ExercisesBody;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.ExercisesExerciseIdBody;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse200;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Rubric;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Tag;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -17,162 +17,211 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.servlet.http.HttpServletRequest;
+import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
+import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
+import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
+import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
+@RequestMapping("/exercises")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class ExercisesApiController implements ExercisesApi {
 
-    public ResponseEntity<Void> deleteExerciseById(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @CookieValue("chalkauthtoken") String jwt) {
-        // TODO - delete exercise by
-        throw new RuntimeException("Not implemented.");
+
+    @Override
+    public ResponseEntity<Exercise> getExerciseById(String jwtToken, String exerciseId) {
+        return null;
     }
 
-    /**
-     * Duplicates the exercise that contains the given identifier.
-     * The id of the specialist, and if existent, the institution identifier
-     * is added to the new exercise metadata. The visibility of the new exercise is
-     * set to private, and is not associated with any course.
-     * @param exerciseId exercise identifier
-     * @return new exercise identifier
-     */
-    public ResponseEntity<String> duplicateExerciseById(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<Boolean> exerciseExists(String jwtToken, String exerciseId) {
+        return null;
     }
 
-    public ResponseEntity<Void> updateExercise(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExercisesExerciseIdBody body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<String> createExercise(String jwtToken, CreateExerciseDTO createExerciseDTO) {
+        return null;
+    }
+
+    @Override
+    public void deleteExerciseById(String jwtToken, String exerciseId) {
 
     }
 
-    public ResponseEntity<Void> issueExerciseResolutionsCorrection(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.QUERY, description = "Type of correction. The correction can either be automatic or done by AI. For a given exercise, it may support either, both, or none of the correction types. " ,schema=@Schema(allowableValues={ "auto", "ai" }
-)) @Valid @RequestParam(value = "correctionType", required = false) String correctionType
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<String> duplicateExerciseById(String jwtToken, String exerciseId, String courseId, String visibility) {
+        return null;
     }
 
-    public ResponseEntity<Integer> countExerciseResolutions(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.QUERY, description = "'false' to count the number of students that made a submission. 'true' to count the total number of submissions." ,schema=@Schema( defaultValue="false")) @Valid @RequestParam(value = "total", required = false, defaultValue="false") Boolean total
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
-    }
-
-    public ResponseEntity<List<InlineResponse200>> getExerciseResolutions(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-, @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateAllOnExercise(String jwtToken, String exerciseId, UpdateExerciseDTO updateExerciseDTO) {
 
     }
 
-    public ResponseEntity<Void> createExerciseResolution(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("exerciseId") Integer exerciseId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExerciseResolution body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateExerciseBody(String jwtToken, String exerciseId, Exercise newBody) {
 
     }
 
-    public ResponseEntity<Integer> countExerciseResolutionsByStudent(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateExerciseVisibility(String jwtToken, String exerciseId, Visibility visibility) {
 
     }
 
-    public ResponseEntity<List<String>> getStudentListOfExerciseResolutionsIdsByExercise(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateExerciseRubric(String jwtToken, String exerciseId, ExerciseRubric rubric) {
 
     }
 
-    public ResponseEntity<ExerciseResolution> getLastExerciseResolutionByStudent(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateExerciseSolution(String jwtToken, String exerciseId, ExerciseResolutionData solution) {
 
     }
 
-    public ResponseEntity<Rubric> getExerciseRubric(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateExerciseCourse(String jwtToken, String exerciseId, String courseId) {
 
     }
 
-    public ResponseEntity<Void> createExerciseRubric(@Parameter(in = ParameterIn.PATH, description = "Exercise identifier", required=true, schema=@Schema()) @PathVariable("exerciseId") String exerciseId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExerciseIdRubricBody body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void updateExerciseTags(String jwtToken, String exerciseId, List<String> tagsIds) {
 
     }
 
-    public ResponseEntity<List<Exercise>> getExercises(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-, @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-, @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the exercises." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "tags", required = false, defaultValue="[]") List<String> tags
-, @Parameter(in = ParameterIn.QUERY, description = "Value that defines if the exercise must have all the given tags to be retrieved." ,schema=@Schema( defaultValue="false")) @Valid @RequestParam(value = "matchAllTags", required = false, defaultValue="false") Boolean matchAllTags
-, @Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the exercises must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'. " ,schema=@Schema(allowableValues={ "public", "institution", "course" }
-, defaultValue="public")) @Valid @RequestParam(value = "visibilityType", required = false, defaultValue="public") String visibilityType
-, @Parameter(in = ParameterIn.QUERY, description = "Identifier of the visibility target. For example, if visibilityType='institution',  then this parameter is the identifier of the institution. " ,schema=@Schema()) @Valid @RequestParam(value = "visibilityTarget", required = false) String visibilityTarget
-, @Parameter(in = ParameterIn.QUERY, description = "Identifier of the specialist. Used when we want to retrieve the exercises created by a specific specialist." ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<ExerciseRubric> getExerciseRubric(String jwtToken, String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public void createExerciseRubric(String jwtToken, String exerciseId, ExerciseRubric rubric) {
 
     }
 
-    public ResponseEntity<String> createExercise(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody ExercisesBody body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void deleteExerciseRubric(String jwtToken, String exerciseId) {
 
     }
 
-    public ResponseEntity<Void> addCommentToExerciseResolution(@Parameter(in = ParameterIn.PATH, description = "Exercise resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Comment body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void issueExerciseResolutionsCorrection(String jwtToken, String exerciseId, String correctionType) {
+
     }
 
-    public ResponseEntity<ExerciseResolution> getExerciseResolution(@Parameter(in = ParameterIn.PATH, description = "Exercise resolution identifier", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void issueExerciseResolutionCorrection(String jwtToken, String resolutionId, String correctionType) {
+
     }
 
-    public ResponseEntity<Void> exerciseResolutionManualCorrection(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("resolutionId") String resolutionId
-, @NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "points", required = true) Float points,  @CookieValue("chalkauthtoken") String jwt
-) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<Integer> countExerciseResolutions(String jwtToken, String exerciseId, Boolean total) {
+        return null;
     }
 
-    public ResponseEntity<Void> deleteExerciseRubric(@Parameter(in = ParameterIn.PATH, description = "rubric identifier", required=true, schema=@Schema()) @PathVariable("rubricId") String rubricId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<List<Pair<Student, ExerciseResolution>>> getExerciseResolutions(String jwtToken, String exerciseId, Integer itemsPerPage, Integer Page, boolean latest) {
+        return null;
     }
 
-    public ResponseEntity<Void> updateRubric(@Parameter(in = ParameterIn.PATH, description = "rubric identifier", required=true, schema=@Schema()) @PathVariable("rubricId") String rubricId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Rubric body
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public void createExerciseResolution(String jwtToken, String exerciseId, ExerciseResolutionData resolutionData) {
+
     }
 
-    public ResponseEntity<List<Tag>> listTags(@Parameter(in = ParameterIn.QUERY, description = "Array of paths from which the tags should be retrieved." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "paths", required = false, defaultValue="[]") List<String> paths
-, @Parameter(in = ParameterIn.QUERY, description = "Number of levels, starting from the given paths that should be retrieved. -1 to retrieve every tag starting at the given paths." ,schema=@Schema( defaultValue="-1")) @Valid @RequestParam(value = "levels", required = false, defaultValue="-1") Integer levels
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented.");
+    @Override
+    public ResponseEntity<Integer> countExerciseResolutionsByStudent(String jwtToken, String exerciseId, String studentId) {
+        return null;
     }
 
+    @Override
+    public ResponseEntity<List<ExerciseResolution>> getStudentListOfExerciseResolutions(String jwtToken, String exerciseId, String studentId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ExerciseResolution> getLastExerciseResolutionByStudent(String jwtToken, String exerciseId, String studentId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Page<Exercise>> getExercises(String jwtToken, Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String courseId, String institutionId, String specialistId, String title, String exerciseType) {
+        return null;
+    }
+
+    @Override
+    public void addCommentToExerciseResolution(String jwtToken, String resolutionId, String comment) {
+
+    }
+
+    @Override
+    public void removeCommentFromExerciseResolution(String jwtToken, String resolutionId) {
+
+    }
+
+    @Override
+    public ResponseEntity<ExerciseResolution> getExerciseResolution(String jwtToken, String resolutionId) {
+        return null;
+    }
+
+    @Override
+    public void deleteExerciseResolutionById(String jwtToken, String resolutionId) {
+
+    }
+
+    @Override
+    public void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException {
+
+    }
+
+    @Override
+    public ResponseEntity<Void> manuallyCorrectExerciseResolution(String jwtToken, String resolutionId, float points) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ExerciseSolution> getExerciseSolution(String jwtToken, String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public void createExerciseSolution(String jwtToken, String exerciseId, ExerciseResolutionData solution) {
+
+    }
+
+    @Override
+    public void deleteExerciseSolution(String jwtToken, String exerciseId) {
+
+    }
+
+    @Override
+    public ResponseEntity<String> getExerciseCourseId(String jwtToken, String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<String> getExerciseInstitutionId(String jwtToken, String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<String> getExerciseVisibility(String jwtToken, String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Set<Tag>> getExerciseTags(String jwtToken, String exerciseId) {
+        return null;
+    }
 }
