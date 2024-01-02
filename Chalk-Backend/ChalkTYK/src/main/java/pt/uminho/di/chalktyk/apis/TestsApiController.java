@@ -1,17 +1,28 @@
 package pt.uminho.di.chalktyk.apis;
 
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2001;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Test;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.TestResolution;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Visibility;
+import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
+import pt.uminho.di.chalktyk.models.tests.Test;
+import pt.uminho.di.chalktyk.services.ISecurityService;
+import pt.uminho.di.chalktyk.services.ITestsService;
+import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
@@ -19,19 +30,31 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/tests")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class TestsApiController implements TestsApi {
+    private final ITestsService testsService;
+    private final ISecurityService securityService;
 
-    public ResponseEntity<List<Test>> getTests(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-,@Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the tests." ,schema=@Schema( defaultValue="[]")) @Valid @RequestParam(value = "tags", required = false, defaultValue="[]") List<Integer> tags
-,@Parameter(in = ParameterIn.QUERY, description = "Value that defines if the exercise must have all the given tags to be retrieved." ,schema=@Schema( defaultValue="false")) @Valid @RequestParam(value = "matchAllTags", required = false, defaultValue="false") Boolean matchAllTags
-,@Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'. " ,schema=@Schema(allowableValues={ "public", "institution", "course" }
-, defaultValue="public")) @Valid @RequestParam(value = "visibilityType", required = false, defaultValue="public") String visibilityType
-,@Parameter(in = ParameterIn.QUERY, description = "Identifier of the visibility target. For example, if visibilityType='institution',  then this parameter is the identifier of the institution. " ,schema=@Schema()) @Valid @RequestParam(value = "visibilityTarget", required = false) String visibilityTarget
-,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
-, @CookieValue("chalkauthtoken") String jwt) {
-        throw new RuntimeException("Not implemented");
+    @Autowired
+    public TestsApiController(ITestsService testsService, ISecurityService securityService){
+        this.testsService = testsService;
+        this.securityService = securityService;
+    }
+
+    public ResponseEntity<List<Test>> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, 
+                                                String visibilityTarget, String specialistId, String courseId, String institutionId, String jwt) {
+        try {
+            securityService.validateJWT(jwt);
+            Page<Test> tests = testsService.getTests(page, itemsPerPage, tags, matchAllTags, visibilityType, specialistId, courseId, institutionId, jwt, false);
+            return ResponseEntity.ok().body(tests.toList());
+        } catch (UnauthorizedException e){
+            return new ExceptionResponseEntity<List<Test>>().createRequest(e);
+        } catch (BadInputException e) {
+            return new ExceptionResponseEntity<List<Test>>().createRequest(e);
+        } catch (NotFoundException e) {
+            return new ExceptionResponseEntity<List<Test>>().createRequest(e);
+        }
     }
 
     public ResponseEntity<String> createTest(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "visibility", required = true) Visibility visibility
