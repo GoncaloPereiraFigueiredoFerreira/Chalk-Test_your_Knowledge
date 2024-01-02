@@ -3,14 +3,12 @@ package pt.uminho.di.chalktyk.models.exercises;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
@@ -64,29 +62,54 @@ public abstract class Exercise {
 	@Column(name = "Statement", columnDefinition = "jsonb")
 	private ExerciseStatement statement;
 
+	@JsonIgnore
 	@ManyToOne(targetEntity= Course.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID") })
 	private Course course;
 
+	@Column(name = "CourseID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String courseId;
+
+	@JsonIgnore
 	@ManyToOne(targetEntity= Specialist.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="SpecialistID", referencedColumnName="ID") })
 	private Specialist specialist;
 
+	@Column(name = "SpecialistID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String specialistId;
+
+	@JsonIgnore
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
+
+	@Column(name = "InstitutionID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String institutionId;
 
 	@ManyToMany(targetEntity= Tag.class, fetch = FetchType.LAZY)
 	@JoinTable(name="Exercise_Tag", joinColumns={ @JoinColumn(name="ExerciseID") }, inverseJoinColumns={ @JoinColumn(name="TagID") })
 	private Set<Tag> tags;
 
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseSolution.class, orphanRemoval = true)
 	@JoinColumn(name = "SolutionID", referencedColumnName = "ID")
 	private ExerciseSolution solution;
 
+	@Column(name = "SolutionID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String solutionId;
+
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseRubric.class, orphanRemoval = true)
 	@JoinColumn(name = "RubricID", referencedColumnName = "ID")
 	private ExerciseRubric rubric;
+
+	@Column(name = "RubricID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String rubricId;
 
 	public Exercise(String id, String title, Visibility visibility, ExerciseStatement statement, Course course, Specialist specialist, Institution institution, Set<Tag> tags, ExerciseSolution solution, ExerciseRubric rubric) {
 		this.id = id;
@@ -109,31 +132,36 @@ public abstract class Exercise {
 			statement.verifyProperties();
 	}
 
-	public String getSpecialistId(){
-		return specialist == null ? null : specialist.getId();
+	public void setCourse(Course course) {
+		this.course = course;
+		this.courseId = course != null ? course.getId() : null;
 	}
 
-	public String getCourseId(){
-		return course == null ? null : course.getId();
+	public void setSpecialist(Specialist specialist) {
+		this.specialist = specialist;
+		this.specialistId = specialist != null ? specialist.getId() : null;
 	}
 
-	public String getInstitutionId(){
-		return institution == null ? null : institution.getName();
+	public void setInstitution(Institution institution) {
+		this.institution = institution;
+		this.institutionId = institution != null ? institution.getName() : null;
 	}
 
-
-	public String getRubricId(){
-		return rubric == null ? null : rubric.getId();
+	public void setSolution(ExerciseSolution solution) {
+		this.solution = solution;
+		this.solutionId = solution != null ? solution.getId() : null;
 	}
 
-	public String getSolutionId(){
-		return solution == null ? null : solution.getId();
+	public void setRubric(ExerciseRubric rubric) {
+		this.rubric = rubric;
+		this.rubricId = rubric != null ? rubric.getId() : null;
 	}
 
 	/**
 	 * Sets the id of the rubric, if rubric is not null.
 	 * @param rubricId id that the rubric should have
 	 */
+	@JsonIgnore
 	public void setRubricIdIfExists(String rubricId){
 		if(rubric != null)
 			rubric.setId(rubricId);
@@ -143,6 +171,7 @@ public abstract class Exercise {
 	 * Sets the id of the solution, if solution is not null.
 	 * @param solutionId id that the solution should have
 	 */
+	@JsonIgnore
 	public void setSolutionIdIfExists(String solutionId){
 		if(solution != null)
 			solution.setId(solutionId);
