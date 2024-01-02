@@ -57,7 +57,7 @@ export function Reviews() {
                 : " scale-0 translate-x-full"
             }`}
           >
-            What People are saying about us
+            What users are saying about us
           </h2>
         </div>
 
