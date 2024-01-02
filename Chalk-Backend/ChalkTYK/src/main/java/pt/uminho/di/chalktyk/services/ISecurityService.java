@@ -14,7 +14,7 @@ public interface ISecurityService {
      * @return jwt token
      * @throws UnauthorizedException if the token is invalid, expired or is blacklisted.
      */
-    JWT checkAndUpdateJWT(String jwtTokenString) throws UnauthorizedException;
+    JWT validateJWT(String jwtTokenString) throws UnauthorizedException;
 
     /**
      * Extracts the user id from the token.

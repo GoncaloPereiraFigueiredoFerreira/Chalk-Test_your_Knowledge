@@ -98,7 +98,7 @@ public class SecurityService implements ISecurityService{
 
     @Override
     @Transactional
-    public JWT checkAndUpdateJWT(String jwtTokenString) throws UnauthorizedException {
+    public JWT validateJWT(String jwtTokenString) throws UnauthorizedException {
         JWT jwt = parseJWT(jwtTokenString);
         checkAndUpdateLogin(jwt);
         return jwt;
