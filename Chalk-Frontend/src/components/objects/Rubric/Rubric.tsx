@@ -1,3 +1,4 @@
+import { RubricEdit } from "./RubricEdit";
 import { RubricPreview } from "./RubricPreview";
 
 export enum StardardLevels {
@@ -10,13 +11,13 @@ export enum StardardLevels {
 export interface Standard {
   title: StardardLevels;
   description: string;
-  percentage: string;
+  percentage: number;
 }
 
 export interface Criteria {
   title: string;
   points: number;
-  standarts: Standard[];
+  standards: Standard[];
 }
 
 export interface Rubric {
@@ -24,16 +25,37 @@ export interface Rubric {
 }
 
 export enum RubricContext {
-  CREATE = "CREATE",
+  EDIT = "EDIT",
   PREVIEW = "PREVIEW",
 }
 
-export function Rubric(context: string, rubric: Rubric) {
+export interface RubricProps {
+  context: RubricContext;
+  rubric: Rubric;
+}
+
+function createStandards(): Standard[] {
+  let standards: Standard[] = [];
+  Object.keys(StardardLevels).map((title) => {
+    standards.push({
+      title: title as StardardLevels,
+      description: "",
+      percentage: 0,
+    });
+  });
+  return standards;
+}
+
+export function createNewCriteria(): Criteria {
+  return { title: "", points: 0, standards: createStandards() };
+}
+
+export function Rubric({ context, rubric }: RubricProps) {
   switch (context) {
     case RubricContext.PREVIEW:
       return RubricPreview(rubric);
 
-    case RubricContext.CREATE:
-      return RubricPreview(rubric);
+    case RubricContext.EDIT:
+      return RubricEdit(rubric);
   }
 }

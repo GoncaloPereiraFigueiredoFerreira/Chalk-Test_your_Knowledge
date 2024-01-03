@@ -15,6 +15,7 @@ import {
   OAResolutionData,
   InitResolutionDataEx,
 } from "../Exercise/Exercise";
+import { Rubric, RubricContext } from "../Rubric/Rubric";
 
 //------------------------------------//
 //                                    //
@@ -36,13 +37,14 @@ export enum EditActionKind {
   CHANGE_ITEM_TEXT = "CHANGE_ITEM_TEXT",
   CHANGE_JUSTIFY_KIND = "CHANGE_JUSTIFY_KIND",
   CHANGE_MAX_ANSWERS = "CHANGE_MAX_ANSWERS",
-  ADD_TOPIC = "ADD_TOPIC",
+  SET_TOPIC = "SET_TOPIC",
 }
 
 export interface EditAction {
   type: EditActionKind;
   dataString?: string;
   dataImgPos?: ImgPos;
+  dataLString?: string[];
   dataItem?: {
     text?: string;
     justification?: string;
@@ -244,6 +246,38 @@ function EditReducer(state: EditState, action: EditAction) {
           };
         }
       throw new Error("Invalid action");
+
+    case EditActionKind.CHANGE_MAX_ANSWERS:
+      if (exercise.type === ExerciseType.CHAT) {
+        return {
+          ...state,
+          exercise: {
+            ...exercise,
+            props: {
+              ...exercise.props,
+              maxAnswers: Number.parseInt(action.dataString!),
+            },
+          },
+        };
+      }
+      throw new Error("Invalid action");
+
+    case EditActionKind.SET_TOPIC:
+      if (exercise.type === ExerciseType.CHAT) {
+        let newTopics = [...action.dataLString!];
+        return {
+          ...state,
+          exercise: {
+            ...exercise,
+            props: {
+              ...exercise.props,
+              topics: newTopics,
+            },
+          },
+        };
+      }
+      throw new Error("Invalid action");
+
     default:
       return state;
   }
@@ -298,8 +332,9 @@ export function EditExercise({
           }}
         ></ExerciseComponent>
         <EditHeader dispatch={editDispatch} state={state.exercise} />
+        <h3 className="font-medium text-xl">Detalhes do Exercício:</h3>
         <ExerciseComponent
-          position="1"
+          position={position ?? "1"}
           exercise={state.exercise}
           context={{
             context: ExerciseContext.EDIT,
@@ -307,6 +342,18 @@ export function EditExercise({
             solutionData: state.solution,
           }}
         ></ExerciseComponent>
+        {state.exercise.type === ExerciseType.CHAT ||
+        state.exercise.type === ExerciseType.OPEN_ANSWER ? (
+          <>
+            <h3 className="font-medium text-xl">Rúbrica:</h3>
+            <Rubric
+              context={RubricContext.EDIT}
+              rubric={{ criteria: [] }}
+            ></Rubric>
+          </>
+        ) : (
+          <></>
+        )}
         <div className="flex gap-2">
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"

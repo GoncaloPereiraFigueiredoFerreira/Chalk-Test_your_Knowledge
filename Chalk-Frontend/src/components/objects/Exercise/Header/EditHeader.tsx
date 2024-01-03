@@ -21,7 +21,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
         <div>
           <label
             htmlFor="message"
-            className="block mb-2 ml-1 text-lg text-gray-900 dark:text-white"
+            className="block mb-2 ml-1 text-xl font-medium text-gray-900 dark:text-white"
           >
             Enunciado:
           </label>

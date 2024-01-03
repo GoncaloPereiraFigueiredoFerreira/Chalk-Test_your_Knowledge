@@ -11,7 +11,11 @@ import {
 } from "../../../objects/Exercise/Exercise";
 import { exampleTest } from "../Preview/PreviewTest";
 import { Answer } from "../../../objects/Answer/Answer";
-import { Rubric, StardardLevels } from "../../../objects/Rubric/Rubric";
+import {
+  Rubric,
+  RubricContext,
+  StardardLevels,
+} from "../../../objects/Rubric/Rubric";
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 import { LuGhost } from "react-icons/lu";
 
@@ -554,7 +558,10 @@ function renderSolution(resolutions: Resolutions, exid: string) {
     return (
       <>
         {exid in resolutions && resolutions[exid].rubric ? (
-          Rubric("PREVIEW", resolutions[exid].rubric!)
+          <Rubric
+            context={RubricContext.PREVIEW}
+            rubric={resolutions[exid].rubric!}
+          />
         ) : (
           <div className="flex h-max items-center justify-center">
             <div className="flex flex-col items-center space-y-4">

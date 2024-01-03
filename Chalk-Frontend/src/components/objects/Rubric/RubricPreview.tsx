@@ -22,7 +22,7 @@ export function RubricPreview(rubric: Rubric) {
                 <Table.Cell className="bg-3-2 font-medium text-black dark:text-white">
                   {criteria.title} ({criteria.points} pts)
                 </Table.Cell>
-                {criteria.standarts.map((standart) => {
+                {criteria.standards.map((standart) => {
                   return (
                     <Table.Cell className="bg-white dark:bg-slate-600 whitespace-nowrap font-medium text-gray-900 dark:text-white">
                       <div className="flex flex-col space-y-1 items-center">
