@@ -3,16 +3,11 @@ import { ImgPos } from "../Exercise/Header/ExHeader";
 import "./EditExercise.css";
 import { EditHeader } from "../Exercise/Header/EditHeader";
 import {
-  ListExerciseActionKind,
-  useListExerciseContext,
-} from "../ListExercises/ListExerciseContext";
-import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
   ExerciseComponent,
   ExerciseContext,
-  ResolutionItem,
   ExerciseHeader,
   ResolutionData,
   TFResolutionData,
@@ -48,7 +43,11 @@ export interface EditAction {
   type: EditActionKind;
   dataString?: string;
   dataImgPos?: ImgPos;
-  dataItem?: ResolutionItem;
+  dataItem?: {
+    text?: string;
+    justification?: string;
+    value?: boolean;
+  };
   dataJK?: ExerciseJustificationKind;
 }
 
@@ -116,10 +115,12 @@ function EditReducer(state: EditState, action: EditAction) {
           newItems[action.dataString!] = {
             text: "",
             justification: "",
+            value: false,
           };
           newSolItems[action.dataString!] = {
             text: "",
             justification: "",
+            value: false,
           };
           return {
             solution: { ...solution, items: newSolItems } as ResolutionData,
@@ -143,8 +144,8 @@ function EditReducer(state: EditState, action: EditAction) {
         let newItems = { ...exercise.props.items };
         let newSolutionItems = { ...newSolution.items };
 
-        newItems[action.dataString!].text = action.dataItem!.text;
-        newSolutionItems[action.dataString!].text = action.dataItem!.text;
+        newItems[action.dataString!].text = action.dataItem!.text!;
+        newSolutionItems[action.dataString!].text = action.dataItem!.text!;
         return {
           exercise: {
             ...exercise,
@@ -160,7 +161,7 @@ function EditReducer(state: EditState, action: EditAction) {
           ...solution,
         } as MCResolutionData;
         let newItems = { ...newSolution.items };
-        newItems[action.dataString!].value = action.dataItem!.value;
+        newItems[action.dataString!].value = action.dataItem!.value!;
         return {
           ...state,
           solution: {
@@ -260,19 +261,18 @@ interface EditState {
 //------------------------------------//
 
 interface EditExerciseProps {
-  exerciseID: string;
-  setExerciseID: (value: string) => void;
-  setEditMenuIsOpen: (value: boolean) => void;
+  position?: string;
+  exercise: Exercise;
+  saveEdit: (state: EditState) => void;
+  cancelEdit: (state: EditState) => void;
 }
 
 export function EditExercise({
-  exerciseID,
-  setExerciseID,
-  setEditMenuIsOpen,
+  position,
+  exercise,
+  saveEdit,
+  cancelEdit,
 }: EditExerciseProps) {
-  const { dispatch, listExerciseState } = useListExerciseContext();
-
-  let exercise = listExerciseState.listExercises[exerciseID];
   let solution = InitResolutionDataEx(exercise);
 
   let initState: EditState = { exercise: exercise, solution: solution };
@@ -285,44 +285,13 @@ export function EditExercise({
           <label className="flex text-title-1">Editar</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => {
-              if (exerciseID === "-1") {
-                // <<< RETIRAR ESTE IF >>>
-                // TEMPORARIO ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                // PARA SE SABER O ID DO NOVO EXERCICIO
-                dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
-                  payload: {
-                    exercise: {
-                      ...state.exercise,
-                      identity: {
-                        ...state.exercise.identity,
-                        id: "novo id 1000",
-                        visibility: state.exercise.identity?.visibility ?? "",
-                        specialistId:
-                          state.exercise.identity?.specialistId ?? "",
-                      },
-                    },
-                  },
-                });
-                // <<< RETIRAR ESTE IF (final)>>>
-              } else {
-                // <<< MANTER >>>
-                dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
-                  payload: { exercise: state.exercise },
-                });
-                // <<< MANTER (final)>>>
-              }
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
+            onClick={() => saveEdit(state)}
           >
             Guardar e fechar
           </button>
         </div>
         <ExerciseComponent
-          position="1"
+          position={position ? position : "1"}
           exercise={state.exercise}
           context={{
             context: ExerciseContext.PREVIEW,
@@ -341,52 +310,13 @@ export function EditExercise({
         <div className="flex gap-2">
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => {
-              if (exerciseID === "-1") {
-                // <<< RETIRAR ESTE IF >>>
-                // TEMPORARIO ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                // PARA SE SABER O ID DO NOVO EXERCICIO
-                dispatch({
-                  type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
-                  payload: {
-                    exercise: {
-                      ...state.exercise,
-                      identity: {
-                        ...state.exercise.identity,
-                        id: "novo id 1000",
-                        visibility: state.exercise.identity?.visibility ?? "",
-                        specialistId:
-                          state.exercise.identity?.specialistId ?? "",
-                      },
-                    },
-                  },
-                });
-                // <<< RETIRAR ESTE IF (final)>>>
-              } else {
-                // <<< MANTER >>>
-                dispatch({
-                  type: ListExerciseActionKind.EDIT_EXERCISE,
-                  payload: { exercise: state.exercise },
-                });
-                // <<< MANTER (final)>>>
-              }
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
+            onClick={() => saveEdit(state)}
           >
             Guardar e fechar
           </button>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => {
-              if (exerciseID === "-1")
-                dispatch({
-                  type: ListExerciseActionKind.REMOVE_EXERCISE,
-                  payload: { selectedExercise: exerciseID },
-                });
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
+            onClick={() => cancelEdit(state)}
           >
             Cancelar
           </button>

@@ -7,7 +7,7 @@ export interface TFPreviewProps {
   context: PreviewProps;
 }
 
-export function TFPreview({ exercise, position, context }: TFPreviewProps) {
+export function TFPreview({ exercise, position }: TFPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />
@@ -39,7 +39,6 @@ function TFShowStatement(props: any) {
           className="radio-green"
           type="radio"
           name={props.name}
-          onChange={() => {}}
           disabled
         ></input>
       </div>
@@ -48,7 +47,6 @@ function TFShowStatement(props: any) {
           className="radio-red"
           type="radio"
           name={props.name}
-          onChange={() => {}}
           disabled
         ></input>
       </div>

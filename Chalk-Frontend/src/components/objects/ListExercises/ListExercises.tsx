@@ -48,13 +48,25 @@ const userExercises: Exercise[] = [
     props: {
       justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
       items: {
-        "1": { text: "Existem 9 canetas roxas ou vermelhas" },
+        "1": {
+          text: "Existem 9 canetas roxas ou vermelhas",
+          justification: "",
+          value: false,
+        },
         "2": {
           text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          justification: "",
+          value: false,
         },
-        "3": { text: "Existem 8 canetas pretas" },
+        "3": {
+          text: "Existem 8 canetas pretas",
+          justification: "",
+          value: false,
+        },
         "4": {
           text: "Existem mais canetas castanhas que amarelas",
+          justification: "",
+          value: false,
         },
       },
     },
@@ -98,13 +110,25 @@ const userExercises: Exercise[] = [
     props: {
       justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
       items: {
-        "1": { text: "Existem 9 canetas roxas ou vermelhas" },
+        "1": {
+          text: "Existem 9 canetas roxas ou vermelhas",
+          justification: "",
+          value: false,
+        },
         "2": {
           text: "Existem tantas canetas pretas ou roxas, quanto vermelhas",
+          justification: "",
+          value: false,
         },
-        "3": { text: "Existem 8 canetas pretas" },
+        "3": {
+          text: "Existem 8 canetas pretas",
+          justification: "",
+          value: false,
+        },
         "4": {
           text: "Existem mais canetas castanhas que amarelas",
+          justification: "",
+          value: false,
         },
       },
     },
@@ -115,6 +139,10 @@ const userExercises: Exercise[] = [
     },
   },
 ];
+
+export function getListExercises() {
+  return userExercises;
+}
 
 interface ListExercisesProps {
   setExerciseID: (value: string) => void;
@@ -138,9 +166,9 @@ export function ListExercises({
     //contactBACK("exercises", "GET", { page: "1", itemsPerPage: "20" });
 
     dispatch({
-      type: ListExerciseActionKind.ADD_EXERCISES,
+      type: ListExerciseActionKind.ADD_LIST_EXERCISES,
       payload: {
-        exercises: userExercises,
+        exercises: getListExercises(),
       },
     });
   }, []);
@@ -164,7 +192,7 @@ export function ListExercises({
             setExerciseID={setExerciseID}
             editMenuIsOpen={editMenuIsOpen}
             setEditMenuIsOpen={setEditMenuIsOpen}
-            selectedExercise={listExerciseState.selectedExercise}
+            selectedExercise={"-1" === listExerciseState.selectedExercise}
             setSelectedExercise={(value) =>
               dispatch({
                 type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
@@ -175,16 +203,16 @@ export function ListExercises({
             }
           ></ShowExercise>
         ) : null}
-        {Object.keys(listExerciseState.listExercises).map((value, index) =>
-          value === "-1" ? null : (
+        {Object.keys(listExerciseState.listExercises).map((key, index) =>
+          key === "-1" ? null : (
             <ShowExercise
               key={index}
               position={(index + 1).toString()}
-              exercise={listExerciseState.listExercises[value]}
+              exercise={listExerciseState.listExercises[key]}
               setExerciseID={setExerciseID}
               editMenuIsOpen={editMenuIsOpen}
               setEditMenuIsOpen={setEditMenuIsOpen}
-              selectedExercise={listExerciseState.selectedExercise}
+              selectedExercise={key === listExerciseState.selectedExercise}
               setSelectedExercise={(value) =>
                 dispatch({
                   type: ListExerciseActionKind.SET_SELECTED_EXERCISE,
@@ -197,26 +225,22 @@ export function ListExercises({
           )
         )}
       </div>
-      <PopUp
-        show={newExercisePopUp}
-        closePopUp={() => setNewExercisePopUp(false)}
-        children={
-          <CreateNewExercisePopUp
-            createNewExercise={(newExerciseType: ExerciseType) => {
-              dispatch({
-                type: ListExerciseActionKind.ADD_NEW_EXERCISE,
-                payload: {
-                  newExerciseType: newExerciseType,
-                },
-              });
-              if (!editMenuIsOpen) {
-                setEditMenuIsOpen(true);
-                setExerciseID("-1");
-              }
-              setNewExercisePopUp(false);
-            }}
-          />
-        }
+      <CreateNewExercisePopUp
+        newExercisePopUp={newExercisePopUp}
+        setNewExercisePopUp={() => setNewExercisePopUp(false)}
+        createNewExercise={(newExerciseType: ExerciseType) => {
+          dispatch({
+            type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
+            payload: {
+              newExerciseType: newExerciseType,
+            },
+          });
+          if (!editMenuIsOpen) {
+            setEditMenuIsOpen(true);
+            setExerciseID("-1");
+          }
+          setNewExercisePopUp(false);
+        }}
       />
     </>
   );

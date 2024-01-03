@@ -32,7 +32,7 @@ interface ExerciseProps {
   setExerciseID: (value: string) => void;
   editMenuIsOpen: boolean;
   setEditMenuIsOpen: (value: boolean) => void;
-  selectedExercise: string;
+  selectedExercise: boolean;
   setSelectedExercise: (value: string) => void;
 }
 
@@ -46,6 +46,7 @@ export function ShowExercise({
   setSelectedExercise,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
+  const [visibility, setVisibility] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
   const { dispatch } = useListExerciseContext();
   const exerciseComponent: ExerciseComponentProps = {
@@ -88,9 +89,7 @@ export function ShowExercise({
       case ExerciseType.CHAT:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <div className="h-full scale-125">
-              <PiChatsBold />
-            </div>
+            <PiChatsBold className="size-4" />
             Chat Question
           </label>
         );
@@ -99,54 +98,57 @@ export function ShowExercise({
     }
   }, [exercise]);
 
-  function getVisibility() {
+  useEffect(() => {
     switch (exercise.identity.visibility) {
       case "private":
-        return (
+        setVisibility(
           <label className="caracteristics-exercise gray-icon">
             <LockIcon size="size-4" />
             Privado
           </label>
         );
+        break;
       case "not-listed":
-        return (
+        setVisibility(
           <label className="caracteristics-exercise gray-icon">
             <LinkIcon size="size-4" />
             Não listado
           </label>
         );
+        break;
       case "course":
-        return (
+        setVisibility(
           <label className="caracteristics-exercise gray-icon">
             <GraduateIcon size="size-4" />
             Curso
           </label>
         );
+        break;
       case "institutional":
-        return (
+        setVisibility(
           <label className="caracteristics-exercise gray-icon">
             <SchoolIcon size="size-4" />
             Institucional
           </label>
         );
+        break;
       case "public":
-        return (
+        setVisibility(
           <label className="caracteristics-exercise gray-icon">
             <WorldSearchIcon size="size-4" />
             Público
           </label>
         );
+        break;
       default:
         break;
     }
-  }
+  }, [exercise]);
 
   return (
     <div
       className={`${
-        exercise.identity.id === selectedExercise
-          ? "max-h-full"
-          : "max-h-[78px]"
+        selectedExercise ? "max-h-full" : "max-h-[78px]"
       } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
@@ -154,7 +156,7 @@ export function ShowExercise({
           <button
             className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
             onClick={() =>
-              exercise.identity.id === selectedExercise
+              selectedExercise
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
@@ -163,9 +165,7 @@ export function ShowExercise({
               {exercise.base.title}
             </label>
             <div
-              className={`${
-                exercise.identity.id === selectedExercise ? "hidden" : "flex"
-              } ml-1 gap-2`}
+              className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
             >
               <div className="bg-yellow-600 tag-exercise">Matemática</div>
               <div className="bg-blue-600 tag-exercise">4º ano</div>
@@ -175,18 +175,18 @@ export function ShowExercise({
           </button>
           <button
             className={`${
-              exercise.identity.id === selectedExercise
+              selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
             } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
             onClick={() =>
-              exercise.identity.id === selectedExercise
+              selectedExercise
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
             <div className="flex flex-col justify-center">
-              {getVisibility()}
+              {visibility}
               {typeLabel}
             </div>
           </button>
@@ -223,7 +223,7 @@ export function ShowExercise({
         </div>
         <div
           className={`${
-            exercise.identity.id != selectedExercise ? "hidden" : "flex"
+            !selectedExercise ? "hidden" : "flex"
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
         >
           <div className="bg-yellow-600 tag-exercise">Matemática</div>
@@ -240,7 +240,7 @@ export function ShowExercise({
         </div>
         <div
           className={`${
-            exercise.identity.id != selectedExercise ? "scale-y-0" : ""
+            !selectedExercise ? "scale-y-0" : ""
           } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1`}
         >
           {preview}

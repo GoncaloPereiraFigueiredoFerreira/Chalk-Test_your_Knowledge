@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   CreateEditProps,
-  Exercise,
   ExerciseJustificationKind,
   ExerciseType,
   MCExercise,
@@ -17,7 +16,7 @@ interface MCEditProps {
 
 export function MCEdit({ context, exercise }: MCEditProps) {
   const [openJustificationkind, setOpenJustificationkind] = useState(
-    exercise.props.justifyType != ExerciseJustificationKind.NO_JUSTIFICATION
+    exercise.props.justifyType !== ExerciseJustificationKind.NO_JUSTIFICATION
   );
 
   return (
@@ -93,8 +92,8 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           <DropdownBlock
             options={[
               ExerciseJustificationKind.JUSTIFY_ALL,
-              ExerciseJustificationKind.JUSTIFY_FALSE,
-              ExerciseJustificationKind.JUSTIFY_TRUE,
+              ExerciseJustificationKind.JUSTIFY_MARKED,
+              ExerciseJustificationKind.JUSTIFY_UNMARKED,
             ]}
             text="Posição"
             chosenOption={exercise.props.justifyType}
@@ -144,7 +143,9 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
               dispatch({
                 type: EditActionKind.CHANGE_ITEM_TEXT,
                 dataString: id,
-                dataItem: { text: e.target.value, justification: "" },
+                dataItem: {
+                  text: e.target.value,
+                },
               })
             }
             value={solutionItem.text}

@@ -1,5 +1,3 @@
-import "./SVGImages.css";
-
 interface IconProps {
   style?: string;
   size?: string;

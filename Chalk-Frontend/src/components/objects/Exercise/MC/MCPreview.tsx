@@ -1,9 +1,4 @@
-import { useState } from "react";
-import {
-  ExerciseJustificationKind,
-  MCExercise,
-  PreviewProps,
-} from "../Exercise";
+import { MCExercise, PreviewProps } from "../Exercise";
 import { ExerciseHeaderComp } from "../Header/ExHeader";
 
 export interface MCPreviewProps {
@@ -12,8 +7,7 @@ export interface MCPreviewProps {
   context: PreviewProps;
 }
 
-export function MCPreview({ exercise, position, context }: MCPreviewProps) {
-  const [chosenOption, setChosenOption] = useState("");
+export function MCPreview({ exercise, position }: MCPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement}></ExerciseHeaderComp>
@@ -32,7 +26,6 @@ export function MCPreview({ exercise, position, context }: MCPreviewProps) {
                 name={"mc" + exercise.identity?.id + position}
                 type="radio"
                 className="radio-blue mr-3"
-                onChange={() => setChosenOption(index)}
                 disabled
               ></input>
               {value.text}

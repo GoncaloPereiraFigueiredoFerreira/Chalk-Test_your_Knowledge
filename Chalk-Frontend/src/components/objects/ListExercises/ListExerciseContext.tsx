@@ -1,23 +1,46 @@
-import { useContext, createContext, useReducer } from "react";
+import { useContext, createContext } from "react";
 import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
+
+//------------------------------------//
+//                                    //
+//      ListExerciseStateReducer      //
+//                                    //
+//------------------------------------//
 
 // Type of actions allowed on the state
 export enum ListExerciseActionKind {
-  ADD_EXERCISES = "ADD_EXERCISES",
-  ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE",
-  EDIT_EXERCISE = "EDIT_EXERCISE",
+  ADD_LIST_EXERCISES = "ADD_LIST_EXERCISES",
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE",
+  EDIT_EXERCISE = "EDIT_EXERCISE",
+  ADD_EXERCISE = "ADD_EXERCISE",
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   SET_SELECTED_EXERCISE = "SET_SELECTED_EXERCISE",
 }
 
+// ListExerciseAction Definition
+export interface ListExerciseAction {
+  type: ListExerciseActionKind;
+  payload?: {
+    exercises?: Exercise[];
+    exercise?: Exercise;
+    selectedExercise?: string;
+    newExerciseType?: ExerciseType;
+  };
+}
+
+// ListExerciseState definition
+export interface ListExerciseState {
+  listExercises: { [key: string]: Exercise };
+  selectedExercise: string;
+}
+
 // Takes the current ListExerciseState and an action to update the ListExerciseState
-function ListExerciseStateReducer(
+export function ListExerciseStateReducer(
   listExerciseState: ListExerciseState,
   action: ListExerciseAction
 ) {
   switch (action.type) {
-    case ListExerciseActionKind.ADD_EXERCISES:
+    case ListExerciseActionKind.ADD_LIST_EXERCISES:
       if (action.payload)
         if (action.payload.exercises) {
           let newListExercises = { ...listExerciseState.listExercises };
@@ -28,7 +51,7 @@ function ListExerciseStateReducer(
         } else throw new Error("No data provided in action.payload.exercises");
       else throw new Error("No data provided in action.payload");
 
-    case ListExerciseActionKind.ADD_NEW_EXERCISE:
+    case ListExerciseActionKind.CREATE_NEW_EXERCISE:
       if (action.payload)
         if (action.payload.newExerciseType) {
           let newExercise: Exercise = InitExercise(
@@ -36,7 +59,7 @@ function ListExerciseStateReducer(
           );
           let newListExercises = {
             ...listExerciseState.listExercises,
-            "-1": newExercise,
+            ["-1" as string]: newExercise,
           };
           return {
             ...listExerciseState,
@@ -49,7 +72,7 @@ function ListExerciseStateReducer(
           );
       else throw new Error("No data provided in action.payload");
 
-    case ListExerciseActionKind.CREATE_NEW_EXERCISE:
+    case ListExerciseActionKind.ADD_EXERCISE:
       if (action.payload)
         if (action.payload.exercise) {
           let { ["-1"]: removedItem, ...cleanListExercises } =
@@ -115,26 +138,16 @@ function ListExerciseStateReducer(
       else throw new Error("No data provided in action.payload");
 
     default:
-      throw new Error("Unknown action");
+      alert("Unknown action");
+      return listExerciseState;
   }
 }
 
-// ListExerciseAction Definition
-export interface ListExerciseAction {
-  type: ListExerciseActionKind;
-  payload?: {
-    exercises?: Exercise[];
-    exercise?: Exercise;
-    selectedExercise?: string;
-    newExerciseType?: ExerciseType;
-  };
-}
-
-// ListExerciseState definition
-export interface ListExerciseState {
-  listExercises: { [key: string]: Exercise };
-  selectedExercise: string;
-}
+//------------------------------------//
+//                                    //
+//        ListExerciseContext         //
+//                                    //
+//------------------------------------//
 
 // ListExerciseContext definition
 export const ListExerciseContext = createContext<
@@ -145,32 +158,11 @@ export const ListExerciseContext = createContext<
   | undefined
 >(undefined);
 
-interface ListExerciseProviderProps {
-  children: any;
-  listExercises?: { [key: string]: Exercise };
-}
-
-// Exports the ListExerciseProvider component that creates a context of type ListExerciseContext
-export function ListExerciseProvider({
-  children,
-  listExercises,
-}: ListExerciseProviderProps) {
-  const inicialState = {
-    listExercises: listExercises ? listExercises : {},
-    selectedExercise: "",
-  };
-
-  const [listExerciseState, dispatch] = useReducer(
-    ListExerciseStateReducer,
-    inicialState
-  );
-
-  return (
-    <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
-      {children}
-    </ListExerciseContext.Provider>
-  );
-}
+//------------------------------------//
+//                                    //
+//      useListExerciseContext        //
+//                                    //
+//------------------------------------//
 
 // Exports function useListExerciseContext that allows you to access the contents of a ListExerciseContext if the context has already been defined
 export function useListExerciseContext() {
