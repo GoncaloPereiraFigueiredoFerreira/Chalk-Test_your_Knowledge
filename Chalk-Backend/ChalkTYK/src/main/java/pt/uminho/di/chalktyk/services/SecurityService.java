@@ -44,8 +44,12 @@ public class SecurityService implements ISecurityService{
 
     private JWT parseJWT(String jwtToken) throws UnauthorizedException {
         try {
-            return new JWT(jwtToken);
-        } catch (JwtException | ParseException e) {
+            JWT jwt = new JWT(jwtToken);
+            // converts the email to a user id, and saves it in the JWT instance
+            String email = (String) jwt.getPayloadParam("username");
+            jwt.setUserId(usersService.getUserIdByEmail(email));
+            return jwt;
+        } catch (JwtException | ParseException | NotFoundException e) {
             throw new UnauthorizedException("Invalid token.");
         }
     }
@@ -59,10 +63,6 @@ public class SecurityService implements ISecurityService{
         }
     }
 
-    private String getUserIdFromJWT(JWT jwt){
-        return (String) jwt.getPayloadParam("username");
-    }
-
     /**
      * Checks if user is logged in. If the user is logged in but the token expired, updates the token.
      * @param jwt JWT Token
@@ -70,7 +70,7 @@ public class SecurityService implements ISecurityService{
      * @throws UnauthorizedException if the user does not exist, of if the user already is logged in with a valid
      */
     private String checkAndUpdateLogin(JWT jwt) throws UnauthorizedException{
-        String userId = getUserIdFromJWT(jwt);
+        String userId = jwt.getUserId();
         Login login = loginDao.findById(userId).orElse(null);
 
         // If the user is not logged in, then a log in operation should be performed first, before using the token,
@@ -105,23 +105,12 @@ public class SecurityService implements ISecurityService{
     }
 
     @Override
-    public String getUserId(JWT jwtToken) {
-        return jwtToken != null ? (String) jwtToken.getPayloadParam("username") : null;
-    }
-
-    @Override
-    public String getUserRole(JWT jwtToken) {
-        return jwtToken != null ? (String) jwtToken.getPayloadParam("role") : null;
-
-    }
-
-    @Override
     @Transactional
     public User login(String jwtToken) throws UnauthorizedException, NotFoundException {
         if(blackListedJWTDao.existsById(jwtToken))
             throw new UnauthorizedException("Authentication token is blacklisted.");
         JWT jwt = parseJWT(jwtToken);
-        String userId = getUserIdFromJWT(jwt);
+        String userId = jwt.getUserId();
         User user = usersService.getUserById(userId);
         Login login = loginDao.findById(userId).orElse(null);
 

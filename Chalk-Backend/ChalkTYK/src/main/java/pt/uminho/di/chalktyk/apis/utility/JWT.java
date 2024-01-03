@@ -14,10 +14,12 @@ import org.apache.tomcat.util.json.ParseException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 @Getter
+@Setter
 public class JWT {
     private final LinkedHashMap<String, Object> header;
     private final LinkedHashMap<String, Object> payload;
     private final String jwsString;
+    private String userId;
     public JWT(String jws) throws JwtException, ParseException {
         this.jwsString = jws;
 
@@ -46,14 +48,6 @@ public class JWT {
 
     public Object getPayloadParam(String key){
         return payload.get(key);
-    }
-
-    /**
-     * Extracts the user id from the token.
-     * @return user id
-     */
-    public String getUserId() {
-        return (String) getPayloadParam("username");
     }
 
     /**

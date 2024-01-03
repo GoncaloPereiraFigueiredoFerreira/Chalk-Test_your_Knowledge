@@ -46,7 +46,7 @@ public class UsersApiController implements UsersApi {
             JWT jwt = securityService.validateJWT(authToken);
             if(userId == null)
                 throw new BadInputException("There is no user with a 'null' identifier.");
-            if(!userId.equals(securityService.getUserId(jwt)))
+            if(!userId.equals(jwt.getUserId()))
                 throw new UnauthorizedException("The user is not allowed to check another user's information.");
             userId = jwt.getUserId();
             return ResponseEntity.ok(usersService.getUserById(userId));

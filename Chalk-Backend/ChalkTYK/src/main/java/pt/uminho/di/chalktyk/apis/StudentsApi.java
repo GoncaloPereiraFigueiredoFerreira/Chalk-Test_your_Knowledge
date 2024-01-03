@@ -17,7 +17,8 @@ import pt.uminho.di.chalktyk.models.users.Student;
 public interface StudentsApi {
     /**
      * Creates a student.
-     * @param student student properties
+     *
+     * @param student  student properties
      * @return identifier of the new student
      */
     @Operation(summary = "Create student", description = "This method is used to create a student.", tags={ "student" })
