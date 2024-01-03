@@ -20,11 +20,11 @@ import java.util.Set;
 @Setter
 @JsonTypeName("MC")
 public class MultipleChoiceData extends ExerciseResolutionData implements Serializable {
-	private Map<Integer, MultipleChoiceResolutionItem> items;
+	private Map<String, MultipleChoiceResolutionItem> items;
 
 	@Override
 	public void verifyInsertProperties() throws BadInputException {
-		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry: items.entrySet()){
+		for(Map.Entry<String, MultipleChoiceResolutionItem> entry: items.entrySet()){
 			MultipleChoiceResolutionItem item = entry.getValue();
 			if(item == null)
 				throw new BadInputException("Multiple choice resolution item cannot be null.");
@@ -38,7 +38,7 @@ public class MultipleChoiceData extends ExerciseResolutionData implements Serial
 			return false;
 		if(multipleChoiceData.getItems().size()!=items.size())
 			return false;
-		for (Integer key:items.keySet()){
+		for (String key:items.keySet()){
 			if(!items.get(key).equals(multipleChoiceData.getItems().get(key)))
 				return false;
 		}
@@ -47,23 +47,23 @@ public class MultipleChoiceData extends ExerciseResolutionData implements Serial
 
 	@Override
 	public ExerciseResolutionData clone() {
-		Map<Integer, MultipleChoiceResolutionItem> itemsCloned = new HashMap<>();
-		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry : items.entrySet())
+		Map<String, MultipleChoiceResolutionItem> itemsCloned = new HashMap<>();
+		for(Map.Entry<String, MultipleChoiceResolutionItem> entry : items.entrySet())
 			itemsCloned.put(entry.getKey(), entry.getValue().clone());
 		return new MultipleChoiceData(itemsCloned);
 	}
 
 	@JsonIgnore
-	public Set<Integer> getIds(){
+	public Set<String> getIds(){
 		return items != null ? items.keySet() : null;
 	}
 
 	@JsonIgnore
-	public MultipleChoiceResolutionItem getItemById(int id){
+	public MultipleChoiceResolutionItem getItemById(String id){
 		return items != null ? items.get(id) : null;
 	}
 
-	public void putItem(int id, MultipleChoiceResolutionItem item){
+	public void putItem(String id, MultipleChoiceResolutionItem item){
 		if(items == null)
 			items = new HashMap<>();
 		items.put(id, item);

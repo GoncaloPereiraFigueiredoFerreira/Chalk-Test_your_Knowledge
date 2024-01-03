@@ -129,11 +129,13 @@ public class ExercisesService implements IExercisesService{
 
         // Check if tags are valid
         Set<Tag> tags = new HashSet<>();
-        for (String id : tagsIds) {
-            Tag tag = iTagsService.getTagById(id);
-            if (tag == null)
-                throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
-            tags.add(tag);
+        if(tagsIds != null) {
+            for (String id : tagsIds) {
+                Tag tag = iTagsService.getTagById(id);
+                if (tag == null)
+                    throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
+                tags.add(tag);
+            }
         }
         exercise.setTags(tags);
 

@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.multiple_choice;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsMap;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
@@ -33,7 +34,12 @@ public class MultipleChoiceExercise extends Exercise {
 
 	@Type(JsonBinaryType.class)
 	@Column(name = "items", columnDefinition = "jsonb")
-	private Map<Integer, Item> items;
+	private ItemsMap items;
+
+	public MultipleChoiceExercise(Mctype mctype, Map<String, Item> items) {
+		this.mctype = mctype;
+		this.items = new ItemsMap(items);
+	}
 
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
@@ -91,8 +97,8 @@ public class MultipleChoiceExercise extends Exercise {
 
 		float points = 0.0f;
 
-		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry : solutionData.getItems().entrySet()){
-			Integer id = entry.getKey();
+		for(Map.Entry<String, MultipleChoiceResolutionItem> entry : solutionData.getItems().entrySet()){
+			String id = entry.getKey();
 			MultipleChoiceResolutionItem solutionItem = entry.getValue();
 			MultipleChoiceResolutionItem resolutionItem = resolutionData.getItemById(id);
 
@@ -126,7 +132,7 @@ public class MultipleChoiceExercise extends Exercise {
 	@Override
 	public void verifyInsertProperties() throws BadInputException {
 		super.verifyInsertProperties();
-		for (Map.Entry<Integer, Item> entry : items.entrySet()) {
+		for (Map.Entry<String, Item> entry : items.entrySet()) {
 			Item item = entry.getValue();
 			if(item == null)
 				throw new BadInputException("Multiple choice cannot have null items.");
@@ -148,8 +154,8 @@ public class MultipleChoiceExercise extends Exercise {
 			throw new BadInputException("Exercise is not of the same type.");
 		_copyExerciseDataOnlyTo(mce);
 		mce.mctype = mctype;
-		mce.items = new HashMap<>();
-		for(Map.Entry<Integer, Item> entry : items.entrySet())
+		mce.items = new ItemsMap();
+		for(Map.Entry<String, Item> entry : items.entrySet())
 			mce.items.put(entry.getKey(), entry.getValue().clone());
 	}
 

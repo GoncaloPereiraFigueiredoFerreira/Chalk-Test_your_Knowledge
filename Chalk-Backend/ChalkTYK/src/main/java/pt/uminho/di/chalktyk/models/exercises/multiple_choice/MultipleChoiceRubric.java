@@ -44,9 +44,9 @@ public class MultipleChoiceRubric extends ExerciseRubric{
 
 	@Type(JsonBinaryType.class)
 	@Column(name = "JustificationsRubrics", columnDefinition = "jsonb")
-	private Map<Integer, OpenAnswerRubric> justificationsRubrics;
+	private Map<String, OpenAnswerRubric> justificationsRubrics;
 
-	public MultipleChoiceRubric(String id, Float penalty, Map<Integer, OpenAnswerRubric> justificationsRubrics) {
+	public MultipleChoiceRubric(String id, Float penalty, Map<String, OpenAnswerRubric> justificationsRubrics) {
 		super(id);
 		this.penalty = penalty;
 		this.justificationsRubrics = justificationsRubrics;
@@ -68,8 +68,8 @@ public class MultipleChoiceRubric extends ExerciseRubric{
 			return false;
 		if(multipleChoiceRubric.getJustificationsRubrics().size()!=justificationsRubrics.size())
 			return false;
-		for (int i=0;i<justificationsRubrics.size();i++){
-			if(!justificationsRubrics.get(i).equals(multipleChoiceRubric.getJustificationsRubrics().get(i)))
+		for (var jr : justificationsRubrics.keySet()){
+			if(!justificationsRubrics.get(jr).equals(multipleChoiceRubric.getJustificationsRubrics().get(jr)))
 				return false;
 		}
 		if(!(Objects.equals(multipleChoiceRubric.getPenalty(), penalty)))
@@ -79,8 +79,8 @@ public class MultipleChoiceRubric extends ExerciseRubric{
 
 	@Override
 	public ExerciseRubric clone() {
-		Map<Integer, OpenAnswerRubric> jrCloned = new HashMap<>();
-		for(Map.Entry<Integer, OpenAnswerRubric> entry : justificationsRubrics.entrySet())
+		Map<String, OpenAnswerRubric> jrCloned = new HashMap<>();
+		for(Map.Entry<String, OpenAnswerRubric> entry : justificationsRubrics.entrySet())
 			jrCloned.put(entry.getKey(), entry.getValue().clone());
 		return new MultipleChoiceRubric(getId(), penalty, jrCloned);
 	}

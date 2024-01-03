@@ -134,10 +134,10 @@ public class ExercisesServiceTest {
 
 
     private MultipleChoiceExercise createMCExercise(String specialistId, String courseId){
-        HashMap<Integer, Item> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,new StringItem("Là"));
-        itemResolutions.put(2,new StringItem("Ali"));
-        itemResolutions.put(3,new StringItem("There"));
+        HashMap<String, Item> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",new StringItem("Là"));
+        itemResolutions.put("2",new StringItem("Ali"));
+        itemResolutions.put("3",new StringItem("There"));
 
 
 
@@ -155,10 +155,10 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutions);
         return new ExerciseSolution(null,multipleChoiceData);
     }
@@ -167,10 +167,10 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
@@ -178,10 +178,10 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,true);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
@@ -189,18 +189,18 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
     private ExerciseRubric createMCRubric(){
-        HashMap<Integer,OpenAnswerRubric> mcRubricMap = new HashMap<>();
-        mcRubricMap.put(1,createOARubric());
-        mcRubricMap.put(2,createOARubric());
-        mcRubricMap.put(3,createOARubric());
+        HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
+        mcRubricMap.put("1",createOARubric());
+        mcRubricMap.put("2",createOARubric());
+        mcRubricMap.put("3",createOARubric());
         return new MultipleChoiceRubric(0.0F,mcRubricMap);
     }
 
@@ -311,11 +311,26 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createDuplicate() throws BadInputException, NotFoundException {
+    public void createDuplicateFTB() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         Exercise exercise = createFTBExercise(specialistId,courseId);
         String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
+        String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
+        assertTrue(exercisesService.exerciseExists(duplicateId));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+    }
+
+    @Test
+    public void createDuplicateMC() throws BadInputException, NotFoundException {
+        ExerciseSolution exerciseSolution = createMCSolution();
+        ExerciseRubric exerciseRubric = createMCRubric();
+        Exercise exercise = createMCExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
+
+        entityManager.flush();
+        entityManager.clear();
+
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));

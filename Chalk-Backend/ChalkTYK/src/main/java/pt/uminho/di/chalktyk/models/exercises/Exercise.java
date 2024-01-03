@@ -27,7 +27,7 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @Getter
 @Setter
 @DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "Type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
 		@JsonSubTypes.Type(name = "MC", value = MultipleChoiceExercise.class),
 		@JsonSubTypes.Type(name = "OA", value = OpenAnswerExercise.class),

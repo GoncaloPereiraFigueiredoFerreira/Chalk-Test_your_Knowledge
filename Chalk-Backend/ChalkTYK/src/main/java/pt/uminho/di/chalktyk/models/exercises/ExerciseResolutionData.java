@@ -9,7 +9,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.io.Serializable;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "Type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "MC", value = MultipleChoiceData.class),
         @JsonSubTypes.Type(name = "OA", value = OpenAnswerData.class),

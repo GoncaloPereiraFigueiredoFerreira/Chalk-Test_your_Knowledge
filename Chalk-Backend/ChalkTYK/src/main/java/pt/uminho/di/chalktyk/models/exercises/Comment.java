@@ -3,19 +3,25 @@ package pt.uminho.di.chalktyk.models.exercises;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
-	private List<Item> items;
+	private ItemsList items;
+
+	public Comment(List<Item> items) {
+		this.items = new ItemsList(items);
+	}
 
 	/**
 	 * Adds item to the list.
@@ -24,7 +30,7 @@ public class Comment {
 	public void addItem(Item item){
 		if(item != null){
 			if(items == null)
-				items = new ArrayList<>();
+				items = new ItemsList();
 			items.add(item);
 		}
 	}
@@ -44,7 +50,7 @@ public class Comment {
 		if(items == null)
 			return new Comment();
 		else
-			return new Comment(items.stream().map(Item::clone).toList());
+			return new Comment(items.stream().map(Item::clone).collect(Collectors.toCollection(ItemsList::new)));
 	}
 
 	@Override

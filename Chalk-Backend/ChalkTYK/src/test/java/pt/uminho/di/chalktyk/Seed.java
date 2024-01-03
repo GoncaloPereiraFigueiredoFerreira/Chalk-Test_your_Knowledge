@@ -197,19 +197,19 @@ public class Seed {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutions);
         return new ExerciseSolution(null,multipleChoiceData);
     }
 
     private ExerciseRubric createMCRubric(){
-        HashMap<Integer,OpenAnswerRubric> mcRubricMap = new HashMap<>();
-        mcRubricMap.put(1,createOARubric());
-        mcRubricMap.put(2,createOARubric());
-        mcRubricMap.put(3,createOARubric());
+        HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
+        mcRubricMap.put("1",createOARubric());
+        mcRubricMap.put("2",createOARubric());
+        mcRubricMap.put("3",createOARubric());
 
         return new MultipleChoiceRubric(0.0F, mcRubricMap);
     }
@@ -222,10 +222,10 @@ public class Seed {
     }
 
     private MultipleChoiceExercise createMCExercise(Specialist specialist, Course course, Tag tag){
-        HashMap<Integer,Item> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,new StringItem("Là"));
-        itemResolutions.put(2,new StringItem("Ali"));
-        itemResolutions.put(3,new StringItem("There"));
+        HashMap<String,Item> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",new StringItem("Là"));
+        itemResolutions.put("2",new StringItem("Ali"));
+        itemResolutions.put("3",new StringItem("There"));
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION, itemResolutions);
         exercise.setStatement(new ExerciseStatement("Donde está la biblioteca","",""));
