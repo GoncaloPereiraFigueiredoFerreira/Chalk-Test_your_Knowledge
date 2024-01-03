@@ -38,7 +38,7 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
             "SELECT e1.id FROM Exercise e1 " +
             "JOIN e1.tags t WHERE " +
             "t.id IN :tagIDS GROUP BY e1 HAVING COUNT(t.id) = :sizeTagIDS and " +
-            " (:visibilityType is null or e.visibility = :visibilityType) and" +
+            " ((:visibilityType is null and e.visibility != 'TEST') or e.visibility = :visibilityType) and" +
             " (:institutionId is null or e.institution.name=:institutionId) and" +
             " (:courseId is null or e.course.id=:courseId) and" +
             " (:specialistID is null or e.specialist.id=:specialistID) and" +
@@ -57,7 +57,7 @@ public interface ExerciseDAO extends JpaRepository<Exercise, String> {
     @EntityGraph(attributePaths = "tags", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT e FROM Exercise e WHERE " +
             "(:tagIDS is null or e.id IN (SELECT e1.id FROM Exercise e1 JOIN e1.tags t WHERE t.id IN :tagIDS)) and " +
-            " (:visibilityType is null or e.visibility = :visibilityType) and" +
+            " ((:visibilityType is null and e.visibility != 'TEST') or e.visibility = :visibilityType) and" +
             " (:institutionId is null or e.institution.name=:institutionId) and" +
             " (:courseId is null or e.course.id=:courseId) and" +
             " (:specialistID is null or e.specialist.id=:specialistID) and" +
