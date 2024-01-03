@@ -176,7 +176,9 @@ public class TestsService implements ITestsService {
                 // This allows the exercises to be persisted independently of the test.
                 if (exe instanceof ConcreteExercise ce){
                     Exercise tmp = ce.getExercise();
-                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                    List<String> tagIds = new ArrayList<>();
+                    if (tmp.getTags() != null)
+                        tagIds = tmp.getTags().stream().map(Tag::getId).toList();
                     dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                 }
 
