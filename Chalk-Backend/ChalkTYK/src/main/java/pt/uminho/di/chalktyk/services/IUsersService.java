@@ -21,6 +21,8 @@ public interface IUsersService {
      */
     User getUserByEmail(String email) throws NotFoundException;
 
+    String getUserIdByEmail(String email) throws NotFoundException;
+
     boolean existsUserById(String userId);
 
     /**

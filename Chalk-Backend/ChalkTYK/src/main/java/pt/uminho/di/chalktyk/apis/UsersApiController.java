@@ -32,7 +32,7 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<Void> updateBasicProperties(String authToken, UserUpdateDTO userDTO) {
         try {
             JWT jwt = securityService.validateJWT(authToken);
-            String userId = securityService.getUserId(jwt);
+            String userId = jwt.getUserId();
             usersService.updateBasicProperties(userId, userDTO.getName(), userDTO.getEmail(), userDTO.getPhotoPath(), userDTO.getDescription());
             return ResponseEntity.ok(null);
         } catch (UnauthorizedException | BadInputException | NotFoundException e) {
@@ -48,7 +48,7 @@ public class UsersApiController implements UsersApi {
                 throw new BadInputException("There is no user with a 'null' identifier.");
             if(!userId.equals(securityService.getUserId(jwt)))
                 throw new UnauthorizedException("The user is not allowed to check another user's information.");
-            userId = securityService.getUserId(jwt);
+            userId = jwt.getUserId();
             return ResponseEntity.ok(usersService.getUserById(userId));
         } catch (UnauthorizedException | NotFoundException | BadInputException e) {
             return new ExceptionResponseEntity<User>().createRequest(e);

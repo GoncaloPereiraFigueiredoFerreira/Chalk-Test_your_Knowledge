@@ -41,7 +41,7 @@ public class SpecialistsApiController implements SpecialistsApi{
     public ResponseEntity<Specialist> getSpecialistById(String jwtToken, String specialistId) {
         try {
             JWT jwt = securityService.validateJWT(jwtToken);
-            String userId = securityService.getUserId(jwt);
+            String userId = jwt.getUserId();
             if(specialistId == null)
                 throw new BadInputException("Specialist id is null.");
             if(!specialistId.equals(userId))
@@ -56,7 +56,7 @@ public class SpecialistsApiController implements SpecialistsApi{
     public ResponseEntity<Boolean> existsSpecialistById(String jwtToken, String specialistId) {
         try {
             JWT jwt = securityService.validateJWT(jwtToken);
-            String userId = securityService.getUserId(jwt);
+            String userId = jwt.getUserId();
             if(specialistId == null)
                 throw new BadInputException("Specialist id is null.");
             if(!specialistId.equals(userId))

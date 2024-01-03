@@ -41,6 +41,11 @@ public class UsersService implements IUsersService{
     }
 
     @Override
+    public String getUserIdByEmail(String email) throws NotFoundException {
+        return getUserByEmail(email).getId();
+    }
+
+    @Override
     public boolean existsUserById(String userId) {
         return userDAO.existsById(userId);
     }

@@ -117,12 +117,12 @@ public abstract class Exercise {
 		this.exerciseType = getExerciseType();
 		this.visibility = visibility;
 		this.statement = statement;
-		this.course = course;
-		this.specialist = specialist;
-		this.institution = institution;
+		setCourse(course);
+		setSpecialist(specialist);
+		setInstitution(institution);
 		this.tags = tags;
-		this.solution = solution;
-		this.rubric = rubric;
+		setSolution(solution);
+		setRubric(rubric);
 	}
 
 	public void verifyInsertProperties() throws BadInputException {

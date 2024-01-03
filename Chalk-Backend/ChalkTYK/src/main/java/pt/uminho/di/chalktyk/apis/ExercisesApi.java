@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
 import pt.uminho.di.chalktyk.models.exercises.*;
@@ -33,9 +32,6 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Student;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.List;
 import java.util.Set;
@@ -59,25 +55,6 @@ public interface ExercisesApi {
             value = "/{exerciseId}",
             method = RequestMethod.GET)
     ResponseEntity<Exercise> getExerciseById(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
-            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
-
-    @Operation(summary = "Checks if exercise exists.", description = "", tags={ "exercise" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operation successful.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(oneOf = {
-                                    MultipleChoiceExercise.class,
-                                    OpenAnswerExercise.class,
-                                    FillTheBlanksExercise.class,
-                                    FillTheBlanksOptionsExercise.class
-                            }))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation.")})
-    @RequestMapping(
-            produces = { "application/json" },
-            value = "/{exerciseId}/exists",
-            method = RequestMethod.GET)
-    ResponseEntity<Boolean> exerciseExists(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 
@@ -105,7 +82,7 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/{exerciseId}",
             method = RequestMethod.DELETE)
-    void deleteExerciseById(
+    ResponseEntity<Void> deleteExerciseById(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 
@@ -137,7 +114,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}",
             method = RequestMethod.PUT)
-    void updateAllOnExercise(
+    ResponseEntity<Void> updateAllOnExercise(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody UpdateExerciseDTO updateExerciseDTO);
@@ -154,7 +131,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/body",
             method = RequestMethod.PUT)
-    void updateExerciseBody(
+    ResponseEntity<Void> updateExerciseBody(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -178,7 +155,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/visibility",
             method = RequestMethod.PUT)
-    void updateExerciseVisibility(
+    ResponseEntity<Void> updateExerciseVisibility(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody Visibility visibility);
@@ -195,7 +172,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/rubric",
             method = RequestMethod.PUT)
-    void updateExerciseRubric(
+    ResponseEntity<Void> updateExerciseRubric(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -218,7 +195,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/solution",
             method = RequestMethod.PUT)
-    void updateExerciseSolution(
+    ResponseEntity<Void> updateExerciseSolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -241,7 +218,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/course",
             method = RequestMethod.PUT)
-    void updateExerciseCourse(
+    ResponseEntity<Void> updateExerciseCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String courseId);
@@ -258,7 +235,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/tags",
             method = RequestMethod.PUT)
-    void updateExerciseTags(
+    ResponseEntity<Void> updateExerciseTags(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody List<String> tagsIds);
@@ -294,7 +271,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/rubric",
             method = RequestMethod.POST)
-    void createExerciseRubric(
+    ResponseEntity<Void> createExerciseRubric(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -312,7 +289,7 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/{exerciseId}/rubric",
             method = RequestMethod.DELETE)
-    void deleteExerciseRubric(
+    ResponseEntity<Void> deleteExerciseRubric(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 
@@ -328,7 +305,7 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/{exerciseId}/resolutions/correction",
             method = RequestMethod.PUT)
-    void issueExerciseResolutionsCorrection(
+    ResponseEntity<Void> issueExerciseResolutionsCorrection(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.QUERY, description = "Type of correction. The correction can either " +
@@ -349,7 +326,7 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/resolutions/{resolutionId}/correction",
             method = RequestMethod.PUT)
-    void issueExerciseResolutionCorrection(
+    ResponseEntity<Void> issueExerciseResolutionCorrection(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
             @Parameter(in = ParameterIn.QUERY, description = "Type of correction. The correction can either " +
@@ -389,9 +366,8 @@ public interface ExercisesApi {
     ResponseEntity<List<Pair<Student, ExerciseResolution>>> getExerciseResolutions(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
-            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") Integer itemsPerPage,
-            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") Integer Page,
-            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("latest") boolean latest);
+            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") int page, @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") int itemsPerPage,
+            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "true")) @RequestParam(value = "latest", defaultValue = "true") Boolean latest);
 
     @Operation(summary = "Creates the resolution of an exercise.",
             description = "",
@@ -405,7 +381,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/resolutions",
             method = RequestMethod.POST)
-    void createExerciseResolution(
+    ResponseEntity<Void> createExerciseResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -496,7 +472,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/resolutions/{resolutionId}/comment",
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    void addCommentToExerciseResolution(
+    ResponseEntity<Void> addCommentToExerciseResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
             @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, example = "You should have done something like ...") @RequestBody String comment);
@@ -508,7 +484,7 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise resolution not found.") })
     @RequestMapping(value = "/resolutions/{resolutionId}/comment",
             method = RequestMethod.DELETE)
-    void removeCommentFromExerciseResolution(
+    ResponseEntity<Void> removeCommentFromExerciseResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId);
 
@@ -531,18 +507,9 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise or resolution not found.") })
     @RequestMapping(value = "/resolutions/{resolutionId}",
             method = RequestMethod.DELETE)
-    void deleteExerciseResolutionById(
+    ResponseEntity<Void> deleteExerciseResolutionById(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId);
-
-    /**
-     * Used to set the points of an exercise resolution.
-     * @param resolutionId identifier of the resolution
-     * @param points points to set
-     * @throws NotFoundException if the resolution does not exist
-     * @throws BadInputException if the points exceed the max points for the exercise.
-     */
-    void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException;
 
     @Operation(summary = "To set the points of an exercise resolution manually.", description = "", tags={ "exercise" })
     @ApiResponses(value = {
@@ -582,7 +549,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/solution",
             method = RequestMethod.POST)
-    void createExerciseSolution(
+    ResponseEntity<Void> createExerciseSolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -601,7 +568,7 @@ public interface ExercisesApi {
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
     @RequestMapping(value = "/{exerciseId}/solution",
             method = RequestMethod.DELETE)
-    void deleteExerciseSolution(
+    ResponseEntity<Void> deleteExerciseSolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 

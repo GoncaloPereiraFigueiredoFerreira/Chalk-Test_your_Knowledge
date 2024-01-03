@@ -2,10 +2,7 @@ package pt.uminho.di.chalktyk.models.exercises;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -13,7 +10,6 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class ExerciseResolution {
 	@Id
@@ -42,16 +38,38 @@ public class ExerciseResolution {
 	@JoinColumns(value={ @JoinColumn(name="ExerciseID", referencedColumnName="ID", nullable=false) })
 	private Exercise exercise;
 
+	@Column(name = "ExerciseID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String exerciseId;
+
 	@ManyToOne(targetEntity= Student.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="StudentID", referencedColumnName="ID", nullable=false) })
 	private Student student;
 
-	public String getExerciseId(){
-		return exercise == null ? null : exercise.getId();
+	@Column(name = "StudentID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String studentId;
+
+
+	public ExerciseResolution(String id, Float points, Integer submissionNr, ExerciseResolutionData data, ExerciseResolutionStatus status, Comment comment, Exercise exercise, Student student) {
+		this.id = id;
+		this.points = points;
+		this.submissionNr = submissionNr;
+		this.data = data;
+		this.status = status;
+		this.comment = comment;
+		setExercise(exercise);
+		setStudent(student);
 	}
 
-	public String getStudentId(){
-		return student == null ? null : student.getId();
+	public void setExercise(Exercise exercise) {
+		this.exercise = exercise;
+		this.exerciseId = exercise != null ? exercise.getId() : null;
+	}
+
+	public void setStudent(Student student) {
+		this.student = student;
+		this.studentId = student != null ? student.getId() : null;
 	}
 
 	/**

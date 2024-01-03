@@ -47,4 +47,20 @@ public class JWT {
     public Object getPayloadParam(String key){
         return payload.get(key);
     }
+
+    /**
+     * Extracts the user id from the token.
+     * @return user id
+     */
+    public String getUserId() {
+        return (String) getPayloadParam("username");
+    }
+
+    /**
+     * Extracts the user role from the token.
+     * @return user role
+     */
+    public String getUserRole() {
+        return (String) getPayloadParam("role");
+    }
 }

@@ -570,6 +570,7 @@ public class TestsService implements ITestsService {
 
     // TODO - Para corrigir automaticamente um teste, pode ser necessário a combinacao de AI e a correcao automatica.
     //  Quando isto for invocado, corrigir apenas os que dão para ser corrigidos?
+    // TODO - adicionar aos TestGroups a cotacao para cada resolucao para evitar pedidos à BD desnecessarios.
     @Transactional
     @Override
     public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {

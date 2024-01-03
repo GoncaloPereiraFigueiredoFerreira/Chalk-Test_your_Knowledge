@@ -41,7 +41,7 @@ public class StudentsApiController implements StudentsApi{
     public ResponseEntity<Student> getStudentById(String jwtToken, String studentId) {
         try {
             JWT jwt = securityService.validateJWT(jwtToken);
-            String userId = securityService.getUserId(jwt);
+            String userId = jwt.getUserId();
             if(studentId == null)
                 throw new BadInputException("Student id is null.");
             if(!studentId.equals(userId))
@@ -56,7 +56,7 @@ public class StudentsApiController implements StudentsApi{
     public ResponseEntity<Boolean> existsStudentById(String jwtToken, String studentId) {
         try {
             JWT jwt = securityService.validateJWT(jwtToken);
-            String userId = securityService.getUserId(jwt);
+            String userId = jwt.getUserId();
             if(studentId == null)
                 throw new BadInputException("Student id is null.");
             if(!studentId.equals(userId))
