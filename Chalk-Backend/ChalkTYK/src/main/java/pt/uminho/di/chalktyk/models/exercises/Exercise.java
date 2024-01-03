@@ -59,6 +59,7 @@ public abstract class Exercise {
 	private String exerciseType = getExerciseType();
 
 	@Column(name = "Visibility")
+	@Enumerated(value = EnumType.STRING)
 	private Visibility visibility;
 
 	@Type(JsonBinaryType.class)
