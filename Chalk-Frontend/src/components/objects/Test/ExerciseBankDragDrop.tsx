@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getListExercises } from "../ListExercises/ListExercises";
 import { Exercise } from "../Exercise/Exercise";
-import { DragDropShowExercise } from "./DragDropShowExercise";
+import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
 
 function convertListExercises() {
   let listExercises = {} as { [key: string]: Exercise };
@@ -11,13 +11,23 @@ function convertListExercises() {
   return listExercises;
 }
 
-interface DragDropListExercisesProps {
+interface ExerciseBankDragDropProps {
+  exerciseID: {
+    groupPosition: number;
+    exercisePosition: number;
+  };
+  setExerciseID: (value: {
+    groupPosition: number;
+    exercisePosition: number;
+  }) => void;
   setSelectedMenu: (value: string) => void;
 }
 
-export function DragDropListExercises({
+export function ExerciseBankDragDrop({
+  exerciseID,
+  setExerciseID,
   setSelectedMenu,
-}: DragDropListExercisesProps) {
+}: ExerciseBankDragDropProps) {
   const [listExercises, setListExercises] = useState<{
     [key: string]: Exercise;
   }>({});
@@ -40,13 +50,18 @@ export function DragDropListExercises({
           </button>
         </div>
         {Object.keys(listExercises).map((key, index) => (
-          <DragDropShowExercise
+          <ShowExerciseDragDrop
             key={index}
-            position={(index + 1).toString()}
+            setExerciseID={setExerciseID}
+            selectedMenu={"dd-list-exercises"}
+            setSelectedMenu={setSelectedMenu}
+            listExerciseButtons={true}
+            exercisePosition={index}
+            groupPosition={exerciseID.groupPosition}
             exercise={listExercises[key]}
             selectedExercise={key === selectedExercise}
             setSelectedExercise={(value) => setSelectedExercise(value)}
-          ></DragDropShowExercise>
+          ></ShowExerciseDragDrop>
         ))}
       </div>
     </>

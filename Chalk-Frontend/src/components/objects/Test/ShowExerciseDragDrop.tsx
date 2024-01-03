@@ -7,6 +7,8 @@ import {
   ExerciseType,
 } from "../Exercise/Exercise";
 import { FaArrowRightToBracket } from "react-icons/fa6";
+import { FaPencilAlt } from "react-icons/fa";
+import { HiOutlineTrash } from "react-icons/hi";
 import { PiChatsBold } from "react-icons/pi";
 import {
   CreateTestActionKind,
@@ -23,19 +25,32 @@ import {
   WorldSearchIcon,
 } from "../SVGImages/SVGImages";
 
-interface DragDropShowExerciseProps {
-  position: string;
+interface ShowExerciseDragDropProps {
+  listExerciseButtons: boolean;
+  groupPosition: number;
+  exercisePosition: number;
   exercise: Exercise;
+  setExerciseID: (value: {
+    groupPosition: number;
+    exercisePosition: number;
+  }) => void;
   selectedExercise: boolean;
   setSelectedExercise: (value: string) => void;
+  selectedMenu: string;
+  setSelectedMenu: (value: string) => void;
 }
 
-export function DragDropShowExercise({
-  position,
+export function ShowExerciseDragDrop({
+  listExerciseButtons,
+  groupPosition,
+  exercisePosition,
   exercise,
+  setExerciseID,
   selectedExercise,
   setSelectedExercise,
-}: DragDropShowExerciseProps) {
+  selectedMenu,
+  setSelectedMenu,
+}: ShowExerciseDragDropProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [visibility, setVisibility] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
@@ -43,9 +58,41 @@ export function DragDropShowExercise({
 
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
-    position: position,
+    position: (exercisePosition + 1).toString(),
     context: { context: ExerciseContext.PREVIEW },
   };
+
+  const [value, setValue] = useState(
+    (exercise.identity.cotation ?? 0).toString()
+  );
+  const [changeCotationIsActive, setChangeCotationIsActive] = useState(false);
+
+  function handleChange(value: string) {
+    const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
+    if (result) {
+      let resultStr = result[2].toString();
+      if (resultStr !== "") setValue(resultStr);
+      else setValue("0");
+    }
+  }
+
+  function handleBlur() {
+    setChangeCotationIsActive(false);
+    dispatch({
+      type: CreateTestActionKind.CHANGE_EXERCISE_COTATION,
+      exercise: {
+        groupPosition: groupPosition,
+        exercisePosition: exercisePosition,
+        newCotation: parseFloat(value),
+      },
+    });
+  }
+
+  function handleClick() {
+    setChangeCotationIsActive(true);
+    const inputElement = document.getElementById("cotation");
+    if (inputElement) inputElement.focus();
+  }
 
   useEffect(() => {
     switch (exercise.type) {
@@ -161,9 +208,13 @@ export function DragDropShowExercise({
           </button>
           <button
             className={`${
-              selectedExercise
-                ? "mr-[75px] pr-4 border-r-2"
-                : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
+              listExerciseButtons
+                ? selectedExercise
+                  ? "mr-[75px] pr-4 border-r-2"
+                  : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
+                : selectedExercise
+                ? "mr-[118px] pr-4 border-r-2"
+                : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
             } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
             onClick={() =>
               selectedExercise
@@ -177,23 +228,98 @@ export function DragDropShowExercise({
             </div>
           </button>
           <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
-            <button
-              className="btn-options-exercise gray-icon"
-              onClick={() => {
-                dispatch({
-                  type: CreateTestActionKind.ADD_EXERCISE,
-                  exercise: {
-                    groupPosition: testState.groupPosition,
-                    exercisePosition: testState.exercisePosition,
-                    exercise: exercise,
-                  },
-                });
-              }}
-            >
-              <FaArrowRightToBracket />
-              Adicionar
-            </button>
+            {listExerciseButtons ? (
+              <button
+                className="btn-options-exercise gray-icon"
+                onClick={() => {
+                  setExerciseID({
+                    groupPosition: groupPosition,
+                    exercisePosition:
+                      testState.test.groups[groupPosition].exercises.length,
+                  });
+                  setSelectedExercise(exercise.identity.id);
+                  dispatch({
+                    type: CreateTestActionKind.ADD_EXERCISE,
+                    exercise: {
+                      groupPosition: groupPosition,
+                      exercisePosition:
+                        testState.test.groups[groupPosition].exercises.length,
+                      exercise: exercise,
+                    },
+                  });
+                }}
+              >
+                <FaArrowRightToBracket />
+                Adicionar
+              </button>
+            ) : (
+              <>
+                <button
+                  className="btn-options-exercise gray-icon"
+                  onClick={() => {
+                    setExerciseID({
+                      groupPosition: groupPosition,
+                      exercisePosition: -1,
+                    });
+                    dispatch({
+                      type: CreateTestActionKind.REMOVE_EXERCISE,
+                      exercise: {
+                        groupPosition: groupPosition,
+                        exercisePosition: exercisePosition,
+                      },
+                    });
+                  }}
+                >
+                  <HiOutlineTrash className="size-5" />
+                  Eliminar
+                </button>
+                <button
+                  className="btn-options-exercise gray-icon"
+                  onClick={() => {
+                    if (selectedMenu !== "edit-exercise") {
+                      setSelectedMenu("edit-exercise");
+                      setExerciseID({
+                        groupPosition: groupPosition,
+                        exercisePosition: exercisePosition,
+                      });
+                      dispatch({
+                        type: CreateTestActionKind.SELECT_EXERCISE_POSITION,
+                        exercise: {
+                          groupPosition: groupPosition,
+                          exercisePosition: exercisePosition,
+                        },
+                      });
+                    }
+                  }}
+                >
+                  <FaPencilAlt className="size-5" />
+                  Editar
+                </button>
+              </>
+            )}
           </div>
+
+          {!listExerciseButtons ? (
+            changeCotationIsActive ? (
+              <input
+                id="cotation"
+                className="flex ml-4 w-14 px-2 py-1 rounded-lg bg-input-2"
+                value={value}
+                onChange={(e) => handleChange(e.target.value)}
+                onBlur={() => handleBlur()}
+                autoFocus
+              />
+            ) : (
+              <div
+                className="flex ml-4 min-w-fit rounded-lg appearance-none bg-3-1 bg-input-1"
+                onClick={() => handleClick()}
+              >
+                <p className="flex justify-center text-base min-w-[56px] px-2 py-1">
+                  {value} pts
+                </p>
+              </div>
+            )
+          ) : null}
         </div>
         <div
           className={`${

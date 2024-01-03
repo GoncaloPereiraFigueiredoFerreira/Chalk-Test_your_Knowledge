@@ -3,11 +3,12 @@ import {
   CreateTestActionKind,
   useCreateTestContext,
 } from "./CreateTestContext";
-import { DragDropGroupPreview } from "./DragDropGroupPreview";
+import { GroupDragDrop } from "./GroupDragDrop";
 import { CreateNewExercisePopUp } from "../ListExercises/CreateNewExercisePopUp";
 import { ExerciseType } from "../Exercise/Exercise";
+import { RiAddFill } from "react-icons/ri";
 
-interface EditTestViewProps {
+interface EditTestProps {
   exerciseID: {
     groupPosition: number;
     exercisePosition: number;
@@ -20,12 +21,12 @@ interface EditTestViewProps {
   setSelectedMenu: (value: string) => void;
 }
 
-export function EditTestView({
+export function EditTestDragDrop({
   exerciseID,
   setExerciseID,
   selectedMenu,
   setSelectedMenu,
-}: EditTestViewProps) {
+}: EditTestProps) {
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
   const { testState, dispatch } = useCreateTestContext();
 
@@ -40,56 +41,46 @@ export function EditTestView({
             <label>group:{exerciseID.groupPosition}</label>
             <label>exercise:{exerciseID.exercisePosition}</label>
           </div>
-          <button
-            className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => setSelectedMenu("dd-list-exercises")}
-          >
-            dd-list-exercises
-          </button>
-          <button
-            className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => setSelectedMenu("edit-exercise")}
-          >
-            edit-exercise
-          </button>
-          <button
-            className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => setSelectedMenu("create-exercise")}
-          >
-            create-exercise
-          </button>
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col pb-4 mb-4 gap-4 border-b-2 border-gray-2-2">
         <div className="ml-4 mt-4">
           <h2 className="text-xl">Informações Gerais do Teste:</h2>
-          <div className="text-md ml-4">
-            <h3>
-              <strong>Autor: </strong>
-              {testState.test.author}
-            </h3>
-            <h3>
-              <strong>Cotação máxima do teste: </strong>
-              {testState.test.globalCotation}
-            </h3>
-            <h3>
-              <strong>Instruções do Teste: </strong>
-              {testState.test.globalInstructions}
-            </h3>
+          <div className="grid grid-cols-2 w-fit text-md m-4 gap-4">
+            <strong>Autor: </strong>
+            <p>{testState.test.author}</p>
+            <strong>Cotação máxima do teste: </strong>
+            <p>{testState.test.globalCotation}</p>
+            <strong>Instruções do Teste: </strong>
+            <p>{testState.test.globalInstructions}</p>
           </div>
         </div>
       </div>
-      {testState.test.groups.map((_, index) => (
-        <DragDropGroupPreview
-          key={index}
-          exerciseGroupID={index}
-          exerciseID={exerciseID}
-          setExerciseID={setExerciseID}
-          selectedMenu={selectedMenu}
-          setSelectedMenu={setSelectedMenu}
-          setNewExercisePopUp={(value: number) => setNewExercisePopUp(value)}
-        ></DragDropGroupPreview>
-      ))}
+      <div className="flex flex-col p-2 gap-4">
+        {testState.test.groups.map((_, index) => (
+          <GroupDragDrop
+            key={index}
+            exerciseGroupID={index}
+            exerciseID={exerciseID}
+            setExerciseID={setExerciseID}
+            selectedMenu={selectedMenu}
+            setSelectedMenu={setSelectedMenu}
+            setNewExercisePopUp={(value: number) => setNewExercisePopUp(value)}
+          ></GroupDragDrop>
+        ))}
+        <div
+          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+          onClick={() => {
+            setSelectedMenu("edit-group");
+            dispatch({ type: CreateTestActionKind.ADD_GROUP });
+          }}
+        >
+          <RiAddFill className="group-gray-icon size-8" />
+          <label className="group-gray-icon font-medium text-lg">
+            Novo Grupo
+          </label>
+        </div>
+      </div>
       <CreateNewExercisePopUp
         show={newExercisePopUp != -1}
         closePopUp={() => setNewExercisePopUp(-1)}

@@ -41,7 +41,7 @@ export function ExerciseBankPage() {
           {editMenuIsOpen ? (
             <EditExercise
               exercise={listExerciseState.listExercises[exerciseID]}
-              saveExercise={(state) => {
+              saveEdit={(state) => {
                 if (exerciseID === "-1") {
                   // <<< ALTERAR ESTE IF >>>
                   // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
@@ -73,7 +73,7 @@ export function ExerciseBankPage() {
                 setExerciseID("");
                 setEditMenuIsOpen(false);
               }}
-              cancelEditExercise={() => {
+              cancelEdit={() => {
                 if (exerciseID === "-1")
                   dispatch({
                     type: ListExerciseActionKind.REMOVE_EXERCISE,

@@ -261,15 +261,17 @@ interface EditState {
 //------------------------------------//
 
 interface EditExerciseProps {
+  position?: string;
   exercise: Exercise;
-  saveExercise: (state: EditState) => void;
-  cancelEditExercise: (state: EditState) => void;
+  saveEdit: (state: EditState) => void;
+  cancelEdit: (state: EditState) => void;
 }
 
 export function EditExercise({
+  position,
   exercise,
-  saveExercise,
-  cancelEditExercise,
+  saveEdit,
+  cancelEdit,
 }: EditExerciseProps) {
   let solution = InitResolutionDataEx(exercise);
 
@@ -283,13 +285,13 @@ export function EditExercise({
           <label className="flex text-title-1">Editar</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => saveExercise(state)}
+            onClick={() => saveEdit(state)}
           >
             Guardar e fechar
           </button>
         </div>
         <ExerciseComponent
-          position="1"
+          position={position ? position : "1"}
           exercise={state.exercise}
           context={{
             context: ExerciseContext.PREVIEW,
@@ -308,13 +310,13 @@ export function EditExercise({
         <div className="flex gap-2">
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => saveExercise(state)}
+            onClick={() => saveEdit(state)}
           >
             Guardar e fechar
           </button>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => cancelEditExercise(state)}
+            onClick={() => cancelEdit(state)}
           >
             Cancelar
           </button>

@@ -1,5 +1,5 @@
-import { EditTestView } from "../../objects/Test/EditTestView";
-import { DragDropListExercises } from "../../objects/Test/DragDropListExercises";
+import { EditTestDragDrop } from "../../objects/Test/EditTestDragDrop";
+import { ExerciseBankDragDrop } from "../../objects/Test/ExerciseBankDragDrop";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
 import { useReducer, useState } from "react";
@@ -10,6 +10,7 @@ import {
   CreateTestStateReducer,
 } from "../../objects/Test/CreateTestContext";
 import { InitTest, Test } from "../../objects/Test/Test";
+import { EditGroup } from "../../objects/Test/EditGroup";
 
 interface CreateTestProps {
   test?: Test;
@@ -18,6 +19,7 @@ interface CreateTestProps {
 export function CreateTest({ test }: CreateTestProps) {
   const [selectedMenu, setSelectedMenu] = useState("");
   const [exerciseID, setExerciseID] = useState({
+    // exercicio selecionado atualmente
     groupPosition: 0,
     exercisePosition: 0,
   });
@@ -47,19 +49,21 @@ export function CreateTest({ test }: CreateTestProps) {
           {selectedMenu === "dd-list-exercises" ? (
             <>
               <Searchbar></Searchbar>
-              <DragDropListExercises
+              <ExerciseBankDragDrop
+                exerciseID={exerciseID}
+                setExerciseID={(value) => setExerciseID(value)}
                 setSelectedMenu={(value) => setSelectedMenu(value)}
-              ></DragDropListExercises>
+              ></ExerciseBankDragDrop>
             </>
           ) : null}
         </div>
         <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
-          <EditTestView
+          <EditTestDragDrop
             exerciseID={exerciseID}
             setExerciseID={(value) => setExerciseID(value)}
             selectedMenu={selectedMenu}
             setSelectedMenu={(value) => setSelectedMenu(value)}
-          ></EditTestView>
+          ></EditTestDragDrop>
         </div>
         <div
           className={`${
@@ -72,12 +76,13 @@ export function CreateTest({ test }: CreateTestProps) {
           {selectedMenu === "edit-exercise" ||
           selectedMenu === "create-exercise" ? (
             <EditExercise
+              position={(testState.exercisePosition + 1).toString()}
               exercise={
                 testState.test.groups[testState.groupPosition].exercises[
                   testState.exercisePosition
                 ]
               }
-              saveExercise={(state) => {
+              saveEdit={(state) => {
                 if (selectedMenu === "create-exercise") {
                   // <<< ALTERAR ESTE IF >>>
                   // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
@@ -114,19 +119,38 @@ export function CreateTest({ test }: CreateTestProps) {
                 }
                 setSelectedMenu("");
               }}
-              cancelEditExercise={(state) => {
+              cancelEdit={() => {
                 if (selectedMenu === "create-exercise")
                   dispatch({
                     type: CreateTestActionKind.REMOVE_EXERCISE,
                     exercise: {
                       groupPosition: testState.groupPosition,
                       exercisePosition: testState.exercisePosition,
-                      exerciseID: state.exercise.identity.id,
                     },
                   });
                 setSelectedMenu("");
               }}
             ></EditExercise>
+          ) : null}
+          {selectedMenu === "edit-group" ? (
+            <EditGroup
+              exerciseInstructions={
+                testState.test.groups[testState.groupPosition].groupInstructions
+              }
+              saveEdit={(state) => {
+                dispatch({
+                  type: CreateTestActionKind.EDIT_GROUP,
+                  group: {
+                    groupPosition: testState.groupPosition,
+                    groupInstructions: state,
+                  },
+                });
+                setSelectedMenu("");
+              }}
+              cancelEdit={() => {
+                setSelectedMenu("");
+              }}
+            ></EditGroup>
           ) : null}
         </div>
       </div>

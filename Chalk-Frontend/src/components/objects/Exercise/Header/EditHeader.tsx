@@ -3,6 +3,7 @@ import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { Exercise } from "../Exercise";
 import { useState } from "react";
+import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 
 interface EditHeaderProps {
   dispatch: React.Dispatch<EditAction>;
@@ -24,18 +25,17 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
           >
             Enunciado:
           </label>
-          <textarea
-            id="header"
-            className="header-textarea"
+          <TextareaBlock
+            toolbar={true}
             placeholder="Escreva aqui o enunciado..."
             value={state.base.statement.text}
-            onChange={(e) =>
+            onChange={(value) =>
               dispatch({
                 type: EditActionKind.CHANGE_STATEMENT,
-                dataString: e.target.value,
+                dataString: value,
               })
             }
-          ></textarea>
+          ></TextareaBlock>
         </div>
         <div className="mt-2 mx-3 font-medium">
           <input

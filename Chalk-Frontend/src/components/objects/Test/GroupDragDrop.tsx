@@ -1,9 +1,9 @@
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
-import { DragDropShowExercise } from "./DragDropShowExercise";
+import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
 import { useCreateTestContext } from "./CreateTestContext";
 
-interface DragDropGroupPreviewProps {
+interface GroupDragDropProps {
   exerciseGroupID: number;
   exerciseID: {
     groupPosition: number;
@@ -18,21 +18,28 @@ interface DragDropGroupPreviewProps {
   setNewExercisePopUp: (value: number) => void;
 }
 
-export function DragDropGroupPreview({
+export function GroupDragDrop({
   exerciseGroupID,
   exerciseID,
   setExerciseID,
   selectedMenu,
   setSelectedMenu,
   setNewExercisePopUp,
-}: DragDropGroupPreviewProps) {
-  const { testState, dispatch } = useCreateTestContext();
-  const groupIsSelected = exerciseGroupID === exerciseID.groupPosition;
+}: GroupDragDropProps) {
+  const { testState } = useCreateTestContext();
 
   return (
     <>
       <div className="flex flex-col rounded-lg px-7 py-5 bg-3-1">
-        <div className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 mb-4">
+        <div
+          className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 mb-4"
+          onClick={() =>
+            setExerciseID({
+              groupPosition: exerciseGroupID,
+              exercisePosition: -1,
+            })
+          }
+        >
           <label className="w-full text-xl font-medium">
             Grupo {exerciseGroupID + 1}
           </label>
@@ -47,12 +54,18 @@ export function DragDropGroupPreview({
         <div className="flex flex-col gap-4">
           {testState.test.groups[exerciseGroupID].exercises.map(
             (value, index) => (
-              <DragDropShowExercise
+              <ShowExerciseDragDrop
                 key={index}
-                position={(index + 1).toString()}
+                listExerciseButtons={false}
+                setExerciseID={setExerciseID}
+                exercisePosition={index}
+                groupPosition={exerciseID.groupPosition}
                 exercise={value}
+                selectedMenu={selectedMenu}
+                setSelectedMenu={setSelectedMenu}
                 selectedExercise={
-                  index === exerciseID.exercisePosition && groupIsSelected
+                  index === exerciseID.exercisePosition &&
+                  exerciseGroupID === exerciseID.groupPosition
                 }
                 setSelectedExercise={() => {
                   if (
@@ -69,13 +82,19 @@ export function DragDropGroupPreview({
                       exercisePosition: -1,
                     });
                 }}
-              ></DragDropShowExercise>
+              ></ShowExerciseDragDrop>
             )
           )}
           <div className="flex gap-7 w-full">
             <div
               className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
-              onClick={() => setSelectedMenu("dd-list-exercises")}
+              onClick={() => {
+                setExerciseID({
+                  groupPosition: exerciseGroupID,
+                  exercisePosition: -1,
+                });
+                setSelectedMenu("dd-list-exercises");
+              }}
             >
               <FaPencil className="group-gray-icon size-6" />
               <label className="group-gray-icon font-medium text-lg">
