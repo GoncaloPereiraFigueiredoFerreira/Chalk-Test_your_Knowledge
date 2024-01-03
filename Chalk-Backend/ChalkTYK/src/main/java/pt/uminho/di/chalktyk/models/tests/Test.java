@@ -2,6 +2,9 @@ package pt.uminho.di.chalktyk.models.tests;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
@@ -181,14 +184,15 @@ public class Test implements Serializable {
 
 		if (groups != null){
 			for(TestGroup entryTG: groups){
-				Map<String, String> resolutionGroupAnswers = new HashMap<>();
+				Map<String, Pair<String, Float>> resolutionGroupAnswers = new HashMap<>();
 
 				for(TestExercise entry : entryTG.getExercises()){
 					assert entry != null; // exercise cannot be empty or null
 					String exerciseId = entry.getId();
 					assert exerciseId != null; // exercise id cannot be null
 
-					resolutionGroupAnswers.put(exerciseId, "");
+					Pair<String, Float> pair = new MutablePair<String, Float>("", 0.0F);
+					resolutionGroupAnswers.put(exerciseId, pair);
 				}
 
 				resolutionGroups.add(new TestResolutionGroup(null, resolutionGroupAnswers));

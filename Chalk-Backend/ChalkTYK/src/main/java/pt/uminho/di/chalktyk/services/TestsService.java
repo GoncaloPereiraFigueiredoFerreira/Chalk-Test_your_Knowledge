@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -568,9 +569,8 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    // TODO - Para corrigir automaticamente um teste, pode ser necessário a combinacao de AI e a correcao automatica.
+    //  TODO - Para corrigir automaticamente um teste, pode ser necessário a combinacao de AI e a correcao automatica.
     //  Quando isto for invocado, corrigir apenas os que dão para ser corrigidos?
-    // TODO - adicionar aos TestGroups a cotacao para cada resolucao para evitar pedidos à BD desnecessarios.
     @Transactional
     @Override
     public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
@@ -583,7 +583,8 @@ public class TestsService implements ITestsService {
             for (TestExercise exe: tg.getExercises()){
                 try {
                     exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
-                }catch (Exception ignored){
+                }
+                catch (Exception ignored){
                     // If an exercise can't be corrected, using the chosen correctionType,
                     // it just is not corrected.
                 }
@@ -597,9 +598,10 @@ public class TestsService implements ITestsService {
         for (TestResolution resolution: resolutions){
             for (TestResolutionGroup trg: resolution.getGroups()){
                 Float points = 0.0F;
-                for (Map.Entry<String, String> entry: trg.getResolutions().entrySet()){
-                    if (entry.getValue() != null && !entry.getValue().equals("")){
-                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(entry.getValue());
+                for (Map.Entry<String, Pair<String, Float>> entry: trg.getResolutions().entrySet()){
+                    Pair<String, Float> pair = entry.getValue();
+                    if (!pair.getKey().equals("")){
+                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getKey());
                         if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
                             isRevised = false;
                         points += exeRes.getPoints();
@@ -733,9 +735,10 @@ public class TestsService implements ITestsService {
 
         // delete exercise resolutions
         for (TestResolutionGroup trg: resolution.getGroups()){
-            for (String res: trg.getResolutions().values()){
-                if (res != null && !res.isEmpty())
-                    exercisesService.deleteExerciseResolutionById(res);
+            for (Pair<String, Float> exeResPair: trg.getResolutions().values()){
+                String exeResId = exeResPair.getKey();
+                if (!exeResId.equals(""))
+                    exercisesService.deleteExerciseResolutionById(exeResId);
             }
         }
         resolutionDAO.delete(resolution);
@@ -926,6 +929,7 @@ public class TestsService implements ITestsService {
 
     @Override
 	public void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException {
+        // updating exercise resolution
         ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
         Float oldPoints = er.getPoints();
         er.setStatus(ExerciseResolutionStatus.REVISED);
@@ -940,14 +944,15 @@ public class TestsService implements ITestsService {
         }
         exerciseResolutionDAO.save(er);
 
+        // modifying test resolution
         TestResolution updatedTR = getTestResolutionById(testResId);
         List<TestResolutionGroup> updatedGroups = updatedTR.getGroups();
 
         for(TestResolutionGroup testResolutionGroup: updatedGroups){
-            for (String resolutionId: testResolutionGroup.getResolutions().values()){
-                if(Objects.equals(resolutionId, exeResId)){
-                    //work the difference in points
-                    testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints()+points-oldPoints);
+            for (Pair<String, Float> exeResPair: testResolutionGroup.getResolutions().values()){
+                if(exeResPair.getKey().equals(exeResId)){
+                    // work the difference in points
+                    testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
                 }
             }
         }
@@ -963,11 +968,13 @@ public class TestsService implements ITestsService {
 
         boolean found = false;
         for (TestResolutionGroup trg: testRes.getGroups()){
-            Map<String, String> mapExeRes = trg.getResolutions();
-            for (Map.Entry<String, String> entry: mapExeRes.entrySet()){
-                if (entry.getKey().equals(exeId)){
+            Map<String, Pair<String, Float>> mapExeRes = trg.getResolutions();
+            for (Map.Entry<String, Pair<String, Float>> entry: mapExeRes.entrySet()){
+                Pair<String, Float> exeResPair = entry.getValue();
+                if (exeResPair.getKey().equals(exeId)){
                     ExerciseResolution exeRes = exercisesService.createExerciseResolution(testResId, exeId, resolution.getData());
-                    mapExeRes.put(entry.getKey(), exeRes.getId());
+                    Pair<String, Float> newExeResPair = new MutablePair<String,Float>(exeRes.getId(), exeRes.getPoints());
+                    mapExeRes.put(entry.getKey(), newExeResPair);
                     found = true;
                     break;
                 }
