@@ -58,8 +58,8 @@ public class CoursesApiController implements CoursesApi {
     public ResponseEntity<Void> updateCourse(String courseId, Course body, String jwt) {
         try {
             JWT token = securityService.validateJWT(jwt);
-            String userId = securityService.getUserId(token);
-            String role = securityService.getUserRole(token);
+            String userId = token.getUserId();
+            String role = token.getUserRole();
 
             if (!role.equals("SPECIALIST"))
                 throw new UnauthorizedException("Cannot update course: owner is not a specialist!");
@@ -98,8 +98,8 @@ public class CoursesApiController implements CoursesApi {
     public ResponseEntity<Void> createCourse(Course body, String jwt) {
         try {
             JWT token = securityService.validateJWT(jwt);
-            String userId = securityService.getUserId(token);
-            String role = securityService.getUserRole(token);
+            String userId = token.getUserId();
+            String role = token.getUserRole();
 
             if (!role.equals("SPECIALIST"))
                 throw new UnauthorizedException("Cannot create course: owner is not a specialist!");
