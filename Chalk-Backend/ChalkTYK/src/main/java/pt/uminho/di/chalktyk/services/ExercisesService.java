@@ -319,7 +319,7 @@ public class ExercisesService implements IExercisesService{
         // checks if body is valid and updates it in the case it is valid
         if(newBody != null)
             //if rubric or solution are not null, then they will verify exercise
-            exercise = _updateExerciseBody(exercise, newBody, rubric == null, solution == null);
+            exercise = _updateExerciseBody(exercise, newBody, rubric != null, solution != null);
 
         if(rubric!=null)
             _createExerciseRubric(exercise,rubric); // this method is used to create/update the rubric of an exercise.

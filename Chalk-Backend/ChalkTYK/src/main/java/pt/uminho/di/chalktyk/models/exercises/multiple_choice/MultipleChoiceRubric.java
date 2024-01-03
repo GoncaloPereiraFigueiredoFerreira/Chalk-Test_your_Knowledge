@@ -79,9 +79,12 @@ public class MultipleChoiceRubric extends ExerciseRubric{
 
 	@Override
 	public ExerciseRubric clone() {
-		Map<String, OpenAnswerRubric> jrCloned = new HashMap<>();
-		for(Map.Entry<String, OpenAnswerRubric> entry : justificationsRubrics.entrySet())
-			jrCloned.put(entry.getKey(), entry.getValue().clone());
+		Map<String, OpenAnswerRubric> jrCloned = null;
+		if(justificationsRubrics != null) {
+			jrCloned = new HashMap<>();
+			for (Map.Entry<String, OpenAnswerRubric> entry : justificationsRubrics.entrySet())
+				jrCloned.put(entry.getKey(), entry.getValue().clone());
+		}
 		return new MultipleChoiceRubric(getId(), penalty, jrCloned);
 	}
 }

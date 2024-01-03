@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.chat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ public class ChatExerciseData extends ExerciseResolutionData{
 
     @Override
     public ExerciseResolutionData clone() {
-        return new ChatExerciseData(chat.stream().collect(Collectors.toList()));
+        List<String> chatList = chat != null ? new ArrayList<>(chat) : null;
+        return new ChatExerciseData(chatList);
     }
 }

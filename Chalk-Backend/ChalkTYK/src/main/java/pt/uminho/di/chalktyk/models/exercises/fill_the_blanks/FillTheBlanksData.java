@@ -42,6 +42,7 @@ public class FillTheBlanksData extends ExerciseResolutionData implements Seriali
 
 	@Override
 	public ExerciseResolutionData clone() {
-		return new FillTheBlanksData(new ArrayList<>(fillings));
+		var newFillings = fillings != null ? new ArrayList<>(fillings) : null;
+		return new FillTheBlanksData(newFillings);
 	}
 }

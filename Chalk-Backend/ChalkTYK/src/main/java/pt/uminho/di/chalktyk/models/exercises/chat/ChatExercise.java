@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.chat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,28 +46,27 @@ public class ChatExercise extends Exercise {
 
     @Override
     public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
-        if(!(exerciseResolutionData instanceof ChatExerciseData chatExerciseData)){
+        if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType())) {
             throw new BadInputException("Exercise resolution does not match exercise type (chat exercise)");
         }
+        ChatExerciseData chatExerciseData = (ChatExerciseData) exerciseResolutionData;
         chatExerciseData.verifyInsertProperties();
     }
 
     @Override
     public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
-        if(!(rubric instanceof ChatExerciseRubric chatExerciseRubric)){
+        if(rubric == null || !rubric.getType().equals(this.getExerciseType()))
             throw new BadInputException("Exercise rubric does not match exercise type (chat exercise)");
-        }
-        chatExerciseRubric.verifyProperties();
-
+        rubric.verifyProperties();
     }
 
     @Override
     public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
-        if(!(exercise instanceof ChatExercise chatExercise)){
-            throw new BadInputException("Exercise is not of the same type (chat exercise)");
-        }
+        if(exercise == null || !exercise.getExerciseType().equals(this.getExerciseType()))
+			throw new BadInputException("Exercise is not of the same type.");
+		ChatExercise chatExercise = (ChatExercise) exercise;
         _copyExerciseDataOnlyTo(chatExercise);
-        chatExercise.topics = topics.stream().collect(Collectors.toList());
+        chatExercise.topics = topics != null ? new ArrayList<>(topics) : null;
     }
 
     @Override
