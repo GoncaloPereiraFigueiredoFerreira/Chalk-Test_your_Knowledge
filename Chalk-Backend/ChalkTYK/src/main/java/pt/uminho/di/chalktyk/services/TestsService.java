@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -138,7 +137,7 @@ public class TestsService implements ITestsService {
         // then the test's visibility cannot be set to institution.
         if (visibility == Visibility.INSTITUTION && institution == null)
             throw new BadInputException("Cannot create test: cannot set visibility to INSTITUTION");
-
+ 
         // Check if course is valid
         String courseId = body.getCourseId();
         try {
@@ -180,13 +179,19 @@ public class TestsService implements ITestsService {
                     List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
                     dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                 }
+
                 // Else the exercise is a reference to an existing exercise,
                 // therefore the exercise needs to be duplicated and
                 // a new reference, containing the id of the duplicate,
                 // needs to be created.
-                else {
-                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                else if (exe instanceof ReferenceExercise re) {
+                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, re.getId(), null, Visibility.TEST);
                 }
+
+                else {
+                    break;
+                }
+
                 ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
                 newExes.add(newExe);
                 allNewExesIds.add(dupExerciseId);
@@ -598,10 +603,10 @@ public class TestsService implements ITestsService {
         for (TestResolution resolution: resolutions){
             for (TestResolutionGroup trg: resolution.getGroups()){
                 Float points = 0.0F;
-                for (Map.Entry<String, Pair<String, Float>> entry: trg.getResolutions().entrySet()){
-                    Pair<String, Float> pair = entry.getValue();
-                    if (!pair.getKey().equals("")){
-                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getKey());
+                for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
+                    TestExerciseResolutionBasic pair = entry.getValue();
+                    if (!pair.getResolutionId().equals("")){
+                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
                         if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
                             isRevised = false;
                         points += exeRes.getPoints();
@@ -680,6 +685,8 @@ public class TestsService implements ITestsService {
         resolution.setTest(test);
         resolution.verifyProperties();
 
+        /*
+
         // check time constraints
         LocalDateTime startDate = resolution.getStartDate();
         LocalDateTime submissionDate = resolution.getSubmissionDate();
@@ -722,6 +729,7 @@ public class TestsService implements ITestsService {
 
         student = entityManager.getReference(Student.class, student.getId());
         resolution.setStudent(student);
+                */
 
         return resolutionDAO.save(resolution);
     }
@@ -735,8 +743,8 @@ public class TestsService implements ITestsService {
 
         // delete exercise resolutions
         for (TestResolutionGroup trg: resolution.getGroups()){
-            for (Pair<String, Float> exeResPair: trg.getResolutions().values()){
-                String exeResId = exeResPair.getKey();
+            for (TestExerciseResolutionBasic exeResPair: trg.getResolutions().values()){
+                String exeResId = exeResPair.getResolutionId();
                 if (!exeResId.equals(""))
                     exercisesService.deleteExerciseResolutionById(exeResId);
             }
@@ -949,8 +957,8 @@ public class TestsService implements ITestsService {
         List<TestResolutionGroup> updatedGroups = updatedTR.getGroups();
 
         for(TestResolutionGroup testResolutionGroup: updatedGroups){
-            for (Pair<String, Float> exeResPair: testResolutionGroup.getResolutions().values()){
-                if(exeResPair.getKey().equals(exeResId)){
+            for (TestExerciseResolutionBasic exeResPair: testResolutionGroup.getResolutions().values()){
+                if(exeResPair.getResolutionId().equals(exeResId)){
                     // work the difference in points
                     testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
                 }
@@ -968,12 +976,12 @@ public class TestsService implements ITestsService {
 
         boolean found = false;
         for (TestResolutionGroup trg: testRes.getGroups()){
-            Map<String, Pair<String, Float>> mapExeRes = trg.getResolutions();
-            for (Map.Entry<String, Pair<String, Float>> entry: mapExeRes.entrySet()){
-                Pair<String, Float> exeResPair = entry.getValue();
-                if (exeResPair.getKey().equals(exeId)){
+            Map<String, TestExerciseResolutionBasic> mapExeRes = trg.getResolutions();
+            for (Map.Entry<String, TestExerciseResolutionBasic> entry: mapExeRes.entrySet()){
+                TestExerciseResolutionBasic exeResPair = entry.getValue();
+                if (exeResPair.getResolutionId().equals(exeId)){
                     ExerciseResolution exeRes = exercisesService.createExerciseResolution(testResId, exeId, resolution.getData());
-                    Pair<String, Float> newExeResPair = new MutablePair<String,Float>(exeRes.getId(), exeRes.getPoints());
+                    TestExerciseResolutionBasic newExeResPair = new TestExerciseResolutionBasic(exeRes.getId(), exeRes.getPoints());
                     mapExeRes.put(entry.getKey(), newExeResPair);
                     found = true;
                     break;
