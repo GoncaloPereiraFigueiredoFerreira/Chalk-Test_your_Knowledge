@@ -10,6 +10,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
+
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
@@ -32,7 +34,8 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 		@JsonSubTypes.Type(name = "MC", value = MultipleChoiceExercise.class),
 		@JsonSubTypes.Type(name = "OA", value = OpenAnswerExercise.class),
 		@JsonSubTypes.Type(name = "FTB", value = FillTheBlanksExercise.class),
-		@JsonSubTypes.Type(name = "FTBO", value = FillTheBlanksOptionsExercise.class)
+		@JsonSubTypes.Type(name = "FTBO", value = FillTheBlanksOptionsExercise.class),
+        @JsonSubTypes.Type(name = "CE", value = ChatExercise.class)
 })
 @NamedEntityGraph(
 		name = "Exercise.NoRubricNoSolution",
