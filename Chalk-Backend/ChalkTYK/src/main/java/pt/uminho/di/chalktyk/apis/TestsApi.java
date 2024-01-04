@@ -185,7 +185,7 @@ public interface TestsApi {
     })
     @RequestMapping(value = "/{testId}/resolutions/correction",
             method = RequestMethod.PUT)
-    ResponseEntity<Void> automaticCorrection(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testResolutionId,
+    ResponseEntity<Void> automaticCorrection(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
                                              @Parameter(in = ParameterIn.QUERY, description = "Type of correction. The correction can either be automatic or done by AI. When using AI correction, the AI will only be used to correct questions that cannot be corrected automatically, i.e., by using the solution. ", schema = @Schema(allowableValues = {"auto", "ai"}
                                              )) @Valid @RequestParam(value = "correctionType", required = false) String correctionType,
                                              @CookieValue("chalkauthtoken") String jwt);
@@ -529,5 +529,33 @@ public interface TestsApi {
     ResponseEntity<Void> deleteTestResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String testId);
+
+
+    @Operation(summary = "Issue the automatic correction of a single test resolution", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/resolutions/{resolutionId}/automaticCorrection",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> automaticCorrectionSingleResolution(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String correctionType);
+
+    @Operation(summary = "Submits a test resolution and revises it (with 'auto' correction type)", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/resolutions/{resolutionId}/automaticCorrection",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> submitTestResolution(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId);
 }
 

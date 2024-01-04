@@ -238,7 +238,7 @@ public class TestsApiController implements TestsApi {
         }
     }*/
 
-    public ResponseEntity<Void> automaticCorrection(String testResolutionId, String correctionType, String jwt) {
+    public ResponseEntity<Void> automaticCorrection(String testId, String correctionType, String jwt) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);
@@ -248,13 +248,13 @@ public class TestsApiController implements TestsApi {
             // checks if the user has permission
             boolean perm = false;
             if(role.equals("STUDENT"))
-                perm = exercisesTestsAuthorization.canStudentAccessTestResolution(userId, testResolutionId);
+                perm = exercisesTestsAuthorization.canStudentAccessTestResolution(userId, testId);
             else if(role.equals("SPECIALIST"))
-                perm = exercisesTestsAuthorization.canSpecialistAccessTestResolution(userId, testResolutionId);
+                perm = exercisesTestsAuthorization.canSpecialistAccessTestResolution(userId, testId);
 
             // if he has permission, execute the request
             if(perm) {
-                testsService.automaticCorrection(testResolutionId,correctionType);
+                testsService.automaticCorrection(testId,correctionType);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
 
@@ -808,6 +808,62 @@ public class TestsApiController implements TestsApi {
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission start this test.");
         } catch (UnauthorizedException | NotFoundException | BadInputException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> automaticCorrectionSingleResolution(String jwtToken, String resolutionId, String correctionType) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            // checks if the user has permission
+            boolean perm = false;
+            if(role.equals("STUDENT"))
+                perm = exercisesTestsAuthorization.canStudentAccessTestResolution(userId, resolutionId);
+            else if(role.equals("SPECIALIST"))
+                perm = exercisesTestsAuthorization.canSpecialistAccessTestResolution(userId, resolutionId);
+
+            // if he has permission, execute the request
+            if(perm) {
+                testsService.automaticCorrectionSingle(resolutionId,correctionType);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "User does not have permission to issue the correction of the test resolution.");
+        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> submitTestResolution(String jwtToken, String resolutionId) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            // checks if the user has permission
+            boolean perm = false;
+            if(role.equals("STUDENT"))
+                perm = exercisesTestsAuthorization.canStudentAccessTestResolution(userId, resolutionId);
+
+            // if he has permission, execute the request
+            if(perm) {
+                testsService.submitTestResolution(resolutionId);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "User does not have permission to issue the correction of the test resolution.");
+        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
     }
