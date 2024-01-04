@@ -193,13 +193,22 @@ public interface ITestsService {
     /**
      * Issue the automatic correction of the test resolutions
      *
+     * @param testId
+     * @param correctionType   Type of correction ("auto" or "ai")
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the test or any exercise were not found
+     **/
+    void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException;
+
+    /**
+     * Issue the automatic correction of a single test resolution
+     *
      * @param testResolutionId
      * @param correctionType   Type of correction ("auto" or "ai")
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the test or any exercise were not found
-     * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void automaticCorrection(String testResolutionId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
+    void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException, BadInputException;
 
     /**
      * Retrieves the number of students that submitted a resolution for a specific test
@@ -241,6 +250,16 @@ public interface ITestsService {
      * @throws NotFoundException if no test was found with the given id
      **/
     String startTest(String testId, String studentId) throws BadInputException, NotFoundException;
+
+    /**
+     * Submits a test resolution and revises it (with 'auto' correction type)
+     *
+     * @param testResId
+     * @throws BadInputException     if any property of the test resolution is not valid.
+     * @throws NotFoundException     if no test was found with the given id
+     * @throws UnauthorizedException if the test does not support the requested correction type.
+     **/
+    void submitTest(String testResId) throws NotFoundException, BadInputException, UnauthorizedException;
 
     /**
      * Create a test resolution
@@ -396,4 +415,13 @@ public interface ITestsService {
      * @throws BadInputException if the test has already been published (can't be changed)
      */
     void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException;
+
+    /**
+     * Fetches the exercise resolution for a given test resolution
+     * returns an ExerciseResolution with submission nr == -1, in case there's no resolution for a specific exercise
+     * 
+     * @param testResId          test resolution identifier
+     * @throws NotFoundException if the test resolution or any exercise resolution were not found
+     */
+    List<ExerciseResolution> getExerciseResolutionsForTestResolution(String testResId) throws NotFoundException;
 }

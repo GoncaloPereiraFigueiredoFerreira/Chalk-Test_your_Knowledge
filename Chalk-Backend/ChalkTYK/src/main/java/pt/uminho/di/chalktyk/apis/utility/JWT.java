@@ -21,6 +21,9 @@ public class JWT {
     private final String jwsString;
     private String userId;
     public JWT(String jws) throws JwtException, ParseException {
+        if(jws == null)
+            throw new ParseException("Token string is null.");
+
         this.jwsString = jws;
 
         if(jws.startsWith("Bearer "))
@@ -56,5 +59,8 @@ public class JWT {
      */
     public String getUserRole() {
         return (String) getPayloadParam("role");
+    }
+    public String getUserEmail() {
+        return (String) getPayloadParam("username");
     }
 }

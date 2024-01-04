@@ -572,14 +572,12 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    //  TODO - Para corrigir automaticamente um teste, pode ser necessário a combinacao de AI e a correcao automatica.
-    //  Quando isto for invocado, corrigir apenas os que dão para ser corrigidos?
     @Transactional
     @Override
-    public void automaticCorrection(String testResolutionId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
-        Test test = testDAO.findById(testResolutionId).orElse(null);
+    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException {
+        Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testResolutionId + "'");
+            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testId + "'");
 
         // issue exercise corrections
         for (TestGroup tg: test.getGroups()){
@@ -597,21 +595,29 @@ public class TestsService implements ITestsService {
         // calculate points
         // check if everything has been revised
         boolean isRevised = true;
-        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testResolutionId);
+        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
         for (TestResolution resolution: resolutions){
-            for (TestResolutionGroup trg: resolution.getGroups()){
+            List<TestResolutionGroup> groups = resolution.getGroups();
+            for (TestResolutionGroup trg: groups){
                 Float points = 0.0F;
+                Map<String, TestExerciseResolutionBasic> resMap = trg.getResolutions();
+
                 for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
                     TestExerciseResolutionBasic pair = entry.getValue();
                     if (!pair.getResolutionId().equals("")){
                         ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
                         if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
                             isRevised = false;
+
+                        pair.setPoints(exeRes.getPoints());
+                        resMap.put(entry.getKey(), pair);
                         points += exeRes.getPoints();
                     }
                 }
+                trg.setResolutions(resMap);
                 trg.setGroupPoints(points);
             }
+            resolution.setGroups(groups);
             resolution.updateSum();
             if (isRevised)
                 resolution.setStatus(TestResolutionStatus.REVISED);
@@ -619,6 +625,51 @@ public class TestsService implements ITestsService {
                 resolution.setStatus(TestResolutionStatus.ONGOING);
             resolutionDAO.save(resolution);
         }
+    }
+
+    public void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException, BadInputException {
+        TestResolution resolution = resolutionDAO.findById(testResolutionId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Couldn't evaluate test: couldn't find test resolution with id '" + testResolutionId + "'");
+        
+        boolean isRevised = true;
+        List<TestResolutionGroup> groups = resolution.getGroups();
+        for (TestResolutionGroup trg: groups){
+            Float points = 0.0F;
+            Map<String, TestExerciseResolutionBasic> resMap = trg.getResolutions();
+            for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
+                TestExerciseResolutionBasic pair = entry.getValue();
+                
+                if (!pair.getResolutionId().equals("")){
+                    try {
+                        exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
+                    }
+                    catch (Exception ignored){
+                        // If an exercise can't be corrected, using the chosen correctionType,
+                        // it just is not corrected.
+                    }
+                    ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
+                    if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
+                        isRevised = false;
+                    pair.setPoints(exeRes.getPoints());
+                    resMap.put(entry.getKey(), pair);
+
+                    // calculate points
+                    points += exeRes.getPoints();
+                }
+            }
+            trg.setResolutions(resMap);
+            trg.setGroupPoints(points);
+        }
+        resolution.setGroups(groups);
+        resolution.updateSum();
+
+        // check if everything has been revised
+        if (isRevised)
+            resolution.setStatus(TestResolutionStatus.REVISED);
+        else
+            resolution.setStatus(TestResolutionStatus.ONGOING);
+        resolutionDAO.save(resolution);
     }
 
     @Override
@@ -687,8 +738,6 @@ public class TestsService implements ITestsService {
         resolution.setTest(test);
         resolution.verifyProperties();
 
-        /*
-
         // check time constraints
         LocalDateTime startDate = resolution.getStartDate();
         LocalDateTime submissionDate = resolution.getSubmissionDate();
@@ -731,7 +780,6 @@ public class TestsService implements ITestsService {
 
         student = entityManager.getReference(Student.class, student.getId());
         resolution.setStudent(student);
-                */
 
         return resolutionDAO.save(resolution);
     }
@@ -945,6 +993,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
 	public void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException {
         // updating exercise resolution
         ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
@@ -964,20 +1013,53 @@ public class TestsService implements ITestsService {
         // modifying test resolution
         TestResolution updatedTR = getTestResolutionById(testResId);
         List<TestResolutionGroup> updatedGroups = updatedTR.getGroups();
+        boolean found = false;
 
         for(TestResolutionGroup testResolutionGroup: updatedGroups){
-            for (TestExerciseResolutionBasic exeResPair: testResolutionGroup.getResolutions().values()){
+            Map<String, TestExerciseResolutionBasic> resMap = testResolutionGroup.getResolutions();
+
+            for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
+                TestExerciseResolutionBasic exeResPair = entry.getValue();
                 if(exeResPair.getResolutionId().equals(exeResId)){
+                    exeResPair.setPoints(points);
+                    resMap.put(comment, exeResPair);
+                    testResolutionGroup.setResolutions(resMap);
+
                     // work the difference in points
                     testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
+
+                    found = true;
+                    break;
                 }
             }
         }
 
+        if (!found)
+            throw new NotFoundException("Couldn't manually correct exercise: couldn't find exercise in the test");
+
         updatedTR.setGroups(updatedGroups);
         updatedTR.updateSum();
+        if (isTestResolutionRevised(testResId))
+            updatedTR.setStatus(TestResolutionStatus.REVISED);
         resolutionDAO.save(updatedTR);
 	}
+
+    // assumes that the resolution exists
+    private boolean isTestResolutionRevised(String testResId) throws NotFoundException {
+        List<ExerciseResolution> exes = getExerciseResolutionsForTestResolution(testResId);
+
+        boolean revised = true;
+        for (ExerciseResolution er: exes){
+            if (er.getSubmissionNr() != -1){
+                if (er.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED)){
+                    revised = false;
+                    break;
+                }
+            }
+        }
+
+        return revised;
+    }
 
     @Override
     @Transactional
@@ -1169,5 +1251,64 @@ public class TestsService implements ITestsService {
         if (tags != null){
             testTagsDAO.deleteAll(tags);
         }
+    }
+
+    public List<ExerciseResolution> getExerciseResolutionsForTestResolution(String testResId) throws NotFoundException {
+        TestResolution testResolution = resolutionDAO.findById(testResId).orElse(null);
+        if (testResolution == null)
+            throw new NotFoundException("Could not get exercise resolution: there is no test resolution with the given identifier");
+        
+        List<ExerciseResolution> res = new ArrayList<>();
+        for (TestResolutionGroup trg: testResolution.getGroups()){
+            for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
+                String exeResId = entry.getValue().getResolutionId();
+                ExerciseResolution exeRes;
+                if (exeResId.equals("")){
+                    exeRes = new ExerciseResolution();
+                    exeRes.setSubmissionNr(-1);
+                }
+                else {
+                    exeRes = exercisesService.getExerciseResolution(exeResId);
+                }
+                res.add(exeRes);
+            }
+        }
+
+        return res;
+    }
+
+    public ExerciseResolution getExerciseResolutionForTestResolutionFromExerciseId(String testResId, String exeId) throws NotFoundException {
+        TestResolution testResolution = resolutionDAO.findById(testResId).orElse(null);
+        if (testResolution == null)
+            throw new NotFoundException("Could not get exercise resolution: there is no test resolution with the given identifier");
+        
+        for (TestResolutionGroup trg: testResolution.getGroups()){
+            for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
+                if (exeId.equals(entry.getKey())){
+                    String exeResId = entry.getValue().getResolutionId();
+                    if (exeResId.equals("")){
+                        ExerciseResolution exeRes = new ExerciseResolution();
+                        exeRes.setSubmissionNr(-1);
+                        return exeRes;
+                    }
+                    else {
+                        return exercisesService.getExerciseResolution(exeResId);
+                    }
+                }
+            }
+        }
+
+        throw new NotFoundException("Could not get exercise resolution: there is no exercise in the test with the given identifier");
+    }
+
+    public void submitTest(String testResId) throws NotFoundException, BadInputException, UnauthorizedException {
+        TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
+        if (resolution == null)
+            throw new NotFoundException("Could not submit test: couldn't find test resolution");
+
+        resolution.setSubmissionNr(resolution.getSubmissionNr() + 1);
+        resolution.setSubmissionDate(LocalDateTime.now());
+        resolutionDAO.save(resolution);
+        automaticCorrectionSingle(testResId, "auto");
     }
 }

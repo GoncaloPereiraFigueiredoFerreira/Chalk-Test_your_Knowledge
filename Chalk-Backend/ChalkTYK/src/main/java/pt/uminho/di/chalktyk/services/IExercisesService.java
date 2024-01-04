@@ -254,6 +254,7 @@ public interface IExercisesService{
      * @throws BadInputException if the points exceed the max points for the exercise.
      */
     void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException;
+    void manuallyCorrectExerciseResolution(String resolutionId, float points, Comment comment) throws NotFoundException, BadInputException;
 
     void deleteExerciseRubric(String exerciseId);
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.models.users.InstitutionManager;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.models.users.User;
 
 public interface StudentsApi {
     /**
@@ -28,7 +29,8 @@ public interface StudentsApi {
     @RequestMapping(value = "",
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<String> createStudent(
+    ResponseEntity<User> createStudent(
+            @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
                     schema=@Schema(implementation = Student.class))
             @Valid @RequestBody Student student);
@@ -51,7 +53,7 @@ public interface StudentsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<Student> getStudentById(
-            @RequestHeader("chalkauthtoken") String jwtToken,
+            @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, description = "Student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId);
 
     /**
@@ -72,6 +74,6 @@ public interface StudentsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<Boolean> existsStudentById(
-            @RequestHeader("chalkauthtoken") String jwtToken,
+            @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, description = "Student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId);
 }

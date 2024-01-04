@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.models.users.InstitutionManager;
 import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.User;
 
 public interface SpecialistsApi {
     /**
@@ -26,7 +27,8 @@ public interface SpecialistsApi {
     @RequestMapping(value = "",
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<String> createSpecialist(
+    ResponseEntity<User> createSpecialist(
+            @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.DEFAULT, description = "", required=true,
                     schema=@Schema(implementation = Specialist.class))
             @Valid @RequestBody Specialist specialist);
@@ -49,7 +51,7 @@ public interface SpecialistsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<Specialist> getSpecialistById(
-            @RequestHeader("chalkauthtoken") String jwtToken,
+            @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, description = "Specialist identifier", required=true, schema=@Schema()) @PathVariable("specialistId") String specialistId);
 
     /**
@@ -70,6 +72,6 @@ public interface SpecialistsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<Boolean> existsSpecialistById(
-            @RequestHeader("chalkauthtoken") String jwtToken,
+            @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, description = "Specialist identifier", required=true, schema=@Schema()) @PathVariable("specialistId") String specialistId);
 }
