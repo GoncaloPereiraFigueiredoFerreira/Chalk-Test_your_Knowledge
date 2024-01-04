@@ -108,6 +108,9 @@ export function CreateTestStateReducer(
           ...state,
           test: {
             ...state.test,
+            globalCotation:
+              state.test.globalCotation +
+              (action.exercise.exercise.identity.cotation ?? 0),
             groups: newGroups,
           },
         } as CreateTestState;
@@ -144,6 +147,11 @@ export function CreateTestStateReducer(
             ...state,
             test: {
               ...state.test,
+              globalCotation:
+                state.test.globalCotation -
+                (state.test.groups[action.exercise.groupPosition].exercises[
+                  action.exercise.exercisePosition
+                ].identity.cotation ?? 0),
               groups: newGroups,
             },
           } as CreateTestState;
@@ -193,6 +201,9 @@ export function CreateTestStateReducer(
           ...state,
           test: {
             ...state.test,
+            globalCotation:
+              state.test.globalCotation -
+              state.test.groups[action.group.groupPosition].groupCotation,
             groups: [...before, ...after],
           },
         } as CreateTestState;
@@ -218,20 +229,23 @@ export function CreateTestStateReducer(
       if (action.exercise && action.exercise.newCotation !== undefined) {
         if (action.exercise.newCotation >= 0) {
           let newGroups = [...state.test.groups];
-          console.log(newGroups);
-          newGroups[action.exercise.groupPosition].groupCotation =
-            newGroups[action.exercise.groupPosition].groupCotation -
+          newGroups[action.exercise.groupPosition].groupCotation +=
+            action.exercise.newCotation -
             (newGroups[action.exercise.groupPosition].exercises[
               action.exercise.exercisePosition
-            ].identity.cotation ?? 0) +
-            action.exercise.newCotation;
+            ].identity.cotation ?? 0);
           newGroups[action.exercise.groupPosition].exercises[
             action.exercise.exercisePosition
           ].identity.cotation = action.exercise.newCotation;
+          var globalCotation = 0;
+          newGroups.forEach((element) => {
+            globalCotation += element.groupCotation;
+          });
           return {
             ...state,
             test: {
               ...state.test,
+              globalCotation: globalCotation,
               groups: newGroups,
             },
           } as CreateTestState;
@@ -308,6 +322,50 @@ export function CreateTestStateReducer(
           } as CreateTestState;
         } else {
           // Move within the same group
+          const newGroups = [...state.test.groups];
+          const origGroup = state.test.groups[action.exercise.groupPosition];
+          const exercise =
+            origGroup.exercises[action.exercise.exercisePosition];
+
+          const before = origGroup.exercises.slice(
+            0,
+            action.exercise.exercisePosition
+          );
+          const after = origGroup.exercises.slice(
+            action.exercise.exercisePosition + 1
+          );
+          var list;
+
+          if (
+            action.exercise.exercisePosition >
+            action.exercise.newPosition.exercisePosition
+          ) {
+            const beforeDest = before.slice(
+              0,
+              action.exercise.newPosition.exercisePosition
+            );
+            const afterDest = before.slice(
+              action.exercise.newPosition.exercisePosition + 1
+            );
+            list = [...beforeDest, exercise, ...afterDest, ...after];
+          } else {
+            const beforeDest = after.slice(
+              0,
+              action.exercise.newPosition.exercisePosition
+            );
+            const afterDest = after.slice(
+              action.exercise.newPosition.exercisePosition + 1
+            );
+            list = [...before, ...beforeDest, exercise, ...afterDest];
+          }
+          newGroups[action.exercise.groupPosition].exercises = list;
+          return {
+            ...state,
+            test: {
+              ...state.test,
+              groups: newGroups,
+            },
+          } as CreateTestState;
         }
       }
       throw new Error("Invalid Action");

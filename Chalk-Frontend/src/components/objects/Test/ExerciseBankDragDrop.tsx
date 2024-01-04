@@ -59,7 +59,7 @@ export function ExerciseBankDragDrop({
             exercisePosition={index}
             groupPosition={exerciseID.groupPosition}
             exercise={listExercises[key]}
-            selectedExercise={key === selectedExercise}
+            exerciseIsSelected={key === selectedExercise}
             setSelectedExercise={(value) => setSelectedExercise(value)}
           ></ShowExerciseDragDrop>
         ))}

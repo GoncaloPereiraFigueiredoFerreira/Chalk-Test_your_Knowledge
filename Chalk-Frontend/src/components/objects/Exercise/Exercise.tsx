@@ -291,7 +291,7 @@ export function InitExercise(type: ExerciseType): Exercise {
   let identity: ExerciseIdentity = {
     id: "",
     specialistId: "",
-    visibility: "",
+    visibility: "public",
   };
 
   switch (type) {

@@ -57,13 +57,13 @@ export function GroupDragDrop({
               <ShowExerciseDragDrop
                 key={index}
                 listExerciseButtons={false}
-                setExerciseID={setExerciseID}
                 exercisePosition={index}
-                groupPosition={exerciseID.groupPosition}
+                groupPosition={exerciseGroupID}
                 exercise={value}
                 selectedMenu={selectedMenu}
+                setExerciseID={setExerciseID}
                 setSelectedMenu={setSelectedMenu}
-                selectedExercise={
+                exerciseIsSelected={
                   index === exerciseID.exercisePosition &&
                   exerciseGroupID === exerciseID.groupPosition
                 }

@@ -26,30 +26,33 @@ import {
 } from "../SVGImages/SVGImages";
 
 interface ShowExerciseDragDropProps {
-  listExerciseButtons: boolean;
   groupPosition: number;
   exercisePosition: number;
   exercise: Exercise;
+  selectedMenu: string;
+  setSelectedMenu: (value: string) => void;
+  listExerciseButtons: boolean;
+  // este exercicio está selecionado
+  exerciseIsSelected: boolean;
+  // definir exercicio aberto
+  setSelectedExercise: (value: string) => void;
+  // definir exercicio selecionado no GroupDragDrop
   setExerciseID: (value: {
     groupPosition: number;
     exercisePosition: number;
   }) => void;
-  selectedExercise: boolean;
-  setSelectedExercise: (value: string) => void;
-  selectedMenu: string;
-  setSelectedMenu: (value: string) => void;
 }
 
 export function ShowExerciseDragDrop({
-  listExerciseButtons,
   groupPosition,
   exercisePosition,
   exercise,
-  setExerciseID,
-  selectedExercise,
-  setSelectedExercise,
   selectedMenu,
   setSelectedMenu,
+  listExerciseButtons,
+  exerciseIsSelected,
+  setSelectedExercise,
+  setExerciseID,
 }: ShowExerciseDragDropProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [visibility, setVisibility] = useState(<></>);
@@ -189,7 +192,7 @@ export function ShowExerciseDragDrop({
   return (
     <div
       className={`${
-        selectedExercise ? "max-h-full" : "max-h-[78px]"
+        exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
       } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2 group-hover`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
@@ -197,7 +200,7 @@ export function ShowExerciseDragDrop({
           <button
             className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
             onClick={() =>
-              selectedExercise
+              exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
@@ -207,17 +210,17 @@ export function ShowExerciseDragDrop({
             </label>
           </button>
           <button
-            className={`${
+            className={` ${
               listExerciseButtons
-                ? selectedExercise
+                ? exerciseIsSelected
                   ? "mr-[75px] pr-4 border-r-2"
                   : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
-                : selectedExercise
+                : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
             } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
             onClick={() =>
-              selectedExercise
+              exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
@@ -237,7 +240,6 @@ export function ShowExerciseDragDrop({
                     exercisePosition:
                       testState.test.groups[groupPosition].exercises.length,
                   });
-                  setSelectedExercise(exercise.identity.id);
                   dispatch({
                     type: CreateTestActionKind.ADD_EXERCISE,
                     exercise: {
@@ -323,7 +325,7 @@ export function ShowExerciseDragDrop({
         </div>
         <div
           className={`${
-            !selectedExercise ? "hidden" : "flex"
+            !exerciseIsSelected ? "hidden" : "flex"
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
         >
           <div className="bg-yellow-600 tag-exercise">Matemática</div>
@@ -340,7 +342,7 @@ export function ShowExerciseDragDrop({
         </div>
         <div
           className={`${
-            !selectedExercise ? "scale-y-0" : ""
+            !exerciseIsSelected ? "scale-y-0" : ""
           } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1`}
         >
           {preview}
