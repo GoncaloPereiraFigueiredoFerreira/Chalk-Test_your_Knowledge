@@ -961,6 +961,12 @@ public class ExercisesService implements IExercisesService{
     @Override
     @Transactional
     public void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException {
+        manuallyCorrectExerciseResolution(resolutionId, points, null);
+    }
+
+    @Override
+    @Transactional
+    public void manuallyCorrectExerciseResolution(String resolutionId, float points, Comment comment) throws NotFoundException, BadInputException {
         // checks if the resolution exists
         ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
         if (resolution == null)
@@ -972,6 +978,8 @@ public class ExercisesService implements IExercisesService{
 
         // sets the points and persists the document
         resolution.setPoints(points);
+        if(comment != null)
+            resolution.setComment(comment);
         resolution.setStatus(ExerciseResolutionStatus.REVISED);
         exerciseResolutionDAO.save(resolution);
     }

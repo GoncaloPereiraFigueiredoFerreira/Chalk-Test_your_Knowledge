@@ -89,7 +89,7 @@ public interface CoursesApi {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation", content = @Content(schema = @Schema(example = ""))),
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(example = ""))) })
-    @RequestMapping(value = "/{courseId}/students/",
+    @RequestMapping(value = "/{courseId}/students",
             method = RequestMethod.GET)
     ResponseEntity<List<Student>> getCourseStudents(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
@@ -107,7 +107,7 @@ public interface CoursesApi {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation", content = @Content(schema = @Schema(example = ""))),
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(example = ""))) })
-    @RequestMapping(value = "/{courseId}/specialists/",
+    @RequestMapping(value = "/{courseId}/specialists",
             method = RequestMethod.GET)
     ResponseEntity<List<Specialist>> getCourseSpecialists(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
@@ -127,7 +127,7 @@ public interface CoursesApi {
     @RequestMapping(value = "/{courseId}/students/add",
             consumes = "application/json",
             produces = "application/json",
-            method = RequestMethod.PUT)
+            method = RequestMethod.POST)
     ResponseEntity<Void> addStudentsToCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,
@@ -144,7 +144,7 @@ public interface CoursesApi {
     @RequestMapping(value = "/{courseId}/specialists/add",
             consumes = "application/json",
             produces = "application/json",
-            method = RequestMethod.PUT)
+            method = RequestMethod.POST)
     ResponseEntity<Void> addSpecialistsToCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,
@@ -160,7 +160,7 @@ public interface CoursesApi {
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(example = ""))) })
     @RequestMapping(value = "/{courseId}/students/remove",
             consumes = "application/json",
-            method = RequestMethod.PUT)
+            method = RequestMethod.DELETE)
     ResponseEntity<Void> removeStudentsFromCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,
@@ -176,7 +176,7 @@ public interface CoursesApi {
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(example = ""))) })
     @RequestMapping(value = "/{courseId}/specialists/remove",
             consumes = "application/json",
-            method = RequestMethod.PUT)
+            method = RequestMethod.DELETE)
     ResponseEntity<Void> removeSpecialistsFromCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.ListPairStudentExerciseResolution;
+import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
@@ -520,7 +521,7 @@ public interface ExercisesApi {
     ResponseEntity<Void> manuallyCorrectExerciseResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
-            @Parameter(in = ParameterIn.QUERY, description = "points to be attributed to the exercise resolution", required=true) @RequestParam(value = "points") float points);
+            @Parameter(in = ParameterIn.DEFAULT, description = "", required=true) @RequestBody ManualExerciseCorrectionDTO mecDTO);
 
     @Operation(summary = "Retrieves the solution of an exercise.", description = "Retrieve exercise solution. 'null' is returned if a solution does not exist.", tags={ "exercise" })
     @ApiResponses(value = {

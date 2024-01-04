@@ -168,6 +168,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
+    @Transactional
     @Override
     public void addSpecialistsToCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -179,6 +180,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
+    @Transactional
     @Override
     public void addStudentsToCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -190,6 +192,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
+    @Transactional
     @Override
     public void removeSpecialistsFromCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -201,6 +204,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
+    @Transactional
     @Override
     public void removeStudentsFromCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
