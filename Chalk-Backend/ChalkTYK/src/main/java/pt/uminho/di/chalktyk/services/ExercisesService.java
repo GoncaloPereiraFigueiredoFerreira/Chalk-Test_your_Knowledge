@@ -129,11 +129,13 @@ public class ExercisesService implements IExercisesService{
 
         // Check if tags are valid
         Set<Tag> tags = new HashSet<>();
-        for (String id : tagsIds) {
-            Tag tag = iTagsService.getTagById(id);
-            if (tag == null)
-                throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
-            tags.add(tag);
+        if(tagsIds != null) {
+            for (String id : tagsIds) {
+                Tag tag = iTagsService.getTagById(id);
+                if (tag == null)
+                    throw new BadInputException("Cannot create exercise: There is not tag with id \"" + id + "\".");
+                tags.add(tag);
+            }
         }
         exercise.setTags(tags);
 
@@ -317,7 +319,7 @@ public class ExercisesService implements IExercisesService{
         // checks if body is valid and updates it in the case it is valid
         if(newBody != null)
             //if rubric or solution are not null, then they will verify exercise
-            exercise = _updateExerciseBody(exercise, newBody, rubric == null, solution == null);
+            exercise = _updateExerciseBody(exercise, newBody, rubric != null, solution != null);
 
         if(rubric!=null)
             _createExerciseRubric(exercise,rubric); // this method is used to create/update the rubric of an exercise.

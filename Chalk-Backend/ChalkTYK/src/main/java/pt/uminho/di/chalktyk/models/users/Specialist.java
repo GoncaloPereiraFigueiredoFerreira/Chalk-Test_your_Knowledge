@@ -38,7 +38,8 @@ public class Specialist extends User {
     }
 
     public Specialist clone() {
-        return new Specialist(getId(),getName(),getPhotoPath(),getEmail(),getDescription(),institution.clone());
+        var clonedInstitution = institution != null ? institution.clone() : null;
+        return new Specialist(getId(),getName(),getPhotoPath(),getEmail(),getDescription(), clonedInstitution);
     }
 
     /**

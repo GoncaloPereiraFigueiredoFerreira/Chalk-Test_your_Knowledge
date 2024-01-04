@@ -8,10 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseData;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.*;
@@ -132,12 +136,44 @@ public class ExercisesServiceTest {
         return new OpenAnswerRubric(List.of(new OACriterion("Desempenho",100f, oaStandards)));
     }
 
+    private ChatExercise createChatExercise(String specialistId,String courseId){
+        ChatExercise exercise = new ChatExercise();
+        exercise.setStatement(new ExerciseStatement("Quais as vantagens de usar sistemas distribuidos?",null,null));
+        exercise.setTitle("Vantages de Sistemas distribuidos");
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
+
+        ItemsList topics = new ItemsList();
+        topics.add(new StringItem("Vantages de sistemas distribuidos"));
+        topics.add(new StringItem("Dificuldades de utilização de sistemas distribuidos"));
+        topics.add(new StringItem("Porque utilizar sistemas distribuidos"));
+
+        exercise.setTopics(topics);
+
+        return exercise;
+    }
+
+    private ExerciseSolution createCESolution(){
+        List<String> chat = new ArrayList<>();
+        chat.add("Quais as vantagens de usar sistemas distribuidos");
+        chat.add("E bue fixe");
+        chat.add("Mas porque que os descreves como bue fixes");
+        chat.add("Permitem a distribuição trabalhos por varios computadores");
+
+        ChatExerciseData chatExerciseData = new ChatExerciseData(chat);
+        return  new ExerciseSolution(null,chatExerciseData);
+    }
+
+    private ChatExerciseRubric createCERubric(){
+        return new ChatExerciseRubric(); 
+    }
 
     private MultipleChoiceExercise createMCExercise(String specialistId, String courseId){
-        HashMap<Integer, Item> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,new StringItem("Là"));
-        itemResolutions.put(2,new StringItem("Ali"));
-        itemResolutions.put(3,new StringItem("There"));
+        HashMap<String, Item> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",new StringItem("Là"));
+        itemResolutions.put("2",new StringItem("Ali"));
+        itemResolutions.put("3",new StringItem("There"));
 
 
 
@@ -155,10 +191,10 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutions);
         return new ExerciseSolution(null,multipleChoiceData);
     }
@@ -167,10 +203,10 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
@@ -178,10 +214,10 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,false);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,true);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
@@ -189,18 +225,18 @@ public class ExercisesServiceTest {
         MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
         MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
-        HashMap<Integer,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
-        itemResolutions.put(1,option1);
-        itemResolutions.put(2,option2);
-        itemResolutions.put(3,option3);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
         return new MultipleChoiceData(itemResolutions);
     }
 
     private ExerciseRubric createMCRubric(){
-        HashMap<Integer,OpenAnswerRubric> mcRubricMap = new HashMap<>();
-        mcRubricMap.put(1,createOARubric());
-        mcRubricMap.put(2,createOARubric());
-        mcRubricMap.put(3,createOARubric());
+        HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
+        mcRubricMap.put("1",createOARubric());
+        mcRubricMap.put("2",createOARubric());
+        mcRubricMap.put("3",createOARubric());
         return new MultipleChoiceRubric(0.0F,mcRubricMap);
     }
 
@@ -276,6 +312,18 @@ public class ExercisesServiceTest {
     }
 
     @Test
+    public void createChatExercise() throws BadInputException, NotFoundException{
+        ExerciseSolution exerciseSolution = createCESolution();
+        ExerciseRubric exerciseRubric = createCERubric();
+        Exercise exercise = createChatExercise(specialistId, courseId);
+        Tag tag1 = tagsService.createTag("Sistemas Distribuidos", "/");
+        String exerciseId = exercisesService.createExercise(exercise, null, null, List.of(tag1.getId()));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+        exercisesService.createExerciseSolution(exerciseId, exerciseSolution);
+        exercisesService.createExerciseRubric(exerciseId, exerciseRubric);
+    }
+
+    @Test
     public void createExerciseAndCheckInstitution() throws BadInputException, NotFoundException {
         Institution institution = new Institution("UM", "Melhor universidade do país", "uminho.pt/images/logo.png");
         InstitutionManager manager = new InstitutionManager(null, "Rogerio", "uminho.pt/images/fotoDoRogerio.png", "rogerio@uminho.pt", "Manager da UM");
@@ -311,11 +359,26 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createDuplicate() throws BadInputException, NotFoundException {
+    public void createDuplicateFTB() throws BadInputException, NotFoundException {
         ExerciseSolution exerciseSolution = createFTBSolution();
         ExerciseRubric exerciseRubric = createFTBRubric();
         Exercise exercise = createFTBExercise(specialistId,courseId);
         String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
+        String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
+        assertTrue(exercisesService.exerciseExists(duplicateId));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+    }
+
+    @Test
+    public void createDuplicateMC() throws BadInputException, NotFoundException {
+        ExerciseSolution exerciseSolution = createMCSolution();
+        ExerciseRubric exerciseRubric = createMCRubric();
+        Exercise exercise = createMCExercise(specialistId,courseId);
+        String exerciseId = exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, new ArrayList<>());
+
+        entityManager.flush();
+        entityManager.clear();
+
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));

@@ -1,10 +1,15 @@
 package pt.uminho.di.chalktyk.models.miscellaneous;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+@JsonDeserialize(using = Visibility.CaseInsensitiveEnumDeserializer.class)
 public enum Visibility {
 	PUBLIC("public"),
 	NOT_LISTED("not_listed"),
@@ -23,23 +28,26 @@ public enum Visibility {
 	@Override
 	@JsonValue
 	public String toString() {
-		return String.valueOf(value);
+		return value;
 	}
 
 	@JsonCreator
-	public static Visibility fromValue(String text) {
-		for (Visibility b : Visibility.values()) {
-			if (String.valueOf(b.value).equals(text)) {
-				return b;
-			}
-		}
-		return null;
+	public static Visibility fromValue(String s) {
+		if(s == null)
+			throw new IllegalArgumentException();
+		s = s.toUpperCase();
+		return Visibility.valueOf(s);
 	}
 
 	public boolean isValid(){
-		if (Arrays.stream(Visibility.values()).anyMatch(this::equals))
-			return true;
-		else
-			return false;
+        return Arrays.asList(Visibility.values()).contains(this);
+	}
+
+	public static class CaseInsensitiveEnumDeserializer extends JsonDeserializer<Visibility> {
+		@Override
+		public Visibility deserialize(com.fasterxml.jackson.core.JsonParser p, DeserializationContext ctxt) throws IOException {
+			String value = p.getValueAsString().toUpperCase(); // Convert to uppercase for case-insensitivity
+			return Visibility.valueOf(value);
+		}
 	}
 }

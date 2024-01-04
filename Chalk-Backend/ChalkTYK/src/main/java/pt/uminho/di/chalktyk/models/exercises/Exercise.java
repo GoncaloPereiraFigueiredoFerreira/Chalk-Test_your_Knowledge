@@ -10,6 +10,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
+
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksOptionsExercise;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
@@ -27,12 +29,13 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @Getter
 @Setter
 @DiscriminatorColumn(name = "Type", discriminatorType = DiscriminatorType.STRING)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "Type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
 		@JsonSubTypes.Type(name = "MC", value = MultipleChoiceExercise.class),
 		@JsonSubTypes.Type(name = "OA", value = OpenAnswerExercise.class),
 		@JsonSubTypes.Type(name = "FTB", value = FillTheBlanksExercise.class),
-		@JsonSubTypes.Type(name = "FTBO", value = FillTheBlanksOptionsExercise.class)
+		@JsonSubTypes.Type(name = "FTBO", value = FillTheBlanksOptionsExercise.class),
+        @JsonSubTypes.Type(name = "CE", value = ChatExercise.class)
 })
 @NamedEntityGraph(
 		name = "Exercise.NoRubricNoSolution",
@@ -56,6 +59,7 @@ public abstract class Exercise {
 	private String exerciseType = getExerciseType();
 
 	@Column(name = "Visibility")
+	@Enumerated(value = EnumType.STRING)
 	private Visibility visibility;
 
 	@Type(JsonBinaryType.class)

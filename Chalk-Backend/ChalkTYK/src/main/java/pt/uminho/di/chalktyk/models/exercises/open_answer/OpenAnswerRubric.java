@@ -61,6 +61,7 @@ public class OpenAnswerRubric extends ExerciseRubric {
 	}
 
 	public OpenAnswerRubric clone(){
-		return new OpenAnswerRubric(getId(), criteria.stream().map(OACriterion::clone).toList());
+		var clonedCriteria = criteria != null ? criteria.stream().map(OACriterion::clone).toList() : null;
+		return new OpenAnswerRubric(getId(), clonedCriteria);
     }
 }

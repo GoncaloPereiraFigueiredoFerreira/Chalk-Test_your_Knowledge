@@ -17,20 +17,6 @@ public interface ISecurityService {
     JWT validateJWT(String jwtTokenString) throws UnauthorizedException;
 
     /**
-     * Extracts the user id from the token.
-     * @param jwtToken JWT token
-     * @return user id
-     */
-    String getUserId(JWT jwtToken);
-
-    /**
-     * Extracts the user role from the token.
-     * @param jwtToken JWT token
-     * @return user role
-     */
-    String getUserRole(JWT jwtToken);
-
-    /**
      * Logs in the user.
      * @param jwtToken JWT Token
      * @return returns the user basic properties

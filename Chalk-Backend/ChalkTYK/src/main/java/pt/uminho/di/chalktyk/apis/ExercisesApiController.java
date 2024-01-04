@@ -186,8 +186,10 @@ public class ExercisesApiController implements ExercisesApi {
             boolean perm = role.equals("SPECIALIST")
                             && exercisesTestsAuthorization.canSpecialistGetExercise(userId, exercise.getSpecialistId(), exVisibility, exCourseId, exInstitutionId);
 
-            if(perm)
-                return ResponseEntity.ok(exercisesService.duplicateExerciseById(userId, exerciseId, courseId, Visibility.valueOf(visibility)));
+            if(perm) {
+                Visibility vis = visibility != null ? Visibility.fromValue(visibility) : null;
+                return ResponseEntity.ok(exercisesService.duplicateExerciseById(userId, exerciseId, courseId, vis));
+            }
             else
                 return new ExceptionResponseEntity<String>().createRequest(
                         HttpStatus.UNAUTHORIZED.value(),

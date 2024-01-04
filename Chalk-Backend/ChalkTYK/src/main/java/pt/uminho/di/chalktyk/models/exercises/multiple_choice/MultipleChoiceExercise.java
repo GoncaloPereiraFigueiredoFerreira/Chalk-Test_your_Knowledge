@@ -1,6 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.multiple_choice;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsMap;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
@@ -33,24 +34,29 @@ public class MultipleChoiceExercise extends Exercise {
 
 	@Type(JsonBinaryType.class)
 	@Column(name = "items", columnDefinition = "jsonb")
-	private Map<Integer, Item> items;
+	private ItemsMap items;
+
+	public MultipleChoiceExercise(Mctype mctype, Map<String, Item> items) {
+		this.mctype = mctype;
+		this.items = new ItemsMap(items);
+	}
 
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
-		if(!(exerciseResolutionData instanceof MultipleChoiceData multipleChoiceData))
+		if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise resolution does not match exercise type (multiple choice).");
 		// checks if the resolution answers to a subset of the items. Cannot have answers to not existent items.
 		if(!items.keySet().containsAll(((MultipleChoiceData) exerciseResolutionData).getIds()))
 			throw new BadInputException("Exercise resolution has items that do not refer to any question.");
-		multipleChoiceData.verifyInsertProperties();
+		exerciseResolutionData.verifyInsertProperties();
 	}
 
 	@Override
 	public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
-		if(!(rubric instanceof MultipleChoiceRubric multipleChoiceRubric))
+		if(rubric == null || !rubric.getType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise rubric does not match exercise type (multiple choice).");
 		// TODO - FUTURE WORK -> check if there is an openanswer rubric for each question that needs justification.
-		multipleChoiceRubric.verifyProperties();
+		rubric.verifyProperties();
 	}
 
 	@Override
@@ -91,8 +97,8 @@ public class MultipleChoiceExercise extends Exercise {
 
 		float points = 0.0f;
 
-		for(Map.Entry<Integer, MultipleChoiceResolutionItem> entry : solutionData.getItems().entrySet()){
-			Integer id = entry.getKey();
+		for(Map.Entry<String, MultipleChoiceResolutionItem> entry : solutionData.getItems().entrySet()){
+			String id = entry.getKey();
 			MultipleChoiceResolutionItem solutionItem = entry.getValue();
 			MultipleChoiceResolutionItem resolutionItem = resolutionData.getItemById(id);
 
@@ -126,7 +132,7 @@ public class MultipleChoiceExercise extends Exercise {
 	@Override
 	public void verifyInsertProperties() throws BadInputException {
 		super.verifyInsertProperties();
-		for (Map.Entry<Integer, Item> entry : items.entrySet()) {
+		for (Map.Entry<String, Item> entry : items.entrySet()) {
 			Item item = entry.getValue();
 			if(item == null)
 				throw new BadInputException("Multiple choice cannot have null items.");
@@ -144,12 +150,13 @@ public class MultipleChoiceExercise extends Exercise {
 
 	@Override
 	public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
-		if(!(exercise instanceof MultipleChoiceExercise mce))
+		if(exercise == null || !exercise.getExerciseType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise is not of the same type.");
+		MultipleChoiceExercise mce = (MultipleChoiceExercise) exercise;
 		_copyExerciseDataOnlyTo(mce);
 		mce.mctype = mctype;
-		mce.items = new HashMap<>();
-		for(Map.Entry<Integer, Item> entry : items.entrySet())
+		mce.items = new ItemsMap();
+		for(Map.Entry<String, Item> entry : items.entrySet())
 			mce.items.put(entry.getKey(), entry.getValue().clone());
 	}
 

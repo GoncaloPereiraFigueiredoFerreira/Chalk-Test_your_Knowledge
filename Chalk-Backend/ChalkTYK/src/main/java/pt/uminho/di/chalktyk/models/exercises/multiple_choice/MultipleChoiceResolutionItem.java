@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class MultipleChoiceResolutionItem  implements Serializable {
-	private Float points;
+	private Float points = 0.0f;
 	private String justification;
 	private Boolean value;
 

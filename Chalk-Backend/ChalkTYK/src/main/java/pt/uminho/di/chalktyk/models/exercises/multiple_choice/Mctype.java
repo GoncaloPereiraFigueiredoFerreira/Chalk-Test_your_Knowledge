@@ -1,5 +1,8 @@
 package pt.uminho.di.chalktyk.models.exercises.multiple_choice;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 
 /*
@@ -24,5 +27,31 @@ public enum Mctype {
     private int code;
     Mctype(int code) {
         this.code = code;
+    }
+
+    // Static method for deserialization
+    @JsonCreator
+    public static Mctype fromCode(int code) {
+        for (Mctype type : Mctype.values()) {
+            if (type.code == code) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid Mctype code: " + code);
+    }
+
+    @JsonValue
+    public int getCodeJsonValue() {
+        return code;
+    }
+
+    // Custom deserializer class
+    @JsonDeserialize(using = MctypeDeserializer.class)
+    public static class MctypeDeserializer extends com.fasterxml.jackson.databind.JsonDeserializer<Mctype> {
+        @Override
+        public Mctype deserialize(com.fasterxml.jackson.core.JsonParser jsonParser, com.fasterxml.jackson.databind.DeserializationContext deserializationContext) throws java.io.IOException {
+            int code = jsonParser.getValueAsInt();
+            return Mctype.fromCode(code);
+        }
     }
 }
