@@ -24,6 +24,14 @@ get:
   tags:
   - exercises
 post:
+  parameters:
+    - description: Exercise identifier
+      in: path
+      name: exerciseId
+      required: true
+      schema:
+        example: exercise1
+        type: string
   requestBody:
     content:
       application/json:

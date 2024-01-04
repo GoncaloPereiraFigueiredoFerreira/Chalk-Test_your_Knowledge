@@ -4,18 +4,7 @@ properties:
     items:
       oneOf:
       - $ref: ../_index.yml#/Exercise
-      - description: Used only for POST methods, when there is a need to copy existing
-          exercises.
-        properties:
-          cotation:
-            description: Cotation associated to the copied exercise.
-            format: float
-            type: number
-          originalExerciseId:
-            description: Identifier of the exercise that is supposed to be copied.
-            example: exercise123
-            type: string
-        type: object
+      - $ref: ../_index.yml#/ExerciseReference
     type: array
   groupCotation:
     format: float

@@ -21,7 +21,7 @@ get:
     schema:
       default: []
       items:
-        type: integer
+        $ref: "../components/schemas/_index.yml#/StringID"
       type: array
   - description: Value that defines if the exercise must have all the given tags to
       be retrieved.
@@ -53,6 +53,7 @@ get:
   - in: query
     name: specialistId
     required: false
+    description: "Identifier of the specialist. Used when we want to retrieve the exercises created by a specific specialist."
     schema:
       type: string
   responses:

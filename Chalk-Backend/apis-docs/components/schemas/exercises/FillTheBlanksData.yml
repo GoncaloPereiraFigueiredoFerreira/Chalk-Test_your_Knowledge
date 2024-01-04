@@ -1,12 +1,11 @@
-allOf:
-- $ref: ../_index.yml#/ExerciseSolution
-- properties:
+type: object
+properties:
     text:
       type: string
     type:
+      type: string
       enum:
-      - FTB
-  type: object
+        - FTB
 description: Fill the blanks resolution data.
 example:
   fillings:

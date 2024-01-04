@@ -42,7 +42,7 @@ get:
   - exercises
 post:
   parameters:
-  - in: query
+  - in: path
     name: exerciseId
     required: true
     schema:
@@ -51,7 +51,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../../components/schemas/_index.yml#/ExerciseResolution
+          $ref: ../../../components/schemas/_index.yml#/ExerciseResolutionData
     required: true
   responses:
     '200':

@@ -1,0 +1,21 @@
+description: Metadata of an exercise.
+properties:
+  cotation:
+    format: float
+    type: number
+  courseId:
+    $ref: "../_index.yml#/StringID"
+  id:
+    $ref: "../_index.yml#/StringID"
+  institutionId:
+    $ref: "../_index.yml#/StringID"
+  specialistId:
+    $ref: "../_index.yml#/StringID"
+  type:
+    type: string
+required:
+- type
+- institutionId
+- courseId
+- specialistId
+type: object
