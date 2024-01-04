@@ -34,7 +34,7 @@ public interface UsersApi {
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> updateBasicProperties(
-            @RequestHeader(name = "chalkauthtoken") String authToken,
+            @CookieValue(name = "chalkauthtoken") String authToken,
             @RequestBody UserUpdateDTO userDTO);
 
     @Operation(summary = "Get user by user id", description = "", tags={ "user" })
@@ -48,7 +48,7 @@ public interface UsersApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<User> getUserById(
-            @RequestHeader(name = "chalkauthtoken") String authToken,
+            @CookieValue(name = "chalkauthtoken") String authToken,
             @Parameter(in = ParameterIn.PATH, name = "userId") @PathVariable(value = "userId") String userId);
 
     @Operation(summary = "Login user", description = "", tags={ "user" })
@@ -60,7 +60,7 @@ public interface UsersApi {
     @RequestMapping(value = "/login",
             produces = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<User> login( @RequestHeader(name = "chalkauthtoken") String authToken);
+    ResponseEntity<User> login( @CookieValue(name = "chalkauthtoken") String authToken);
 
     @Operation(summary = "Logout user", description = "", tags={ "user" })
     @ApiResponses(value = {
@@ -69,6 +69,6 @@ public interface UsersApi {
     @RequestMapping(value = "/logout",
             produces = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<Void> logout(@RequestHeader(name = "chalkauthtoken") String authToken);
+    ResponseEntity<Void> logout(@CookieValue(name = "chalkauthtoken") String authToken);
 }
 

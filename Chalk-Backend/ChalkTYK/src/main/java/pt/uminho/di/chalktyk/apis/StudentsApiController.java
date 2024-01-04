@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.models.users.Student;
+import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.IStudentsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -29,11 +30,15 @@ public class StudentsApiController implements StudentsApi{
     }
 
     @Override
-    public ResponseEntity<String> createStudent(Student student) {
+    public ResponseEntity<User> createStudent(String jwtToken, Student student) {
         try {
-            return ResponseEntity.ok(studentsService.createStudent(student));
-        } catch (BadInputException e) {
-            return new ExceptionResponseEntity<String>().createRequest(e);
+            JWT jwt = securityService.parseJWT(jwtToken);
+            if(student == null || !jwt.getUserEmail().equals(student.getEmail()))
+                throw new BadInputException("Invalid student.");
+            studentsService.createStudent(student);
+            return ResponseEntity.ok(securityService.login(jwtToken));
+        } catch (BadInputException | UnauthorizedException | NotFoundException e) {
+            return new ExceptionResponseEntity<User>().createRequest(e);
         }
     }
 
