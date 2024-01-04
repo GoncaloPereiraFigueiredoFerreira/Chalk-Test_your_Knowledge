@@ -8,12 +8,12 @@ const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <APIProvider>
-      <UserProvider>
+    <UserProvider>
+      <APIProvider>
         <GoogleOAuthProvider clientId={GCLIENTID}>
           <App />
         </GoogleOAuthProvider>
-      </UserProvider>
-    </APIProvider>
+      </APIProvider>
+    </UserProvider>
   </React.StrictMode>
 );

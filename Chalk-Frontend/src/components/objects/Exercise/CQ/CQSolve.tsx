@@ -89,7 +89,7 @@ export function CQSolve(props: CQSolveProps) {
                     </div>
                   </div>
                   <div className="flex-shrink-0 h-10 w-10 rounded-full">
-                    <img src={user.user?.profilePic}></img>
+                    <img src={user.user?.photoPath}></img>
                   </div>
                 </div>
               ) : (

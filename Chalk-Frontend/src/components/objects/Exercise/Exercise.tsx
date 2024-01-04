@@ -65,8 +65,8 @@ export interface ResolutionItems {
 
 export interface ResolutionItem {
   text: string;
-  justification: string;
-  value: boolean;
+  justification?: string;
+  value?: boolean;
 }
 
 //------------------------------------//
@@ -169,6 +169,7 @@ export interface ExerciseHeader {
 export interface ExerciseBase {
   title: string;
   statement: ExerciseHeader;
+  tags: string[];
 }
 
 export interface ExerciseIdentity {
@@ -297,16 +298,17 @@ export function ExerciseComponent({
 export function InitExercise(type: ExerciseType): Exercise {
   let newExercise: Exercise;
   let base = {
-    title: "",
+    title: "Novo Exercício",
     statement: {
       text: "",
     },
+    tags: [],
   };
 
   let identity: ExerciseIdentity = {
     id: "",
     specialistId: "",
-    visibility: "",
+    visibility: "public",
   };
 
   switch (type) {
@@ -433,4 +435,172 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
       break;
   }
   return newRes;
+}
+
+//----------------------------------------//
+//                                        //
+//      Translate exercise functions      //
+//                                        //
+//----------------------------------------//
+
+export function TranslateExerciseOUT(exercise: Exercise): {
+  exerciseTR: any;
+  solutionTR: any;
+  //faltam as tags
+} {
+  let exerciseTR = {};
+
+  let exerciseBASE = {
+    title: exercise.base.title,
+    visibility: exercise.identity.visibility,
+    statement: exercise.base.statement,
+  };
+
+  let solutionTR: any = {};
+
+  switch (exercise.type) {
+    case ExerciseType.OPEN_ANSWER:
+      exerciseTR = {
+        ...exerciseBASE,
+        type: "OA",
+      };
+      solutionTR["type"] = "OA";
+      solutionTR["text"] = "Something ....";
+      break;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.TRUE_OR_FALSE:
+      let mcType = ExerciseType.MULTIPLE_CHOICE ? "1" : "2";
+      switch (exercise.props.justifyType) {
+        case ExerciseJustificationKind.NO_JUSTIFICATION:
+          mcType += "0";
+          break;
+        case ExerciseJustificationKind.JUSTIFY_ALL:
+          mcType += "1";
+          break;
+        case ExerciseJustificationKind.JUSTIFY_UNMARKED ||
+          ExerciseJustificationKind.JUSTIFY_FALSE:
+          mcType += "2";
+          break;
+        case ExerciseJustificationKind.JUSTIFY_MARKED ||
+          ExerciseJustificationKind.JUSTIFY_TRUE:
+          mcType += "3";
+          break;
+      }
+
+      let newExItems: { [id: string]: any } = {};
+      let newSolItems: { [id: string]: any } = {};
+
+      Object.keys(exercise.props.items).map((key) => {
+        newExItems[key] = {
+          type: "string",
+          text: exercise.props.items[key].text,
+        };
+        newSolItems[key] = {
+          value: exercise.props.items[key].value,
+        };
+      });
+
+      exerciseTR = {
+        ...exerciseBASE,
+        type: "MC",
+        mcType: Number.parseInt(mcType),
+        items: newExItems,
+      };
+      solutionTR = {
+        type: "MC",
+        items: newSolItems,
+      };
+      break;
+
+    case ExerciseType.CHAT:
+      exerciseTR = {
+        ...exerciseBASE,
+        type: "CE",
+        topics: exercise.props.topics,
+        maxAnswers: exercise.props.maxAnswers,
+      };
+      solutionTR["type"] = "CE";
+      break;
+  }
+
+  return { exerciseTR: exerciseTR, solutionTR: solutionTR };
+}
+
+export function TranslateExerciseIN(exercise: any): Exercise {
+  let exerciseBase = {
+    base: {
+      title: exercise.title,
+      statement: exercise.statement,
+      tags: exercise.tags,
+    },
+    identity: {
+      id: exercise.id,
+      specialistId: exercise.specialistId,
+      visibility: exercise.visibility,
+    },
+  };
+  let type: ExerciseType;
+  let exerciseTR: Exercise;
+
+  switch (exercise.type) {
+    case "MC":
+      let justification: ExerciseJustificationKind;
+      type =
+        (exercise.mctype as Number).toString().charAt(0) === "1"
+          ? ExerciseType.MULTIPLE_CHOICE
+          : ExerciseType.TRUE_OR_FALSE;
+
+      switch ((exercise.mctype as Number).toString().charAt(1)) {
+        case "0":
+          justification = ExerciseJustificationKind.NO_JUSTIFICATION;
+          break;
+        case "1":
+          justification = ExerciseJustificationKind.JUSTIFY_ALL;
+          break;
+        case "2":
+          justification = ExerciseJustificationKind.JUSTIFY_FALSE;
+          break;
+        case "3":
+          justification = ExerciseJustificationKind.JUSTIFY_TRUE;
+          break;
+        default:
+          justification = ExerciseJustificationKind.NO_JUSTIFICATION;
+      }
+      let items: any = {};
+
+      Object.keys(exercise.items).map((key: string) => {
+        items[key] = { text: exercise.items[key].text };
+      });
+
+      let propsMC: MCProps = {
+        items: items,
+        justifyType: justification,
+      };
+
+      exerciseTR = { ...exerciseBase, type: type, props: propsMC };
+
+      break;
+
+    case "CE":
+      let propsCQ: CQProps = {
+        maxAnswers: exercise.maxAnswers,
+        topics: exercise.topics,
+      };
+      type = ExerciseType.CHAT;
+      exerciseTR = { ...exerciseBase, type: type, props: propsCQ };
+      break;
+    case "OA":
+      type = ExerciseType.OPEN_ANSWER;
+      exerciseTR = { ...exerciseBase, type: type, props: {} };
+      break;
+    default:
+      exerciseTR = {
+        ...exerciseBase,
+        type: ExerciseType.OPEN_ANSWER,
+        props: {},
+      };
+  }
+
+  return exerciseTR;
 }

@@ -1,16 +1,22 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useReducer, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import {
   ListExerciseActionKind,
   ListExerciseContext,
   ListExerciseStateReducer,
 } from "../../objects/ListExercises/ListExerciseContext";
+import { APIContext } from "../../../APIContext";
+import {
+  TranslateExerciseIN,
+  TranslateExerciseOUT,
+} from "../../objects/Exercise/Exercise";
 
 export function ExerciseBankPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
   const [exerciseID, setExerciseID] = useState("");
+  const { contactBACK } = useContext(APIContext);
 
   const inicialState = {
     listExercises: {},
@@ -42,33 +48,46 @@ export function ExerciseBankPage() {
             <EditExercise
               exercise={listExerciseState.listExercises[exerciseID]}
               saveEdit={(state) => {
+                const { exerciseTR, solutionTR } = TranslateExerciseOUT(
+                  state.exercise
+                );
                 if (exerciseID === "-1") {
-                  // <<< ALTERAR ESTE IF >>>
-                  // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                  // PARA SE SABER O ID DO NOVO EXERCICIO
-                  dispatch({
-                    type: ListExerciseActionKind.ADD_EXERCISE,
-                    payload: {
-                      exercise: {
-                        ...state.exercise,
-                        identity: {
-                          ...state.exercise.identity,
-                          id: "novo id 1000",
-                          visibility: state.exercise.identity?.visibility ?? "",
-                          specialistId:
-                            state.exercise.identity?.specialistId ?? "",
+                  contactBACK("exercises", "POST", undefined, {
+                    exercise: exerciseTR,
+                    solution: solutionTR,
+                    //falta a rubrica
+                    tags: ["Português"],
+                  }).then((response) => {
+                    response.text().then((jsonRes) => {
+                      dispatch({
+                        type: ListExerciseActionKind.ADD_EXERCISE,
+                        payload: {
+                          exercise: {
+                            ...state.exercise,
+                            identity: {
+                              ...state.exercise.identity,
+                              id: jsonRes,
+                              visibility:
+                                state.exercise.identity?.visibility ?? "",
+                              specialistId:
+                                state.exercise.identity?.specialistId ?? "",
+                            },
+                          },
                         },
-                      },
-                    },
+                      });
+                    });
                   });
-                  // <<< ALTERAR ESTE IF (final)>>>
                 } else {
-                  // <<< MANTER >>>
-                  dispatch({
-                    type: ListExerciseActionKind.EDIT_EXERCISE,
-                    payload: { exercise: state.exercise },
+                  contactBACK("exercises/" + exerciseID, "PUT", undefined, {
+                    exercise: exerciseTR,
+                    solution: solutionTR,
+                    //falta a rubrica
+                  }).then((response) => {
+                    dispatch({
+                      type: ListExerciseActionKind.EDIT_EXERCISE,
+                      payload: { exercise: state.exercise },
+                    });
                   });
-                  // <<< MANTER (final)>>>
                 }
                 setExerciseID("");
                 setEditMenuIsOpen(false);

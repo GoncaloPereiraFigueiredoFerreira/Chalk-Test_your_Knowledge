@@ -36,130 +36,130 @@ const exampleRes: Resolutions = {
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção de Conteúdo",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
@@ -284,130 +284,130 @@ const exampleRes: Resolutions = {
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção de Conteúdo",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },

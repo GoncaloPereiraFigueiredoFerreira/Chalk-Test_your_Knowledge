@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import {
@@ -6,10 +6,12 @@ import {
   ListIcon,
   SearchIcon,
 } from "../../objects/SVGImages/SVGImages";
+import { APIContext } from "../../../APIContext";
 
 interface Student {
   id: string;
   name: string;
+  photoPath: string;
   email: string;
 }
 export function AlunosPage() {
@@ -17,30 +19,43 @@ export function AlunosPage() {
   const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const { id } = useParams();
   const [searchKey, setSearch] = useState("");
-  useEffect(
-    () =>
-      setStudentList([
-        { id: "1", name: "John Doe", email: "john.doe@example.com" },
-        { id: "2", name: "John Doe", email: "john.doe@example.com" },
-        { id: "3", name: "John Doe", email: "john.doe@example.com" },
-        { id: "4", name: "John Doe", email: "john.doe@example.com" },
-        { id: "5", name: "John Doe", email: "john.doe@example.com" },
-      ]),
-    [id]
-  );
+  const { contactBACK } = useContext(APIContext);
+
+  useEffect(() => {
+    contactBACK("courses/" + id + "/students", "GET", {
+      page: "0",
+      itemsPerPage: "50",
+    }).then((response) => {
+      response.json().then((students) => {
+        console.log(students);
+        setStudentList(students);
+      });
+    });
+  }, [id]);
+
   const addStudent = () => {
     const newStudent: Student = {
       id: "1",
       name: "Luis",
-      email: "john.doe@example.com",
+      photoPath: "",
+      email: "alexandrinho@gmail.com",
     };
-    setStudentList([...studentList, newStudent]);
+
+    contactBACK("courses/" + id + "/students/add", "POST", undefined, [
+      "alexandrinho@gmail.com",
+    ]).then((response) => {
+      setStudentList([...studentList, newStudent]);
+    });
   };
 
-  const removeStudent = (idToRemove: string) => {
-    setStudentList((prevlist) =>
-      prevlist.filter((student) => student.id !== idToRemove)
-    );
+  const removeStudent = (emailToRemove: string) => {
+    contactBACK("courses/" + id + "/students/remove", "DELETE", undefined, [
+      emailToRemove,
+    ]).then((response) => {
+      setStudentList((prevlist) =>
+        prevlist.filter((student) => student.email !== emailToRemove)
+      );
+    });
   };
 
   return (
@@ -110,9 +125,10 @@ export function AlunosPage() {
                 {student.name}
               </h2>
 
-              <p className="text-sm text-gray-600">ID: {student.id}</p>
               <p className="text-sm text-gray-600">Email: {student.email}</p>
-              <button onClick={() => removeStudent(student.id)}>Remove</button>
+              <button onClick={() => removeStudent(student.email)}>
+                Remove
+              </button>
             </div>
           ))}
         </div>

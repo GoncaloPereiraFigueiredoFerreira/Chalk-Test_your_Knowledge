@@ -31,10 +31,12 @@ interface SidebarProps {
 import { Dropdown } from "flowbite-react";
 import { Course, UserContext } from "../../../UserContext.tsx";
 import { CreateGroupModal } from "../../pages/Groups/CreateGroup.tsx";
+import { APIContext } from "../../../APIContext.tsx";
 
 export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [showGroup, setShowGroup] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const { contactBACK } = useContext(APIContext);
   const [selectedGroup, setSelectedGroup] = useState<Course>({
     id: "all",
     name: "Grupos",
@@ -90,7 +92,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             } sidebar-dropdown transition-all`}
           >
             <li>
-              <Link to={`groups/${selectedGroup.name}/alunos`}>
+              <Link to={`groups/${selectedGroup.id}/alunos`}>
                 <button className="sidebar-item bg-btn-1 group">
                   <GraduateIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Alunos</span>
@@ -98,7 +100,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               </Link>
             </li>
             <li>
-              <Link to={`groups/${selectedGroup.name}/testes`}>
+              <Link to={`groups/${selectedGroup.id}/testes`}>
                 <button className="sidebar-item bg-btn-1 group">
                   <WorldIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>
@@ -108,7 +110,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               </Link>
             </li>
             <li>
-              <Link to={`groups/${selectedGroup.name}/avaliacoes`}>
+              <Link to={`groups/${selectedGroup.id}/avaliacoes`}>
                 <button className="sidebar-item bg-btn-1 group">
                   <CircularGraficIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Avaliações</span>
@@ -119,6 +121,12 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
         </>
       );
     }
+  }
+
+  function handleLogout() {
+    contactBACK("users/logout", "POST", undefined, undefined).then(() => {
+      logout();
+    });
   }
 
   return (
@@ -247,7 +255,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                     onClick={() => {
                       setShowGroup(false);
                       setSelectedGroup(item);
-                      navigate(`groups/${item.name}/alunos`);
+                      navigate(`groups/${item.id}/alunos`);
                     }}
                     className={`sidebar-item ${
                       item === selectedGroup ? "bg-btn-1-selected" : "bg-btn-1"
@@ -305,7 +313,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 renderTrigger={() => (
                   <button className="sidebar-item bg-btn-1 group">
                     <img
-                      src={user.user?.profilePic ?? ""}
+                      src={user.user?.photoPath ?? ""}
                       className={`${
                         isOpen ? "w-10 h-10 " : "size-6"
                       } rounded-full ease-linear duration-75`}
@@ -345,7 +353,13 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   <HelpIcon style={"group-gray-icon"} />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>Help</span>
                 </Dropdown.Item>
-                <Dropdown.Item as="button" className=" group" onClick={logout}>
+                <Dropdown.Item
+                  as="button"
+                  className=" group"
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                >
                   <LogoutIcon style={"group-gray-icon"} />
                   <span
                     className={`${isOpen ? "" : "hidden"} text-red-700 ml-3`}

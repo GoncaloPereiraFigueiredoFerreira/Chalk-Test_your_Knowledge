@@ -77,19 +77,28 @@ export function Login() {
           let userInfo: User = {
             email: result.user.username,
             name: result.user.name,
-            profilePic:
-              "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg",
+            photoPath: "",
             role: result.user.role,
-            courses: [
-              //vai se buscar ao BE
-              { id: "1", name: "Professores da escola AFS Gualtar" },
-              { id: "2", name: "Turma A" },
-              { id: "3", name: "Turma b" },
-            ],
+            courses: [],
           };
-          //contactBACK("login","POST",undefined,userInfo).then((response)=>{login(response.body);navigate("/webapp")})
-          login(userInfo);
-          navigate("/webapp");
+          contactBACK("users/login", "POST", undefined, userInfo).then(
+            (response) => {
+              response.json().then((user) => {
+                console.log(user);
+                contactBACK(
+                  "courses",
+                  "GET",
+                  { page: "0", itemsPerPage: "5" },
+                  undefined
+                ).then((groupResponse) => {
+                  groupResponse.json().then((groups) => {
+                    login({ ...userInfo, courses: groups });
+                    navigate("/webapp");
+                  });
+                });
+              });
+            }
+          );
         });
         break;
       case 400:

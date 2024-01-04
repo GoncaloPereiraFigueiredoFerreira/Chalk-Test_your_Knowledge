@@ -1,13 +1,13 @@
 import { ShowExercise } from "./ShowExercise";
 import "./ListExercises.css";
 import { useContext, useEffect, useState } from "react";
-import { PopUp } from "../../interactiveElements/PopUp";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import { CreateNewExercisePopUp } from "./CreateNewExercisePopUp";
 import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
+  TranslateExerciseIN,
 } from "../Exercise/Exercise";
 import {
   ListExerciseActionKind,
@@ -25,6 +25,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.RIGHT,
       },
+      tags: [],
     },
     type: ExerciseType.CHAT,
     props: { maxAnswers: 3, topics: ["Matemática"] },
@@ -43,6 +44,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.RIGHT,
       },
+      tags: [],
     },
     type: ExerciseType.TRUE_OR_FALSE,
     props: {
@@ -86,6 +88,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.BOT,
       },
+      tags: [],
     },
     type: ExerciseType.OPEN_ANSWER,
     props: {},
@@ -105,6 +108,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.RIGHT,
       },
+      tags: [],
     },
     type: ExerciseType.MULTIPLE_CHOICE,
     props: {
@@ -162,14 +166,24 @@ export function ListExercises({
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    //This dispatch will need to change in order to change a page
-    //contactBACK("exercises", "GET", { page: "1", itemsPerPage: "20" });
-
-    dispatch({
-      type: ListExerciseActionKind.ADD_LIST_EXERCISES,
-      payload: {
-        exercises: getListExercises(),
-      },
+    contactBACK("exercises", "GET", {
+      page: "0",
+      itemsPerPage: "10",
+      visibility: "public",
+    }).then((response) => {
+      response.json().then((exercises) => {
+        console.log(exercises);
+        let exerciseL: Exercise[] = [];
+        exercises.map((ex: any) => {
+          exerciseL.push(TranslateExerciseIN(ex));
+        });
+        dispatch({
+          type: ListExerciseActionKind.ADD_LIST_EXERCISES,
+          payload: {
+            exercises: exerciseL,
+          },
+        });
+      });
     });
   }, []);
 
@@ -226,8 +240,8 @@ export function ListExercises({
         )}
       </div>
       <CreateNewExercisePopUp
-        newExercisePopUp={newExercisePopUp}
-        setNewExercisePopUp={() => setNewExercisePopUp(false)}
+        show={newExercisePopUp}
+        closePopUp={() => setNewExercisePopUp(false)}
         createNewExercise={(newExerciseType: ExerciseType) => {
           dispatch({
             type: ListExerciseActionKind.CREATE_NEW_EXERCISE,

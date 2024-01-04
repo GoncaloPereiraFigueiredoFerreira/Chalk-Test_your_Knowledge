@@ -1,16 +1,21 @@
 import { useContext, useState } from "react";
 import { Modal } from "flowbite-react";
 import { APIContext } from "../../../APIContext";
+import { UserContext } from "../../../UserContext";
 
 export function CreateGroupModal({ open, close }: any) {
   const [name, setGroupName] = useState("");
   const { contactBACK } = useContext(APIContext);
 
   function onCloseModal() {
-    // if name !== ""
-    // contactBACK("course", "POST", undefined,{course: { description: "", instituitionID: "", name: name }});
-    setGroupName("");
-    close();
+    if (name !== "")
+      contactBACK("courses", "POST", undefined, {
+        description: "",
+        name: name,
+      }).then(() => {
+        setGroupName("");
+        close();
+      });
   }
 
   return (

@@ -1,12 +1,31 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../UserContext.tsx";
+import { Course, UserContext } from "../../../UserContext.tsx";
+import { APIContext } from "../../../APIContext.tsx";
 
 export function GroupsPage() {
   const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const navigate = useNavigate();
-  const { user, logout } = useContext(UserContext);
+  const { contactBACK } = useContext(APIContext);
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  useEffect(() => {
+    contactBACK(
+      "courses",
+      "GET",
+      { page: "0", itemsPerPage: "50" },
+      undefined
+    ).then((response) => {
+      response.json().then((groups) => {
+        let tmpL: Course[] = [];
+        groups.map((group: any) => {
+          tmpL.push({ id: group.id, name: group.name } as Course);
+        });
+        setCourses(tmpL);
+      });
+    });
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-2-1">
@@ -30,11 +49,11 @@ export function GroupsPage() {
             : "flex flex-col gap-4 px-10"
         }
       >
-        {user.user?.courses.map((item, index) => (
+        {courses.map((item, index) => (
           <button
             key={index}
             type="button"
-            onClick={() => navigate(`${item.name}/alunos`)}
+            onClick={() => navigate(`${item.id}/alunos`)}
           >
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">

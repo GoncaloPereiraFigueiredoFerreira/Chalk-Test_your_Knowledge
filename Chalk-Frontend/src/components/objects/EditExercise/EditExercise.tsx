@@ -297,6 +297,7 @@ interface EditState {
 interface EditExerciseProps {
   position?: string;
   exercise: Exercise;
+  rubric?: Rubric;
   saveEdit: (state: EditState) => void;
   cancelEdit: (state: EditState) => void;
 }

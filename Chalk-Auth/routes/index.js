@@ -45,6 +45,7 @@ router.post("/register", (req, res, next) => {
         res
           .status(200)
           .setHeader("Content-Type", "application/json")
+          .setHeader("Authorization", "Bearer " + token)
           .cookie("chalkauthtoken", token)
           .jsonp({
             sucess: true,
@@ -79,6 +80,7 @@ router.post(
         res
           .status(200)
           .setHeader("Content-Type", "application/json")
+          .setHeader("Authorization", "Bearer " + token)
           .cookie("chalkauthtoken", token)
           .jsonp({
             success: true,
@@ -143,6 +145,17 @@ router.post("/google", (req, res, next) => {
           .end();
       });
     });
+});
+
+router.get("/user", authenticate.verifyUser, (req, res, next) => {
+  res
+    .status(200)
+    .jsonp({
+      email: req.user.username,
+      role: req.user.role,
+      name: req.user.name,
+    })
+    .end();
 });
 
 module.exports = router;
