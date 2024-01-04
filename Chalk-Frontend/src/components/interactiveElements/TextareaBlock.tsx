@@ -100,6 +100,11 @@ export function TextareaBlock({
     pRef.current?.focus();
   }
 
+  function toggleUnderline() {
+    document.execCommand("underline");
+    pRef.current?.focus();
+  }
+
   return (
     <>
       <div
@@ -120,14 +125,21 @@ export function TextareaBlock({
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleBold()}
               >
-                B
+                <strong>B</strong>
               </button>
               <button
                 type="button"
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleItalic()}
               >
-                I
+                <em>I</em>
+              </button>
+              <button
+                type="button"
+                className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
+                onClick={() => toggleUnderline()}
+              >
+                <u>U</u>
               </button>
             </div>
             <div className="flex flex-wrap items-center space-x-1 sm:pl-4">
@@ -141,7 +153,7 @@ export function TextareaBlock({
           </div>
         </div>
         <div
-          className="flex flex-row w-full px-4 py-2"
+          className="flex flex-row w-full px-4 py-2 overflow-x-auto"
           style={{ minHeight: 24 * rows + "px" }}
           onClick={() => pRef.current?.focus()}
         >

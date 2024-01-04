@@ -256,17 +256,19 @@ export function ShowExerciseDragDrop({
                 <button
                   className="btn-options-exercise gray-icon"
                   onClick={() => {
-                    setExerciseID({
-                      groupPosition: groupPosition,
-                      exercisePosition: -1,
-                    });
-                    dispatch({
-                      type: EditTestActionKind.REMOVE_EXERCISE,
-                      exercise: {
+                    if (selectedMenu !== "edit-exercise") {
+                      setExerciseID({
                         groupPosition: groupPosition,
-                        exercisePosition: exercisePosition,
-                      },
-                    });
+                        exercisePosition: -1,
+                      });
+                      dispatch({
+                        type: EditTestActionKind.REMOVE_EXERCISE,
+                        exercise: {
+                          groupPosition: groupPosition,
+                          exercisePosition: exercisePosition,
+                        },
+                      });
+                    }
                   }}
                 >
                   <HiOutlineTrash className="size-5" />

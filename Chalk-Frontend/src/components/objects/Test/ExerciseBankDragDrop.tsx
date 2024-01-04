@@ -52,15 +52,15 @@ export function ExerciseBankDragDrop({
         {Object.keys(listExercises).map((key, index) => (
           <ShowExerciseDragDrop
             key={index}
-            setExerciseID={setExerciseID}
-            selectedMenu={"dd-list-exercises"}
-            setSelectedMenu={setSelectedMenu}
             listExerciseButtons={true}
-            exercisePosition={index}
             groupPosition={exerciseID.groupPosition}
             exercise={listExercises[key]}
+            selectedMenu={"dd-list-exercises"}
+            setSelectedMenu={setSelectedMenu}
             exerciseIsSelected={key === selectedExercise}
             setSelectedExercise={(value) => setSelectedExercise(value)}
+            exercisePosition={index}
+            setExerciseID={setExerciseID}
           ></ShowExerciseDragDrop>
         ))}
       </div>

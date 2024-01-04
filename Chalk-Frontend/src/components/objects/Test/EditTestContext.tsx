@@ -92,16 +92,31 @@ export function EditTestStateReducer(
     case EditTestActionKind.ADD_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
         let newGroups = [...state.test.groups];
+        const before = newGroups[action.exercise.groupPosition].exercises.slice(
+          0,
+          action.exercise.exercisePosition
+        );
+        const after = newGroups[action.exercise.groupPosition].exercises.slice(
+          action.exercise.exercisePosition
+        );
+        const exercise = {
+          ...action.exercise.exercise,
+          identity: {
+            ...action.exercise.exercise.identity,
+            // <<<<<<<<<  ALTERAR  >>>>>>>>>
+            // Exercicio tem de ser sempre duplicado
+            // Novo id resultante de duplicar este exercicio no backend
+            id: "test-exercise-".concat(Math.random().toString()),
+            // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+          },
+        } as Exercise;
         let newExerciseGroup = {
           ...newGroups[action.exercise.groupPosition],
           groupCotation:
             newGroups[action.exercise.groupPosition].groupCotation +
             (action.exercise.exercise.identity.cotation ?? 0),
-          exercises: [
-            ...newGroups[action.exercise.groupPosition].exercises,
-            action.exercise.exercise,
-          ],
-        } as ExerciseGroup;
+          exercises: [...before, exercise, ...after],
+        };
         newGroups[action.exercise.groupPosition] = newExerciseGroup;
         return {
           ...state,
@@ -188,6 +203,7 @@ export function EditTestStateReducer(
           groups: [
             ...state.test.groups,
             {
+              id: "test-group-" + state.test.groups.length,
               groupInstructions: "",
               exercises: [],
               groupCotation: 0,
@@ -392,7 +408,7 @@ export function EditTestStateReducer(
 
 //------------------------------------//
 //                                    //
-//        EditTestProvider          //
+//          EditTestProvider          //
 //                                    //
 //------------------------------------//
 
@@ -403,7 +419,7 @@ export const EditTestContext = createContext<
 
 //------------------------------------//
 //                                    //
-//       useEditTestContext         //
+//        useEditTestContext          //
 //                                    //
 //------------------------------------//
 
@@ -416,4 +432,32 @@ export function useEditTestContext() {
     );
   }
   return createTest;
+}
+
+//------------------------------------//
+//                                    //
+//         EditTest Handlers          //
+//                                    //
+//------------------------------------//
+
+export function findGroupByID(id: string) {
+  const { testState } = useEditTestContext();
+  testState.test.groups.forEach((group, index) => {
+    if (group.id === id) return index;
+  });
+  return -1;
+}
+
+export function findExerciseByID(id: string) {
+  const { testState } = useEditTestContext();
+  testState.test.groups.forEach((group, groupPosition) => {
+    group.exercises.forEach((exercise, exercisePosition) => {
+      if (exercise.identity.id === id)
+        return {
+          groupPosition: groupPosition,
+          exercisePosition: exercisePosition,
+        };
+    });
+  });
+  return -1;
 }
