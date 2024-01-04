@@ -63,16 +63,6 @@ export function EditTestInfo({
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
-          <strong>Tipo:</strong>
-          <div className="px-4">
-            <TextareaBlock
-              toolbar={true}
-              rows={6}
-              placeholder="Coloque aqui as instrucoes do grupo..."
-              value={type}
-              onChange={(value) => setType(value)}
-            />
-          </div>
           <strong>Instruções globais:</strong>
           <div className="px-4">
             <TextareaBlock

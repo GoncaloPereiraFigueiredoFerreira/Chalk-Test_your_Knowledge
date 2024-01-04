@@ -26,7 +26,7 @@ export function Searchbar() {
               <SearchIcon style="text-gray-400" size="size-4"></SearchIcon>
               <button
                 type="submit"
-                className="btn-selected font-medium rounded-lg text-sm px-4 py-2 pointer-events-auto"
+                className="font-medium rounded-lg text-sm px-4 py-2 pointer-events-auto btn-selected"
               >
                 Search
               </button>
