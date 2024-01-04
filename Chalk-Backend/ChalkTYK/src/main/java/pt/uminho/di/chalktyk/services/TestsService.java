@@ -1301,7 +1301,7 @@ public class TestsService implements ITestsService {
         throw new NotFoundException("Could not get exercise resolution: there is no exercise in the test with the given identifier");
     }
 
-    public void submitTest(String testResId) throws NotFoundException, BadInputException, UnauthorizedException {
+    public void submitTestResolution(String testResId) throws NotFoundException, BadInputException, UnauthorizedException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Could not submit test: couldn't find test resolution");

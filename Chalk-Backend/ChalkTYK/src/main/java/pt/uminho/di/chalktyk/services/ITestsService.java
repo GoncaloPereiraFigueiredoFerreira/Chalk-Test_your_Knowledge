@@ -259,7 +259,7 @@ public interface ITestsService {
      * @throws NotFoundException     if no test was found with the given id
      * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void submitTest(String testResId) throws NotFoundException, BadInputException, UnauthorizedException;
+    void submitTestResolution(String testResId) throws NotFoundException, BadInputException, UnauthorizedException; //TODO
 
     /**
      * Create a test resolution
