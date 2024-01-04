@@ -1,0 +1,4 @@
+.gridTestInfo {
+  display: grid;
+  grid-template-columns: max-content auto;
+}

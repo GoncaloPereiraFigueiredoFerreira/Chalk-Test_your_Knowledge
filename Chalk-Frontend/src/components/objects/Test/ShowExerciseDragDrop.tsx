@@ -7,13 +7,10 @@ import {
   ExerciseType,
 } from "../Exercise/Exercise";
 import { FaArrowRightToBracket } from "react-icons/fa6";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
 import { PiChatsBold } from "react-icons/pi";
-import {
-  CreateTestActionKind,
-  useCreateTestContext,
-} from "./CreateTestContext";
+import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import {
   CheckboxIcon,
   CheckedListIcon,
@@ -57,7 +54,7 @@ export function ShowExerciseDragDrop({
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [visibility, setVisibility] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
-  const { testState, dispatch } = useCreateTestContext();
+  const { testState, dispatch } = useEditTestContext();
 
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
@@ -82,7 +79,7 @@ export function ShowExerciseDragDrop({
   function handleBlur() {
     setChangeCotationIsActive(false);
     dispatch({
-      type: CreateTestActionKind.CHANGE_EXERCISE_COTATION,
+      type: EditTestActionKind.CHANGE_EXERCISE_COTATION,
       exercise: {
         groupPosition: groupPosition,
         exercisePosition: exercisePosition,
@@ -241,7 +238,7 @@ export function ShowExerciseDragDrop({
                       testState.test.groups[groupPosition].exercises.length,
                   });
                   dispatch({
-                    type: CreateTestActionKind.ADD_EXERCISE,
+                    type: EditTestActionKind.ADD_EXERCISE,
                     exercise: {
                       groupPosition: groupPosition,
                       exercisePosition:
@@ -264,7 +261,7 @@ export function ShowExerciseDragDrop({
                       exercisePosition: -1,
                     });
                     dispatch({
-                      type: CreateTestActionKind.REMOVE_EXERCISE,
+                      type: EditTestActionKind.REMOVE_EXERCISE,
                       exercise: {
                         groupPosition: groupPosition,
                         exercisePosition: exercisePosition,
@@ -285,7 +282,7 @@ export function ShowExerciseDragDrop({
                         exercisePosition: exercisePosition,
                       });
                       dispatch({
-                        type: CreateTestActionKind.SELECT_EXERCISE_POSITION,
+                        type: EditTestActionKind.SELECT_EXERCISE_POSITION,
                         exercise: {
                           groupPosition: groupPosition,
                           exercisePosition: exercisePosition,
@@ -294,7 +291,7 @@ export function ShowExerciseDragDrop({
                     }
                   }}
                 >
-                  <FaPencilAlt className="size-5" />
+                  <FaPencil className="size-5" />
                   Editar
                 </button>
               </>

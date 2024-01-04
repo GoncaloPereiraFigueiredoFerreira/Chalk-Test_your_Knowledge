@@ -26,14 +26,14 @@ export function Searchbar() {
               <SearchIcon style="text-gray-400" size="size-4"></SearchIcon>
               <button
                 type="submit"
-                className="font-medium rounded-lg text-sm px-4 py-2 pointer-events-auto btn-selected"
+                className="btn-selected font-medium rounded-lg text-sm px-4 py-2 pointer-events-auto"
               >
                 Search
               </button>
             </div>
             <input
               type="text"
-              className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border-l-0 border bg-input-1"
+              className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border border-l-0 bg-input-1"
               placeholder="Search..."
               value={searchText}
               onChange={(text) => setSearchText(text.target.value)}
