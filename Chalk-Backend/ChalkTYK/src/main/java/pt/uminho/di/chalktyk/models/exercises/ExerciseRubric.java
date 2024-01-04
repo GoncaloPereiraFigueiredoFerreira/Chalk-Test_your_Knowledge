@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceRubric;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
@@ -26,7 +27,8 @@ import java.io.Serializable;
 @JsonSubTypes({
 		@JsonSubTypes.Type(name = "MC", value = MultipleChoiceRubric.class),
 		@JsonSubTypes.Type(name = "OA", value = OpenAnswerRubric.class),
-		@JsonSubTypes.Type(name = "FTB", value = FillTheBlanksRubric.class)
+		@JsonSubTypes.Type(name = "FTB", value = FillTheBlanksRubric.class),
+		@JsonSubTypes.Type(name = "CE", value = ChatExerciseRubric.class)
 })
 public abstract class ExerciseRubric implements Serializable {
 	@Id

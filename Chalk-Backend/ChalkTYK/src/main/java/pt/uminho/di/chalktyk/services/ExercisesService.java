@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.services;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -471,9 +472,12 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the exercise or the course do no exist.
      */
     private void _updateExerciseCourse(Exercise exercise, String courseId) throws NotFoundException, BadInputException {
-        Course course = coursesService.getCourseById(courseId);
-        if(!coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
-            throw new BadInputException("Specialist does not belong to the course.");
+        Course course = null;
+        if(courseId != null) {
+            course = coursesService.getCourseById(courseId);
+            if (!coursesService.checkSpecialistInCourse(courseId, exercise.getSpecialistId()))
+                throw new BadInputException("Specialist does not belong to the course.");
+        }
         exercise.setCourse(course);
         exerciseDAO.save(exercise);
     }
@@ -859,7 +863,7 @@ public class ExercisesService implements IExercisesService{
      * @return list of exercises that match the given filters
      */
     @Override
-    public Page<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
+    public List<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
 
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
@@ -888,7 +892,7 @@ public class ExercisesService implements IExercisesService{
             exercises = exerciseDAO.getExercisesMatchAnyGivenTag(tags,visibilityType,institutionId,courseId,
                                                                  specialistId,title,exerciseType,
                                                                  PageRequest.of(page, itemsPerPage));
-        return exercises;
+        return exercises.toList();
     }
 
     /**
@@ -1081,8 +1085,11 @@ public class ExercisesService implements IExercisesService{
      * @throws UnauthorizedException if the resolution cannot be corrected automatically
      */
     private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws UnauthorizedException {
-        assert resolution != null && exercise != null && rubric != null && solution != null;
-        resolution = exercise.automaticEvaluation(resolution, solution, rubric);
+        assert resolution != null && exercise != null;
+        ExerciseRubric unproxiedRubric = null;
+        if(rubric != null)
+            unproxiedRubric = (ExerciseRubric) Hibernate.unproxy(rubric);
+        resolution = exercise.automaticEvaluation(resolution, solution, unproxiedRubric);
         exerciseResolutionDAO.save(resolution);
         return resolution.getPoints();
     }

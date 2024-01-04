@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,6 +37,7 @@ public class ExerciseResolution {
 	
 	@ManyToOne(targetEntity= Exercise.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="ExerciseID", referencedColumnName="ID", nullable=false) })
+	@JsonIgnore
 	private Exercise exercise;
 
 	@Column(name = "ExerciseID", insertable = false, updatable = false)
@@ -44,6 +46,7 @@ public class ExerciseResolution {
 
 	@ManyToOne(targetEntity= Student.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="StudentID", referencedColumnName="ID", nullable=false) })
+	@JsonIgnore
 	private Student student;
 
 	@Column(name = "StudentID", insertable = false, updatable = false)
@@ -114,4 +117,6 @@ public class ExerciseResolution {
 		else
 			data.verifyInsertProperties();
 	}
+
+
 }
