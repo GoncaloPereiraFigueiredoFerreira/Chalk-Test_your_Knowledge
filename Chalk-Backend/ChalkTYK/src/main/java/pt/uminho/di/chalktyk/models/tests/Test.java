@@ -1,8 +1,11 @@
 package pt.uminho.di.chalktyk.models.tests;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
@@ -34,10 +37,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -75,25 +74,56 @@ public class Test implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime publishDate;
 
+	@JsonIgnore
 	@ManyToOne(targetEntity= Specialist.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="SpecialistID", referencedColumnName="ID", nullable=false) })
 	private Specialist specialist;
+
+	@Column(name = "SpecialistID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String specialistId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "Visibility")
 	private Visibility visibility;
 
+	@JsonIgnore
 	@ManyToOne(targetEntity= Course.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="CourseID", referencedColumnName="ID") })
 	private Course course;
 
+	@Column(name = "CourseID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String courseId;
+
+	@JsonIgnore
 	@ManyToOne(targetEntity= Institution.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="InstitutionID", referencedColumnName="ID") })
 	private Institution institution;
 
+	@Column(name = "InstitutionID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String institutionId;
+
+
 	@Type(JsonBinaryType.class)
     @Column(name = "Groups", columnDefinition = "jsonb")
 	private List<TestGroup> groups;
+
+	public void setCourse(Course course) {
+		this.course = course;
+		this.courseId = course != null ? course.getId() : null;
+	}
+
+	public void setSpecialist(Specialist specialist) {
+		this.specialist = specialist;
+		this.specialistId = specialist != null ? specialist.getId() : null;
+	}
+
+	public void setInstitution(Institution institution) {
+		this.institution = institution;
+		this.institutionId = institution != null ? institution.getName() : null;
+	}
 
 	/**
 	 * Calculates and updates global and group points.
@@ -140,7 +170,7 @@ public class Test implements Serializable {
 	public String getCourseId(){
 		if(course==null)
 			return null;
-		else return course.getId();
+		else return courseId;
 	}
 
 	public String getInstitutionId(){
@@ -149,32 +179,19 @@ public class Test implements Serializable {
 		else return institution.getName();
 	}
 
-	// TODO - ver onde é que o Luis usou este metodo porque nao é suposto fazer deep clone das associacoes
-	/**
-	 * Clones everything except associations.
-	 * @return cloned test, or 'null' if any property of the test is not valid.
-	 */
-	public Test cloneAllButAssociations() {
-		Test duplicatedTest = new Test();
-		duplicatedTest.setTitle(this.title);
-		duplicatedTest.setGlobalInstructions(this.globalInstructions);
-		try { calculatePoints();
-		} catch (BadInputException e) { return null; }
-		duplicatedTest.setGlobalPoints(this.globalPoints);
-		duplicatedTest.setConclusion(this.conclusion);
-		duplicatedTest.setCreationDate(this.creationDate);
-		duplicatedTest.setPublishDate(this.publishDate);
-		duplicatedTest.setVisibility(this.visibility);
-
-		// Duplicate groups if present
-		if (this.groups != null) {
-			List<TestGroup> duplicatedGroups = new ArrayList<>();
-			for (TestGroup entry : this.groups) {
-				duplicatedGroups.add(entry.clone());
-			}
-			duplicatedTest.setGroups(duplicatedGroups);
-		}
-		return duplicatedTest;
+	public Test(String id, String title, String globalInstructions, Float globalPoints, String conclusion, LocalDateTime creationDate, LocalDateTime publishDate, Specialist specialist, Visibility visibility, Course course, Institution institution, List<TestGroup> groups) {
+		this.id = id;
+		this.title = title;
+		this.globalInstructions = globalInstructions;
+		this.globalPoints = globalPoints;
+		this.conclusion = conclusion;
+		this.creationDate = creationDate;
+		this.publishDate = publishDate;
+		setSpecialist(specialist);
+		this.visibility = visibility;
+		setCourse(course);
+		setInstitution(institution);
+		this.groups = groups;
 	}
 
 	public List<TestResolutionGroup> createEmptyResolutionGroups(){

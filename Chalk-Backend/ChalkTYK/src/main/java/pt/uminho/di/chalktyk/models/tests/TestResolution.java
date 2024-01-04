@@ -1,7 +1,11 @@
 package pt.uminho.di.chalktyk.models.tests;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import lombok.*;
 import org.hibernate.annotations.Type;
+import pt.uminho.di.chalktyk.models.courses.Course;
+import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
@@ -19,10 +23,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -48,13 +48,23 @@ public class TestResolution {
 	@Column(name="TotalPoints")
 	private Float totalPoints;
 
+	@JsonIgnore
 	@ManyToOne(targetEntity= Student.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="StudentID", referencedColumnName="ID", nullable=false) })
 	private Student student;
 
+	@Column(name = "StudentID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String studentId;
+
+	@JsonIgnore
 	@ManyToOne(targetEntity= Test.class, fetch=FetchType.LAZY)
 	@JoinColumns(value={ @JoinColumn(name="TestID", referencedColumnName="ID", nullable=false) })
 	private Test test;
+
+	@Column(name = "TestID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String testID;
 
 	@Column(name="Status")
 	private TestResolutionStatus status;
@@ -62,6 +72,28 @@ public class TestResolution {
 	@Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb", name = "Groups")
 	private List<TestResolutionGroup> groups;
+
+	public TestResolution(String id, LocalDateTime startDate, LocalDateTime submissionDate, int submissionNr, Float totalPoints, Student student, Test test, TestResolutionStatus status, List<TestResolutionGroup> groups) {
+		this.id = id;
+		this.startDate = startDate;
+		this.submissionDate = submissionDate;
+		this.submissionNr = submissionNr;
+		this.totalPoints = totalPoints;
+		setStudent(student);
+		setTest(test);
+		this.status = status;
+		this.groups = groups;
+	}
+
+	public void setStudent(Student student) {
+		this.student = student;
+		this.studentId = studentId != null ? student.getId() : null;
+	}
+
+	public void setTest(Test test) {
+		this.test = test;
+		this.testID = test != null ? test.getId() : null;
+	}
 
 	public void updateSum() {
 		totalPoints = groups.stream()

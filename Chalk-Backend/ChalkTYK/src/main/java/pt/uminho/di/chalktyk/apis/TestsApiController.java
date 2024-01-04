@@ -4,7 +4,8 @@ import org.springframework.http.HttpStatus;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
-import pt.uminho.di.chalktyk.dtos.UpdateTestExerciseResolutionDTO;
+import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
@@ -186,7 +187,7 @@ public class TestsApiController implements TestsApi {
         }
     }
 
-    public ResponseEntity<String> duplicateTestById(String testId, String jwt, String courseId, String visibility) {
+    public ResponseEntity<String> duplicateTestById(String testId, String jwt, DuplicateTestDTO duplicateTestDTO) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);
@@ -200,9 +201,10 @@ public class TestsApiController implements TestsApi {
 
             boolean perm = role.equals("SPECIALIST")
                     && exercisesTestsAuthorization.canSpecialistGetTest(userId, test.getSpecialistId(), exVisibility, exCourseId, exInstitutionId);
-
+            if(perm && duplicateTestDTO.getCourseId()!=null)
+                perm = exercisesTestsAuthorization.specialistBelongsToCourse(userId,duplicateTestDTO.getCourseId());
             if(perm)
-                return ResponseEntity.ok(testsService.duplicateTestById(userId, testId, Visibility.valueOf(visibility), courseId));
+                return ResponseEntity.ok(testsService.duplicateTestById(userId, testId, Visibility.valueOf(duplicateTestDTO.getVisibility()), duplicateTestDTO.getCourseId()));
             else
                 return new ExceptionResponseEntity<String>().createRequest(
                         HttpStatus.UNAUTHORIZED.value(),
@@ -314,6 +316,7 @@ public class TestsApiController implements TestsApi {
         }
     }
 
+    /*
     public ResponseEntity<Void> createTestResolution(String testId, TestResolution body, String jwt) {
         try {
             // validate jwt token and get user id and role
@@ -333,8 +336,9 @@ public class TestsApiController implements TestsApi {
         } catch (NotFoundException | UnauthorizedException | BadInputException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
-    }
+    }*/
 
+    /*
     public ResponseEntity<Boolean> canStudentSubmitResolution(String testId, String studentId, String jwt) {
         try {
             // validate jwt token and get user id and role
@@ -353,7 +357,7 @@ public class TestsApiController implements TestsApi {
         } catch (NotFoundException | UnauthorizedException e) {
             return new ExceptionResponseEntity<Boolean>().createRequest(e);
         }
-    }
+    }*/
 
     public ResponseEntity<Integer> countStudentSubmissionsForTest(String testId, String studentId, String jwt) {
         try {
@@ -669,7 +673,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestExerciseResolution(String jwtToken, String testResolutionId, UpdateTestExerciseResolutionDTO updateTestExerciseResolutionDTO) {
+    public ResponseEntity<Void> updateTestExerciseResolution(String jwtToken, String testResolutionId, ExerciseResolution exerciseResolution) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -678,7 +682,7 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("STUDENT")) {
                 if(exercisesTestsAuthorization.canStudentAccessTestResolution(userId, testResolutionId)) {
-                    testsService.uploadResolution(testResolutionId,updateTestExerciseResolutionDTO.getExeId(),updateTestExerciseResolutionDTO.getResolution());
+                    testsService.uploadResolution(testResolutionId,exerciseResolution.getExerciseId(),exerciseResolution);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
@@ -692,7 +696,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> createTestExercise(String jwtToken, String testId, CreateTestExerciseDTO createTestExerciseDTO) {
+    public ResponseEntity<String> createTestExercise(String jwtToken, String testId, CreateTestExerciseDTO createTestExerciseDTO) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -701,20 +705,19 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
-                    testsService.createTestExercise(testId,
+                    return ResponseEntity.ok(testsService.createTestExercise(testId,
                             createTestExerciseDTO.getExercise(),
                             createTestExerciseDTO.getGroupIndex(),
                             createTestExerciseDTO.getExeIndex(),
-                            createTestExerciseDTO.getGroupInstructions());
-                    return new ResponseEntity<>(HttpStatus.OK);
+                            createTestExerciseDTO.getGroupInstructions()));
                 }
             }
 
-            return new ExceptionResponseEntity<Void>().createRequest(
+            return new ExceptionResponseEntity<String>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to create a exercise for this test.");
         } catch (UnauthorizedException | NotFoundException | BadInputException e) {
-            return new ExceptionResponseEntity<Void>().createRequest(e);
+            return new ExceptionResponseEntity<String>().createRequest(e);
         }
     }
 
@@ -765,7 +768,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> startTest(String jwtToken, String testId) {
+    public ResponseEntity<String> startTest(String jwtToken, String testId) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -774,16 +777,15 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("STUDENT")) {
                 if(exercisesTestsAuthorization.canStudentGetTest(userId, testId)) {
-                    testsService.startTest(testId,userId);
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return ResponseEntity.ok(testsService.startTest(testId,userId));
                 }
             }
 
-            return new ExceptionResponseEntity<Void>().createRequest(
+            return new ExceptionResponseEntity<String>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission start this test.");
         } catch (UnauthorizedException | NotFoundException | BadInputException e) {
-            return new ExceptionResponseEntity<Void>().createRequest(e);
+            return new ExceptionResponseEntity<String>().createRequest(e);
         }
     }
 

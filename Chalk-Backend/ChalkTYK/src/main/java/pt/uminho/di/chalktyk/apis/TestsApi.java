@@ -3,7 +3,8 @@ package pt.uminho.di.chalktyk.apis;
 
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2001;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
-import pt.uminho.di.chalktyk.dtos.UpdateTestExerciseResolutionDTO;
+import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
@@ -48,9 +49,9 @@ public interface TestsApi {
                                         )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage,
                                         @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the tests.", schema = @Schema(defaultValue = "[]")) @Valid @RequestParam(value = "tags", required = false, defaultValue = "[]") List<String> tags,
                                         @Parameter(in = ParameterIn.QUERY, description = "Value that defines if the exercise must have all the given tags to be retrieved.", schema = @Schema(defaultValue = "false")) @Valid @RequestParam(value = "matchAllTags", required = false, defaultValue = "false") Boolean matchAllTags,
-                                        @Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'. ", schema = @Schema(allowableValues = {"public", "institution", "course"},
-                                                defaultValue = "public")) @Valid @RequestParam(value = "visibilityType", required = false, defaultValue = "public") String visibilityType,
-                                        @Parameter(in = ParameterIn.QUERY, description = "Identifier of the visibility target. For example, if visibilityType='institution',  then this parameter is the identifier of the institution. ", schema = @Schema()) @Valid @RequestParam(value = "visibilityTarget", required = false) String visibilityTarget,
+                                        @Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'. ", schema = @Schema(allowableValues = {"PUBLIC", "INSTITUTION", "COURSE","NOT_LISTED","PRIVATE"},
+                                                defaultValue = "PUBLIC")) @Valid @RequestParam(value = "visibilityType", required = false, defaultValue = "PUBLIC") String visibilityType,
+                                        @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "title", required = false) String title,
                                         @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId,
                                         @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "courseId", required = false) String courseId,
                                         @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId,
@@ -68,7 +69,48 @@ public interface TestsApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
-    ResponseEntity<String> createTest(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody Test body,
+    ResponseEntity<String> createTest(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema(example = "{\n" +
+            "    \"title\": \"Teste exemplo\",\n" +
+            "    \"globalInstructions\": \"Não fazer batota\",\n" +
+            "    \"globalPoints\": 10,\n" +
+            "    \"conclusion\": \"Parabéns \",\n" +
+            "    \"creationDate\": \"2024-01-04T16:30:05.970Z\",\n" +
+            "    \"publishDate\": \"2024-01-10T16:30:05.970Z\",\n" +
+            "    \"visibility\": \"public\",\n" +
+            "    \"groups\": [\n" +
+            "      {\n" +
+            "        \"groupInstructions\": \"string\",\n" +
+            "        \"groupPoints\": 10,\n" +
+            "        \"exercises\": [\n" +
+            "          {\n" +
+            "            \"points\": 10,\n" +
+            "            \"id\": \"id\",\n" +
+            "            \"Type\": \"reference\"\n" +
+            "          },\n" +
+            "          \n" +
+            "          {\n" +
+            "            \"points\": 10,\n" +
+            "          \"exercise\":{\n" +
+            "           \"title\":\"Exemplo Resposta Aberta\",\n" +
+            "           \"type\": \"OA\",\n" +
+            "           \"visibility\":\"public\",\n" +
+            "           \"statement\":{\n" +
+            "               \"text\":\"Qual é o sentido da vida?\",\n" +
+            "               \"imagePath\":\"https://cdn.flash.pt/images/2019-10/img_828x523$2019_10_15_13_49_46_227057_im_637409554131662405.png\",\n" +
+            "               \"imagePosition\":\"down\"\n" +
+            "           },\n" +
+            "            \"course\": {\n" +
+            "               \"id\" : null\n" +
+            "           }\n" +
+            "            },\n" +
+            "            \"Type\": \"concrete\"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"courseId\": \"id\",\n" +
+            "    \"institutionId\": null\n" +
+            "  }")) @Valid @RequestBody Test body,
                                       @RequestHeader("chalkauthtoken") String jwt);
 
 
@@ -120,7 +162,8 @@ public interface TestsApi {
             produces = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<String> duplicateTestById(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
-                                             @RequestHeader("chalkauthtoken") String jwt, String courseId, String visibility);
+                                             @RequestHeader("chalkauthtoken") String jwt,
+                                             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody DuplicateTestDTO duplicateTestDTO);
 
 
     /*
@@ -183,7 +226,7 @@ public interface TestsApi {
                                                             )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage,
                                                             @RequestHeader("chalkauthtoken") String jwt);
 
-
+/*
     @Operation(summary = "Create a test resolution", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test resolution created successfully."),
@@ -195,9 +238,10 @@ public interface TestsApi {
             method = RequestMethod.POST)
     ResponseEntity<Void> createTestResolution(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("testId") String testId,
                                               @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody TestResolution body,
-                                              @RequestHeader("chalkauthtoken") String jwt);
+                                              @RequestHeader("chalkauthtoken") String jwt);*/
 
 
+    /*
     @Operation(summary = "Allows to check if the student can submit a resolution for the test.", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval.",
@@ -209,7 +253,7 @@ public interface TestsApi {
             method = RequestMethod.GET)
     ResponseEntity<Boolean> canStudentSubmitResolution(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
                                                        @Parameter(in = ParameterIn.PATH, description = "student identifier", required = true, schema = @Schema()) @PathVariable("studentId") String studentId,
-                                                       @RequestHeader("chalkauthtoken") String jwt);
+                                                       @RequestHeader("chalkauthtoken") String jwt);*/
 
 
     @Operation(summary = "Retrieves the number of (resolution) submissions a student has made for a specific test.", description = "", tags = {"tests"})
@@ -419,8 +463,8 @@ public interface TestsApi {
             method = RequestMethod.PUT)
     ResponseEntity<Void> updateTestExerciseResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
-            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testResolutionId,
-            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody UpdateTestExerciseResolutionDTO updateTestExerciseResolutionDTO);
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String testResolutionId,
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ExerciseResolution exerciseResolution);
 
 
     @Operation(summary = "Add an exercise to a given test", description = "", tags={ "tests" })
@@ -432,7 +476,7 @@ public interface TestsApi {
             consumes = { "application/json" },
             value = "/{testId}/createExercise",
             method = RequestMethod.PUT)
-    ResponseEntity<Void> createTestExercise(
+    ResponseEntity<String> createTestExercise(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody CreateTestExerciseDTO createTestExerciseDTO);
@@ -472,10 +516,9 @@ public interface TestsApi {
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
-            consumes = { "application/json" },
             value = "/{testId}/resolutions/start",
             method = RequestMethod.POST)
-    ResponseEntity<Void> startTest(
+    ResponseEntity<String> startTest(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId);
 
@@ -490,6 +533,6 @@ public interface TestsApi {
             method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteTestResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
-            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId);
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String testId);
 }
 
