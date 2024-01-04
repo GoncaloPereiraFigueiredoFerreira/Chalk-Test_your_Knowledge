@@ -146,12 +146,12 @@ public class Seed {
                     LocalDateTime.now().plusDays(4));
         String test3 = testsService.createTest(t3);
 
-
         TimeUnit.SECONDS.sleep(1);
 
         // test resolutions
+        testsService.startTest(test1, student1);
         TestResolution tr1 = new TestResolution(null, LocalDateTime.now(), null, 0, null, st1, t1, TestResolutionStatus.ONGOING, List.of());
-        TestResolution tr2 = new TestResolution(null, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 1, null, st2, t2, TestResolutionStatus.REVISED, List.of());
+        TestResolution tr2 = new TestResolution(null, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(1), 1, null, st2, t2, TestResolutionStatus.REVISED, List.of());
         TestResolution tr3 = new TestResolution(null, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 2, null, st3, t3, TestResolutionStatus.NOT_REVISED, List.of());
         testsService.createTestResolution(test1, tr1);
         testsService.createTestResolution(test2, tr2);
