@@ -21,6 +21,8 @@ import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
+import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
@@ -35,9 +37,13 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @JsonTypeName("CE")
 @DiscriminatorValue("CE")
 public class ChatExercise extends Exercise {
-    @Type(JsonBinaryType.class)
-    @Column(name = "topics", columnDefinition = "jsonb")
-    private List<String> topics;
+
+    @Column(name = "topics")
+    private ItemsList topics;
+
+    public ChatExercise(List<Item> items){
+        this.topics = new ItemsList();        
+    }
 
     @Override
     public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
@@ -66,7 +72,7 @@ public class ChatExercise extends Exercise {
 			throw new BadInputException("Exercise is not of the same type.");
 		ChatExercise chatExercise = (ChatExercise) exercise;
         _copyExerciseDataOnlyTo(chatExercise);
-        chatExercise.topics = topics != null ? new ArrayList<>(topics) : null;
+        chatExercise.topics = topics != null ? new ItemsList(topics) : null;
     }
 
     @Override

@@ -87,4 +87,12 @@ public class TestResolution {
 				throw new BadInputException ("Cannot create test resolution: total points don't correspond with group points");
 		}
 	}
+
+	public String getStudentId(){
+		return student.getId();
+	}
+
+	public String getTestId(){
+		return test.getId();
+	}
 }

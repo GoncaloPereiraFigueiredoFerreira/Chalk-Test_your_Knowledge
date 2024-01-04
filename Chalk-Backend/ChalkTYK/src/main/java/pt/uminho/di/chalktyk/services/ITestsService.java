@@ -21,19 +21,19 @@ public interface ITestsService {
      * Retrieves tests that match the given filters. Necessary to check authorization.
      *
      * @param page
-     * @param itemsPerPage   maximum items in a page
-     * @param tags           Array of identifiers from the tags that will be used to filter the tests
-     * @param matchAllTags   Value that defines if the exercise must have all the given tags to be retrieved
-     * @param visibilityType Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'.
-     * @param courseId       to search for a test from a specific course
-     * @param institutionId  to search for a test from a specific institution
-     * @param title          to search for a test title
+     * @param itemsPerPage  maximum items in a page
+     * @param tags          Array of identifiers from the tags that will be used to filter the tests
+     * @param matchAllTags  Value that defines if the exercise must have all the given tags to be retrieved
+     * @param visibility    Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'.
      * @param specialistId
-     * @param verifyParams   if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
-     *                       *                         'false' does not verify database logic
+     * @param courseId      to search for a test from a specific course
+     * @param institutionId to search for a test from a specific institution
+     * @param title         to search for a test title
+     * @param verifyParams  if 'true' then verify if parameters exist in the database (example: verify if specialist exists),
+     *                      *                         'false' does not verify database logic
      * @return page of tests
      **/
-    Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException;
+     Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException;
 
     /**
      * Get test using its id
@@ -193,13 +193,13 @@ public interface ITestsService {
     /**
      * Issue the automatic correction of the test resolutions
      *
-     * @param testId
-     * @param correctionType         Type of correction ("auto" or "ai")
+     * @param testResolutionId
+     * @param correctionType   Type of correction ("auto" or "ai")
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the test or any exercise were not found
      * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
+    void automaticCorrection(String testResolutionId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
 
     /**
      * Retrieves the number of students that submitted a resolution for a specific test

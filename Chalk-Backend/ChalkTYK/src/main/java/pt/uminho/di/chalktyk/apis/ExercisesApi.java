@@ -613,6 +613,8 @@ public interface ExercisesApi {
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 
+
+
     @Operation(summary = "Retrieves the tags of an exercise.", tags={ "exercise" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retrieval successful.",

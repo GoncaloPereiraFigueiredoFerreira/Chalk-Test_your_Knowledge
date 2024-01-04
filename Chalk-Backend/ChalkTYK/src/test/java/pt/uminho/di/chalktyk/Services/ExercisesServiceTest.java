@@ -8,10 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseData;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.*;
@@ -132,6 +136,38 @@ public class ExercisesServiceTest {
         return new OpenAnswerRubric(List.of(new OACriterion("Desempenho",100f, oaStandards)));
     }
 
+    private ChatExercise createChatExercise(String specialistId,String courseId){
+        ChatExercise exercise = new ChatExercise();
+        exercise.setStatement(new ExerciseStatement("Quais as vantagens de usar sistemas distribuidos?",null,null));
+        exercise.setTitle("Vantages de Sistemas distribuidos");
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
+
+        ItemsList topics = new ItemsList();
+        topics.add(new StringItem("Vantages de sistemas distribuidos"));
+        topics.add(new StringItem("Dificuldades de utilização de sistemas distribuidos"));
+        topics.add(new StringItem("Porque utilizar sistemas distribuidos"));
+
+        exercise.setTopics(topics);
+
+        return exercise;
+    }
+
+    private ExerciseSolution createCESolution(){
+        List<String> chat = new ArrayList<>();
+        chat.add("Quais as vantagens de usar sistemas distribuidos");
+        chat.add("E bue fixe");
+        chat.add("Mas porque que os descreves como bue fixes");
+        chat.add("Permitem a distribuição trabalhos por varios computadores");
+
+        ChatExerciseData chatExerciseData = new ChatExerciseData(chat);
+        return  new ExerciseSolution(null,chatExerciseData);
+    }
+
+    private ChatExerciseRubric createCERubric(){
+        return new ChatExerciseRubric(); 
+    }
 
     private MultipleChoiceExercise createMCExercise(String specialistId, String courseId){
         HashMap<String, Item> itemResolutions = new HashMap<>();
@@ -270,6 +306,18 @@ public class ExercisesServiceTest {
         Tag tag1 = tagsService.createTag("Espanol","/");
         Tag tag2 = tagsService.createTag("NewEspanol","/");
         String exerciseId = exercisesService.createExercise(exercise,null,null, List.of(tag1.getId(), tag2.getId()));
+        assertTrue(exercisesService.exerciseExists(exerciseId));
+        exercisesService.createExerciseSolution(exerciseId, exerciseSolution);
+        exercisesService.createExerciseRubric(exerciseId, exerciseRubric);
+    }
+
+    @Test
+    public void createChatExercise() throws BadInputException, NotFoundException{
+        ExerciseSolution exerciseSolution = createCESolution();
+        ExerciseRubric exerciseRubric = createCERubric();
+        Exercise exercise = createChatExercise(specialistId, courseId);
+        Tag tag1 = tagsService.createTag("Sistemas Distribuidos", "/");
+        String exerciseId = exercisesService.createExercise(exercise, null, null, List.of(tag1.getId()));
         assertTrue(exercisesService.exerciseExists(exerciseId));
         exercisesService.createExerciseSolution(exerciseId, exerciseSolution);
         exercisesService.createExerciseRubric(exerciseId, exerciseRubric);
