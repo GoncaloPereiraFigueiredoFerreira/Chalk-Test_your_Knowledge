@@ -57,7 +57,7 @@ public interface ExercisesApi {
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 
-    @Operation(summary = "Get exercise using its identifier.",
+    @Operation(summary = "Create exercise.",
             description = "Get exercise using its identifier. Returns the identifier of the exercise.",
             tags={ "exercise" })
     @ApiResponses(value = {
