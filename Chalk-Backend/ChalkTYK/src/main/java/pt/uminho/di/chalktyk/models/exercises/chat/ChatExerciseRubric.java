@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.models.exercises.chat;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 /**
  * ChatExerciseRubric
  */
+@Entity
 @NoArgsConstructor
 @Getter
 @Setter
