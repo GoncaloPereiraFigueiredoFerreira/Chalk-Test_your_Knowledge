@@ -174,9 +174,11 @@ public class CoursesService implements ICoursesService {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not add specialists: course not found.");
         for(String email : specialistsEmails){
-            String id = specialistsService.getSpecialistIdByEmail(email);
-            if(id != null)
-                courseDAO.addSpecialistToCourse(id, courseId);
+            try {
+                String id = specialistsService.getSpecialistIdByEmail(email);
+                if (id != null)
+                    courseDAO.addSpecialistToCourse(id, courseId);
+            }catch (Exception ignored){}
         }
     }
 
@@ -186,9 +188,11 @@ public class CoursesService implements ICoursesService {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not add students: course not found.");
         for(String email : studentsEmails){
-            String id = studentsService.getStudentIdByEmail(email);
-            if(id != null)
-                courseDAO.addStudentToCourse(id, courseId);
+            try {
+                String id = studentsService.getStudentIdByEmail(email);
+                if (id != null)
+                    courseDAO.addStudentToCourse(id, courseId);
+            }catch (Exception ignored){}
         }
     }
 
