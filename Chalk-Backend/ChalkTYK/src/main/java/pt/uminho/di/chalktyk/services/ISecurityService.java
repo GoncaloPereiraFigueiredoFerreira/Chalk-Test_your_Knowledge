@@ -7,6 +7,9 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 public interface ISecurityService {
+
+    JWT parseJWT(String jwtToken) throws UnauthorizedException;
+
     /**
      * Checks if the token is valid, and updates the token associated with login
      * if the token currently associated with the login expired.

@@ -34,7 +34,7 @@ public interface CoursesApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Course> getCourse(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-, @RequestHeader("chalkauthtoken") String jwt);
+, @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "", description = "", tags={ "course" })
     @ApiResponses(value = {
@@ -46,7 +46,7 @@ public interface CoursesApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Course>> getCourses(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(minimum="1", maximum="50"))
             @RequestParam(value = "page")  int page,
             @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema())
@@ -64,7 +64,7 @@ public interface CoursesApi {
             consumes = { "application/json" },
             method = RequestMethod.POST)
     ResponseEntity<String> createCourse(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwt,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @RequestBody Course body);
 
     @Operation(summary = "Update course", description = "", tags={ "course" })
@@ -78,7 +78,7 @@ public interface CoursesApi {
         method = RequestMethod.PUT)
     ResponseEntity<Void> updateCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema())
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @RequestBody Course body);
@@ -93,7 +93,7 @@ public interface CoursesApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Student>> getCourseStudents(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema())
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(minimum="1", maximum="50"))
@@ -111,7 +111,7 @@ public interface CoursesApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Specialist>> getCourseSpecialists(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema())
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(minimum="1", maximum="50"))
@@ -130,7 +130,7 @@ public interface CoursesApi {
             method = RequestMethod.PUT)
     ResponseEntity<Void> addStudentsToCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true)
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.DEFAULT, description = "Emails of the students to be added.",required=true)
@@ -147,7 +147,7 @@ public interface CoursesApi {
             method = RequestMethod.PUT)
     ResponseEntity<Void> addSpecialistsToCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true)
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.DEFAULT, description = "Emails of the specialists to be added.",required=true)
@@ -163,7 +163,7 @@ public interface CoursesApi {
             method = RequestMethod.PUT)
     ResponseEntity<Void> removeStudentsFromCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true)
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.DEFAULT, description = "Emails of the students to be removed.",required=true)
@@ -179,7 +179,7 @@ public interface CoursesApi {
             method = RequestMethod.PUT)
     ResponseEntity<Void> removeSpecialistsFromCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
-            @RequestHeader("chalkauthtoken") String jwt,
+            @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true)
             @PathVariable("courseId") String courseId,
             @Parameter(in = ParameterIn.DEFAULT, description = "Emails of the specialists to be removed.",required=true)

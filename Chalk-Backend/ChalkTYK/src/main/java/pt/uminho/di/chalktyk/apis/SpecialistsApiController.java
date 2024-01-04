@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -29,11 +30,15 @@ public class SpecialistsApiController implements SpecialistsApi{
     }
     
     @Override
-    public ResponseEntity<String> createSpecialist(Specialist specialist) {
+    public ResponseEntity<User> createSpecialist(String jwtToken, Specialist specialist) {
         try {
-            return ResponseEntity.ok(specialistsService.createSpecialist(specialist));
-        } catch (BadInputException e) {
-            return new ExceptionResponseEntity<String>().createRequest(e);
+            JWT jwt = securityService.parseJWT(jwtToken);
+            if(specialist == null || !jwt.getUserEmail().equals(specialist.getEmail()))
+                throw new BadInputException("Invalid specialist.");
+            specialistsService.createSpecialist(specialist);
+            return ResponseEntity.ok(securityService.login(jwtToken));
+        } catch (BadInputException | UnauthorizedException | NotFoundException e) {
+            return new ExceptionResponseEntity<User>().createRequest(e);
         }
     }
 

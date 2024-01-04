@@ -42,24 +42,28 @@ public class SecurityService implements ISecurityService{
 
     /* ***** Auxiliary methods ***** */
 
-    private JWT parseJWT(String jwtToken) throws UnauthorizedException {
-        try {
-            JWT jwt = new JWT(jwtToken);
-            // converts the email to a user id, and saves it in the JWT instance
-            String email = (String) jwt.getPayloadParam("username");
-            jwt.setUserId(usersService.getUserIdByEmail(email));
-            return jwt;
-        } catch (JwtException | ParseException | NotFoundException e) {
-            throw new UnauthorizedException("Invalid token.");
-        }
-    }
-
     private boolean isJWTValid(String jwtToken){
         try {
             new JWT(jwtToken);
             return true;
         } catch (JwtException | ParseException e) {
             return false;
+        }
+    }
+
+    /**
+     * Converts email present in the jwt token to a user id,
+     * and sets it in the JWT.
+     * @param jwt
+     * @throws UnauthorizedException if user with the given email was not found
+     */
+    private void setsJWTUserId(JWT jwt) throws UnauthorizedException {
+        try {
+            // converts the email to a user id, and saves it in the JWT instance
+            String email = (String) jwt.getPayloadParam("username");
+            jwt.setUserId(usersService.getUserIdByEmail(email));
+        }catch (NotFoundException nfe){
+            throw new UnauthorizedException("User does not exist.");
         }
     }
 
@@ -96,10 +100,25 @@ public class SecurityService implements ISecurityService{
 
     /* ***** Main methods ***** */
 
+    public JWT parseJWT(String jwtToken) throws UnauthorizedException {
+        try {
+            return new JWT(jwtToken);
+        } catch (JwtException | ParseException e) {
+            throw new UnauthorizedException("Invalid token.");
+        }
+    }
+
+    /**
+     * Cannot be used to log in. As this checks if the token is valid relatively to the existing token.
+     * @param jwtTokenString JWT token as string
+     * @return
+     * @throws UnauthorizedException
+     */
     @Override
     @Transactional
     public JWT validateJWT(String jwtTokenString) throws UnauthorizedException {
         JWT jwt = parseJWT(jwtTokenString);
+        setsJWTUserId(jwt);
         checkAndUpdateLogin(jwt);
         return jwt;
     }
@@ -110,6 +129,7 @@ public class SecurityService implements ISecurityService{
         if(blackListedJWTDao.existsById(jwtToken))
             throw new UnauthorizedException("Authentication token is blacklisted.");
         JWT jwt = parseJWT(jwtToken);
+        setsJWTUserId(jwt);
         String userId = jwt.getUserId();
         User user = usersService.getUserById(userId);
         Login login = loginDao.findById(userId).orElse(null);
