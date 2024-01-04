@@ -683,14 +683,14 @@ public class ExercisesServiceTest {
         var listOfResolutionsIds = List.of(er1.getId(), er2.getId());
         assert listOfResolutionsIds.containsAll(listOfResolutionsIdsWithGet) && listOfResolutionsIdsWithGet.containsAll(listOfResolutionsIds);
 
-        var pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, false);
+        var pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, false, false);
         assert pairsOfStudentAndResolutions.size() == 2;
         listOfResolutionsIdsWithGet =
                 pairsOfStudentAndResolutions.stream().filter(p -> p.getLeft().getId().equals(studentId))
                                                      .map(p -> p.getRight().getId()).toList();
         assert listOfResolutionsIds.containsAll(listOfResolutionsIdsWithGet) && listOfResolutionsIdsWithGet.containsAll(listOfResolutionsIds);
 
-        pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, true);
+        pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, true, false);
         assert pairsOfStudentAndResolutions.size() == 1;
         assert pairsOfStudentAndResolutions.get(0).getRight().getId().equals(er2.getId());
 
