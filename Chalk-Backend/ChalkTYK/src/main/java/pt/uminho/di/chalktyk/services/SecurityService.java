@@ -159,7 +159,7 @@ public class SecurityService implements ISecurityService{
     @Override
     @Transactional
     public void logout(String jwtToken) throws UnauthorizedException {
-        JWT jwt = parseJWT(jwtToken);
+        JWT jwt = validateJWT(jwtToken);
         String userId = checkAndUpdateLogin(jwt);
         Login login = loginDao.findById(userId).orElse(null);
         assert login != null; // login is used in checkAndUpdateLogin therefore it should not be null.

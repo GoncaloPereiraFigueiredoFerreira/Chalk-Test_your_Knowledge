@@ -8,6 +8,7 @@ import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.ListPairStudentExerciseResolution;
+import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
@@ -773,16 +774,25 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<Void> manuallyCorrectExerciseResolution(String jwtToken, String resolutionId, float points) {
+    public ResponseEntity<Void> manuallyCorrectExerciseResolution(String jwtToken, String resolutionId, ManualExerciseCorrectionDTO mecDTO) {
         try {
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
             String userId = jwt.getUserId(),
                     role = jwt.getUserRole();
 
+            if(mecDTO == null)
+                throw new BadInputException("Bad input.");
+
+            float points = mecDTO.getPoints();
+            String commentStr = mecDTO.getComment();
+            Comment comment = null;
+            if(commentStr != null)
+                comment = new Comment(List.of(new StringItem(mecDTO.getComment())));
+
             // checks if the user has permission
             if(role.equals("SPECIALIST") && exercisesTestsAuthorization.canSpecialistAccessExerciseResolution(userId, resolutionId)) {
-                exercisesService.manuallyCorrectExerciseResolution(resolutionId, points);
+                exercisesService.manuallyCorrectExerciseResolution(resolutionId, points, comment);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
 
