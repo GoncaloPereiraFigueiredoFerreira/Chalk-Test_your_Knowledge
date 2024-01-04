@@ -191,16 +191,16 @@ public class CoursesApiController implements CoursesApi {
             String role = token.getUserRole();
 
             if (role.equals("SPECIALIST")){
-                if(!userId.equals(specialistId))
+                if(specialistId != null && !userId.equals(specialistId))
                     throw new UnauthorizedException("Cannot lists courses: User is not allowed to get another user's courses.!");
                 else {
-                    return ResponseEntity.ok(coursesService.getSpecialistCourses(specialistId, page, itemsPerPage));
+                    return ResponseEntity.ok(coursesService.getSpecialistCourses(userId, page, itemsPerPage));
                 }
             } else if (role.equals("STUDENT")) {
-                if(!userId.equals(studentId))
+                if(studentId != null && !userId.equals(studentId))
                     throw new UnauthorizedException("Cannot lists courses: User is not allowed to get another user's courses.!");
                 else {
-                    return ResponseEntity.ok(coursesService.getStudentCourses(studentId, page, itemsPerPage));
+                    return ResponseEntity.ok(coursesService.getStudentCourses(userId, page, itemsPerPage));
                 }
             }
             throw new UnauthorizedException("User does not have permission to get courses.");
