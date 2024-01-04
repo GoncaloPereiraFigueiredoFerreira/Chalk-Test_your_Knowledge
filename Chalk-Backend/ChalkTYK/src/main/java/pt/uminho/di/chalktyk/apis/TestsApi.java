@@ -552,7 +552,7 @@ public interface TestsApi {
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
-            value = "/resolutions/{resolutionId}/automaticCorrection",
+            value = "/resolutions/{resolutionId}/submit",
             method = RequestMethod.PUT)
     ResponseEntity<Void> submitTestResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
