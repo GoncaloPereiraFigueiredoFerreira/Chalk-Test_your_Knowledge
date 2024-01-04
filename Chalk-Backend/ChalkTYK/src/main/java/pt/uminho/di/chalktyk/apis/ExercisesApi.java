@@ -9,14 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.ListPairStudentExerciseResolution;
 import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
@@ -31,7 +30,6 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
-import pt.uminho.di.chalktyk.models.users.Student;
 
 import java.util.List;
 import java.util.Set;
@@ -221,7 +219,7 @@ public interface ExercisesApi {
     ResponseEntity<Void> updateExerciseCourse(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
-            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String courseId);
+            @Parameter(in = ParameterIn.DEFAULT, description = "Can be null", required = true) @RequestBody(required = false) String courseId);
 
     @Operation(summary = "Updates the tags of an exercise.",
             description = "",
@@ -363,10 +361,11 @@ public interface ExercisesApi {
     @RequestMapping(value = "/{exerciseId}/resolutions",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Pair<Student, ExerciseResolution>>> getExerciseResolutions(
+    ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
-            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") int page, @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") int itemsPerPage,
+            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") int page,
+            @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") int itemsPerPage,
             @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "true")) @RequestParam(value = "latest", defaultValue = "true") Boolean latest);
 
     @Operation(summary = "Creates the resolution of an exercise.",
@@ -397,38 +396,38 @@ public interface ExercisesApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval."),
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
-    @RequestMapping(value = "/{exerciseId}/resolutions/{studentId}/count",
+    @RequestMapping(value = "/{exerciseId}/resolutions/countByStudent",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<Integer> countExerciseResolutionsByStudent(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
-            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("studentId") String studentId);
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("studentId") String studentId);
 
     @Operation(summary = "Get the list of student's resolutions for the given exercise.", description = "", tags={ "exercise" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ExerciseResolution.class)))),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation.") })
-    @RequestMapping(value = "/{exerciseId}/resolutions/{studentId}",
+    @RequestMapping(value = "/{exerciseId}/resolutions/listByStudent",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<List<ExerciseResolution>> getStudentListOfExerciseResolutions(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
-            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("studentId") String studentId);
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("studentId") String studentId);
 
     @Operation(summary = "Get latest exercise resolution made by the student.", description = "Gets last resolution made by the student for a given exercise, or 'null' if it does not exist.", tags={ "exercise" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExerciseResolution.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
             @ApiResponse(responseCode = "404", description = "Exercise not found.") })
-    @RequestMapping(value = "/{exerciseId}/resolutions/{studentId}/last",
+    @RequestMapping(value = "/{exerciseId}/resolutions/lastByStudent",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<ExerciseResolution> getLastExerciseResolutionByStudent(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
-            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("studentId") String studentId);
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("studentId") String studentId);
 
     @Operation(summary = "Retrieve exercises.", description = "Retrieves exercises that match the given filters.", tags={ "exercise" })
     @ApiResponses(value = {
@@ -444,16 +443,16 @@ public interface ExercisesApi {
     @RequestMapping(value = "",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<Page<Exercise>> getExercises(
+    ResponseEntity<List<Exercise>> getExercises(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") Integer page,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") Integer itemsPerPage,
             @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers of the tags that will be used to filter the exercises." , schema=@Schema(defaultValue="[]")) @Valid
-            @RequestParam(value = "tags", required = false, defaultValue="[]") List<String> tags,
+            @RequestParam(value = "tags", required = false) List<String> tags,
             @Parameter(in = ParameterIn.QUERY, description = "Value that defines if the exercise must have all the given tags to be retrieved." ,schema=@Schema( defaultValue="false")) @Valid
             @RequestParam(value = "matchAllTags", required = false, defaultValue="false") Boolean matchAllTags,
-            @Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the exercises must have." ,schema=@Schema(allowableValues={ "public", "institution", "course", "not_listed", "private"})) @Valid
-            @RequestParam(value = "visibility", required = false) Visibility visibility,
+            @Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the exercises must have." ,schema=@Schema(allowableValues={ "public", "institution", "course", "not_listed", "private"}))
+            @RequestParam(value = "visibility", required = false) String visibility,
             @Parameter(in = ParameterIn.QUERY, description = "Course identifier.") @RequestParam(value = "courseId", required = false) String courseId,
             @Parameter(in = ParameterIn.QUERY, description = "Institution identifier.") @RequestParam(value = "institutionId", required = false) String institutionId,
             @Parameter(in = ParameterIn.QUERY, description = "Specialist identifier.") @RequestParam(value = "specialistId", required = false) String specialistId,
@@ -579,7 +578,7 @@ public interface ExercisesApi {
                             schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
             @ApiResponse(responseCode = "404", description = "Exercise does not exist.") })
-    @RequestMapping(value = "/{exerciseId}/courseId",
+    @RequestMapping(value = "/{exerciseId}/course/id",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<String> getExerciseCourseId(
@@ -593,7 +592,7 @@ public interface ExercisesApi {
                             schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
             @ApiResponse(responseCode = "404", description = "Exercise does not exist.") })
-    @RequestMapping(value = "/{exerciseId}/institutionId",
+    @RequestMapping(value = "/{exerciseId}/institution/id",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<String> getExerciseInstitutionId(

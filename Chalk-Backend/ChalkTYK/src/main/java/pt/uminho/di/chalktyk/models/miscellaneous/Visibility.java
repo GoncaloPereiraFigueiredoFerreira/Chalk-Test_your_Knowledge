@@ -47,7 +47,7 @@ public enum Visibility {
 		@Override
 		public Visibility deserialize(com.fasterxml.jackson.core.JsonParser p, DeserializationContext ctxt) throws IOException {
 			String value = p.getValueAsString().toUpperCase(); // Convert to uppercase for case-insensitivity
-			return Visibility.valueOf(value);
+			return Visibility.fromValue(value);
 		}
 	}
 }

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/courses")
@@ -29,40 +31,27 @@ public class CoursesApiController implements CoursesApi {
         this.securityService = securityService;
     }
 
-    /* 
-    public ResponseEntity<Void> coursesCourseIdDelete(@Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema()) @PathVariable("courseId") String courseId
-, @CookieValue("chalkauthtoken") String jwt) {
-
-        throw new RuntimeException("Not implemented");
-        //jwt.verify if is specialist
-        //throw new UnauthorizedException("Method is only available for specialists");
-    }
-    */
-
     @Override
     public ResponseEntity<Course> getCourse(String courseId, String jwt) {
         try {
             securityService.validateJWT(jwt);
             Course c = coursesService.getCourseById(courseId);
-            return ResponseEntity.ok().body(c);
+            return ResponseEntity.ok(c);
         }
-        catch (NotFoundException e){
-            return new ExceptionResponseEntity<Course>().createRequest(e);
-        }
-        catch (UnauthorizedException e){
+        catch (NotFoundException | UnauthorizedException e){
             return new ExceptionResponseEntity<Course>().createRequest(e);
         }
     }
 
     @Override
-    public ResponseEntity<Void> updateCourse(String courseId, Course body, String jwt) {
+    public ResponseEntity<Void> updateCourse(String jwt, String courseId, Course body) {
         try {
             JWT token = securityService.validateJWT(jwt);
             String userId = token.getUserId();
             String role = token.getUserRole();
 
             if (!role.equals("SPECIALIST"))
-                throw new UnauthorizedException("Cannot update course: owner is not a specialist!");
+                throw new UnauthorizedException("Cannot update course: user does not have permission to update the course!");
 
             Course c = coursesService.getCourseById(courseId);
             if (!userId.equals(c.getOwnerId()))
@@ -71,31 +60,40 @@ public class CoursesApiController implements CoursesApi {
             coursesService.updateCourseBasicProperties(courseId, body.getName(), body.getDescription());
             return ResponseEntity.ok().build();
         }
-        catch (BadInputException e){
-            return new ExceptionResponseEntity<Void>().createRequest(e);
-        }
-        catch (NotFoundException e){
-            return new ExceptionResponseEntity<Void>().createRequest(e);
-        }
-        catch (UnauthorizedException e){
+        catch (BadInputException | NotFoundException | UnauthorizedException e){
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
     }
-
-    /* 
-    public ResponseEntity<List<Course>> getCourses(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "page", required = true) Integer page
-,@NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(allowableValues={ "1", "50" }, minimum="1", maximum="50"
-)) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage
-,@Parameter(in = ParameterIn.QUERY, description = "Find the courses this student belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "studentId", required = false) String studentId
-,@Parameter(in = ParameterIn.QUERY, description = "Find the courses this specialist belongs to. " ,schema=@Schema()) @Valid @RequestParam(value = "specialistId", required = false) String specialistId
-,@Parameter(in = ParameterIn.QUERY, description = "Find the courses of this institution. " ,schema=@Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId
-, @CookieValue("chalkauthtoken") String jwt) {
-
-    }
-    */
 
     @Override
-    public ResponseEntity<Void> createCourse(Course body, String jwt) {
+    public ResponseEntity<List<Course>> getCourses(String jwt, int page, int itemsPerPage, String studentId, String specialistId) {
+        try {
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId();
+            String role = token.getUserRole();
+
+            if (role.equals("SPECIALIST")){
+                if(!userId.equals(specialistId))
+                    throw new UnauthorizedException("Cannot lists courses: User is not allowed to get another user's courses.!");
+                else {
+                    return ResponseEntity.ok(coursesService.getSpecialistCourses(specialistId, page, itemsPerPage));
+                }
+            } else if (role.equals("STUDENT")) {
+                if(!userId.equals(studentId))
+                    throw new UnauthorizedException("Cannot lists courses: User is not allowed to get another user's courses.!");
+                else {
+                    return ResponseEntity.ok(coursesService.getStudentCourses(studentId, page, itemsPerPage));
+                }
+            }
+            throw new UnauthorizedException("User does not have permission to get courses.");
+        }
+        catch (NotFoundException | UnauthorizedException e){
+            return new ExceptionResponseEntity<List<Course>>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> createCourse(String jwt, Course body) {
         try {
             JWT token = securityService.validateJWT(jwt);
             String userId = token.getUserId();
@@ -105,14 +103,11 @@ public class CoursesApiController implements CoursesApi {
                 throw new UnauthorizedException("Cannot create course: owner is not a specialist!");
 
             body.setOwnerId(userId);
-            coursesService.createCourse(body);
-            return ResponseEntity.ok().build();
+
+            return ResponseEntity.ok(coursesService.createCourse(body));
         }
-        catch (UnauthorizedException e){
-            return new ExceptionResponseEntity<Void>().createRequest(e);
-        }
-        catch (BadInputException e){
-            return new ExceptionResponseEntity<Void>().createRequest(e);
+        catch (UnauthorizedException | BadInputException e){
+            return new ExceptionResponseEntity<String>().createRequest(e);
         }
     }
 }
