@@ -28,4 +28,6 @@ public interface IStudentsService {
      * @return 'true' if a student exists with the given id
      */
     boolean existsStudentById(String studentId);
+
+    String getStudentIdByEmail(String email);
 }

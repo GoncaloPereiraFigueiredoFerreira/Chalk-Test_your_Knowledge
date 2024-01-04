@@ -67,6 +67,34 @@ public interface ICoursesService {
     void removeStudentsFromCourse(String courseId, List<String> studentsIds) throws NotFoundException;
 
     /**
+     * Add specialists to course
+     * @param courseId identifier of the course
+     * @param specialistsEmails list of specialists emails
+     */
+    void addSpecialistsToCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException;
+
+    /**
+     * Add students to course.
+     * @param courseId identifier of the course
+     * @param studentsEmails list of students emails
+     */
+    void addStudentsToCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException;
+
+    /**
+     * Remove specialists from course
+     * @param courseId identifier of the course
+     * @param specialistsEmails list of specialists emails
+     */
+    void removeSpecialistsFromCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException;
+
+    /**
+     * Remove students from course.
+     * @param courseId identifier of the course
+     * @param studentsEmails list of students emails
+     */
+    void removeStudentsFromCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException;
+
+    /**
      * Update course basic information
      *
      * @param courseId

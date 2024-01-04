@@ -168,6 +168,50 @@ public class CoursesService implements ICoursesService {
         }
     }
 
+    @Override
+    public void addSpecialistsToCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
+        if(!courseDAO.existsById(courseId))
+            throw new NotFoundException("Could not add specialists: course not found.");
+        for(String email : specialistsEmails){
+            String id = specialistsService.getSpecialistIdByEmail(email);
+            if(id != null)
+                courseDAO.addSpecialistToCourse(id, courseId);
+        }
+    }
+
+    @Override
+    public void addStudentsToCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
+        if(!courseDAO.existsById(courseId))
+            throw new NotFoundException("Could not add students: course not found.");
+        for(String email : studentsEmails){
+            String id = studentsService.getStudentIdByEmail(email);
+            if(id != null)
+                courseDAO.addStudentToCourse(id, courseId);
+        }
+    }
+
+    @Override
+    public void removeSpecialistsFromCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
+        if(!courseDAO.existsById(courseId))
+            throw new NotFoundException("Could not add specialists: course not found.");
+        for(String email : specialistsEmails){
+            String id = specialistsService.getSpecialistIdByEmail(email);
+            if(id != null)
+                courseDAO.removeSpecialistFromCourse(id, courseId);
+        }
+    }
+
+    @Override
+    public void removeStudentsFromCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
+        if(!courseDAO.existsById(courseId))
+            throw new NotFoundException("Could not add students: course not found.");
+        for(String email : studentsEmails){
+            String id = studentsService.getStudentIdByEmail(email);
+            if(id != null)
+                courseDAO.removeStudentFromCourse(id, courseId);
+        }
+    }
+
     /**
      * Update course basic information.
      *

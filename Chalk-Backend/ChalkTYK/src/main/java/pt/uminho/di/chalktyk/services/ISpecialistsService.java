@@ -28,4 +28,6 @@ public interface ISpecialistsService {
      * @return 'true' if a specialist exists with the given id
      */
     boolean existsSpecialistById(String specialistId);
+
+    String getSpecialistIdByEmail(String email);
 }

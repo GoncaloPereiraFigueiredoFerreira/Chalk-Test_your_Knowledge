@@ -73,4 +73,9 @@ public class StudentsService implements IStudentsService{
     public boolean existsStudentById(String studentId) {
         return studentDAO.existsById(studentId);
     }
+
+    @Override
+    public String getStudentIdByEmail(String email) {
+        return studentDAO.getStudentIdByEmail(email);
+    }
 }
