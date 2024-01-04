@@ -80,7 +80,7 @@ public class Course {
 		duplicatedCourse.setName(this.name);
 		duplicatedCourse.setDescription(this.description);
 		duplicatedCourse.setOwnerId(this.ownerId);
-		duplicatedCourse.setInstitution(this.institution.clone());
+		duplicatedCourse.setInstitution(this.institution != null ? this.institution.clone() : null);
 
 		// Duplicate specialists if present
 		if (this.specialists != null) {

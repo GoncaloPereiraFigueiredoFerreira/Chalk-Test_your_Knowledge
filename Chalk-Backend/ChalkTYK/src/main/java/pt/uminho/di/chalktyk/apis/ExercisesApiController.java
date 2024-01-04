@@ -1,21 +1,19 @@
 package pt.uminho.di.chalktyk.apis;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.ListPairStudentExerciseResolution;
 import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Specialist;
-import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -186,8 +184,10 @@ public class ExercisesApiController implements ExercisesApi {
             boolean perm = role.equals("SPECIALIST")
                             && exercisesTestsAuthorization.canSpecialistGetExercise(userId, exercise.getSpecialistId(), exVisibility, exCourseId, exInstitutionId);
 
-            if(perm)
-                return ResponseEntity.ok(exercisesService.duplicateExerciseById(userId, exerciseId, courseId, Visibility.valueOf(visibility)));
+            if(perm) {
+                Visibility vis = visibility != null ? Visibility.fromValue(visibility) : null;
+                return ResponseEntity.ok(exercisesService.duplicateExerciseById(userId, exerciseId, courseId, vis));
+            }
             else
                 return new ExceptionResponseEntity<String>().createRequest(
                         HttpStatus.UNAUTHORIZED.value(),
@@ -321,10 +321,15 @@ public class ExercisesApiController implements ExercisesApi {
     @Override
     public ResponseEntity<Void> updateExerciseCourse(String jwtToken, String exerciseId, String courseId) {
         try {
+            if (courseId != null && courseId.startsWith("null"))
+                courseId = null;
+
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
             String userId = jwt.getUserId(),
                     role = jwt.getUserRole();
+
+            System.out.println("isCourse null? " + (courseId == null) + "| courseId: " + courseId);
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
@@ -507,7 +512,7 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<List<Pair<Student, ExerciseResolution>>> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest) {
+    public ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest) {
         try {
             latest = latest == null || latest; // default value is 'true'
 
@@ -518,15 +523,17 @@ public class ExercisesApiController implements ExercisesApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
-                    return ResponseEntity.ok(exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest));
+                    return ResponseEntity.ok(
+                            new ListPairStudentExerciseResolution(
+                                    exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest)));
                 }
             }
 
-            return new ExceptionResponseEntity<List<Pair<Student, ExerciseResolution>>>().createRequest(
+            return new ExceptionResponseEntity<ListPairStudentExerciseResolution>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to list exercise's resolutions.");
         } catch (NotFoundException | UnauthorizedException e) {
-            return new ExceptionResponseEntity<List<Pair<Student, ExerciseResolution>>>().createRequest(e);
+            return new ExceptionResponseEntity<ListPairStudentExerciseResolution>().createRequest(e);
         }
     }
 
@@ -629,12 +636,17 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<Page<Exercise>> getExercises(String jwtToken, Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String courseId, String institutionId, String specialistId, String title, String exerciseType) {
+    public ResponseEntity<List<Exercise>> getExercises(String jwtToken, Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibility, String courseId, String institutionId, String specialistId, String title, String exerciseType) {
         try {
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
             String userId = jwt.getUserId(),
                     role = jwt.getUserRole();
+
+            // convert visibility
+            Visibility vis = visibility != null ? Visibility.fromValue(visibility) : null;
+            // default is false for matchAllTags
+            matchAllTags = matchAllTags != null && matchAllTags;
 
             boolean perm = false;
 
@@ -645,9 +657,9 @@ public class ExercisesApiController implements ExercisesApi {
             }
             else{
                 if(role.equals("STUDENT"))
-                    perm = exercisesTestsAuthorization.canStudentGetExercise(userId, visibility, courseId, institutionId);
+                    perm = exercisesTestsAuthorization.canStudentGetExercise(userId, vis, courseId, institutionId);
                 else if (role.equals("SPECIALIST")) {
-                    perm = exercisesTestsAuthorization.canSpecialistGetExercise(userId, specialistId, visibility, courseId, institutionId);
+                    perm = exercisesTestsAuthorization.canSpecialistGetExercise(userId, specialistId, vis, courseId, institutionId);
                 }
             }
 
@@ -655,14 +667,14 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(
                         exercisesService.getExercises(
                                 page, itemsPerPage, tags, matchAllTags,
-                                visibility, courseId, institutionId,
+                                vis, courseId, institutionId,
                                 specialistId, title, exerciseType, false));
             else
-                return new ExceptionResponseEntity<Page<Exercise>>().createRequest(
+                return new ExceptionResponseEntity<List<Exercise>>().createRequest(
                         HttpStatus.UNAUTHORIZED.value(),
                         "User does not have permission to list the exercises with the given filters.");
         } catch (NotFoundException | UnauthorizedException | BadInputException e) {
-            return new ExceptionResponseEntity<Page<Exercise>>().createRequest(e);
+            return new ExceptionResponseEntity<List<Exercise>>().createRequest(e);
         }
     }
 

@@ -34,17 +34,18 @@ public class FillTheBlanksExercise extends Exercise {
 
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
-		if(!(exerciseResolutionData instanceof FillTheBlanksData fillTheBlanksData))
+		if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise solution/resolution does not match exercise type (fill the blanks).");
+		FillTheBlanksData fillTheBlanksData = (FillTheBlanksData) exerciseResolutionData;
 		fillTheBlanksData.verifyInsertProperties();
 		if(getNumberOfBlanks() != fillTheBlanksData.getFillings().size())
 			throw new BadInputException("Exercise solution/resolution does not have enough fillings. The number of fillings should equal the number of text segments minus 1.");
 	}
 	@Override
 	public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
-		if(!(rubric instanceof FillTheBlanksRubric fillTheBlanksRubric))
+		if(rubric == null || !rubric.getType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise rubric does not match exercise type (fill the blanks).");
-		fillTheBlanksRubric.verifyProperties();
+		rubric.verifyProperties();
 	}
 
 	@Override
@@ -96,8 +97,9 @@ public class FillTheBlanksExercise extends Exercise {
 
 	@Override
 	public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
-		if(!(exercise instanceof FillTheBlanksExercise ftbe))
+		if(exercise == null || !exercise.getExerciseType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise is not of the same type.");
+		FillTheBlanksExercise ftbe = (FillTheBlanksExercise) exercise;
 		_copyExerciseDataOnlyTo(ftbe);
 		ftbe.setTextSegments(new ArrayList<>(textSegments));
 	}

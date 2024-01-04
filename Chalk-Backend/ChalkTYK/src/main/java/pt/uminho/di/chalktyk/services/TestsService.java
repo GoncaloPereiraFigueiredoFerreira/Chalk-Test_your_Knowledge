@@ -68,14 +68,7 @@ public class TestsService implements ITestsService {
 
     
     @Override
-    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
-        Visibility visibility;
-        if (visibilityType != null) {
-            visibility = Visibility.fromValue(visibilityType);
-            if (visibility == null)
-                throw new BadInputException("Visibility type not found");
-        }
-
+    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
                 throw new NotFoundException("There is no course with the given id");
@@ -91,7 +84,7 @@ public class TestsService implements ITestsService {
                 throw new NotFoundException("There is no specialist with the given id");
         }
 
-        return testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, Visibility.fromValue(visibilityType), institutionId, courseId, specialistId, title);
+        return testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, visibility, institutionId, courseId, specialistId, title);
     }
 
     @Override
@@ -176,7 +169,9 @@ public class TestsService implements ITestsService {
                 // This allows the exercises to be persisted independently of the test.
                 if (exe instanceof ConcreteExercise ce){
                     Exercise tmp = ce.getExercise();
-                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                    List<String> tagIds = new ArrayList<>();
+                    if (tmp.getTags() != null)
+                        tagIds = tmp.getTags().stream().map(Tag::getId).toList();
                     dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                 }
 
@@ -578,10 +573,10 @@ public class TestsService implements ITestsService {
     //  Quando isto for invocado, corrigir apenas os que dão para ser corrigidos?
     @Transactional
     @Override
-    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
-        Test test = testDAO.findById(testId).orElse(null);
+    public void automaticCorrection(String testResolutionId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException {
+        Test test = testDAO.findById(testResolutionId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testId + "'");
+            throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testResolutionId + "'");
 
         // issue exercise corrections
         for (TestGroup tg: test.getGroups()){
@@ -599,7 +594,7 @@ public class TestsService implements ITestsService {
         // calculate points
         // check if everything has been revised
         boolean isRevised = true;
-        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
+        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testResolutionId);
         for (TestResolution resolution: resolutions){
             for (TestResolutionGroup trg: resolution.getGroups()){
                 Float points = 0.0F;

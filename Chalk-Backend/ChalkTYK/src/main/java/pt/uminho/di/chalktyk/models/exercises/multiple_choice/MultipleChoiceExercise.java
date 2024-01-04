@@ -43,20 +43,20 @@ public class MultipleChoiceExercise extends Exercise {
 
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
-		if(!(exerciseResolutionData instanceof MultipleChoiceData multipleChoiceData))
+		if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise resolution does not match exercise type (multiple choice).");
 		// checks if the resolution answers to a subset of the items. Cannot have answers to not existent items.
 		if(!items.keySet().containsAll(((MultipleChoiceData) exerciseResolutionData).getIds()))
 			throw new BadInputException("Exercise resolution has items that do not refer to any question.");
-		multipleChoiceData.verifyInsertProperties();
+		exerciseResolutionData.verifyInsertProperties();
 	}
 
 	@Override
 	public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
-		if(!(rubric instanceof MultipleChoiceRubric multipleChoiceRubric))
+		if(rubric == null || !rubric.getType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise rubric does not match exercise type (multiple choice).");
 		// TODO - FUTURE WORK -> check if there is an openanswer rubric for each question that needs justification.
-		multipleChoiceRubric.verifyProperties();
+		rubric.verifyProperties();
 	}
 
 	@Override
@@ -150,8 +150,9 @@ public class MultipleChoiceExercise extends Exercise {
 
 	@Override
 	public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
-		if(!(exercise instanceof MultipleChoiceExercise mce))
+		if(exercise == null || !exercise.getExerciseType().equals(this.getExerciseType()))
 			throw new BadInputException("Exercise is not of the same type.");
+		MultipleChoiceExercise mce = (MultipleChoiceExercise) exercise;
 		_copyExerciseDataOnlyTo(mce);
 		mce.mctype = mctype;
 		mce.items = new ItemsMap();

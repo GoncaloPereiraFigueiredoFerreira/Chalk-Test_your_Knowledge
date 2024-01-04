@@ -47,9 +47,12 @@ public class MultipleChoiceData extends ExerciseResolutionData implements Serial
 
 	@Override
 	public ExerciseResolutionData clone() {
-		Map<String, MultipleChoiceResolutionItem> itemsCloned = new HashMap<>();
-		for(Map.Entry<String, MultipleChoiceResolutionItem> entry : items.entrySet())
-			itemsCloned.put(entry.getKey(), entry.getValue().clone());
+		Map<String, MultipleChoiceResolutionItem> itemsCloned = null;
+		if(items != null) {
+			itemsCloned = new HashMap<>();
+			for (Map.Entry<String, MultipleChoiceResolutionItem> entry : items.entrySet())
+				itemsCloned.put(entry.getKey(), entry.getValue().clone());
+		}
 		return new MultipleChoiceData(itemsCloned);
 	}
 

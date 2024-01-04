@@ -22,16 +22,17 @@ import java.util.Objects;
 public class OpenAnswerExercise extends Exercise {
 	@Override
     public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
-        if(!(exerciseResolutionData instanceof OpenAnswerData openAnswerData))
+        if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType()))
             throw new BadInputException("Exercise resolution does not match exercise type (open answer).");
+        OpenAnswerData openAnswerData = (OpenAnswerData) exerciseResolutionData;
         openAnswerData.verifyInsertProperties();
     }
 
     @Override
     public void verifyRubricProperties(ExerciseRubric rubric) throws BadInputException {
-        if(!(rubric instanceof OpenAnswerRubric openAnswerRubric))
+        if(rubric == null || !rubric.getType().equals(this.getExerciseType()))
             throw new BadInputException("Exercise rubric does not match exercise type (open answer).");
-        openAnswerRubric.verifyProperties();
+        rubric.verifyProperties();
     }
 
     @Override
@@ -63,8 +64,9 @@ public class OpenAnswerExercise extends Exercise {
 
     @Override
     public void copyExerciseDataOnlyTo(Exercise exercise) throws BadInputException {
-        if(!(exercise instanceof OpenAnswerExercise oae))
+        if(exercise == null || !exercise.getExerciseType().equals(this.getExerciseType()))
             throw new BadInputException("Exercise is not of the same type.");
+        OpenAnswerExercise oae = (OpenAnswerExercise) exercise;
         _copyExerciseDataOnlyTo(oae);
     }
 }

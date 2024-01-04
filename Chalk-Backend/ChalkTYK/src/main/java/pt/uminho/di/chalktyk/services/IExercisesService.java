@@ -1,7 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.data.domain.Page;
 
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
@@ -211,7 +210,7 @@ public interface IExercisesService{
      *                       'false' does not verify database logic
      * @return list of exercises that match the given filters
      */
-    Page<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
+    List<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
 
     /**
      * Adds a comment to an exercise resolution.

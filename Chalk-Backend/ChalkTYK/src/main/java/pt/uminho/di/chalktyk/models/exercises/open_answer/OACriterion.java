@@ -58,6 +58,7 @@ public class OACriterion  implements Serializable {
 		return true;
 	}
 	public OACriterion clone(){
-		return new OACriterion(title, points, standards.stream().map(OAStandard::clone).toList());
+		var clonedStandards = standards != null ? standards.stream().map(OAStandard::clone).toList() : null;
+		return new OACriterion(title, points, clonedStandards);
 	}
 }

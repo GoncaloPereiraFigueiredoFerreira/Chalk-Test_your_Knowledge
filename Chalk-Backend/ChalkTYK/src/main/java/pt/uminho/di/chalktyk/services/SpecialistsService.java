@@ -72,4 +72,9 @@ public class SpecialistsService implements ISpecialistsService{
     public boolean existsSpecialistById(String specialistId) {
         return specialistDAO.existsById(specialistId);
     }
+
+    @Override
+    public String getSpecialistIdByEmail(String email) {
+        return specialistDAO.getSpecialistIdByEmail(email);
+    }
 }
