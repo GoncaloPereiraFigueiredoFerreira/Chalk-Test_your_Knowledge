@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -543,12 +544,92 @@ public class TestsService implements ITestsService {
             }
 
             TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
+            newTG.calculateGroupPoints();
             newTGs.add(newTG);
         }
         test.setGroups(newTGs);
 
         // update points
-        test.setGroups(groups);
+        test.calculatePoints();
+
+        test = testDAO.save(test);
+
+        // count and create tags if there was an update regarding the exercises
+        if(exercisesCollectionChanged) {
+            deleteTestTags(test.getId());
+            createTestTags(exercisesService.countTagsOccurrencesForExercisesList(allNewExesIds), test);
+        }
+
+        // delete all exercises that are no longer used
+        for(String exId : ogExercisesIds)
+            exercisesService.deleteExerciseById(exId);
+    }
+
+    @Transactional
+    @Override
+    public void updateTestGroup(String testId, Integer groupIndex, TestGroup group) throws NotFoundException, BadInputException {
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
+
+        List<TestGroup> tgs = test.getGroups();
+        if (groupIndex >= tgs.size())
+            throw new BadInputException("Couldn't update test: there's no group with index " + groupIndex);
+        TestGroup og = tgs.get(groupIndex);
+
+        // verify new group
+        group.verifyProperties();
+
+        String specialistId = test.getSpecialistId();
+
+        // Set of ids of exercises on the current version of the group.
+        // This set is need to delete exercises that are no longer being used.
+        Set<String> ogExercisesIds = group.getExercises().stream().map(TestExercise::getId).collect(Collectors.toSet());
+
+        // check and duplicate exercises
+        List<String> allNewExesIds = new ArrayList<>();
+        boolean exercisesCollectionChanged = false; // if the global collection of exercises changed, then the tags need to be updated.
+
+        List<TestExercise> newExes = new ArrayList<>();
+        for (TestExercise exe: group.getExercises()){
+            // duplicate or persist exercise
+            String exerciseId;
+
+            // if the exercise is a concrete exercise, the exercise must be persisted
+            // and a reference, with the id of the persisted exercise, needs to be created.
+            // This allows the exercises to be persisted independently of the test.
+            if (exe instanceof ConcreteExercise ce){
+                Exercise tmp = ce.getExercise();
+                List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                exercisesCollectionChanged = true;
+            }
+            // Else the exercise is a reference to an existing exercise.
+            // First we need to check if it was already an exercise of the
+            // test. If it isn't the exercise needs to be duplicated and
+            // a new reference, containing the id of the duplicate,
+            // needs to be created.
+            else {
+                // checks if exercise belonged to the test already
+                if(ogExercisesIds.contains(exe.getId())){
+                    exerciseId = exe.getId();
+                    ogExercisesIds.remove(exe.getId());
+                } else {
+                    exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                    exercisesCollectionChanged = true;
+                }
+            }
+            ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
+            newExes.add(newExe);
+            allNewExesIds.add(exerciseId);
+        }
+
+        TestGroup newTG = new TestGroup(group.getGroupInstructions(), group.getGroupPoints(), newExes);
+        newTG.calculateGroupPoints();
+        tgs.set(groupIndex, newTG);
+        test.setGroups(tgs);
+
+        // update points
         test.calculatePoints();
 
         test = testDAO.save(test);

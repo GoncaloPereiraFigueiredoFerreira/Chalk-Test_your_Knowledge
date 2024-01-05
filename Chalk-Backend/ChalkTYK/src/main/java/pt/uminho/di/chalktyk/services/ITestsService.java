@@ -156,6 +156,17 @@ public interface ITestsService {
     void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException;
 
     /**
+     * Updates a specific group in a test
+     *
+     * @param testId
+     * @param groupIndex
+     * @param group
+     * @throws BadInputException if any property of the group is not valid.
+     * @throws NotFoundException if no test or exercise were found with the given id
+     **/
+    void updateTestGroup(String testId, Integer groupIndex, TestGroup group) throws NotFoundException, BadInputException;
+
+    /**
      * Updates a test's deliver date
      * Exclusive for tests of the type DeliverDateTest
      *

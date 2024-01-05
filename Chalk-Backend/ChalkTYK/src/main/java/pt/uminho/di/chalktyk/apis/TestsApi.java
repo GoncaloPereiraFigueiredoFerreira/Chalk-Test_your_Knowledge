@@ -390,6 +390,21 @@ public interface TestsApi {
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody List<TestGroup> groups);
 
+    @Operation(summary = "Updates a specific group in a test", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/{testId}/groups/{groupIndex}",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> updateTestGroup(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("groupIndex") Integer groupIndex,
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody TestGroup group);
+
 
     @Operation(summary = "Updates a test's deliver date", description = "", tags={ "tests" })
     @ApiResponses(value = {

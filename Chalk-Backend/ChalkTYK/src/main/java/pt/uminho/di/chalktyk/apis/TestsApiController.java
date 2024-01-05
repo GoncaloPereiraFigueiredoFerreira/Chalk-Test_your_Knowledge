@@ -581,6 +581,29 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
+    public ResponseEntity<Void> updateTestGroup(String jwtToken, String testId, Integer groupIndex, TestGroup group) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            if(role.equals("SPECIALIST")) {
+                if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
+                    testsService.updateTestGroup(testId, groupIndex, group);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "User does not have permission to update the test groups.");
+        } catch (UnauthorizedException | NotFoundException | BadInputException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
+
+    @Override
     public ResponseEntity<Void> updateTestDeliverDate(String jwtToken, String testId, LocalDateTime deliverDate) {
         try {
             // validate jwt token and get user id and role
