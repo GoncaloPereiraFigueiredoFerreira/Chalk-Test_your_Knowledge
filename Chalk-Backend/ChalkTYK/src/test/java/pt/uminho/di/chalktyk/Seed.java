@@ -271,9 +271,9 @@ public class Seed {
     private String createPortugueseExam(Specialist specialist, Course course, List<Tag> tags) throws BadInputException, NotFoundException {
         //Exercises
         String exercise0 = createMCExercise0(specialist.getId(),course.getId(),Arrays.asList(tags.get(0)));
-
-
         TestExercise tex1 = new ReferenceExercise(exercise0,3.0F);
+
+
         TestGroup tg1 = new TestGroup("Leia os textos e as notas.\n" +
                 "A rapariga 1 fica de perfil, o homem está de costas, conversam em voz baixa, mas o tom dela\n" +
                 "subiu quando disse, Não, meu pai, sinto-me bem, são portanto pai e filha, conjunção pouco\n" +
