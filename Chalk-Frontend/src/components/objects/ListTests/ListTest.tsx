@@ -297,7 +297,7 @@ export enum ViewType {
 export function ListTests({ view }: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
-  const [testList, setTesList] = useState<TestList>([]);
+  const [testList, setTestList] = useState<TestList>([]);
   const { user } = useContext(UserContext);
   const { contactBACK } = useContext(APIContext);
 
@@ -307,8 +307,8 @@ export function ListTests({ view }: any) {
       (response) => {
         response.json().then((tests) => {
           console.log(tests);
-          if (currentPage != 1) setTesList([]);
-          else setTesList(exampleData);
+          if (currentPage != 1) setTestList([]);
+          else setTestList(exampleData);
         });
       }
     );

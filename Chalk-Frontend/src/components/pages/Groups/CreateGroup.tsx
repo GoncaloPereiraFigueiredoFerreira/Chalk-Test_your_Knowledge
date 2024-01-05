@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Modal } from "flowbite-react";
+import { Button, Modal, TextInput } from "flowbite-react";
 import { APIContext } from "../../../APIContext";
 import { UserContext } from "../../../UserContext";
 
@@ -18,35 +18,37 @@ export function CreateGroupModal({ open, close }: any) {
       });
   }
 
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      // If Enter key is pressed, prevent the default behavior and call the addStudent function
+      event.preventDefault();
+      onCloseModal();
+    }
+  };
+
   return (
-    <Modal dismissible show={open} size="md" onClose={close} popup>
-      <Modal.Header />
+    <Modal dismissible show={open} size="md" onClose={close}>
+      <Modal.Header> Criar um Novo Grupo</Modal.Header>
       <Modal.Body>
         <div className="space-y-6">
-          <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-            Criar um Novo Grupo
-          </h3>
           <div>
             <div className="mb-2 block">
               <label htmlFor="name">Nome do Grupo</label>
             </div>
-            <input
+            <TextInput
               type="text"
               id="name"
               value={name}
               onChange={(event) => setGroupName(event.target.value)}
+              onKeyDown={handleKeyDown}
               required
             />
-            <button
-              type="button"
-              className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
-              onClick={() => onCloseModal()}
-            >
-              Submeter Novo Grupo
-            </button>
           </div>
         </div>
       </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={() => onCloseModal()}>Submeter Novo Grupo</Button>
+      </Modal.Footer>
     </Modal>
   );
 }
