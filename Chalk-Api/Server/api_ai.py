@@ -66,15 +66,14 @@ def num_tokens_from_messages(messages):
       raise NotImplementedError(f"""num_tokens_from_messages() is not presently implemented for model {model}.
   See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
 
-def send_open_answer(answers,question,answer_critiria,answer_topics = None,answer_auxiliar = None):
+def send_open_answer(answer,question,answer_critiria,answer_topics = None,answer_auxiliar = None):
     ret = []
 
     sys_pronpt = gen_sys_open_answer(question,answer_critiria,answer_topics,answer_auxiliar)
 
-    for i in answers:
-        user_pronpt = gen_user_open_answer(i[1])
-        resp = send_request_json([sys_pronpt,user_pronpt[0]])
-        ret.append((i[0],resp["category"]))
+    user_pronpt = gen_user_open_answer(answer)
+    resp = send_request_json([sys_pronpt,user_pronpt[0]])
+    ret.append(resp["category"])
 
     return ret
 
@@ -112,7 +111,7 @@ def send_create_true_false(text,questions,user_input = ""):
     return resp
 
 def send_oral(text):
-    resp = send_request_json(text,1,0.5,0.5)
+    resp = send_request(text,1,0.5,0.5)
     return resp
 
 def send_eval_oral(topics,text):
