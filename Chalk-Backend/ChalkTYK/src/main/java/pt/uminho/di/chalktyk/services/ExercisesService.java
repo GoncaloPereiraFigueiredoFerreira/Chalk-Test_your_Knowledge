@@ -56,10 +56,6 @@ public class ExercisesService implements IExercisesService{
         this.exerciseResolutionDAO = exerciseResolutionDAO;
     }
 
-    //TODO - update do corpo de um exercicio que já tem resolucoes dá asneira. Como resolver?
-    // 1. Eliminar resolucoes?
-    // 2. Duplicar exercicio e definir o original como eliminado?
-
     /**
      * Get Exercise by ID
      *
@@ -294,33 +290,32 @@ public class ExercisesService implements IExercisesService{
         copy.setSolution(solutionCopy);
 
         // persists exercise
-        exerciseDAO.save(copy);
+        copy.setId(null); // id needs to be set to null
+        copy = exerciseDAO.save(copy);
 
         return copy.getId();
     }
 
-    /**
-     * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
-     * To delete it, a specific delete method should be invoked.
-     *
-     * @param exerciseId identifier of the exercise to be updated
-     * @param newBody    new exercise body
-     * @param rubric     new exercise rubric
-     * @param solution   new exercise solution
-     * @param tagsIds    new list of tags
-     * @param visibility new visibility
-     * @throws NotFoundException if the exercise was not found
-     */
     @Override
     @Transactional
-    public void updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
+    public String updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
         // gets exercise using the identifier, or throws not found exception
         Exercise exercise = _getExerciseById(exerciseId);
 
+        // flag that indicates if the exercise was duplicated,
+        // since an exercise with resolutions cannot be duplicated.
+        // The exercise is duplicated, and the copy is updated instead.
+        boolean duplicated = false;
+
         // checks if body is valid and updates it in the case it is valid
-        if(newBody != null)
+        if(newBody != null) {
             //if rubric or solution are not null, then they will verify exercise
             exercise = _updateExerciseBody(exercise, newBody, rubric != null, solution != null);
+            if (!exercise.getId().equals(exerciseId)) { // 'true' if the exercise was duplicated
+                duplicated = true;
+                exerciseId = exercise.getId();
+            }
+        }
 
         if(rubric!=null)
             _createExerciseRubric(exercise,rubric); // this method is used to create/update the rubric of an exercise.
@@ -330,25 +325,30 @@ public class ExercisesService implements IExercisesService{
             _updateExerciseTags(exercise,tagsIds);
         if(visibility!=null)
             _updateExerciseVisibility(exercise,visibility);
+
+        return duplicated ? exerciseId : null; // returns the exercise identifier of the duplicate exercise, or 'null' if it was not duplicated
     }
 
     @Override
     @Transactional
-    public void updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException {
+    public Exercise updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
-        _updateExerciseBody(exercise, newBody, false, false);
+        exercise = _updateExerciseBody(exercise, newBody, false, false);
+        return exercise.getId().equals(exerciseId) ? null : exercise; // returns the exercise if the exercise was duplicated
     }
 
     /**
      * Updates an exercise body.
+     * If the exercise already has resolutions,
+     * then the exercise is duplicated,
+     * and the updates are made to the copy.
      *
-     * @param exercise the actual exercise instance retrieved from the database
-     * @param newBody new exercise body
-     * @param hasNewSolution if true then method verifies if current solution corresponds to the exercise
-     * @param hasNewRubric if true then method verifies if current rubric corresponds to the exercise
+     * @param exercise exercise that will get the body updated
+     * @param newBody    new exercise body
+     * @return the updated exercise. Check the id to verify if the exercise returned is not a duplicate.
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
-     * course was not found,
-     * the rubric or solution don't belong to the new exercise body
+     *                           course was not found,
+     *                           the rubric or solution don't belong to the new exercise body
      */
     private Exercise _updateExerciseBody(Exercise exercise, Exercise newBody, Boolean hasNewRubric, Boolean hasNewSolution) throws BadInputException {
         String exerciseId = exercise.getId();
@@ -356,10 +356,23 @@ public class ExercisesService implements IExercisesService{
         // Check new body properties
         if(newBody == null)
             throw new BadInputException("Could not update exercise body: body is null.");
-        newBody.setId(exerciseId); // needed to avoid override attacks
+
         newBody.verifyInsertProperties();
-        
+
+        // If there are resolutions, the exercise body cannot be updated.
+        // The exercise is duplicated. And the duplicate is updated.
+        if(exerciseResolutionDAO.existsExerciseResolutions(exercise.getId())){
+            try {
+                // duplicates the exercise, and switches the exercise instance by the duplicated exercise instance
+                exerciseId = duplicateExerciseById(exercise.getSpecialistId(), exerciseId, exercise.getCourseId(), exercise.getVisibility());
+                exercise = _getExerciseById(exerciseId);
+            } catch (NotFoundException ignored) {
+                assert false; // should not get here.
+            }
+        }
+
         // copies exercise related data to the original exercise
+        newBody.setId(exerciseId); // needed to avoid override attacks
         newBody.copyExerciseDataOnlyTo(exercise);
 
         boolean deleteRubric = false;

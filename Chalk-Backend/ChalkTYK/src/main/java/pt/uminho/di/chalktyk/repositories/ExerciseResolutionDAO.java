@@ -114,6 +114,6 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
     Page<ExerciseResolution> findAllByExercise_IdAndStudent_IdOrderBySubmissionNrAsc(String exerciseId, String studentId, Pageable pageable);
     List<ExerciseResolution> findAllByExercise_IdAndStudent_IdOrderBySubmissionNrAsc(String exerciseId, String studentId);
 
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM ExerciseResolution r WHERE r.id = :exerciseId")
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM ExerciseResolution r WHERE r.exercise.id = :exerciseId")
     boolean existsExerciseResolutions(@Param("exerciseId") String exerciseId);
 }

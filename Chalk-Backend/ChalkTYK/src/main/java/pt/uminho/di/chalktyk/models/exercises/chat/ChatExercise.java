@@ -1,11 +1,10 @@
 package pt.uminho.di.chalktyk.models.exercises.chat;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
@@ -16,13 +15,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.hibernate.annotations.Type;
+import org.jetbrains.annotations.NotNull;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
-import pt.uminho.di.chalktyk.models.exercises.items.Item;
-import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
@@ -38,12 +37,8 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @DiscriminatorValue("CE")
 public class ChatExercise extends Exercise {
     @Type(JsonBinaryType.class)
-    @Column(name = "topics", columnDefinition = "jsonb")
-    private ItemsList topics;
-
-    public ChatExercise(List<Item> items){
-        this.topics = new ItemsList(items);
-    }
+    @Column(name = "Topics", columnDefinition = "jsonb")
+    private List<String> topics;
 
     @Override
     public boolean supportsCorrectionType(String evaluationType) {
@@ -77,7 +72,7 @@ public class ChatExercise extends Exercise {
 			throw new BadInputException("Exercise is not of the same type.");
 		ChatExercise chatExercise = (ChatExercise) exercise;
         _copyExerciseDataOnlyTo(chatExercise);
-        chatExercise.topics = topics != null ? new ItemsList(topics) : null;
+        chatExercise.topics = topics != null ? new ArrayList<>(topics) : null;
     }
 
     @Override
