@@ -76,6 +76,9 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
     //@Query("SELECT r FROM Student s JOIN ExerciseResolution r ON s.id = r.student.id WHERE r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX (r2.submissionNr) FROM ExerciseResolution r2 WHERE r.student.id = r2.student.id)")
     //Page<ExerciseResolution> findLatestExerciseResolutionSByExercise_Id(@Param("exerciseId") String exerciseId, Pageable pageable);
 
+    @Query("SELECT r FROM ExerciseResolution r JOIN FETCH r.student s WHERE r.exercise.id = :exerciseId AND r.status = :status AND r.submissionNr = (SELECT MAX (r2.submissionNr) FROM ExerciseResolution r2 WHERE r2.exercise.id = :exerciseId AND r.student.id = r2.student.id)")
+    Page<ExerciseResolution> findLatestResolutionsByExercise_IdAndStatus(@Param("exerciseId") String exerciseId, @Param("status") ExerciseResolutionStatus status, Pageable pageable);
+
     /**
      * Deletes all resolutions of an exercise.
      * @param exerciseId exercise identifier
@@ -111,6 +114,6 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
     Page<ExerciseResolution> findAllByExercise_IdAndStudent_IdOrderBySubmissionNrAsc(String exerciseId, String studentId, Pageable pageable);
     List<ExerciseResolution> findAllByExercise_IdAndStudent_IdOrderBySubmissionNrAsc(String exerciseId, String studentId);
 
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM ExerciseResolution r WHERE r.id = :exerciseId")
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM ExerciseResolution r WHERE r.exercise.id = :exerciseId")
     boolean existsExerciseResolutions(@Param("exerciseId") String exerciseId);
 }

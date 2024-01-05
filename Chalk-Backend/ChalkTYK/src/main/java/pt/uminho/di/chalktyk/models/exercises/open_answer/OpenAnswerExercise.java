@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.*;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.Mctype;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
@@ -38,6 +39,17 @@ public class OpenAnswerExercise extends Exercise {
     @Override
     public String getExerciseType() {
         return "OA";
+    }
+
+    @Override
+    public boolean supportsCorrectionType(String evaluationType) {
+        if(evaluationType == null) return false;
+        evaluationType = evaluationType.toLowerCase();
+
+        return switch (evaluationType) {
+            case "ai" -> true;
+            default -> false;
+        };
     }
 
     /**

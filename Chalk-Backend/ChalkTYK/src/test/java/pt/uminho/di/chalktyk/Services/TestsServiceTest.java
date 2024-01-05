@@ -1,6 +1,7 @@
 package pt.uminho.di.chalktyk.Services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +19,14 @@ import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseStatement;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseData;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
+import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.Mctype;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceData;
@@ -94,6 +99,7 @@ public class TestsServiceTest {
         this.course2Id = seed.addCourse2(specialist2Id);
         this.studentId = seed.addStudentAnnie();
         this.student2Id = seed.addStudentGeorge();
+
         // create tags
         this.tag1 = tagsService.createTag("Espanol","/");
         this.tag2 = tagsService.createTag("NewEspanol","/");
@@ -176,6 +182,85 @@ public class TestsServiceTest {
         assert tt2.getNExercises() == 4;
     }
 
+    @Test
+    public void duplicateTest() throws BadInputException, NotFoundException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+
+        String testId = testsService.createTest(t1);
+        String duplicateId = testsService.duplicateTestById(this.specialistId, testId, Visibility.PRIVATE, this.courseId);
+
+        // trigger exceptions
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+        pt.uminho.di.chalktyk.models.tests.Test tmp_dup = testsService.getTestById(duplicateId);
+        assert tmp_dup != null;
+    }
+
+    /* 
+    @Test
+    public void duplicateLiveTest() throws BadInputException, NotFoundException {
+        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest();
+        LiveTest t1 = new LiveTest(null, tmp.getTitle(), tmp.getGlobalInstructions(), null, tmp.getConclusion(), tmp.getCreationDate(), 
+            tmp.getPublishDate(), tmp.getSpecialist(), tmp.getVisibility(), tmp.getCourse(), tmp.getInstitution(), tmp.getGroups(),
+            LocalDateTime.now().plusSeconds(100), 360, 10);
+
+        String testId = testsService.createTest(t1);
+        String duplicateId = testsService.duplicateTestById(this.specialistId, testId, Visibility.PRIVATE, this.courseId);
+
+        // trigger exceptions
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+        pt.uminho.di.chalktyk.models.tests.Test tmp_dup = testsService.getTestById(duplicateId);
+        assert tmp_dup != null;
+        assert tmp_dup instanceof LiveTest;
+    }
+
+    @Test
+    public void duplicateDDTest() throws BadInputException, NotFoundException {
+        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest();
+        DeliverDateTest t1 = new DeliverDateTest(null, tmp.getTitle(), tmp.getGlobalInstructions(), null, tmp.getConclusion(), tmp.getCreationDate(), 
+            tmp.getPublishDate(), tmp.getSpecialist(), tmp.getVisibility(), tmp.getCourse(), tmp.getInstitution(), tmp.getGroups(),
+            LocalDateTime.now().plusDays(1));
+
+        String testId = testsService.createTest(t1);
+        String duplicateId = testsService.duplicateTestById(this.specialistId, testId, Visibility.PRIVATE, this.courseId);
+
+        // trigger exceptions
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+        pt.uminho.di.chalktyk.models.tests.Test tmp_dup = testsService.getTestById(duplicateId);
+        assert tmp_dup != null;
+        assert tmp_dup instanceof DeliverDateTest;
+    }
+    */
+
+    @Test
+    public void deleteTest() throws BadInputException, NotFoundException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+        String testId = testsService.createTest(t1);
+
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+
+        testsService.deleteTestById(testId);
+        try {
+            testsService.getTestById(testId);
+            assert false;
+        } catch (NotFoundException e) {
+            assert true;
+        }
+    }
+
+    @Test
+    public void updateAllOnTest(){
+        // TODO
+    }
+
+    @Test
+    public void blah(){
+        
+    }
+
     
     /* ******* CREATE METHODS ******* */
 
@@ -199,28 +284,33 @@ public class TestsServiceTest {
         e3.setTags(Set.of(tag1, tag2));
         String e3_id = exercisesService.createExercise(createFTBExercise(specialistId, courseId), createFTBSolution(), createFTBRubric(), List.of(tag1.getId(), tag2.getId()));
 
-        //Exercise e4;
+        /* 
+        Exercise e4 = createChatExercise(specialistId, courseId);
+        e4.setSolution(createChatSolution());
+        e4.setRubric(createChatRubric());
+        e4.setTags(Set.of(tag2));
+        String e4_id = exercisesService.createExercise(createChatExercise(specialistId, courseId), createChatSolution(), createChatRubric(), List.of(tag2.getId()));
+        */
 
-        TestExercise ex1 = new ConcreteExercise(2.5F, e1);
-        TestExercise ex2 = new ConcreteExercise(2.5F, e2);
-        TestExercise ex3 = new ConcreteExercise(2.5F, e3);
-        // TODO: chat exercise
-        //TestExercise ex4 = new ConcreteExercise(2.5F, e4);
-        TestExercise ex5 = new ReferenceExercise(e1_id, 2.5F);
-        TestExercise ex6 = new ReferenceExercise(e2_id, 2.5F);
-        TestExercise ex7 = new ReferenceExercise(e3_id, 2.5F);
-        //TestExercise ex8 = new ReferenceExercise(e4_id, 2.5F);
+        TestExercise ex1 = new ConcreteExercise(3.0F, e1);
+        TestExercise ex2 = new ConcreteExercise(3.0F, e2);
+        TestExercise ex3 = new ConcreteExercise(3.0F, e3);
+        //TestExercise ex4 = new ConcreteExercise(3.0F, e4);
+        TestExercise ex5 = new ReferenceExercise(e1_id, 2.0F);
+        TestExercise ex6 = new ReferenceExercise(e2_id, 2.0F);
+        TestExercise ex7 = new ReferenceExercise(e3_id, 2.0F);
+        //TestExercise ex8 = new ReferenceExercise(e4_id, 2.0F);
 
         TestGroup tg1 = new TestGroup("instructions1", null, List.of(ex1, ex5));
         TestGroup tg2 = new TestGroup("instructions2", null, List.of(ex2, ex6));
         TestGroup tg3 = new TestGroup("instructions3", null, List.of(ex3, ex7));
-        //TestGroup tg4 = new TestGroup("instructions4", null, List.of(ex4));
+        //TestGroup tg4 = new TestGroup("instructions4", null, List.of(ex4, ex8));
 
         Specialist s1 = specialistsService.getSpecialistById(this.specialistId);
         Course c1 = coursesService.getCourseById(this.courseId);
 
         pt.uminho.di.chalktyk.models.tests.Test test = new pt.uminho.di.chalktyk.models.tests.Test(null, "TEST #1", "instructions 1", 
-            null, "", LocalDateTime.now(), LocalDateTime.now().plusSeconds(1), s1, Visibility.PUBLIC, c1, null, List.of(tg1, tg2, tg3));
+            null, "", LocalDateTime.now(), LocalDateTime.now().plusSeconds(1), s1, Visibility.PUBLIC, c1, null, List.of(tg1, tg2, tg3));//, tg4));
 
         return test;
     }
@@ -304,5 +394,38 @@ public class TestsServiceTest {
 
     private ExerciseRubric createFTBRubric(){
         return new FillTheBlanksRubric(0.0F);
+    }
+
+    private ChatExercise createChatExercise(String specialistId, String courseId){
+        ChatExercise exercise = new ChatExercise();
+        exercise.setStatement(new ExerciseStatement("Quais as vantagens de usar sistemas distribuidos?",null,null));
+        exercise.setTitle("Vantages de Sistemas distribuidos");
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
+
+        ItemsList topics = new ItemsList();
+        topics.add(new StringItem("Vantages de sistemas distribuidos"));
+        topics.add(new StringItem("Dificuldades de utilização de sistemas distribuidos"));
+        topics.add(new StringItem("Porque utilizar sistemas distribuidos"));
+
+        exercise.setTopics(topics);
+
+        return exercise;
+    }
+
+    private ExerciseSolution createChatSolution(){
+        List<String> chat = new ArrayList<>();
+        chat.add("Quais as vantagens de usar sistemas distribuidos");
+        chat.add("E bue fixe");
+        chat.add("Mas porque que os descreves como bue fixes");
+        chat.add("Permitem a distribuição trabalhos por varios computadores");
+
+        ChatExerciseData chatExerciseData = new ChatExerciseData(chat);
+        return  new ExerciseSolution(null,chatExerciseData);
+    }
+
+    private ChatExerciseRubric createChatRubric(){
+        return new ChatExerciseRubric(); 
     }
 }

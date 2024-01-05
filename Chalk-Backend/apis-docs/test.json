@@ -1,0 +1,42 @@
+{
+    "title": "Teste exemplo",
+    "globalInstructions": "Não fazer batota",
+    "globalPoints": 10,
+    "conclusion": "Parabéns ",
+    "creationDate": "2024-01-04T16:30:05.970Z",
+    "publishDate": "2024-01-10T16:30:05.970Z",
+    "visibility": "public",
+    "groups": [
+      {
+        "groupInstructions": "string",
+        "groupPoints": 10,
+        "exercises": [
+          {
+            "points": 10,
+            "id": "2adad728-0d5a-493d-b7bb-5c31f793ea58",
+            "Type": "reference"
+          },
+          
+          {
+            "points": 10,
+          "exercise":{
+           "title":"Exemplo Resposta Aberta",
+           "type": "OA",
+           "visibility":"public",
+           "statement":{
+               "text":"Qual é o sentido da vida?",
+               "imagePath":"https://cdn.flash.pt/images/2019-10/img_828x523$2019_10_15_13_49_46_227057_im_637409554131662405.png",
+               "imagePosition":"down"
+           },
+            "course": {
+               "id" : null
+           }
+            },
+            "Type": "concrete"
+          }
+        ]
+      }
+    ],
+    "courseId": "d5cca25e-7678-4fe2-b931-637c30569fa5",
+    "institutionId": null
+  }

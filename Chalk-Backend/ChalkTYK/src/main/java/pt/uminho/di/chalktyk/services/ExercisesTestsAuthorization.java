@@ -82,10 +82,18 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
             case TEST, PRIVATE, DELETED:
                 return false;
             case INSTITUTION:
-                try { return institutionsService.isSpecialistOfInstitution(specialistId, institutionId); }
+                try {
+                    if(institutionId==null)
+                        return false;
+                    return institutionsService.isSpecialistOfInstitution(specialistId, institutionId);
+                }
                 catch (NotFoundException e) { return false; }
             case COURSE:
-                try { return coursesService.checkSpecialistInCourse(courseId, specialistId); }
+                try {
+                    if(courseId==null)
+                        return false;
+                    return coursesService.checkSpecialistInCourse(courseId, specialistId);
+                }
                 catch (NotFoundException e) { return false; }
             default:
                 return true;
@@ -164,5 +172,10 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
     public boolean canSpecialistAccessTestResolution(String userId, String resolutionId) throws NotFoundException {
         TestResolution resolution = testsService.getTestResolutionById(resolutionId);
         return canSpecialistAccessTest(userId, resolution.getTestId());
+    }
+
+    @Override
+    public boolean specialistBelongsToCourse(String userId, String courseId) throws NotFoundException {
+        return coursesService.checkSpecialistInCourse(userId,courseId);
     }
 }
