@@ -585,7 +585,7 @@ public class TestsService implements ITestsService {
                 try {
                     exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
                 }
-                catch (Exception ignored){
+                catch (BadInputException | UnauthorizedException ignored){
                     // If an exercise can't be corrected, using the chosen correctionType,
                     // it just is not corrected.
                 }
@@ -644,7 +644,7 @@ public class TestsService implements ITestsService {
                     try {
                         exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
                     }
-                    catch (Exception ignored){
+                    catch (BadInputException | UnauthorizedException ignored){
                         // If an exercise can't be corrected, using the chosen correctionType,
                         // it just is not corrected.
                     }

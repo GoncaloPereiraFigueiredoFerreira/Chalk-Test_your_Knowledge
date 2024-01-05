@@ -37,12 +37,17 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 @JsonTypeName("CE")
 @DiscriminatorValue("CE")
 public class ChatExercise extends Exercise {
-
-    @Column(name = "topics")
+    @Type(JsonBinaryType.class)
+    @Column(name = "topics", columnDefinition = "jsonb")
     private ItemsList topics;
 
     public ChatExercise(List<Item> items){
-        this.topics = new ItemsList();        
+        this.topics = new ItemsList(items);
+    }
+
+    @Override
+    public boolean supportsCorrectionType(String evaluationType) {
+        return "ai".equalsIgnoreCase(evaluationType);
     }
 
     @Override

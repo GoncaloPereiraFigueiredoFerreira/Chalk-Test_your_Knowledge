@@ -656,11 +656,10 @@ public class ExercisesService implements IExercisesService{
     @Transactional
     @Override
     public void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException {
-        if(!correctionType.equalsIgnoreCase("auto") && !correctionType.equalsIgnoreCase("ai"))
-            throw new BadInputException("Could not correct exercise resolutions: Correction type must be 'auto' or 'ai'.");
-
         // gets instance of the exercise and it's rubric
         Exercise exercise = _getExerciseById(exerciseId);
+        if(!exercise.supportsCorrectionType(correctionType))
+            throw new BadInputException("Could not correct exercise resolutions: correction type not supported.");
 
         // checks existence of a rubric, which is required
         // for the automatic correction of the exercise
@@ -672,9 +671,8 @@ public class ExercisesService implements IExercisesService{
 
         if(correctionType.equalsIgnoreCase("auto"))
             automaticExerciseResolutionsCorrection(exercise, rubric, solution);
-        else if (correctionType.equalsIgnoreCase("ai")) {
-            // TODO - add the AI part
-        }
+        else // more correction types ...
+            throw new UnauthorizedException("Correction type is supported, but cannot be issued by this method.");
     }
 
     /**
@@ -695,7 +693,7 @@ public class ExercisesService implements IExercisesService{
         // gets the identifier of the exercise
         ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
         if(resolution == null)
-            throw new NotFoundException("Could not correct exercise: resolution does not exist.");
+            throw new NotFoundException("Could not correct exercise resolution: resolution does not exist.");
 
         // if the exercise is already revised, then returns the points attributed to the resolution
         if(resolution.getStatus() == ExerciseResolutionStatus.REVISED)
@@ -704,6 +702,8 @@ public class ExercisesService implements IExercisesService{
 
         // gets instance of the exercise and it's rubric
         Exercise exercise = _getExerciseById(exerciseId);
+        if(!exercise.supportsCorrectionType(correctionType))
+            throw new BadInputException("Could not correct exercise resolution: correction type not supported.");
 
         // checks existence of a rubric, which is required
         // for the automatic correction of the exercise
@@ -713,7 +713,10 @@ public class ExercisesService implements IExercisesService{
         // for the automatic correction of the exercise
         ExerciseSolution solution = getExerciseSolution(exerciseId);
 
-        return automaticExerciseResolutionCorrection(resolution, exercise, rubric, solution);
+        if(correctionType.equalsIgnoreCase("auto"))
+            return automaticExerciseResolutionCorrection(resolution, exercise, rubric, solution);
+        else // ... more correction types
+            throw new UnauthorizedException("Correction type is supported, but cannot be issued by this method.");
     }
 
     /**

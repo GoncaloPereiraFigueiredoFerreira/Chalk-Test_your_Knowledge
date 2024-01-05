@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -162,29 +161,15 @@ public abstract class Exercise {
 		this.rubricId = rubric != null ? rubric.getId() : null;
 	}
 
-	/**
-	 * Sets the id of the rubric, if rubric is not null.
-	 * @param rubricId id that the rubric should have
-	 */
-	@JsonIgnore
-	public void setRubricIdIfExists(String rubricId){
-		if(rubric != null)
-			rubric.setId(rubricId);
-	}
-
-	/**
-	 * Sets the id of the solution, if solution is not null.
-	 * @param solutionId id that the solution should have
-	 */
-	@JsonIgnore
-	public void setSolutionIdIfExists(String solutionId){
-		if(solution != null)
-			solution.setId(solutionId);
-	}
-
 	public void setExerciseType(String ignored) {
 		this.exerciseType = getExerciseType();
 	}
+
+	/**
+	 * @param evaluationType Evaluation type. Allowable values: {'auto', 'ai'}
+	 * @return 'true' if the given evaluation type is supported. 'false' otherwise.
+	 */
+	public abstract boolean supportsCorrectionType(String evaluationType);
 
 	/**
 	 * Evaluates the resolution of an exercise.
