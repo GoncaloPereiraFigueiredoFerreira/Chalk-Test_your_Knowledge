@@ -69,7 +69,7 @@ public class TestsService implements ITestsService {
     
     @Override
     @Transactional
-    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
+    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException {
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
                 throw new NotFoundException("There is no course with the given id");
@@ -88,9 +88,17 @@ public class TestsService implements ITestsService {
         return testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, visibility, institutionId, courseId, specialistId, title);
     }
 
+    // TODO - ver se não é suposto substituir os reference exercises por concrete exercises
     @Override
     @Transactional
     public Test getTestById(String testId) throws NotFoundException {
+        Test t = testDAO.findById(testId).orElse(null);
+        if (t == null)
+            throw new NotFoundException("Could not get test: there is no test with the given identifier.");
+        return t;
+    }
+
+    private Test _getTestById(String testId) throws NotFoundException {
         Test t = testDAO.findById(testId).orElse(null);
         if (t == null)
             throw new NotFoundException("Could not get test: there is no test with the given identifier.");
@@ -404,22 +412,7 @@ public class TestsService implements ITestsService {
         if (test == null)
             throw new NotFoundException("Couldn't update test visibility: couldn't find test with id '" + testId + "'");
 
-        // check course constraints
-        if(visibility.equals(Visibility.COURSE)){
-            Course course = test.getCourse();
-            if (course == null)
-                throw new BadInputException("Couldn't update test visibility: course is null");
-        }
-
-        // check institution constraints
-        if(visibility.equals(Visibility.INSTITUTION)){
-            Institution institution = test.getInstitution();
-            if (institution == null)
-                throw new BadInputException("Couldn't update test visibility: institution is null");
-        }
-        
-        test.setVisibility(visibility);
-        testDAO.save(test);
+        _updateTestVisibility(test, visibility);
     }
 
     private void _updateTestVisibility(Test test, Visibility visibility) throws BadInputException {
@@ -472,88 +465,9 @@ public class TestsService implements ITestsService {
         if (test == null)
             throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
 
-        LocalDateTime publishDate = test.getPublishDate();
-        if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
-            throw new BadInputException("Couldn't update test: can't change test after it has already been published.");
-
-        // verify test group properties
-        for (TestGroup g: groups){
-            g.verifyProperties();
-        }
-
-        String specialistId = test.getSpecialistId();
-
-        // Set of ids of exercises on the current version of the test.
-        // This set is need to delete exercises that are no longer being used.
-        Set<String> ogExercisesIds =
-                test.getGroups().stream()
-                        .flatMap(g -> g.getExercises().stream())
-                        .map(TestExercise::getId).collect(Collectors.toSet());
-
-        // check and duplicate exercises
-        List<TestGroup> newTGs = new ArrayList<>();
-        List<String> allNewExesIds = new ArrayList<>();
-        boolean exercisesCollectionChanged = false; // if the global collection of exercises changed, then the tags need to be updated.
-
-        for (TestGroup tg: groups){
-            List<TestExercise> newExes = new ArrayList<>();
-
-            for (TestExercise exe: tg.getExercises()){
-                // duplicate or persist exercise
-                String exerciseId;
-
-                // if the exercise is a concrete exercise, the exercise must be persisted
-                // and a reference, with the id of the persisted exercise, needs to be created.
-                // This allows the exercises to be persisted independently of the test.
-                if (exe instanceof ConcreteExercise ce){
-                    Exercise tmp = ce.getExercise();
-                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
-                    exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
-                    exercisesCollectionChanged = true;
-                }
-                // Else the exercise is a reference to an existing exercise.
-                // First we need to check if it was already an exercise of the
-                // test. If it isn't the exercise needs to be duplicated and
-                // a new reference, containing the id of the duplicate,
-                // needs to be created.
-                else {
-                    // checks if exercise belonged to the test already
-                    if(ogExercisesIds.contains(exe.getId())){
-                        exerciseId = exe.getId();
-                        ogExercisesIds.remove(exe.getId());
-                    } else {
-                        exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
-                        exercisesCollectionChanged = true;
-                    }
-                }
-                ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
-                newExes.add(newExe);
-                allNewExesIds.add(exerciseId);
-            }
-
-            TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
-            newTGs.add(newTG);
-        }
-        test.setGroups(newTGs);
-
-        // update points
-        test.setGroups(groups);
-        test.calculatePoints();
-
-        test = testDAO.save(test);
-
-        // count and create tags if there was an update regarding the exercises
-        if(exercisesCollectionChanged) {
-            deleteTestTags(testId);
-            createTestTags(exercisesService.countTagsOccurrencesForExercisesList(allNewExesIds), test);
-        }
-
-        // delete all exercises that are no longer used
-        for(String exId : ogExercisesIds)
-            exercisesService.deleteExerciseById(exId);
+        _updateTestGroups(test, groups);
     }
 
-    @Transactional
     private void _updateTestGroups(Test test, List<TestGroup> groups) throws NotFoundException, BadInputException {
         LocalDateTime publishDate = test.getPublishDate();
         if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
@@ -623,7 +537,7 @@ public class TestsService implements ITestsService {
         test.setGroups(groups);
         test.calculatePoints();
 
-        testDAO.save(test);
+        test = testDAO.save(test);
 
         // count and create tags if there was an update regarding the exercises
         if(exercisesCollectionChanged) {
@@ -710,7 +624,7 @@ public class TestsService implements ITestsService {
 
     @Transactional
     @Override
-    public void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException {
+    public void automaticCorrection(String testId, String correctionType) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testId + "'");
@@ -740,7 +654,7 @@ public class TestsService implements ITestsService {
 
                 for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
                     TestExerciseResolutionBasic pair = entry.getValue();
-                    if (!pair.getResolutionId().equals("")){
+                    if (!pair.getResolutionId().isEmpty()){
                         ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
                         if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
                             isRevised = false;
@@ -763,7 +677,7 @@ public class TestsService implements ITestsService {
         }
     }
 
-    public void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException, BadInputException {
+    public void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(testResolutionId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Couldn't evaluate test: couldn't find test resolution with id '" + testResolutionId + "'");
@@ -776,7 +690,7 @@ public class TestsService implements ITestsService {
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
                 TestExerciseResolutionBasic pair = entry.getValue();
                 
-                if (!pair.getResolutionId().equals("")){
+                if (!pair.getResolutionId().isEmpty()){
                     try {
                         exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
                     }
@@ -842,10 +756,10 @@ public class TestsService implements ITestsService {
     public String startTest(String testId, String studentId) throws BadInputException, NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Can't start test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Can't start test: couldn't find test with id '" + testId + "'");
         Student student = studentsService.getStudentById(studentId);
         if (student == null)
-            throw new NotFoundException("Can't start test: couldn't find student with id \'" + studentId + "\'");
+            throw new NotFoundException("Can't start test: couldn't find student with id '" + studentId + "'");
 
         TestResolution resolution = new TestResolution(null,
                 LocalDateTime.now(),
@@ -889,7 +803,7 @@ public class TestsService implements ITestsService {
 
         if (test instanceof DeliverDateTest ddt){
             LocalDateTime testDeliverDate = ddt.getDeliverDate();
-            if (testDeliverDate != null && startDate.isAfter(testDeliverDate))
+            if (testDeliverDate != null && startDate != null && startDate.isAfter(testDeliverDate))
                 throw new BadInputException("Cannot create a test resolution: start date needs to be after test deliver date");
         }
         else if (test instanceof LiveTest lt) {
@@ -925,13 +839,13 @@ public class TestsService implements ITestsService {
     public void deleteTestResolutionById(String resolutionId) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(resolutionId).orElse(null);
         if (resolution == null)
-            throw new NotFoundException("Couldn't delete resolution: Resolution \'" + resolutionId + "\'was not found");
+            throw new NotFoundException("Couldn't delete resolution: Resolution '" + resolutionId + "'was not found");
 
         // delete exercise resolutions
         for (TestResolutionGroup trg: resolution.getGroups()){
             for (TestExerciseResolutionBasic exeResPair: trg.getResolutions().values()){
                 String exeResId = exeResPair.getResolutionId();
-                if (!exeResId.equals(""))
+                if (!exeResId.isEmpty())
                     exercisesService.deleteExerciseResolutionById(exeResId);
             }
         }
@@ -943,7 +857,7 @@ public class TestsService implements ITestsService {
     public void updateTestResolution(String testResId, TestResolution body) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
-            throw new NotFoundException("Couldn't update resolution: Resolution \'" + testResId + "\'was not found");
+            throw new NotFoundException("Couldn't update resolution: Resolution '" + testResId + "'was not found");
 
         resolution.setSubmissionNr(body.getSubmissionNr());
         resolution.setStatus(body.getStatus());
@@ -952,49 +866,17 @@ public class TestsService implements ITestsService {
         _updateTestResolutionSubmissionDate(resolution, body.getSubmissionDate());
     }
 
+    @Transactional
     @Override
     public void updateTestResolutionStartDate(String testResId, LocalDateTime startDate) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
-            throw new NotFoundException("Couldn't update resolution start date: Resolution \'" + testResId + "\'was not found");
-
-        Test test = getTestById(resolution.getTest().getId());
-        if (test == null)
-            throw new NotFoundException("Couldn't update resolution start date: couldn't fetch test");
-
-        // check time constraints
-        LocalDateTime submissionDate = resolution.getSubmissionDate();
-        if (submissionDate != null && startDate.isAfter(submissionDate))
-            throw new BadInputException("Couldn't update resolution start date: submission date occurs before start date");
-
-        LocalDateTime testCreationDate = test.getCreationDate();
-        LocalDateTime testPublishDate = test.getPublishDate();
-        if (testCreationDate.isAfter(startDate) || testPublishDate.isAfter(startDate))
-            throw new BadInputException("Couldn't update resolution start date: start date needs to be after test creation or publication");
-
-        if (test instanceof DeliverDateTest ddt){
-            LocalDateTime testDeliverDate = ddt.getDeliverDate();
-            if (testDeliverDate != null && startDate.isAfter(testDeliverDate))
-                throw new BadInputException("Couldn't update resolution start date: start date needs to be before test deliver date");
-        }
-        else if (test instanceof LiveTest lt) {
-            LocalDateTime testStartDate = lt.getStartDate();
-            if (testStartDate != null && testStartDate.isAfter(startDate))
-                throw new BadInputException("Couldn't update resolution start date: start date needs to be after test start");
-            
-            LocalDateTime tolerance = testStartDate.plusSeconds(lt.getStartTolerance());
-            if (testStartDate != null && startDate.isAfter(tolerance))
-                throw new BadInputException("Couldn't update resolution start date: start date occurs after test start tolerance");
-        }
-
-        resolution.setStartDate(startDate);
-        resolutionDAO.save(resolution);
+            throw new NotFoundException("Couldn't update resolution start date: Resolution '" + testResId + "'was not found");
+        _updateTestResolutionStartDate(resolution, startDate);
     }
 
     private void _updateTestResolutionStartDate(TestResolution resolution, LocalDateTime startDate) throws NotFoundException, BadInputException {
-        Test test = getTestById(resolution.getTest().getId());
-        if (test == null)
-            throw new NotFoundException("Couldn't update resolution start date: couldn't fetch test");
+        Test test = _getTestById(resolution.getTest().getId());
 
         // check time constraints
         LocalDateTime submissionDate = resolution.getSubmissionDate();
@@ -1012,13 +894,16 @@ public class TestsService implements ITestsService {
                 throw new BadInputException("Couldn't update resolution start date: start date needs to be before test deliver date");
         }
         else if (test instanceof LiveTest lt) {
-            LocalDateTime testStartDate = lt.getStartDate();
-            if (testStartDate != null && testStartDate.isAfter(startDate))
-                throw new BadInputException("Couldn't update resolution start date: start date needs to be after test start");
-            
-            LocalDateTime tolerance = testStartDate.plusSeconds(lt.getStartTolerance());
-            if (testStartDate != null && startDate.isAfter(tolerance))
-                throw new BadInputException("Couldn't update resolution start date: start date occurs after test start tolerance");
+            LocalDateTime currentStartDate = lt.getStartDate();
+
+            if (currentStartDate != null){
+                if(currentStartDate.isAfter(startDate))
+                    throw new BadInputException("Couldn't update resolution start date: new start date needs to be after the current start date.");
+
+                LocalDateTime tolerance = currentStartDate.plusSeconds(lt.getStartTolerance());
+                if (startDate.isAfter(tolerance))
+                    throw new BadInputException("Couldn't update resolution start date: start date occurs after test start tolerance");
+            }
         }
 
         resolution.setStartDate(startDate);
@@ -1030,36 +915,12 @@ public class TestsService implements ITestsService {
     public void updateTestResolutionSubmissionDate(String testResId, LocalDateTime submissionDate) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
-            throw new NotFoundException("Couldn't update resolution submission date: Resolution \'" + testResId + "\'was not found");
-
-        Test test = getTestById(resolution.getTest().getId());
-        if (test == null)
-            throw new NotFoundException("Couldn't update resolution submission date: couldn't fetch test");
-
-        // check time constraints
-        if (resolution.getStartDate().isAfter(submissionDate))
-            throw new NotFoundException("Couldn't update resolution submission date: submission date needs to occur after resolution start date");
-        if (test instanceof DeliverDateTest ddt){
-            LocalDateTime testDeliverDate = ddt.getDeliverDate();
-            if (testDeliverDate != null && submissionDate.isAfter(testDeliverDate))
-                throw new BadInputException("Couldn't update resolution submission date: submission date needs to be after test deliver date");
-        }
-        else if (test instanceof LiveTest lt) {
-            LocalDateTime resStartDate = resolution.getStartDate();
-            LocalDateTime resEndDate = resStartDate.plusSeconds(lt.getDuration());
-
-            if (submissionDate.isAfter(resEndDate))
-                throw new BadInputException("Couldn't update resolution submission date: submission date needs to be before the end of the test");
-        }
-        
-        resolution.setSubmissionDate(submissionDate);
-        resolutionDAO.save(resolution);
+            throw new NotFoundException("Couldn't update resolution submission date: Resolution '" + testResId + "'was not found");
+        _updateTestResolutionSubmissionDate(resolution, submissionDate);
     }
 
     private void _updateTestResolutionSubmissionDate(TestResolution resolution, LocalDateTime submissionDate) throws NotFoundException, BadInputException {
-        Test test = getTestById(resolution.getTest().getId());
-        if (test == null)
-            throw new NotFoundException("Couldn't update resolution submission date: couldn't fetch test");
+        Test test = _getTestById(resolution.getTest().getId());
 
         // check time constraints
         if (resolution.getStartDate().isAfter(submissionDate))
@@ -1086,7 +947,7 @@ public class TestsService implements ITestsService {
     public void updateTestResolutionSubmissionNr(String testResId, int submissionNr) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
-            throw new NotFoundException("Couldn't update resolution submission number: Resolution \'" + testResId + "\'was not found");
+            throw new NotFoundException("Couldn't update resolution submission number: Resolution '" + testResId + "'was not found");
 
         if (submissionNr <= 0)
             throw new BadInputException("Couldn't update resolution submission number: submission number needs to be higher than 0");
@@ -1100,7 +961,7 @@ public class TestsService implements ITestsService {
     public void updateTestResolutionStatus(String testResId, TestResolutionStatus status) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
-            throw new NotFoundException("Couldn't update resolution: Resolution \'" + testResId + "\'was not found");
+            throw new NotFoundException("Couldn't update resolution: Resolution '" + testResId + "'was not found");
 
         resolution.setStatus(status);
         resolutionDAO.save(resolution);
@@ -1111,13 +972,13 @@ public class TestsService implements ITestsService {
     @Transactional
     public Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
-            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't find test with given id.");
+            throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
-            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't find student with given id.");
+            throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't find student with given id.");
 
         Test test = getTestById(testId);
         if (test == null)
-            throw new NotFoundException("Can't check if student \'" + studentId + "\' can make a submission for test \'" + testId + "\'': couldn't fetch non relational test with given id.");
+            throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't fetch non relational test with given id.");
 
         Visibility vis = test.getVisibility();
         if (vis.equals(Visibility.PRIVATE)){ return false; }
@@ -1134,15 +995,13 @@ public class TestsService implements ITestsService {
         if (test.getPublishDate().isAfter(LocalDateTime.now()))
             return false;
         if (test instanceof DeliverDateTest ddt){
-            if (LocalDateTime.now().isAfter(ddt.getDeliverDate()))
-                return false;
+            return !LocalDateTime.now().isAfter(ddt.getDeliverDate());
         }
         else if (test instanceof LiveTest lt){
             if (lt.getStartDate().isAfter(LocalDateTime.now()))
                 return false;
             LocalDateTime endOfTest = lt.getStartDate().plusSeconds(lt.getDuration()).plusSeconds(lt.getStartTolerance());
-            if (LocalDateTime.now().isAfter(endOfTest))
-                return false;
+            return !LocalDateTime.now().isAfter(endOfTest);
         }
 
         return true;
@@ -1208,7 +1067,7 @@ public class TestsService implements ITestsService {
         Float oldPoints = er.getPoints();
         er.setStatus(ExerciseResolutionStatus.REVISED);
         er.setPoints(points);
-        Comment c = null;
+        Comment c;
         if (comment != null){
             List<Item> items = new ArrayList<>();
             StringItem si = new StringItem(comment);
@@ -1294,13 +1153,13 @@ public class TestsService implements ITestsService {
         if (found)
             resolutionDAO.save(testRes);
         else
-            throw new NotFoundException("Cannot upload resolution for exercise with id \'" + exeId + "\'' in test resolution with id \'" + testResId + "\': couldn't find the exercise");
+            throw new NotFoundException("Cannot upload resolution for exercise with id '" + exeId + "'' in test resolution with id '" + testResId + "': couldn't find the exercise");
     }
 
     public String createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't add exercise to test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't add exercise to test: couldn't find test with id '" + testId + "'");
 
         LocalDateTime publishDate = test.getPublishDate();
         if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
@@ -1310,11 +1169,11 @@ public class TestsService implements ITestsService {
         String exeFinalId = null;
 
         String dupExeId = "";
-        Float points = 0.0F;
+        float points = 0.0F;
         List<String> tagIds = new ArrayList<>();
         if (exercise instanceof ConcreteExercise ce){
             Exercise exe = ce.getExercise();
-            tagIds = exe.getTags().stream().map(t -> t.getId()).toList();
+            tagIds = exe.getTags().stream().map(Tag::getId).toList();
             dupExeId = exercisesService.createExercise(exe, exe.getSolution(), exe.getRubric(), tagIds);
             exeFinalId = dupExeId;
             points = ce.getPoints();
@@ -1322,12 +1181,12 @@ public class TestsService implements ITestsService {
         else if (exercise instanceof ReferenceExercise re){
             Exercise exe = exercisesService.getExerciseById(re.getId());
             if (exe == null)
-                throw new NotFoundException("Couldn't add exercise to test: couldn't find exercise with id \'" + re.getId() + "\'");
+                throw new NotFoundException("Couldn't add exercise to test: couldn't find exercise with id '" + re.getId() + "'");
             
             dupExeId = exercisesService.duplicateExerciseById(exe.getSpecialistId(), exe.getId());
             exeFinalId = dupExeId;
             points = re.getPoints();
-            tagIds = exe.getTags().stream().map(t -> t.getId()).toList();
+            tagIds = exe.getTags().stream().map(Tag::getId).toList();
         }
 
         // insert the exercise into test
@@ -1373,7 +1232,7 @@ public class TestsService implements ITestsService {
     public void deleteExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't delete exercise from test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't delete exercise from test: couldn't find test with id '" + testId + "'");
 
         LocalDateTime publishDate = test.getPublishDate();
         if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
@@ -1393,7 +1252,7 @@ public class TestsService implements ITestsService {
                 }
             }
             if (found){
-                if (exes.size() == 0)
+                if (exes.isEmpty())
                     groups.remove(tg);
                 tg.calculateGroupPoints();
                 break;
@@ -1403,7 +1262,7 @@ public class TestsService implements ITestsService {
             // delete exercise
             exercisesService.deleteExerciseById(exerciseId);
         else
-            throw new NotFoundException("Couldn't delete exercise from test: couldn't find exercise with id \'" + exerciseId + "\'");
+            throw new NotFoundException("Couldn't delete exercise from test: couldn't find exercise with id '" + exerciseId + "'");
 
         // save test
         test.setGroups(groups);
@@ -1416,7 +1275,7 @@ public class TestsService implements ITestsService {
     public void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
-            throw new NotFoundException("Couldn't remove exercise from test: couldn't find test with id \'" + testId + "\'");
+            throw new NotFoundException("Couldn't remove exercise from test: couldn't find test with id '" + testId + "'");
 
         LocalDateTime publishDate = test.getPublishDate();
         if (publishDate != null && LocalDateTime.now().isAfter(publishDate))
@@ -1436,7 +1295,7 @@ public class TestsService implements ITestsService {
                 }
             }
             if (found){
-                if (exes.size() == 0)
+                if (exes.isEmpty())
                     groups.remove(tg);
                 tg.calculateGroupPoints();
                 break;
@@ -1446,7 +1305,7 @@ public class TestsService implements ITestsService {
             // change visibility to PRIVATE
             exercisesService.updateExerciseVisibility(exerciseId, Visibility.PRIVATE);
         else
-            throw new NotFoundException("Couldn't delete exercise from test: couldn't find exercise with id \'" + exerciseId + "\'");
+            throw new NotFoundException("Couldn't delete exercise from test: couldn't find exercise with id '" + exerciseId + "'");
 
         // save test
         test.setGroups(groups);
@@ -1471,7 +1330,7 @@ public class TestsService implements ITestsService {
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
                 String exeResId = entry.getValue().getResolutionId();
                 ExerciseResolution exeRes;
-                if (exeResId.equals("")){
+                if (exeResId.isEmpty()){
                     exeRes = new ExerciseResolution();
                     exeRes.setSubmissionNr(-1);
                 }
@@ -1494,7 +1353,7 @@ public class TestsService implements ITestsService {
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
                 if (exeId.equals(entry.getKey())){
                     String exeResId = entry.getValue().getResolutionId();
-                    if (exeResId.equals("")){
+                    if (exeResId.isEmpty()){
                         ExerciseResolution exeRes = new ExerciseResolution();
                         exeRes.setSubmissionNr(-1);
                         return exeRes;
@@ -1509,7 +1368,7 @@ public class TestsService implements ITestsService {
         throw new NotFoundException("Could not get exercise resolution: there is no exercise in the test with the given identifier");
     }
 
-    public void submitTestResolution(String testResId) throws NotFoundException, BadInputException, UnauthorizedException {
+    public void submitTestResolution(String testResId) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Could not submit test: couldn't find test resolution");

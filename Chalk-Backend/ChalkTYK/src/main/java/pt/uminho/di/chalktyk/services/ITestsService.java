@@ -33,7 +33,7 @@ public interface ITestsService {
      *                      *                         'false' does not verify database logic
      * @return page of tests
      **/
-     Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException;
+     Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException;
 
     /**
      * Get test using its id
@@ -208,7 +208,7 @@ public interface ITestsService {
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the test or any exercise were not found
      **/
-    void automaticCorrection(String testId, String correctionType) throws NotFoundException, BadInputException;
+    void automaticCorrection(String testId, String correctionType) throws NotFoundException;
 
     /**
      * Issue the automatic correction of a single test resolution
@@ -218,7 +218,7 @@ public interface ITestsService {
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the test or any exercise were not found
      **/
-    void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException, BadInputException;
+    void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException;
 
     /**
      * Retrieves the number of students that submitted a resolution for a specific test
@@ -269,7 +269,7 @@ public interface ITestsService {
      * @throws NotFoundException     if no test was found with the given id
      * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void submitTestResolution(String testResId) throws NotFoundException, BadInputException, UnauthorizedException; //TODO
+    void submitTestResolution(String testResId) throws NotFoundException;
 
     /**
      * Create a test resolution
