@@ -144,10 +144,10 @@ public class ExercisesServiceTest {
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        ItemsList topics = new ItemsList();
-        topics.add(new StringItem("Vantages de sistemas distribuidos"));
-        topics.add(new StringItem("Dificuldades de utilização de sistemas distribuidos"));
-        topics.add(new StringItem("Porque utilizar sistemas distribuidos"));
+        List<String> topics = new ArrayList<>();
+        topics.add("Vantages de sistemas distribuidos");
+        topics.add("Dificuldades de utilização de sistemas distribuidos");
+        topics.add("Porque utilizar sistemas distribuidos");
 
         exercise.setTopics(topics);
 
@@ -367,6 +367,7 @@ public class ExercisesServiceTest {
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));
+        assert !exerciseId.equals(duplicateId);
     }
 
     @Test
@@ -382,6 +383,7 @@ public class ExercisesServiceTest {
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));
+        assert !exerciseId.equals(duplicateId);
     }
 
     @Test
