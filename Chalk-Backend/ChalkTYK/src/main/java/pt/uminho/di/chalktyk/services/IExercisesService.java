@@ -68,6 +68,8 @@ public interface IExercisesService{
     /**
      * Updates an exercise. If an object is 'null' than it is considered that it should remain the same.
      * To delete it, a specific delete method should be invoked.
+     * If the exercise already has resolutions, then the body cannot be updated.
+     * To not lose the changes the exercise is duplicated, and the id of this duplicated exercise is returned.
      *
      * @param exerciseId identifier of the exercise to be updated
      * @param exercise   new exercise body
@@ -75,22 +77,26 @@ public interface IExercisesService{
      * @param solution   new exercise solution
      * @param tagsIds    new list of tags
      * @param visibility new visibility
-     * @throws UnauthorizedException if the exercise is not owned by the specialist
-     * @throws NotFoundException     if the exercise was not found
+     * @return 'null' if the exercise was updated successfully, of the id of the duplicated exercise is returned.
+     * @throws NotFoundException if the exercise was not found
      */
-    void updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility)  throws NotFoundException, BadInputException;
+    String updateAllOnExercise(String exerciseId, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility)  throws NotFoundException, BadInputException;
 
     /**
      * Updates an exercise body.
+     * If the exercise already has resolutions,
+     * then the exercise is duplicated,
+     * and the updates are made to the copy.
      *
-     * @param exerciseId
+     * @param exerciseId identifier of the exercise
      * @param newBody    new exercise body
-     * @throws NotFoundException if the test wasn't found
+     * @return 'null' if the exercise is updated. If the exercise is duplicated, the duplicated exercise is returned.
+     * @throws NotFoundException if the exercise wasn't found
      * @throws BadInputException solution, rubric, institution or specialist ids where changed,
      *                           course was not found,
      *                           the rubric or solution don't belong to the new exercise body
      */
-    void updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException;
+    Exercise updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException;
 
     void updateExerciseVisibility(String exerciseId, Visibility visibility) throws NotFoundException, BadInputException;
 
@@ -149,13 +155,14 @@ public interface IExercisesService{
     Integer countExerciseResolutions(String exerciseId, boolean total);
 
     /**
-     * @param exerciseId   identifier of the exercise
-     * @param page         index of the page
-     * @param itemsPerPage number of pairs in each page
+     * @param exerciseId     identifier of the exercise
+     * @param page           index of the page
+     * @param itemsPerPage   number of pairs in each page
      * @param latest
+     * @param onlyNotRevised if 'true' only exercises resolutions that haven't been corrected will be returned.
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest);
+    List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised);
 
     /**
      * Create a resolution for a specific exercise.

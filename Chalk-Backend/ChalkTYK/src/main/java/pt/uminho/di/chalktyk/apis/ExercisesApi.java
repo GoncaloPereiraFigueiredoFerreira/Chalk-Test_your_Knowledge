@@ -57,7 +57,7 @@ public interface ExercisesApi {
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId);
 
-    @Operation(summary = "Get exercise using its identifier.",
+    @Operation(summary = "Create exercise.",
             description = "Get exercise using its identifier. Returns the identifier of the exercise.",
             tags={ "exercise" })
     @ApiResponses(value = {
@@ -102,7 +102,8 @@ public interface ExercisesApi {
 
     @Operation(summary = "Updates an exercise.",
             description = "Updates an exercise. If an object is 'null' than it is considered that it should remain the same." +
-                          "To delete it, a specific delete method should be invoked.",
+                          "To delete it, a specific delete method should be invoked. " +
+                    "\nAn exercise identifier is returned if the changes were made to a copy of the exercise. A copy of the exercise is created when the exercise already has resolutions. 'null' is returned if the exercise was updated successfully and not a copy.",
             tags={ "exercise" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Exercise updated successfully."),
@@ -113,13 +114,13 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}",
             method = RequestMethod.PUT)
-    ResponseEntity<Void> updateAllOnExercise(
+    ResponseEntity<String> updateAllOnExercise(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody UpdateExerciseDTO updateExerciseDTO);
 
     @Operation(summary = "Updates the body of an exercise.",
-            description = "",
+            description = "Updates the body of an exercise. An exercise body is returned if the changes were made to a copy of the exercise. A copy of the exercise is created when the exercise already has resolutions. 'null' is returned if the exercise was updated successfully and not a copy.",
             tags={ "exercise" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Exercise updated successfully."),
@@ -130,7 +131,7 @@ public interface ExercisesApi {
             consumes = { "application/json" },
             value = "/{exerciseId}/body",
             method = RequestMethod.PUT)
-    ResponseEntity<Void> updateExerciseBody(
+    ResponseEntity<Exercise> updateExerciseBody(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.DEFAULT, required = true,
@@ -367,7 +368,8 @@ public interface ExercisesApi {
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") int page,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") int itemsPerPage,
-            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "true")) @RequestParam(value = "latest", defaultValue = "true") Boolean latest);
+            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "true")) @RequestParam(value = "latest", defaultValue = "true") Boolean latest,
+            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "false")) @RequestParam(value = "onlyNotRevised", defaultValue = "false") Boolean onlyNotRevised);
 
     @Operation(summary = "Creates the resolution of an exercise.",
             description = "",

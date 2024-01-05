@@ -33,7 +33,7 @@ public interface ITestsService {
      *                      *                         'false' does not verify database logic
      * @return page of tests
      **/
-     Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException;
+     Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException;
 
     /**
      * Get test using its id
@@ -77,6 +77,16 @@ public interface ITestsService {
      * @throws NotFoundException if no test or specialist were found with the given ids
      **/
     String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException;
+
+    /**
+     * Updates a test
+     *
+     * @param testId
+     * @param body
+     * @throws NotFoundException if no test was found with the given id
+     * @throws BadInputException if any property of the test is not valid.
+     **/
+    void updateTest(String testId, Test body) throws NotFoundException, BadInputException;
 
     /**
      * Updates a test's title
@@ -193,13 +203,22 @@ public interface ITestsService {
     /**
      * Issue the automatic correction of the test resolutions
      *
+     * @param testId
+     * @param correctionType   Type of correction ("auto" or "ai")
+     * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
+     * @throws NotFoundException     if the test or any exercise were not found
+     **/
+    void automaticCorrection(String testId, String correctionType) throws NotFoundException;
+
+    /**
+     * Issue the automatic correction of a single test resolution
+     *
      * @param testResolutionId
      * @param correctionType   Type of correction ("auto" or "ai")
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the test or any exercise were not found
-     * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void automaticCorrection(String testResolutionId, String correctionType) throws NotFoundException, BadInputException, UnauthorizedException;
+    void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException;
 
     /**
      * Retrieves the number of students that submitted a resolution for a specific test
@@ -243,6 +262,16 @@ public interface ITestsService {
     String startTest(String testId, String studentId) throws BadInputException, NotFoundException;
 
     /**
+     * Submits a test resolution and revises it (with 'auto' correction type)
+     *
+     * @param testResId
+     * @throws BadInputException     if any property of the test resolution is not valid.
+     * @throws NotFoundException     if no test was found with the given id
+     * @throws UnauthorizedException if the test does not support the requested correction type.
+     **/
+    void submitTestResolution(String testResId) throws NotFoundException;
+
+    /**
      * Create a test resolution
      *
      * @param testId
@@ -259,6 +288,16 @@ public interface ITestsService {
      * @throws NotFoundException if no test resolution was found with the given id
      **/
     void deleteTestResolutionById(String resolutionId) throws NotFoundException;
+
+    /**
+     * Updates a test's resolution
+     *
+     * @param testResId
+     * @param body
+     * @throws NotFoundException if no test was found with the given id
+     * @throws BadInputException if any property of the test resolution is not valid.
+     **/
+    void updateTestResolution(String testResId, TestResolution body) throws NotFoundException, BadInputException;
 
     /**
      * Update a test resolution's start date
@@ -363,16 +402,17 @@ public interface ITestsService {
 
     /**
      * Add an exercise to a given test
-     * 
-     * @param  testId
-     * @param  exercise
-     * @param  groupIndex        index of the TestGroup to add the exercise to
-     * @param  exeIndex          position in the TestGroup
-     * @param  groupInstructions instructions to add if the test groups is new
+     *
+     * @param testId
+     * @param exercise
+     * @param groupIndex        index of the TestGroup to add the exercise to
+     * @param exeIndex          position in the TestGroup
+     * @param groupInstructions instructions to add if the test groups is new
+     * @return the id of the exercise created
      * @throws NotFoundException if no test or exercise were found
      * @throws BadInputException if any property of the exercise is not valid.
      */
-    void createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException;
+    String createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException;
 
     /**
      * If an exercise belongs to a test removes it from the test,
@@ -395,4 +435,13 @@ public interface ITestsService {
      * @throws BadInputException if the test has already been published (can't be changed)
      */
     void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException;
+
+    /**
+     * Fetches the exercise resolution for a given test resolution
+     * returns an ExerciseResolution with submission nr == -1, in case there's no resolution for a specific exercise
+     * 
+     * @param testResId          test resolution identifier
+     * @throws NotFoundException if the test resolution or any exercise resolution were not found
+     */
+    List<ExerciseResolution> getExerciseResolutionsForTestResolution(String testResId) throws NotFoundException;
 }

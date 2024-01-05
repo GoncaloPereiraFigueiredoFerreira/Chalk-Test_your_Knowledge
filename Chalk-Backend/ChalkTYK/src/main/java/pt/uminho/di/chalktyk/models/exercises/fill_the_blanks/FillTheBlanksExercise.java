@@ -77,6 +77,11 @@ public class FillTheBlanksExercise extends Exercise {
 		super.verifyInsertProperties();
 	}
 
+	@Override
+	public boolean supportsCorrectionType(String evaluationType) {
+		return false; // TODO - future work
+	}
+
 	@JsonIgnore
 	private int getNumberOfBlanks(){
 		return textSegments.size() - 1;

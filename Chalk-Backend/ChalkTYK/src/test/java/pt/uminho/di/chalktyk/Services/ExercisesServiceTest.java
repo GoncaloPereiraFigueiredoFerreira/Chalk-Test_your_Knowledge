@@ -144,10 +144,10 @@ public class ExercisesServiceTest {
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        ItemsList topics = new ItemsList();
-        topics.add(new StringItem("Vantages de sistemas distribuidos"));
-        topics.add(new StringItem("Dificuldades de utilização de sistemas distribuidos"));
-        topics.add(new StringItem("Porque utilizar sistemas distribuidos"));
+        List<String> topics = new ArrayList<>();
+        topics.add("Vantages de sistemas distribuidos");
+        topics.add("Dificuldades de utilização de sistemas distribuidos");
+        topics.add("Porque utilizar sistemas distribuidos");
 
         exercise.setTopics(topics);
 
@@ -367,6 +367,7 @@ public class ExercisesServiceTest {
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));
+        assert !exerciseId.equals(duplicateId);
     }
 
     @Test
@@ -382,6 +383,7 @@ public class ExercisesServiceTest {
         String duplicateId = exercisesService.duplicateExerciseById(specialistId,exerciseId);
         assertTrue(exercisesService.exerciseExists(duplicateId));
         assertTrue(exercisesService.exerciseExists(exerciseId));
+        assert !exerciseId.equals(duplicateId);
     }
 
     @Test
@@ -683,14 +685,14 @@ public class ExercisesServiceTest {
         var listOfResolutionsIds = List.of(er1.getId(), er2.getId());
         assert listOfResolutionsIds.containsAll(listOfResolutionsIdsWithGet) && listOfResolutionsIdsWithGet.containsAll(listOfResolutionsIds);
 
-        var pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, false);
+        var pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, false, false);
         assert pairsOfStudentAndResolutions.size() == 2;
         listOfResolutionsIdsWithGet =
                 pairsOfStudentAndResolutions.stream().filter(p -> p.getLeft().getId().equals(studentId))
                                                      .map(p -> p.getRight().getId()).toList();
         assert listOfResolutionsIds.containsAll(listOfResolutionsIdsWithGet) && listOfResolutionsIdsWithGet.containsAll(listOfResolutionsIds);
 
-        pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, true);
+        pairsOfStudentAndResolutions = exercisesService.getExerciseResolutions(exerciseId, 0, 5, true, false);
         assert pairsOfStudentAndResolutions.size() == 1;
         assert pairsOfStudentAndResolutions.get(0).getRight().getId().equals(er2.getId());
 

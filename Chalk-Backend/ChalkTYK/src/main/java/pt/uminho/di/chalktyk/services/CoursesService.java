@@ -171,11 +171,11 @@ public class CoursesService implements ICoursesService {
     @Transactional
     @Override
     public void addSpecialistsToCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
-        if(!courseDAO.existsById(courseId))
+        if (!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not add specialists: course not found.");
-        for(String email : specialistsEmails){
+        for (String email : specialistsEmails) {
             String id = specialistsService.getSpecialistIdByEmail(email);
-            if(id != null)
+            if (id != null && !courseDAO.isCourseSpecialist(courseId, id))
                 courseDAO.addSpecialistToCourse(id, courseId);
         }
     }
@@ -185,9 +185,9 @@ public class CoursesService implements ICoursesService {
     public void addStudentsToCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not add students: course not found.");
-        for(String email : studentsEmails){
+        for(String email : studentsEmails) {
             String id = studentsService.getStudentIdByEmail(email);
-            if(id != null)
+            if (id != null && !courseDAO.isCourseStudent(courseId, id))
                 courseDAO.addStudentToCourse(id, courseId);
         }
     }

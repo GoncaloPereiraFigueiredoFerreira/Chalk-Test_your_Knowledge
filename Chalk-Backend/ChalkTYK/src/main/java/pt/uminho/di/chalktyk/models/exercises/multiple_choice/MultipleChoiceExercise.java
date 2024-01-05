@@ -141,6 +141,19 @@ public class MultipleChoiceExercise extends Exercise {
 	}
 
 	@Override
+	public boolean supportsCorrectionType(String evaluationType) {
+		if(evaluationType == null) return false;
+		evaluationType = evaluationType.toLowerCase();
+
+        return switch (evaluationType) {
+            case "auto" -> mctype == Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION
+                    || mctype == Mctype.TRUE_FALSE_NO_JUSTIFICATION;
+            case "ai" -> false; // TODO - future work
+            default -> false;
+        };
+	}
+
+	@Override
 	public Exercise cloneExerciseDataOnly()  {
 		var exercise = new MultipleChoiceExercise();
 		try { copyExerciseDataOnlyTo(exercise); }

@@ -25,4 +25,5 @@ public interface IExercisesTestsAuthorization {
 
     boolean canSpecialistAccessTestResolution(String userId, String resolutionId) throws NotFoundException;
 
+    boolean specialistBelongsToCourse(String userId, String courseId) throws NotFoundException;
 }

@@ -199,7 +199,7 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateAllOnExercise(String jwtToken, String exerciseId, UpdateExerciseDTO updateExerciseDTO) {
+    public ResponseEntity<String> updateAllOnExercise(String jwtToken, String exerciseId, UpdateExerciseDTO updateExerciseDTO) {
         try {
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
@@ -208,27 +208,27 @@ public class ExercisesApiController implements ExercisesApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
-                    exercisesService.updateAllOnExercise(
-                            exerciseId,
-                            updateExerciseDTO.getExercise(),
-                            updateExerciseDTO.getRubric(),
-                            new ExerciseSolution(null, updateExerciseDTO.getSolution()),
-                            updateExerciseDTO.getTagsIds(),
-                            updateExerciseDTO.getVisibility());
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return ResponseEntity.ok(
+                            exercisesService.updateAllOnExercise(
+                                    exerciseId,
+                                    updateExerciseDTO.getExercise(),
+                                    updateExerciseDTO.getRubric(),
+                                    new ExerciseSolution(null, updateExerciseDTO.getSolution()),
+                                    updateExerciseDTO.getTagsIds(),
+                                    updateExerciseDTO.getVisibility()));
                 }
             }
 
-            return new ExceptionResponseEntity<Void>().createRequest(
+            return new ExceptionResponseEntity<String>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to update the exercise.");
         } catch (UnauthorizedException | NotFoundException | BadInputException e) {
-            return new ExceptionResponseEntity<Void>().createRequest(e);
+            return new ExceptionResponseEntity<String>().createRequest(e);
         }
     }
 
     @Override
-    public ResponseEntity<Void> updateExerciseBody(String jwtToken, String exerciseId, Exercise newBody) {
+    public ResponseEntity<Exercise> updateExerciseBody(String jwtToken, String exerciseId, Exercise newBody) {
         try {
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
@@ -237,16 +237,15 @@ public class ExercisesApiController implements ExercisesApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
-                    exercisesService.updateExerciseBody(exerciseId, newBody);
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return ResponseEntity.ok(exercisesService.updateExerciseBody(exerciseId, newBody));
                 }
             }
 
-            return new ExceptionResponseEntity<Void>().createRequest(
+            return new ExceptionResponseEntity<Exercise>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to update the exercise's body.");
         } catch (UnauthorizedException | NotFoundException | BadInputException e) {
-            return new ExceptionResponseEntity<Void>().createRequest(e);
+            return new ExceptionResponseEntity<Exercise>().createRequest(e);
         }
     }
 
@@ -513,9 +512,10 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest) {
+    public ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest, Boolean onlyNotRevised) {
         try {
             latest = latest == null || latest; // default value is 'true'
+            onlyNotRevised = onlyNotRevised != null && onlyNotRevised; // default value is 'false'
 
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
@@ -526,7 +526,7 @@ public class ExercisesApiController implements ExercisesApi {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
                     return ResponseEntity.ok(
                             new ListPairStudentExerciseResolution(
-                                    exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest)));
+                                    exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest, onlyNotRevised)));
                 }
             }
 
