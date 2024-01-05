@@ -105,10 +105,8 @@ public class AIService implements IAIService {
         if(exerciseI instanceof ChatExercise exercise){
             JsonArrayBuilder jTopics = Json.createArrayBuilder();
 
-            for (Item item: exercise.getTopics()){
-                if(item instanceof StringItem topic){
-                    jTopics.add(topic.getText());
-                }
+            for (String topic: exercise.getTopics()){
+                    jTopics.add(topic);
             }
 
             request.add("Ex_id",exercise.getId());
@@ -142,10 +140,8 @@ public class AIService implements IAIService {
         if(exerciseI instanceof ChatExercise exercise){
             JsonArrayBuilder jTopics = Json.createArrayBuilder();
 
-            for (Item item: exercise.getTopics()){
-                if(item instanceof StringItem topic){
-                    jTopics.add(topic.getText());
-                }
+            for (String topic: exercise.getTopics()){
+                    jTopics.add(topic);
             }
 
             request.add("Ex_id",exercise.getId());
