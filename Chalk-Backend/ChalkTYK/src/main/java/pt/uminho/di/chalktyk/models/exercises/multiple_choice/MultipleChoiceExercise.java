@@ -132,6 +132,8 @@ public class MultipleChoiceExercise extends Exercise {
 	@Override
 	public void verifyInsertProperties() throws BadInputException {
 		super.verifyInsertProperties();
+		if(mctype == null)
+			throw new BadInputException("MC type need to be provided.");
 		for (Map.Entry<String, Item> entry : items.entrySet()) {
 			Item item = entry.getValue();
 			if(item == null)

@@ -8,6 +8,6 @@ public class DuplicateTestDTO {
     @Schema(required = false)
     String courseId;
 
-    @Schema(required = true,allowableValues = {"PUBLIC", "institution", "course","not_listed","private"})
+    @Schema(required = true,allowableValues = {"public", "institution", "course", "not_listed", "private"})
     String visibility;
 }
