@@ -1,7 +1,8 @@
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
-import { useCreateTestContext } from "./CreateTestContext";
+import { useEditTestContext } from "./EditTestContext";
+import { textToHTML } from "../../interactiveElements/TextareaBlock";
 
 interface GroupDragDropProps {
   exerciseGroupID: number;
@@ -26,13 +27,13 @@ export function GroupDragDrop({
   setSelectedMenu,
   setNewExercisePopUp,
 }: GroupDragDropProps) {
-  const { testState } = useCreateTestContext();
+  const { testState } = useEditTestContext();
 
   return (
     <>
-      <div className="flex flex-col rounded-lg px-7 py-5 bg-3-1">
+      <div className="flex flex-col gap-4 rounded-lg px-7 py-5 bg-3-1">
         <div
-          className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 mb-4"
+          className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2"
           onClick={() =>
             setExerciseID({
               groupPosition: exerciseGroupID,
@@ -45,25 +46,47 @@ export function GroupDragDrop({
           </label>
           <div className="flex w-full justify-end items-center gap-3">
             Cotação do Grupo:
-            <div className=" flex justify-center min-w-fit w-10 rounded-lg px-3 py-1 bg-3-2">
+            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
               {testState.test.groups[exerciseGroupID].groupCotation}
             </div>
           </div>
         </div>
-        {testState.test.groups[exerciseGroupID].groupInstructions}
+        <div className="px-4">
+          <div className="flex items-center justify-between">
+            <strong>Instruções do grupo:</strong>
+            <button
+              className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+              onClick={() => {
+                setExerciseID({
+                  groupPosition: exerciseGroupID,
+                  exercisePosition: -1,
+                });
+                setSelectedMenu("edit-group");
+              }}
+            >
+              <FaPencil className="size-5" />
+              Editar
+            </button>
+          </div>
+          <div className="px-4">
+            {textToHTML(
+              testState.test.groups[exerciseGroupID].groupInstructions
+            )}
+          </div>
+        </div>
         <div className="flex flex-col gap-4">
           {testState.test.groups[exerciseGroupID].exercises.map(
             (value, index) => (
               <ShowExerciseDragDrop
                 key={index}
                 listExerciseButtons={false}
-                setExerciseID={setExerciseID}
                 exercisePosition={index}
-                groupPosition={exerciseID.groupPosition}
+                groupPosition={exerciseGroupID}
                 exercise={value}
                 selectedMenu={selectedMenu}
+                setExerciseID={setExerciseID}
                 setSelectedMenu={setSelectedMenu}
-                selectedExercise={
+                exerciseIsSelected={
                   index === exerciseID.exercisePosition &&
                   exerciseGroupID === exerciseID.groupPosition
                 }
@@ -86,7 +109,7 @@ export function GroupDragDrop({
             )
           )}
           <div className="flex gap-7 w-full">
-            <div
+            <button
               className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
               onClick={() => {
                 setExerciseID({
@@ -100,8 +123,8 @@ export function GroupDragDrop({
               <label className="group-gray-icon font-medium text-lg">
                 Lista de Exercicios
               </label>
-            </div>
-            <div
+            </button>
+            <button
               className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
               onClick={() => {
                 setSelectedMenu("");
@@ -112,7 +135,7 @@ export function GroupDragDrop({
               <label className="group-gray-icon font-medium text-lg">
                 Criar Novo
               </label>
-            </div>
+            </button>
           </div>
         </div>
       </div>

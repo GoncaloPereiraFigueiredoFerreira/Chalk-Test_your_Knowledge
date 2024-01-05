@@ -4,11 +4,11 @@ import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 
 //------------------------------------//
 //                                    //
-//      CreateTestStateReducer        //
+//      EditTestStateReducer        //
 //                                    //
 //------------------------------------//
 
-export enum CreateTestActionKind {
+export enum EditTestActionKind {
   EDIT_TEST_INFO = "EDIT_TEST_INFO",
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE", // Add a new exercise to a given group
   ADD_EXERCISE = "ADD_EXERCISE", // Add an exercise from User Exercise List
@@ -22,13 +22,12 @@ export enum CreateTestActionKind {
   MOVE_EXERCISE = "MOVE_EXERCISE",
 }
 
-export interface CreateTestAction {
-  type: CreateTestActionKind;
+export interface EditTestAction {
+  type: EditTestActionKind;
   testInfo?: {
     type: string;
     conclusion: string;
     title: string;
-    creationDate: string;
     globalInstructions: string;
   };
   group?: {
@@ -48,19 +47,19 @@ export interface CreateTestAction {
   };
 }
 
-export interface CreateTestState {
+export interface EditTestState {
   test: Test;
   // posição do exercicio/grupo selecionado para edição
   exercisePosition: number;
   groupPosition: number;
 }
 
-export function CreateTestStateReducer(
-  state: CreateTestState,
-  action: CreateTestAction
+export function EditTestStateReducer(
+  state: EditTestState,
+  action: EditTestAction
 ) {
   switch (action.type) {
-    case CreateTestActionKind.EDIT_TEST_INFO:
+    case EditTestActionKind.EDIT_TEST_INFO:
       if (action.testInfo)
         return {
           ...state,
@@ -68,7 +67,7 @@ export function CreateTestStateReducer(
         };
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.CREATE_NEW_EXERCISE:
+    case EditTestActionKind.CREATE_NEW_EXERCISE:
       if (action.group && action.group.exerciseType) {
         let newGroups = [...state.test.groups];
         let newExerciseGroup = {
@@ -86,35 +85,53 @@ export function CreateTestStateReducer(
             ...state.test,
             groups: newGroups,
           },
-        } as CreateTestState;
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.ADD_EXERCISE:
+    case EditTestActionKind.ADD_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
         let newGroups = [...state.test.groups];
+        const before = newGroups[action.exercise.groupPosition].exercises.slice(
+          0,
+          action.exercise.exercisePosition
+        );
+        const after = newGroups[action.exercise.groupPosition].exercises.slice(
+          action.exercise.exercisePosition
+        );
+        const exercise = {
+          ...action.exercise.exercise,
+          identity: {
+            ...action.exercise.exercise.identity,
+            // <<<<<<<<<  ALTERAR  >>>>>>>>>
+            // Exercicio tem de ser sempre duplicado
+            // Novo id resultante de duplicar este exercicio no backend
+            id: "test-exercise-".concat(Math.random().toString()),
+            // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+          },
+        } as Exercise;
         let newExerciseGroup = {
           ...newGroups[action.exercise.groupPosition],
           groupCotation:
             newGroups[action.exercise.groupPosition].groupCotation +
             (action.exercise.exercise.identity.cotation ?? 0),
-          exercises: [
-            ...newGroups[action.exercise.groupPosition].exercises,
-            action.exercise.exercise,
-          ],
-        } as ExerciseGroup;
+          exercises: [...before, exercise, ...after],
+        };
         newGroups[action.exercise.groupPosition] = newExerciseGroup;
         return {
           ...state,
           test: {
             ...state.test,
+            globalCotation:
+              state.test.globalCotation +
+              (action.exercise.exercise.identity.cotation ?? 0),
             groups: newGroups,
           },
-        } as CreateTestState;
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.REMOVE_EXERCISE:
+    case EditTestActionKind.REMOVE_EXERCISE:
       if (action.exercise) {
         let newGroups = [...state.test.groups];
         if (
@@ -123,35 +140,45 @@ export function CreateTestStateReducer(
             action.exercise.exercisePosition
           ]
         ) {
+          // remove exercise
           const before = newGroups[
             action.exercise.groupPosition
           ].exercises.slice(0, action.exercise.exercisePosition);
           const after = newGroups[
             action.exercise.groupPosition
           ].exercises.slice(action.exercise.exercisePosition + 1);
-
+          // update newGroups
           let cleanGroup = {
             ...newGroups[action.exercise.groupPosition],
-            groupCotation:
-              newGroups[action.exercise.groupPosition].groupCotation -
-              (newGroups[action.exercise.groupPosition].exercises[
-                action.exercise.exercisePosition
-              ].identity.cotation ?? 0),
             exercises: [...before, ...after],
           };
           newGroups[action.exercise.groupPosition] = cleanGroup;
+          // update groupCotation
+          let auxCotation = 0;
+          newGroups[action.exercise.groupPosition].exercises.forEach(
+            (element) => {
+              auxCotation += element.identity.cotation ?? 0;
+            }
+          );
+          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
+          // update globalCotation
+          auxCotation = 0;
+          newGroups.forEach((element) => {
+            auxCotation += element.groupCotation;
+          });
           return {
             ...state,
             test: {
               ...state.test,
+              globalCotation: auxCotation,
               groups: newGroups,
             },
-          } as CreateTestState;
+          } as EditTestState;
         }
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.EDIT_EXERCISE:
+    case EditTestActionKind.EDIT_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
         let newGroups = [...state.test.groups];
         newGroups[action.exercise.groupPosition].exercises[
@@ -163,11 +190,11 @@ export function CreateTestStateReducer(
             ...state.test,
             groups: newGroups,
           },
-        } as CreateTestState;
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.ADD_GROUP:
+    case EditTestActionKind.ADD_GROUP:
       return {
         ...state,
         groupPosition: state.test.groups.length,
@@ -176,31 +203,43 @@ export function CreateTestStateReducer(
           groups: [
             ...state.test.groups,
             {
+              id: "test-group-" + state.test.groups.length,
               groupInstructions: "",
               exercises: [],
               groupCotation: 0,
             },
           ],
         },
-      } as CreateTestState;
+      } as EditTestState;
 
-    case CreateTestActionKind.REMOVE_GROUP:
+    case EditTestActionKind.REMOVE_GROUP:
       if (action.group) {
         let newGroups = [...state.test.groups];
+        // remove group
         const before = newGroups.slice(0, action.group.groupPosition);
         const after = newGroups.slice(action.group.groupPosition + 1);
+        // update groups
+        let cleanGroups = [...before, ...after];
+        // update globalCotation
+        let auxCotation = 0;
+        newGroups.forEach((element) => {
+          auxCotation += element.groupCotation;
+        });
         return {
           ...state,
           test: {
             ...state.test,
-            groups: [...before, ...after],
+            globalCotation: auxCotation,
+            groups: cleanGroups,
           },
-        } as CreateTestState;
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.EDIT_GROUP:
-      if (action.group && action.group.groupInstructions) {
+    case EditTestActionKind.EDIT_GROUP:
+      console.log(action);
+
+      if (action.group && action.group.groupInstructions !== undefined) {
         let newGroups = [...state.test.groups];
         newGroups[action.group.groupPosition].groupInstructions =
           action.group.groupInstructions;
@@ -210,31 +249,36 @@ export function CreateTestStateReducer(
             ...state.test,
             groups: newGroups,
           },
-        } as CreateTestState;
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.CHANGE_EXERCISE_COTATION:
+    case EditTestActionKind.CHANGE_EXERCISE_COTATION:
       if (action.exercise && action.exercise.newCotation !== undefined) {
         if (action.exercise.newCotation >= 0) {
           let newGroups = [...state.test.groups];
-          console.log(newGroups);
-          newGroups[action.exercise.groupPosition].groupCotation =
-            newGroups[action.exercise.groupPosition].groupCotation -
-            (newGroups[action.exercise.groupPosition].exercises[
-              action.exercise.exercisePosition
-            ].identity.cotation ?? 0) +
-            action.exercise.newCotation;
           newGroups[action.exercise.groupPosition].exercises[
             action.exercise.exercisePosition
           ].identity.cotation = action.exercise.newCotation;
+          let auxCotation = 0;
+          newGroups[action.exercise.groupPosition].exercises.forEach(
+            (element) => {
+              auxCotation += element.identity.cotation ?? 0;
+            }
+          );
+          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
+          auxCotation = 0;
+          newGroups.forEach((element) => {
+            auxCotation += element.groupCotation;
+          });
           return {
             ...state,
             test: {
               ...state.test,
+              globalCotation: auxCotation,
               groups: newGroups,
             },
-          } as CreateTestState;
+          } as EditTestState;
         } else {
           console.warn("Cotation cannot be negative");
           return state;
@@ -242,17 +286,17 @@ export function CreateTestStateReducer(
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.SELECT_EXERCISE_POSITION:
+    case EditTestActionKind.SELECT_EXERCISE_POSITION:
       if (action.exercise) {
         return {
           ...state,
           exercisePosition: action.exercise.exercisePosition,
           groupPosition: action.exercise.groupPosition,
-        } as CreateTestState;
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 
-    case CreateTestActionKind.MOVE_EXERCISE:
+    case EditTestActionKind.MOVE_EXERCISE:
       if (action.exercise && action.exercise.newPosition) {
         if (
           action.exercise.groupPosition !==
@@ -305,9 +349,53 @@ export function CreateTestStateReducer(
               ...state.test,
               groups: newGroups,
             },
-          } as CreateTestState;
+          } as EditTestState;
         } else {
           // Move within the same group
+          const newGroups = [...state.test.groups];
+          const origGroup = state.test.groups[action.exercise.groupPosition];
+          const exercise =
+            origGroup.exercises[action.exercise.exercisePosition];
+
+          const before = origGroup.exercises.slice(
+            0,
+            action.exercise.exercisePosition
+          );
+          const after = origGroup.exercises.slice(
+            action.exercise.exercisePosition + 1
+          );
+          var list;
+
+          if (
+            action.exercise.exercisePosition >
+            action.exercise.newPosition.exercisePosition
+          ) {
+            const beforeDest = before.slice(
+              0,
+              action.exercise.newPosition.exercisePosition
+            );
+            const afterDest = before.slice(
+              action.exercise.newPosition.exercisePosition + 1
+            );
+            list = [...beforeDest, exercise, ...afterDest, ...after];
+          } else {
+            const beforeDest = after.slice(
+              0,
+              action.exercise.newPosition.exercisePosition
+            );
+            const afterDest = after.slice(
+              action.exercise.newPosition.exercisePosition + 1
+            );
+            list = [...before, ...beforeDest, exercise, ...afterDest];
+          }
+          newGroups[action.exercise.groupPosition].exercises = list;
+          return {
+            ...state,
+            test: {
+              ...state.test,
+              groups: newGroups,
+            },
+          } as EditTestState;
         }
       }
       throw new Error("Invalid Action");
@@ -320,28 +408,56 @@ export function CreateTestStateReducer(
 
 //------------------------------------//
 //                                    //
-//        CreateTestProvider          //
+//          EditTestProvider          //
 //                                    //
 //------------------------------------//
 
-export const CreateTestContext = createContext<
-  | { testState: CreateTestState; dispatch: React.Dispatch<CreateTestAction> }
+export const EditTestContext = createContext<
+  | { testState: EditTestState; dispatch: React.Dispatch<EditTestAction> }
   | undefined
 >(undefined);
 
 //------------------------------------//
 //                                    //
-//       useCreateTestContext         //
+//        useEditTestContext          //
 //                                    //
 //------------------------------------//
 
-// Exports function useCreateTestContext that allows you to access the contents of a CreateTestContext if the context has already been defined
-export function useCreateTestContext() {
-  const createTest = useContext(CreateTestContext);
+// Exports function useEditTestContext that allows you to access the contents of a EditTestContext if the context has already been defined
+export function useEditTestContext() {
+  const createTest = useContext(EditTestContext);
   if (createTest === undefined) {
     throw new Error(
-      "useCreateTestContext must be used with a CreateTestContext.Provider"
+      "useEditTestContext must be used with a EditTestContext.Provider"
     );
   }
   return createTest;
+}
+
+//------------------------------------//
+//                                    //
+//         EditTest Handlers          //
+//                                    //
+//------------------------------------//
+
+export function findGroupByID(id: string) {
+  const { testState } = useEditTestContext();
+  testState.test.groups.forEach((group, index) => {
+    if (group.id === id) return index;
+  });
+  return -1;
+}
+
+export function findExerciseByID(id: string) {
+  const { testState } = useEditTestContext();
+  testState.test.groups.forEach((group, groupPosition) => {
+    group.exercises.forEach((exercise, exercisePosition) => {
+      if (exercise.identity.id === id)
+        return {
+          groupPosition: groupPosition,
+          exercisePosition: exercisePosition,
+        };
+    });
+  });
+  return -1;
 }

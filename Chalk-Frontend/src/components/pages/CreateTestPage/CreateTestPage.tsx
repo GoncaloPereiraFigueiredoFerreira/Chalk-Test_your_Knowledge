@@ -4,13 +4,14 @@ import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
 import { useReducer, useState } from "react";
 import {
-  CreateTestActionKind,
-  CreateTestContext,
-  CreateTestState,
-  CreateTestStateReducer,
-} from "../../objects/Test/CreateTestContext";
+  EditTestActionKind,
+  EditTestContext,
+  EditTestState,
+  EditTestStateReducer,
+} from "../../objects/Test/EditTestContext";
 import { InitTest, Test } from "../../objects/Test/Test";
 import { EditGroup } from "../../objects/Test/EditGroup";
+import { EditTestInfo } from "../../objects/Test/EditTestInfo";
 
 interface CreateTestProps {
   test?: Test;
@@ -24,18 +25,15 @@ export function CreateTest({ test }: CreateTestProps) {
     exercisePosition: 0,
   });
 
-  const inicialState: CreateTestState = {
+  const inicialState: EditTestState = {
     test: test !== undefined ? test : InitTest(),
     exercisePosition: 0,
     groupPosition: 0,
   };
-  const [testState, dispatch] = useReducer(
-    CreateTestStateReducer,
-    inicialState
-  );
+  const [testState, dispatch] = useReducer(EditTestStateReducer, inicialState);
 
   return (
-    <CreateTestContext.Provider value={{ testState, dispatch }}>
+    <EditTestContext.Provider value={{ testState, dispatch }}>
       <div
         className={`${
           selectedMenu === "" ? "" : "divide-x-2"
@@ -48,7 +46,7 @@ export function CreateTest({ test }: CreateTestProps) {
         >
           {selectedMenu === "dd-list-exercises" ? (
             <>
-              <Searchbar></Searchbar>
+              <Searchbar />
               <ExerciseBankDragDrop
                 exerciseID={exerciseID}
                 setExerciseID={(value) => setExerciseID(value)}
@@ -68,7 +66,9 @@ export function CreateTest({ test }: CreateTestProps) {
         <div
           className={`${
             selectedMenu === "edit-exercise" ||
-            selectedMenu === "create-exercise"
+            selectedMenu === "create-exercise" ||
+            selectedMenu === "edit-group" ||
+            selectedMenu === "edit-test-info"
               ? "w-full"
               : "w-0"
           } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
@@ -88,7 +88,7 @@ export function CreateTest({ test }: CreateTestProps) {
                   // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
                   // PARA SE SABER O ID DO NOVO EXERCICIO
                   dispatch({
-                    type: CreateTestActionKind.EDIT_EXERCISE,
+                    type: EditTestActionKind.EDIT_EXERCISE,
                     exercise: {
                       groupPosition: testState.groupPosition,
                       exercisePosition: testState.exercisePosition,
@@ -108,7 +108,7 @@ export function CreateTest({ test }: CreateTestProps) {
                 } else {
                   // <<< MANTER >>>
                   dispatch({
-                    type: CreateTestActionKind.EDIT_EXERCISE,
+                    type: EditTestActionKind.EDIT_EXERCISE,
                     exercise: {
                       groupPosition: testState.groupPosition,
                       exercisePosition: testState.exercisePosition,
@@ -122,7 +122,7 @@ export function CreateTest({ test }: CreateTestProps) {
               cancelEdit={() => {
                 if (selectedMenu === "create-exercise")
                   dispatch({
-                    type: CreateTestActionKind.REMOVE_EXERCISE,
+                    type: EditTestActionKind.REMOVE_EXERCISE,
                     exercise: {
                       groupPosition: testState.groupPosition,
                       exercisePosition: testState.exercisePosition,
@@ -139,7 +139,7 @@ export function CreateTest({ test }: CreateTestProps) {
               }
               saveEdit={(state) => {
                 dispatch({
-                  type: CreateTestActionKind.EDIT_GROUP,
+                  type: EditTestActionKind.EDIT_GROUP,
                   group: {
                     groupPosition: testState.groupPosition,
                     groupInstructions: state,
@@ -152,8 +152,28 @@ export function CreateTest({ test }: CreateTestProps) {
               }}
             ></EditGroup>
           ) : null}
+          {selectedMenu === "edit-test-info" ? (
+            <EditTestInfo
+              testInfo={{
+                type: testState.test.type,
+                conclusion: testState.test.conclusion,
+                title: testState.test.title,
+                globalInstructions: testState.test.globalInstructions,
+              }}
+              saveEdit={(state) => {
+                dispatch({
+                  type: EditTestActionKind.EDIT_TEST_INFO,
+                  testInfo: state,
+                });
+                setSelectedMenu("");
+              }}
+              cancelEdit={() => {
+                setSelectedMenu("");
+              }}
+            ></EditTestInfo>
+          ) : null}
         </div>
       </div>
-    </CreateTestContext.Provider>
+    </EditTestContext.Provider>
   );
 }

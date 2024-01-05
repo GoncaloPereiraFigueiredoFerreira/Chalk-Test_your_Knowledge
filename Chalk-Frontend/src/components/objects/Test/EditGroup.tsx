@@ -28,6 +28,7 @@ export function EditGroup({
         </div>
         <TextareaBlock
           toolbar={true}
+          rows={6}
           placeholder="Coloque aqui as instrucoes do grupo..."
           value={state}
           onChange={(value) => setState(value)}

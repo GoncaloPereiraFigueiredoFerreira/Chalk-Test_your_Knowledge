@@ -18,6 +18,7 @@ export interface Test {
 //------------------------------------//
 
 export interface ExerciseGroup {
+  id: string;
   exercises: Exercise[];
   groupInstructions: string;
   groupCotation: number;
@@ -44,6 +45,7 @@ export function InitTest() {
 
 export function InitGroup() {
   return {
+    id: "test-group-" + 0,
     exercises: [],
     groupInstructions: "",
     groupCotation: 0,
