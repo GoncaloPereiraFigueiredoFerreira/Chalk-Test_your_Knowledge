@@ -149,13 +149,14 @@ public interface IExercisesService{
     Integer countExerciseResolutions(String exerciseId, boolean total);
 
     /**
-     * @param exerciseId   identifier of the exercise
-     * @param page         index of the page
-     * @param itemsPerPage number of pairs in each page
+     * @param exerciseId     identifier of the exercise
+     * @param page           index of the page
+     * @param itemsPerPage   number of pairs in each page
      * @param latest
+     * @param onlyNotRevised if 'true' only exercises resolutions that haven't been corrected will be returned.
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest);
+    List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised);
 
     /**
      * Create a resolution for a specific exercise.

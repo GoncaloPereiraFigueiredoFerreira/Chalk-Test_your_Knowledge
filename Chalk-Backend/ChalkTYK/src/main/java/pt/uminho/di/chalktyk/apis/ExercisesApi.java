@@ -367,7 +367,8 @@ public interface ExercisesApi {
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") int page,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") int itemsPerPage,
-            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "true")) @RequestParam(value = "latest", defaultValue = "true") Boolean latest);
+            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "true")) @RequestParam(value = "latest", defaultValue = "true") Boolean latest,
+            @Parameter(in = ParameterIn.QUERY, schema = @Schema(defaultValue = "false")) @RequestParam(value = "onlyNotRevised", defaultValue = "false") Boolean onlyNotRevised);
 
     @Operation(summary = "Creates the resolution of an exercise.",
             description = "",

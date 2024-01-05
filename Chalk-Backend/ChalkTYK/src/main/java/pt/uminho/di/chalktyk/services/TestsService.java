@@ -68,6 +68,7 @@ public class TestsService implements ITestsService {
 
     
     @Override
+    @Transactional
     public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws BadInputException, NotFoundException {
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
@@ -88,6 +89,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public Test getTestById(String testId) throws NotFoundException {
         Test t = testDAO.findById(testId).orElse(null);
         if (t == null)
@@ -172,6 +174,7 @@ public class TestsService implements ITestsService {
                     List<String> tagIds = new ArrayList<>();
                     if (tmp.getTags() != null)
                         tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                    tmp.setSpecialist(specialist);
                     dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                 }
 
@@ -806,6 +809,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public Integer countStudentsTestResolutions(String testId, Boolean total) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
@@ -816,6 +820,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public List<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
@@ -824,6 +829,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public TestResolution getTestResolutionById(String resolutionId) throws NotFoundException{
         TestResolution tr = resolutionDAO.findById(resolutionId).orElse(null);
         if (tr == null)
@@ -854,6 +860,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public TestResolution createTestResolution(String testId, TestResolution resolution) throws BadInputException, NotFoundException {
         // check test
         if (testId == null)
@@ -1019,6 +1026,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void updateTestResolutionSubmissionDate(String testResId, LocalDateTime submissionDate) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -1074,6 +1082,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void updateTestResolutionSubmissionNr(String testResId, int submissionNr) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -1087,6 +1096,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void updateTestResolutionStatus(String testResId, TestResolutionStatus status) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -1095,6 +1105,7 @@ public class TestsService implements ITestsService {
         resolution.setStatus(status);
         resolutionDAO.save(resolution);
     }
+
 
     @Override
     @Transactional
@@ -1148,6 +1159,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
@@ -1157,6 +1169,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find test with given id.");
@@ -1257,6 +1270,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
         TestResolution testRes = getTestResolutionById(testResId);
 
@@ -1283,7 +1297,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Cannot upload resolution for exercise with id \'" + exeId + "\'' in test resolution with id \'" + testResId + "\': couldn't find the exercise");
     }
 
-    public void createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException {
+    public String createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Couldn't add exercise to test: couldn't find test with id \'" + testId + "\'");
@@ -1293,6 +1307,8 @@ public class TestsService implements ITestsService {
             throw new BadInputException("Couldn't add exercise to test: can't change test after it has already been published.");
 
         // retrieve and/or duplicate exercise
+        String exeFinalId = null;
+
         String dupExeId = "";
         Float points = 0.0F;
         List<String> tagIds = new ArrayList<>();
@@ -1300,6 +1316,7 @@ public class TestsService implements ITestsService {
             Exercise exe = ce.getExercise();
             tagIds = exe.getTags().stream().map(t -> t.getId()).toList();
             dupExeId = exercisesService.createExercise(exe, exe.getSolution(), exe.getRubric(), tagIds);
+            exeFinalId = dupExeId;
             points = ce.getPoints();
         }
         else if (exercise instanceof ReferenceExercise re){
@@ -1308,6 +1325,7 @@ public class TestsService implements ITestsService {
                 throw new NotFoundException("Couldn't add exercise to test: couldn't find exercise with id \'" + re.getId() + "\'");
             
             dupExeId = exercisesService.duplicateExerciseById(exe.getSpecialistId(), exe.getId());
+            exeFinalId = dupExeId;
             points = re.getPoints();
             tagIds = exe.getTags().stream().map(t -> t.getId()).toList();
         }
@@ -1347,9 +1365,11 @@ public class TestsService implements ITestsService {
         test.setGroups(groups);
         test.calculatePoints(); 
         testDAO.save(test);
+        return exeFinalId;
     }
 
     @Override
+    @Transactional
     public void deleteExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -1392,6 +1412,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional
     public void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -1488,7 +1509,7 @@ public class TestsService implements ITestsService {
         throw new NotFoundException("Could not get exercise resolution: there is no exercise in the test with the given identifier");
     }
 
-    public void submitTest(String testResId) throws NotFoundException, BadInputException, UnauthorizedException {
+    public void submitTestResolution(String testResId) throws NotFoundException, BadInputException, UnauthorizedException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Could not submit test: couldn't find test resolution");

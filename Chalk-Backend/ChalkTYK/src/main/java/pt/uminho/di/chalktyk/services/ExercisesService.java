@@ -733,24 +733,42 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * @param exerciseId   identifier of the exercise
-     * @param page         index of the page
-     * @param itemsPerPage number of pairs in each page
-     * @param latest if 'true' only the latest resolution of a student is returned.
-     *               'false' every resolution can be returned, i.e., can have
-     *               multiple resolutions of a student
+     * @param exerciseId     identifier of the exercise
+     * @param page           index of the page
+     * @param itemsPerPage   number of pairs in each page
+     * @param latest         if 'true' only the latest resolution of a student is returned.
+     *                       'false' every resolution can be returned, i.e., can have
+     *                       multiple resolutions of a student
+     * @param onlyNotRevised if 'true' only exercises resolutions that haven't been corrected will be returned.
      * @return list of pairs of a student and its latest exercise resolution for the requested exercise.
      */
     @Transactional
     @Override
-    public List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest) {
+    public List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised) {
         Page<ExerciseResolution> resolutions;
 
         // gets the page of resolutions to return
-        if(latest)
-            resolutions = exerciseResolutionDAO.findLatestResolutionsByExercise_Id(exerciseId, PageRequest.of(page, itemsPerPage));
-        else
-            resolutions = exerciseResolutionDAO.findAllByExercise_Id(exerciseId,PageRequest.of(page, itemsPerPage));
+        if(!onlyNotRevised){
+            if (latest)
+                resolutions = exerciseResolutionDAO.findLatestResolutionsByExercise_Id(
+                        exerciseId,
+                        PageRequest.of(page, itemsPerPage));
+            else
+                resolutions = exerciseResolutionDAO.findAllByExercise_Id(
+                        exerciseId,
+                        PageRequest.of(page, itemsPerPage));
+        }else{
+            if (latest)
+                resolutions = exerciseResolutionDAO.findLatestResolutionsByExercise_IdAndStatus(
+                        exerciseId,
+                        ExerciseResolutionStatus.NOT_REVISED,
+                        PageRequest.of(page, itemsPerPage));
+            else
+                resolutions = exerciseResolutionDAO.findAllByExercise_IdAndStatus(
+                        exerciseId,
+                        ExerciseResolutionStatus.NOT_REVISED,
+                        PageRequest.of(page, itemsPerPage));
+        }
 
         // gets the basic student info (Student) from the ExerciseResolution instances
         // and pairs it with the respective ExerciseResolution (No) instances

@@ -269,7 +269,7 @@ public interface ITestsService {
      * @throws NotFoundException     if no test was found with the given id
      * @throws UnauthorizedException if the test does not support the requested correction type.
      **/
-    void submitTest(String testResId) throws NotFoundException, BadInputException, UnauthorizedException;
+    void submitTestResolution(String testResId) throws NotFoundException, BadInputException, UnauthorizedException; //TODO
 
     /**
      * Create a test resolution
@@ -402,16 +402,17 @@ public interface ITestsService {
 
     /**
      * Add an exercise to a given test
-     * 
-     * @param  testId
-     * @param  exercise
-     * @param  groupIndex        index of the TestGroup to add the exercise to
-     * @param  exeIndex          position in the TestGroup
-     * @param  groupInstructions instructions to add if the test groups is new
+     *
+     * @param testId
+     * @param exercise
+     * @param groupIndex        index of the TestGroup to add the exercise to
+     * @param exeIndex          position in the TestGroup
+     * @param groupInstructions instructions to add if the test groups is new
+     * @return the id of the exercise created
      * @throws NotFoundException if no test or exercise were found
      * @throws BadInputException if any property of the exercise is not valid.
      */
-    void createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException;
+    String createTestExercise(String testId, TestExercise exercise, Integer groupIndex, Integer exeIndex, String groupInstructions) throws NotFoundException, BadInputException;
 
     /**
      * If an exercise belongs to a test removes it from the test,

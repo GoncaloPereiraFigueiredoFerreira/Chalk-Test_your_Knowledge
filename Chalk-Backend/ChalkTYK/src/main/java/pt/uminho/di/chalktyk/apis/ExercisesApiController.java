@@ -513,9 +513,10 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest) {
+    public ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest, Boolean onlyNotRevised) {
         try {
             latest = latest == null || latest; // default value is 'true'
+            onlyNotRevised = onlyNotRevised != null && onlyNotRevised; // default value is 'false'
 
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
@@ -526,7 +527,7 @@ public class ExercisesApiController implements ExercisesApi {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
                     return ResponseEntity.ok(
                             new ListPairStudentExerciseResolution(
-                                    exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest)));
+                                    exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest, onlyNotRevised)));
                 }
             }
 
