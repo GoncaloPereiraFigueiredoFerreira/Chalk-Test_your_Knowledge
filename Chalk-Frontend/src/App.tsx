@@ -37,7 +37,8 @@ function App() {
         <Route path="/pricing" element={<Subscription />} />
         <Route
           path="/webapp"
-          element={user.authenticated ? <WebApp /> : <Login />}
+          //element={user.authenticated ? <WebApp /> : <Login />}
+          element={<WebApp />}
         >
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
