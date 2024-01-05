@@ -165,7 +165,8 @@ export function TextareaBlock({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onInput={handleInput}
-            contentEditable
+            contentEditable={!disabled}
+            suppressContentEditableWarning={true}
           ></div>
           {text === "" && !isFocused && placeholder !== undefined ? (
             <span className="text-gray-500 pointer-events-none">

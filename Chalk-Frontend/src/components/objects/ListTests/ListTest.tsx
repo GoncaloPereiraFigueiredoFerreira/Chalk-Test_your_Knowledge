@@ -8,11 +8,9 @@ import {
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { MdConstruction } from "react-icons/md";
 import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
-
-const ROLE = "user";
+import { APIContext } from "../../../APIContext.tsx";
 
 const exampleData = [
   {
@@ -61,7 +59,7 @@ const exampleData = [
 function ShowTestList(test: Test, index: number, role: UserRole) {
   return (
     <>
-      {role == ROLE ? (
+      {role == UserRole.STUDENT ? (
         <Link
           to="/webapp/tests/preview"
           key={index}
@@ -160,7 +158,7 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
 function ShowTestGrid(test: Test, index: number, role: UserRole) {
   return (
     <>
-      {role == ROLE ? (
+      {role == UserRole.STUDENT ? (
         <Link
           to="/webapp/tests/preview"
           key={index}
@@ -300,14 +298,20 @@ export function ListTests({ view }: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
   const [testList, setTesList] = useState<TestList>([]);
-  const { user, logout } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+  const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
     // load different test
-    //contactBACK("tests", "GET", { page: "1", itemsPerPage: "20" });
-
-    if (currentPage != 1) setTesList([]);
-    else setTesList(exampleData);
+    contactBACK("tests", "GET", { page: "1", itemsPerPage: "20" }).then(
+      (response) => {
+        response.json().then((tests) => {
+          console.log(tests);
+          if (currentPage != 1) setTesList([]);
+          else setTesList(exampleData);
+        });
+      }
+    );
   }, [currentPage]);
 
   return (
