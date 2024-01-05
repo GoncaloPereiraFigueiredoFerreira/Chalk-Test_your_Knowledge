@@ -11,6 +11,7 @@ import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
+import pt.uminho.di.chalktyk.models.tests.TestTag;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -212,6 +213,16 @@ public interface ITestsService {
 
 
     /**
+     * Retrieves tags present in a test
+     * 
+     * @param testId
+     * @return
+     * @throws NotFoundException if no test was found with the given id
+     */
+    List<TestTag> getTestTags(String testId) throws NotFoundException;
+
+
+    /**
      * Issue the automatic correction of the test resolutions
      *
      * @param testId
@@ -409,7 +420,7 @@ public interface ITestsService {
      * @throws NotFoundException if no test or exercise were found
      * @throws BadInputException if any property of the resolution is not valid
      */
-    void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
+    String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
 
     /**
      * Add an exercise to a given test

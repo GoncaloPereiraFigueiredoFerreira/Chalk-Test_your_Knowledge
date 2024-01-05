@@ -10,6 +10,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.tests.TestTag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -52,6 +53,18 @@ public interface TestsApi {
                                         @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId,
                                         @CookieValue("chalkauthtoken") String jwt);
 
+    @Operation(summary = "Retrieves tags present in a test", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/{testId}/tags",
+            method = RequestMethod.GET)
+    ResponseEntity<List<TestTag>> getTestTags(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId);
 
     @Operation(summary = "Create a test", description = "", tags = {"tests"})
     @ApiResponses(value = {

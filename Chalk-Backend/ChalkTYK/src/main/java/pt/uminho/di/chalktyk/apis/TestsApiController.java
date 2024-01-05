@@ -10,6 +10,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.tests.TestTag;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.IExercisesTestsAuthorization;
 import pt.uminho.di.chalktyk.services.ISecurityService;
@@ -184,6 +185,19 @@ public class TestsApiController implements TestsApi {
                         "User does not have permission to access the test.");
         } catch (NotFoundException | UnauthorizedException e) {
             return new ExceptionResponseEntity<Test>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<TestTag>> getTestTags(String jwt, String testId) {
+        try {
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            return ResponseEntity.ok(testsService.getTestTags(testId));
+        } catch (UnauthorizedException | NotFoundException e){
+            return new ExceptionResponseEntity<List<TestTag>>().createRequest(e);
         }
     }
 
