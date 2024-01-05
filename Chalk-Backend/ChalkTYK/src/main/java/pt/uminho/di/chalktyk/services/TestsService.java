@@ -89,13 +89,27 @@ public class TestsService implements ITestsService {
         return tests;
     }
 
-    // TODO - ver se não é suposto substituir os reference exercises por concrete exercises
     @Override
     @Transactional
     public Test getTestById(String testId) throws NotFoundException {
         Test t = testDAO.findById(testId).orElse(null);
         if (t == null)
             throw new NotFoundException("Could not get test: there is no test with the given identifier.");
+
+        // getting concrete exercises
+        List<TestGroup> newGroups = new ArrayList<>();
+        for (TestGroup tg: t.getGroups()){
+            TestGroup newGroup = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), new ArrayList<>());
+            List<TestExercise> newExes = new ArrayList<>();
+            for (TestExercise ref: tg.getExercises()){
+                Exercise exe = exercisesService.getExerciseById(ref.getId());
+                TestExercise newExe = new ConcreteExercise(ref.getPoints(), exe);
+                newExes.add(newExe);
+            }
+            newGroup.setExercises(newExes);
+        }
+        t.setGroups(newGroups);
+
         return t;
     }
 
@@ -260,7 +274,7 @@ public class TestsService implements ITestsService {
     public String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException {
         // if test does not exist, a not found exception will be thrown
         // fetch original models
-        Test ogTest = getTestById(testId);
+        Test ogTest = _getTestById(testId);
 
         // Copies the basic information, and sets the visibility
         Test newTest = new Test(null, ogTest.getTitle(), ogTest.getGlobalInstructions(),
@@ -780,7 +794,7 @@ public class TestsService implements ITestsService {
         // check test
         if (testId == null)
             throw new BadInputException("Cannot create test resolution: resolution must belong to a test");
-        Test test = getTestById(testId);
+        Test test = _getTestById(testId);
         if (test == null)
             throw new NotFoundException("Cannot create test resolution: couldn't find test");
         if (resolution == null)
@@ -977,7 +991,7 @@ public class TestsService implements ITestsService {
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't find student with given id.");
 
-        Test test = getTestById(testId);
+        Test test = _getTestById(testId);
         if (test == null)
             throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't fetch non relational test with given id.");
 
