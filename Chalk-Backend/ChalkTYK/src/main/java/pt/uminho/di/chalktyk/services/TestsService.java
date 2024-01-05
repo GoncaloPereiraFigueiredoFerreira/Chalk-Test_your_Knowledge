@@ -84,8 +84,9 @@ public class TestsService implements ITestsService {
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("There is no specialist with the given id");
         }
-
-        return testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, visibility, institutionId, courseId, specialistId, title);
+        Page<Test> tests = testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, visibility, institutionId, courseId, specialistId, title);
+        tests.stream().forEach(e->e.setGroups(null)); //Só porque o Ganso pediu
+        return tests;
     }
 
     // TODO - ver se não é suposto substituir os reference exercises por concrete exercises
