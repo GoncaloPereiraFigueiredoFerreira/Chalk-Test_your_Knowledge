@@ -261,7 +261,7 @@ public class TestsApiController implements TestsApi {
             return new ExceptionResponseEntity<Void>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to issue the correction of the test resolution.");
-        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+        } catch (UnauthorizedException | NotFoundException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
     }
@@ -836,7 +836,7 @@ public class TestsApiController implements TestsApi {
             return new ExceptionResponseEntity<Void>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to issue the correction of the test resolution.");
-        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+        } catch (UnauthorizedException | NotFoundException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
     }
@@ -863,7 +863,7 @@ public class TestsApiController implements TestsApi {
             return new ExceptionResponseEntity<Void>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to issue the correction of the test resolution.");
-        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+        } catch (UnauthorizedException | NotFoundException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
     }
