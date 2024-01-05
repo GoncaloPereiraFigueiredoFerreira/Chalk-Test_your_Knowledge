@@ -18,6 +18,7 @@ import { AvaliacoesPage } from "./components/pages/Groups/AvaliacoesPage";
 import { TestesPartilhadosPage } from "./components/pages/Groups/TestesPartilhadosPage";
 import { AlunosPage } from "./components/pages/Groups/AlunosPage";
 import { GroupNavBar } from "./components/pages/Groups/GroupNavBar";
+import { EvaluationPage } from "./components/pages/Groups/EvaluationPage";
 import { Correction } from "./components/pages/Tests/Correction/Correction";
 import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
 import "./App.css";
@@ -54,8 +55,12 @@ function App() {
           <Route path="groups/:id" element={<GroupNavBar />}>
             <Route path="alunos" element={<AlunosPage />} />
             <Route path="testes" element={<TestesPartilhadosPage />} />
-            <Route path="avaliacoes" element={<AvaliacoesPage />} />
+            <Route path="avaliacoes">
+              <Route index path="" element={<AvaliacoesPage />} />
+              <Route path=":results_id" element={<EvaluationPage />} />
+            </Route>
           </Route>
+
           {/*<Route path="correction" element={<Correction />} />*/}
 
           {/* <Route path="edit" element={<EditExercisePage />} /> */}
