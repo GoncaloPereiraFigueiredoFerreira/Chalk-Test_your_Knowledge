@@ -79,6 +79,16 @@ public interface ITestsService {
     String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException;
 
     /**
+     * Updates a test
+     *
+     * @param testId
+     * @param body
+     * @throws NotFoundException if no test was found with the given id
+     * @throws BadInputException if any property of the test is not valid.
+     **/
+    void updateTest(String testId, Test body) throws NotFoundException, BadInputException;
+
+    /**
      * Updates a test's title
      *
      * @param testId
@@ -278,6 +288,16 @@ public interface ITestsService {
      * @throws NotFoundException if no test resolution was found with the given id
      **/
     void deleteTestResolutionById(String resolutionId) throws NotFoundException;
+
+    /**
+     * Updates a test's resolution
+     *
+     * @param testResId
+     * @param body
+     * @throws NotFoundException if no test was found with the given id
+     * @throws BadInputException if any property of the test resolution is not valid.
+     **/
+    void updateTestResolution(String testResId, TestResolution body) throws NotFoundException, BadInputException;
 
     /**
      * Update a test resolution's start date

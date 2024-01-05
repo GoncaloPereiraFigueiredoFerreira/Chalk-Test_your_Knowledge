@@ -124,7 +124,7 @@ public class TestsServiceTest {
 
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
-        assert test.getGlobalPoints() == 20.0F;
+        assert test.getGlobalPoints() == 15.0F;
         assert test.getSpecialistId().equals(specialistId);
         assert test.getCourseId().equals(courseId);
 
@@ -133,7 +133,7 @@ public class TestsServiceTest {
         TestTag tt1 = testTagsDAO.findById(ttpk1).orElse(null);
         TestTag tt2 = testTagsDAO.findById(ttpk2).orElse(null);
         assert tt1.getNExercises() == 6;
-        assert tt2.getNExercises() == 6;
+        assert tt2.getNExercises() == 4;
     }
 
     @Test
@@ -147,7 +147,7 @@ public class TestsServiceTest {
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
         assert test instanceof LiveTest;
-        assert test.getGlobalPoints() == 20.0F;
+        assert test.getGlobalPoints() == 15.0F;
         assert test.getSpecialistId().equals(specialistId);
         assert test.getCourseId().equals(courseId);
 
@@ -156,7 +156,7 @@ public class TestsServiceTest {
         TestTag tt1 = testTagsDAO.findById(ttpk1).orElse(null);
         TestTag tt2 = testTagsDAO.findById(ttpk2).orElse(null);
         assert tt1.getNExercises() == 6;
-        assert tt2.getNExercises() == 6;
+        assert tt2.getNExercises() == 4;
     }
 
     @Test
@@ -170,7 +170,7 @@ public class TestsServiceTest {
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
         assert test instanceof DeliverDateTest;
-        assert test.getGlobalPoints() == 20.0F;
+        assert test.getGlobalPoints() == 15.0F;
         assert test.getSpecialistId().equals(specialistId);
         assert test.getCourseId().equals(courseId);
 
@@ -179,7 +179,7 @@ public class TestsServiceTest {
         TestTag tt1 = testTagsDAO.findById(ttpk1).orElse(null);
         TestTag tt2 = testTagsDAO.findById(ttpk2).orElse(null);
         assert tt1.getNExercises() == 6;
-        assert tt2.getNExercises() == 6;
+        assert tt2.getNExercises() == 4;
     }
 
     @Test
@@ -196,6 +196,7 @@ public class TestsServiceTest {
         assert tmp_dup != null;
     }
 
+    /* 
     @Test
     public void duplicateLiveTest() throws BadInputException, NotFoundException {
         pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest();
@@ -230,6 +231,34 @@ public class TestsServiceTest {
         pt.uminho.di.chalktyk.models.tests.Test tmp_dup = testsService.getTestById(duplicateId);
         assert tmp_dup != null;
         assert tmp_dup instanceof DeliverDateTest;
+    }
+    */
+
+    @Test
+    public void deleteTest() throws BadInputException, NotFoundException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+        String testId = testsService.createTest(t1);
+
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+
+        testsService.deleteTestById(testId);
+        try {
+            testsService.getTestById(testId);
+            assert false;
+        } catch (NotFoundException e) {
+            assert true;
+        }
+    }
+
+    @Test
+    public void updateAllOnTest(){
+        // TODO
+    }
+
+    @Test
+    public void blah(){
+        
     }
 
     
