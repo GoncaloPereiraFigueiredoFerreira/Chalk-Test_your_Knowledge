@@ -13,7 +13,10 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
  * IAIService
  */
 public interface IAIService {
- 
+    public String newQuestionChatExercise(Exercise exerciseI, ExerciseResolution solution, String answer) throws ApiConnectionException, BadInputException;
+
+    public Float evaluateChatExercise(Exercise exerciseI, ExerciseRubric rubricI, ExerciseResolution solution) throws ApiConnectionException, BadInputException;
+
     public Float evaluateOpenAnswer(Exercise exerciseI, ExerciseRubric rubricI, ExerciseResolution solution) throws NotFoundException, ApiConnectionException, BadInputException;
 
     public JsonObject bypassBackend(String endpoint,String bodyS) throws ApiConnectionException;
