@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
+import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionStatus;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseStatement;
@@ -26,7 +29,6 @@ import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
-import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.Mctype;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceData;
@@ -43,6 +45,8 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.DeliverDateTest;
 import pt.uminho.di.chalktyk.models.tests.LiveTest;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
+import pt.uminho.di.chalktyk.models.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
 import pt.uminho.di.chalktyk.models.tests.TestTag;
 import pt.uminho.di.chalktyk.models.tests.TestTagPK;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.ConcreteExercise;
@@ -61,7 +65,6 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @SpringBootTest
-@Transactional
 public class TestsServiceTest {
     private final Seed seed;
     private final ITestsService testsService;
@@ -235,20 +238,100 @@ public class TestsServiceTest {
     */
 
     @Test
-    public void deleteTest() throws BadInputException, NotFoundException {
+    public void deleteTest() throws BadInputException, NotFoundException, InterruptedException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
         String testId = testsService.createTest(t1);
 
         pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
         assert tmp1 != null;
 
+        String tr_id = testsService.startTest(testId, this.studentId);
+        TestResolution tr = testsService.getTestResolutionById(tr_id);
+        assert tr != null;
+
         testsService.deleteTestById(testId);
         try {
-            testsService.getTestById(testId);
+            testsService.getTestResolutionById(tr_id);
             assert false;
-        } catch (NotFoundException e) {
+        }
+        catch (NotFoundException e) {
+            try {
+                testsService.getTestById(testId);
+            }
+            catch (NotFoundException e2) {
+                assert true;
+            }
+        }
+    }
+
+    @Test
+    public void startTest() throws NotFoundException, BadInputException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+
+        String testId = testsService.createTest(t1);
+        String tr_id = testsService.startTest(testId, this.studentId);
+        TestResolution tr = testsService.getTestResolutionById(tr_id);
+        assert tr != null;
+        assert tr.getStudentId().equals(this.studentId);
+        assert tr.getStatus().equals(TestResolutionStatus.ONGOING);
+        assert tr.getSubmissionNr() == 0;
+    }
+
+    @Test
+    public void submitTestNoResolution() throws NotFoundException, BadInputException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+
+        String testId = testsService.createTest(t1);
+        String tr_id = testsService.startTest(testId, this.studentId);
+
+        testsService.submitTestResolution(tr_id);
+        TestResolution tr = testsService.getTestResolutionById(tr_id);
+        assert tr != null;
+        assert tr.getStudentId().equals(this.studentId);
+        assert tr.getSubmissionNr() == 1;
+    }
+
+    @Test
+    public void deleteTestResolution() throws BadInputException, NotFoundException, InterruptedException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+        String testId = testsService.createTest(t1);
+
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+
+        String tr_id = testsService.startTest(testId, this.studentId);
+        TestResolution tr = testsService.getTestResolutionById(tr_id);
+        assert tr != null;
+
+        testsService.deleteTestResolutionById(tr_id);
+        try {
+            testsService.getTestResolutionById(tr_id);
+            assert false;
+        }
+        catch (NotFoundException e) {
             assert true;
         }
+    }
+
+    @Test
+    public void getTestResolutions() throws NotFoundException, BadInputException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+        String testId = testsService.createTest(t1);
+
+        pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
+        assert tmp1 != null;
+
+        String tr_id1 = testsService.startTest(testId, this.studentId);
+        String tr_id2 = testsService.startTest(testId, this.student2Id);
+        String tr_id3 = testsService.startTest(testId, this.studentId);
+        List<TestResolution> trs1 = testsService.getTestResolutions(testId, 0, 2);
+        List<TestResolution> trs2 = testsService.getTestResolutions(testId, 1, 2);
+
+        assert trs1.size() == 2;
+        assert trs2.size() == 1;
+        assert trs1.get(0).getId().equals(tr_id1);
+        assert trs1.get(1).getId().equals(tr_id2);
+        assert trs2.get(0).getId().equals(tr_id3);
     }
 
     @Test
@@ -257,9 +340,58 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void blah(){
-        
+    public void uploadResolution() throws NotFoundException, BadInputException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest();
+        String testId = testsService.createTest(t1);
+
+        pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
+        TestGroup tg = test.getGroups().get(1);
+        TestExercise exe = tg.getExercises().get(1);
+
+        String testResId = testsService.startTest(testId, this.studentId);
+
+        ExerciseResolutionData rightMC = createRightMCResolution();
+        ExerciseResolution er1 = exercisesService.createExerciseResolution(this.studentId, exe.getId(), rightMC.clone());
+        String exeResId = testsService.uploadResolution(testResId, exe.getId(), er1);
+
+        ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
+        assert er != null;
+
+        // trigger fail
+        try {
+            testsService.uploadResolution(testResId, "non-existent exercise", er1);
+            assert false;
+        }
+        catch (NotFoundException e) {
+            assert true;
+        }
     }
+
+    @Test
+    public void automaticCorrection() throws NotFoundException, BadInputException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildMCTest();
+
+        String testId = testsService.createTest(t1);
+        String tr_id = testsService.startTest(testId, this.studentId);
+
+        pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
+        List<TestGroup> tg = test.getGroups();
+
+        ExerciseResolutionData rightMC = createRightMCResolution();
+
+        ExerciseResolution er1 = new ExerciseResolution(null,null,null, rightMC, 
+                                ExerciseResolutionStatus.NOT_REVISED, null, null, null);
+
+        testsService.uploadResolution(tr_id, tg.get(0).getExercises().get(0).getId(), er1);
+        testsService.uploadResolution(tr_id, tg.get(1).getExercises().get(0).getId(), er1);
+        testsService.uploadResolution(tr_id, tg.get(1).getExercises().get(1).getId(), er1);
+
+        testsService.submitTestResolution(tr_id);
+        TestResolution tr = testsService.getTestResolutionById(tr_id);
+
+        assert tr.getTotalPoints() == 8.0F;
+    }
+
 
     
     /* ******* CREATE METHODS ******* */
@@ -303,14 +435,45 @@ public class TestsServiceTest {
 
         TestGroup tg1 = new TestGroup("instructions1", null, List.of(ex1, ex5));
         TestGroup tg2 = new TestGroup("instructions2", null, List.of(ex2, ex6));
-        TestGroup tg3 = new TestGroup("instructions3", null, List.of(ex3, ex7));
+        //TestGroup tg3 = new TestGroup("instructions3", null, List.of(ex3, ex7));
         //TestGroup tg4 = new TestGroup("instructions4", null, List.of(ex4, ex8));
 
         Specialist s1 = specialistsService.getSpecialistById(this.specialistId);
         Course c1 = coursesService.getCourseById(this.courseId);
 
+        LocalDateTime date = LocalDateTime.now();
         pt.uminho.di.chalktyk.models.tests.Test test = new pt.uminho.di.chalktyk.models.tests.Test(null, "TEST #1", "instructions 1", 
-            null, "", LocalDateTime.now(), LocalDateTime.now().plusSeconds(1), s1, Visibility.PUBLIC, c1, null, List.of(tg1, tg2, tg3));//, tg4));
+            null, "", date, date.plusNanos(100000000), s1, Visibility.PUBLIC, c1, null, List.of(tg1, tg2));//, tg3));, tg4));
+
+        return test;
+    }
+
+    private pt.uminho.di.chalktyk.models.tests.Test buildMCTest() throws BadInputException, NotFoundException {
+        // building exercises
+        Exercise e1 = createMCExercise(specialistId, courseId);
+        e1.setSolution(createMCSolution());
+        e1.setRubric(createMCRubric());
+        e1.setTags(Set.of(tag1, tag2));
+
+        Exercise e2 = createMCExercise(specialistId, courseId);
+        e2.setSolution(createMCSolution());
+        e2.setRubric(createMCRubric());
+        e2.setTags(Set.of(tag1));
+        String e2_id = exercisesService.createExercise(createMCExercise(specialistId, courseId), createMCSolution(), createMCRubric(), List.of(tag1.getId()));
+
+        TestExercise ex1 = new ConcreteExercise(3.0F, e1);
+        TestExercise ex2 = new ConcreteExercise(3.0F, e2);
+        TestExercise ex3 = new ReferenceExercise(e2_id, 2.0F);
+
+        TestGroup tg1 = new TestGroup("instructions1", null, List.of(ex1));
+        TestGroup tg2 = new TestGroup("instructions2", null, List.of(ex2, ex3));
+
+        Specialist s1 = specialistsService.getSpecialistById(this.specialistId);
+        Course c1 = coursesService.getCourseById(this.courseId);
+
+        LocalDateTime date = LocalDateTime.now();
+        pt.uminho.di.chalktyk.models.tests.Test test = new pt.uminho.di.chalktyk.models.tests.Test(null, "TEST #1", "instructions 1", 
+            null, "", date, date.plusNanos(100000000), s1, Visibility.PUBLIC, c1, null, List.of(tg1, tg2));
 
         return test;
     }
@@ -369,6 +532,17 @@ public class TestsServiceTest {
         return new ExerciseSolution("id",multipleChoiceData);
     }
 
+    private ExerciseResolutionData createRightMCResolution(){
+        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,null,false);
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutions = new HashMap<>();
+        itemResolutions.put("1",option1);
+        itemResolutions.put("2",option2);
+        itemResolutions.put("3",option3);
+        return new MultipleChoiceData(itemResolutions);
+    }
+
     private ExerciseRubric createMCRubric(){
         HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         mcRubricMap.put("1",createOARubric());
@@ -396,7 +570,7 @@ public class TestsServiceTest {
         return new FillTheBlanksRubric(0.0F);
     }
 
-    private ChatExercise createChatExercise(String specialistId, String courseId){
+    private ChatExercise createChatExercise(String specialistId,String courseId){
         ChatExercise exercise = new ChatExercise();
         exercise.setStatement(new ExerciseStatement("Quais as vantagens de usar sistemas distribuidos?",null,null));
         exercise.setTitle("Vantages de Sistemas distribuidos");

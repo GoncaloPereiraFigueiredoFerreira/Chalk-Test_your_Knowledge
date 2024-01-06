@@ -10,6 +10,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.tests.TestTag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -52,6 +53,18 @@ public interface TestsApi {
                                         @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "institutionId", required = false) String institutionId,
                                         @CookieValue("chalkauthtoken") String jwt);
 
+    @Operation(summary = "Retrieves tags present in a test", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/{testId}/tags",
+            method = RequestMethod.GET)
+    ResponseEntity<List<TestTag>> getTestTags(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId);
 
     @Operation(summary = "Create a test", description = "", tags = {"tests"})
     @ApiResponses(value = {
@@ -106,7 +119,7 @@ public interface TestsApi {
             "    \"courseId\": \"id\",\n" +
             "    \"institutionId\": null\n" +
             "  }")) @Valid @RequestBody Test body,
-                                      @RequestHeader("chalkauthtoken") String jwt);
+                                      @CookieValue("chalkauthtoken") String jwt);
 
 
     @Operation(summary = "Get test resolution using its id.", description = "", tags = {"tests"})
@@ -157,7 +170,7 @@ public interface TestsApi {
             produces = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<String> duplicateTestById(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
-                                             @RequestHeader("chalkauthtoken") String jwt,
+                                             @CookieValue("chalkauthtoken") String jwt,
                                              @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody DuplicateTestDTO duplicateTestDTO);
 
 
@@ -233,7 +246,7 @@ public interface TestsApi {
             method = RequestMethod.POST)
     ResponseEntity<Void> createTestResolution(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema()) @PathVariable("testId") String testId,
                                               @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody TestResolution body,
-                                              @RequestHeader("chalkauthtoken") String jwt);*/
+                                              @CookieValue("chalkauthtoken") String jwt);*/
 
 
     /*
@@ -248,7 +261,7 @@ public interface TestsApi {
             method = RequestMethod.GET)
     ResponseEntity<Boolean> canStudentSubmitResolution(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
                                                        @Parameter(in = ParameterIn.PATH, description = "student identifier", required = true, schema = @Schema()) @PathVariable("studentId") String studentId,
-                                                       @RequestHeader("chalkauthtoken") String jwt);*/
+                                                       @CookieValue("chalkauthtoken") String jwt);*/
 
 
     @Operation(summary = "Retrieves the number of (resolution) submissions a student has made for a specific test.", description = "", tags = {"tests"})
@@ -390,6 +403,21 @@ public interface TestsApi {
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody List<TestGroup> groups);
 
+    @Operation(summary = "Updates a specific group in a test", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/{testId}/groups/{groupIndex}",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> updateTestGroup(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("groupIndex") Integer groupIndex,
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody TestGroup group);
+
 
     @Operation(summary = "Updates a test's deliver date", description = "", tags={ "tests" })
     @ApiResponses(value = {
@@ -457,7 +485,7 @@ public interface TestsApi {
             value = "/resolutions/{resolutionId}/exercise",
             method = RequestMethod.PUT)
     ResponseEntity<Void> updateTestExerciseResolution(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String testResolutionId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ExerciseResolution exerciseResolution);
 
@@ -472,7 +500,7 @@ public interface TestsApi {
             value = "/{testId}/createExercise",
             method = RequestMethod.PUT)
     ResponseEntity<String> createTestExercise(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody CreateTestExerciseDTO createTestExerciseDTO);
 
@@ -514,7 +542,7 @@ public interface TestsApi {
             value = "/{testId}/resolutions/start",
             method = RequestMethod.POST)
     ResponseEntity<String> startTest(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId);
 
     @Operation(summary = "Delete test resolution by its id", description = "", tags={ "tests" })
@@ -527,7 +555,7 @@ public interface TestsApi {
             value = "/resolutions/{resolutionId}",
             method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteTestResolution(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String testId);
 
 
@@ -541,7 +569,7 @@ public interface TestsApi {
             value = "/resolutions/{resolutionId}/automaticCorrection",
             method = RequestMethod.PUT)
     ResponseEntity<Void> automaticCorrectionSingleResolution(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String correctionType);
 
@@ -555,7 +583,7 @@ public interface TestsApi {
             value = "/resolutions/{resolutionId}/submit",
             method = RequestMethod.PUT)
     ResponseEntity<Void> submitTestResolution(
-            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @RequestHeader("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId);
 }
 

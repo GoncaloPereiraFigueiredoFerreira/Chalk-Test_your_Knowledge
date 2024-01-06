@@ -505,6 +505,7 @@ public class ExercisesService implements IExercisesService{
     public ExerciseRubric getExerciseRubric(String exerciseId) throws NotFoundException {
         if(!exerciseDAO.existsById(exerciseId))
             throw new NotFoundException("Cannot get exercise rubric: exercise does not exist.");
+        
         return exerciseRubricDAO.findByExerciseId(exerciseId).orElse(null);
     }
 

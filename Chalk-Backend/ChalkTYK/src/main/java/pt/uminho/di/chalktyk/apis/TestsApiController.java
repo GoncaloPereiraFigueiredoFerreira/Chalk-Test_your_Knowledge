@@ -10,6 +10,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
+import pt.uminho.di.chalktyk.models.tests.TestTag;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.IExercisesTestsAuthorization;
 import pt.uminho.di.chalktyk.services.ISecurityService;
@@ -184,6 +185,19 @@ public class TestsApiController implements TestsApi {
                         "User does not have permission to access the test.");
         } catch (NotFoundException | UnauthorizedException e) {
             return new ExceptionResponseEntity<Test>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<TestTag>> getTestTags(String jwt, String testId) {
+        try {
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            return ResponseEntity.ok(testsService.getTestTags(testId));
+        } catch (UnauthorizedException | NotFoundException e){
+            return new ExceptionResponseEntity<List<TestTag>>().createRequest(e);
         }
     }
 
@@ -568,6 +582,29 @@ public class TestsApiController implements TestsApi {
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
                     testsService.updateTestGroups(testId,groups);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "User does not have permission to update the test groups.");
+        } catch (UnauthorizedException | NotFoundException | BadInputException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> updateTestGroup(String jwtToken, String testId, Integer groupIndex, TestGroup group) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            if(role.equals("SPECIALIST")) {
+                if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
+                    testsService.updateTestGroup(testId, groupIndex, group);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }

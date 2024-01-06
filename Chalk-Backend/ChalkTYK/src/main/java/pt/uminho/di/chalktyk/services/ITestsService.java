@@ -11,6 +11,7 @@ import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
+import pt.uminho.di.chalktyk.models.tests.TestTag;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -156,6 +157,17 @@ public interface ITestsService {
     void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException;
 
     /**
+     * Updates a specific group in a test
+     *
+     * @param testId
+     * @param groupIndex
+     * @param group
+     * @throws BadInputException if any property of the group is not valid.
+     * @throws NotFoundException if no test or exercise were found with the given id
+     **/
+    void updateTestGroup(String testId, Integer groupIndex, TestGroup group) throws NotFoundException, BadInputException;
+
+    /**
      * Updates a test's deliver date
      * Exclusive for tests of the type DeliverDateTest
      *
@@ -198,6 +210,16 @@ public interface ITestsService {
      * @throws NotFoundException if no test was found with the given id
      **/
     void updateTestStartTolerance(String testId, long startTolerance) throws NotFoundException, BadInputException;
+
+
+    /**
+     * Retrieves tags present in a test
+     * 
+     * @param testId
+     * @return
+     * @throws NotFoundException if no test was found with the given id
+     */
+    List<TestTag> getTestTags(String testId) throws NotFoundException;
 
 
     /**
@@ -398,7 +420,7 @@ public interface ITestsService {
      * @throws NotFoundException if no test or exercise were found
      * @throws BadInputException if any property of the resolution is not valid
      */
-    void uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
+    String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
 
     /**
      * Add an exercise to a given test
