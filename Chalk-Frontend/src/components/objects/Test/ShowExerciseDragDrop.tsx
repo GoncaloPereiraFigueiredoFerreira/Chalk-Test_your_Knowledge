@@ -81,7 +81,7 @@ export function ShowExerciseDragDrop({
     data: {
       type: listExerciseButtons ? "add" : "exercise", // exercise from ExerciseBankDragDrop/EditTestDragDrop
       exercise: exercise,
-      groupPosition: groupPosition, // selected group position
+      groupPosition: listExerciseButtons ? -1 : groupPosition, // exercise on ExerciseBankDragDrop / exercise group position
       exercisePosition: exercisePosition, // exercise position on listExercise / selected exercise position
     },
   });
@@ -354,11 +354,7 @@ export function ShowExerciseDragDrop({
                 </div>
               ))}
           </div>
-          <div
-            className={`${
-              !exerciseIsSelected && !isDragging ? "hidden" : "flex"
-            } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
-          >
+          <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1">
             <div className="bg-yellow-600 tag-exercise">Matemática</div>
             <div className="bg-blue-600 tag-exercise">4º ano</div>
             <div className="bg-green-600 tag-exercise">escolinha</div>

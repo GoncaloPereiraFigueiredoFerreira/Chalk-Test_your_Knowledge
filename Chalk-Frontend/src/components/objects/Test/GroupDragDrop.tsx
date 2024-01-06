@@ -195,7 +195,7 @@ export function GroupDragDrop({
             )}
           </div>
         </div>
-        <div className={"flex flex-col gap-4"}>
+        <div className={"flex flex-col gap-4 min-h-max "}>
           <SortableContext
             items={testState.test.groups[exerciseGroupPosition].exercises.map(
               (exercise) => exercise.identity.id

@@ -366,41 +366,6 @@ export function EditTestStateReducer(
             action.exercise.exercisePosition,
             action.exercise.newPosition.exercisePosition
           );
-          // const exercise =
-          //   origGroup.exercises[action.exercise.exercisePosition];
-
-          // const before = origGroup.exercises.slice(
-          //   0,
-          //   action.exercise.exercisePosition
-          // );
-          // const after = origGroup.exercises.slice(
-          //   action.exercise.exercisePosition + 1
-          // );
-          // var list;
-
-          // if (
-          //   action.exercise.exercisePosition >
-          //   action.exercise.newPosition.exercisePosition
-          // ) {
-          //   const beforeDest = before.slice(
-          //     0,
-          //     action.exercise.newPosition.exercisePosition
-          //   );
-          //   const afterDest = before.slice(
-          //     action.exercise.newPosition.exercisePosition + 1
-          //   );
-          //   list = [...beforeDest, exercise, ...afterDest, ...after];
-          // } else {
-          //   const beforeDest = after.slice(
-          //     0,
-          //     action.exercise.newPosition.exercisePosition
-          //   );
-          //   const afterDest = after.slice(
-          //     action.exercise.newPosition.exercisePosition + 1
-          //   );
-          //   list = [...before, ...beforeDest, exercise, ...afterDest];
-          // }
-          // newGroups[action.exercise.groupPosition].exercises = list;
           newGroups[action.exercise.groupPosition] = origGroup;
           return {
             ...state,
