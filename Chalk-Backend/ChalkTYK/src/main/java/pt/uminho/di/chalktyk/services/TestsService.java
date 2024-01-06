@@ -1176,10 +1176,18 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional
-	public void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException {
-        // updating exercise resolution
+	public void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException, BadInputException {
+        TestResolution updatedTR = getTestResolutionById(testResId);
         ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
+        
+        TestExercise ref = getTestExercise(updatedTR.getTestId(), er.getExerciseId());
+        if (ref.getPoints() < points)
+            throw new BadInputException("Could not correct exercise: points attributed are more than the value of the exercise");
+
+        // updating exercise resolution
         Float oldPoints = er.getPoints();
+        if (oldPoints == null)
+            oldPoints = 0.0F;
         er.setStatus(ExerciseResolutionStatus.REVISED);
         er.setPoints(points);
         Comment c;
@@ -1193,22 +1201,26 @@ public class TestsService implements ITestsService {
         exerciseResolutionDAO.save(er);
 
         // modifying test resolution
-        TestResolution updatedTR = getTestResolutionById(testResId);
         List<TestResolutionGroup> updatedGroups = updatedTR.getGroups();
         boolean found = false;
 
         for(TestResolutionGroup testResolutionGroup: updatedGroups){
             Map<String, TestExerciseResolutionBasic> resMap = testResolutionGroup.getResolutions();
 
+            // TODO: check if points attributed are bigger than exercise points
+
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
                 TestExerciseResolutionBasic exeResPair = entry.getValue();
                 if(exeResPair.getResolutionId().equals(exeResId)){
                     exeResPair.setPoints(points);
-                    resMap.put(comment, exeResPair);
+                    resMap.put(entry.getKey(), exeResPair);
                     testResolutionGroup.setResolutions(resMap);
 
                     // work the difference in points
-                    testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
+                    if (testResolutionGroup.getGroupPoints() != null)
+                        testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
+                    else
+                        testResolutionGroup.setGroupPoints(points);
 
                     found = true;
                     break;
@@ -1225,6 +1237,21 @@ public class TestsService implements ITestsService {
             updatedTR.setStatus(TestResolutionStatus.REVISED);
         resolutionDAO.save(updatedTR);
 	}
+
+    private TestExercise getTestExercise(String testId, String exeId) throws NotFoundException {
+        Test test = _getTestById(testId);
+        TestExercise res = null;
+        for (TestGroup tg: test.getGroups()){
+            for (TestExercise exe: tg.getExercises()){
+                if (exe.getId().equals(exeId)){
+                    res = exe;
+                    break;
+                }
+            }
+        }
+
+        return res;
+    }
 
     // assumes that the resolution exists
     private boolean isTestResolutionRevised(String testResId) throws NotFoundException {
@@ -1291,7 +1318,8 @@ public class TestsService implements ITestsService {
         List<String> tagIds = new ArrayList<>();
         if (exercise instanceof ConcreteExercise ce){
             Exercise exe = ce.getExercise();
-            tagIds = exe.getTags().stream().map(Tag::getId).toList();
+            if (exe.getTags() != null)
+                tagIds = exe.getTags().stream().map(Tag::getId).toList();
             dupExeId = exercisesService.createExercise(exe, exe.getSolution(), exe.getRubric(), tagIds);
             exeFinalId = dupExeId;
             points = ce.getPoints();

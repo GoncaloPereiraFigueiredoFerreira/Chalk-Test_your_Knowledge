@@ -408,8 +408,9 @@ public interface ITestsService {
      * @param points    points attributed
      * @param comment   additional comments made by the specialist
      * @throws NotFoundException if no exercise resolution was found
+     * @throws BadInputException if the points attributed are more than the exercise points
      **/
-    void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException;
+    void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException, BadInputException;
 
     /**
      * Uploads a resolution for a specific exercise on a given test
