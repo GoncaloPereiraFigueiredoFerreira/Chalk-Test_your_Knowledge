@@ -1,6 +1,7 @@
 import { useContext, createContext } from "react";
 import { ExerciseGroup, Test } from "./Test";
 import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
+import { arrayMove } from "@dnd-kit/sortable";
 
 //------------------------------------//
 //                                    //
@@ -20,6 +21,7 @@ export enum EditTestActionKind {
   CHANGE_EXERCISE_COTATION = "CHANGE_EXERCISE_COTATION",
   SELECT_EXERCISE_POSITION = "SELECT_EXERCISE_POSITION",
   MOVE_EXERCISE = "MOVE_EXERCISE",
+  MOVE_GROUP = "MOVE_GROUP",
 }
 
 export interface EditTestAction {
@@ -34,6 +36,7 @@ export interface EditTestAction {
     groupPosition: number;
     groupInstructions?: string;
     exerciseType?: ExerciseType;
+    newPosition?: number;
   };
   exercise?: {
     exercisePosition: number;
@@ -303,7 +306,7 @@ export function EditTestStateReducer(
           action.exercise.newPosition.groupPosition
         ) {
           // Move to another group
-          const newGroups = [...state.test.groups];
+          let newGroups = [...state.test.groups];
           const origGroup = state.test.groups[action.exercise.groupPosition];
           const destGroup =
             state.test.groups[action.exercise.newPosition.groupPosition];
@@ -315,32 +318,36 @@ export function EditTestStateReducer(
             action.exercise.exercisePosition + 1
           );
 
-          const cleanOriginGroup = {
+          let cleanOriginGroup = {
             ...origGroup,
-            groupCotation:
-              origGroup.groupCotation -
-              (origGroup.exercises[action.exercise.exercisePosition].identity
-                .cotation ?? 0),
             exercises: [...before, ...after],
           };
+          let auxCotation = 0;
+          cleanOriginGroup.exercises.forEach((element) => {
+            auxCotation += element.identity.cotation ?? 0;
+          });
+          cleanOriginGroup.groupCotation = auxCotation;
+
           before = destGroup.exercises.slice(
             0,
             action.exercise.exercisePosition
           );
           after = destGroup.exercises.slice(action.exercise.exercisePosition);
 
-          const cleanDestGroup = {
+          let cleanDestGroup = {
             ...destGroup,
-            groupCotation:
-              destGroup.groupCotation +
-              (origGroup.exercises[action.exercise.exercisePosition].identity
-                .cotation ?? 0),
             exercises: [
               ...before,
               origGroup.exercises[action.exercise.exercisePosition],
               ...after,
             ],
           };
+          auxCotation = 0;
+          cleanDestGroup.exercises.forEach((element) => {
+            auxCotation += element.identity.cotation ?? 0;
+          });
+          cleanDestGroup.groupCotation = auxCotation;
+
           newGroups[action.exercise.groupPosition] = cleanOriginGroup;
           newGroups[action.exercise.newPosition.groupPosition] = cleanDestGroup;
           return {
@@ -352,43 +359,49 @@ export function EditTestStateReducer(
           } as EditTestState;
         } else {
           // Move within the same group
-          const newGroups = [...state.test.groups];
-          const origGroup = state.test.groups[action.exercise.groupPosition];
-          const exercise =
-            origGroup.exercises[action.exercise.exercisePosition];
-
-          const before = origGroup.exercises.slice(
-            0,
-            action.exercise.exercisePosition
-          );
-          const after = origGroup.exercises.slice(
-            action.exercise.exercisePosition + 1
-          );
-          var list;
-
-          if (
-            action.exercise.exercisePosition >
+          let newGroups = [...state.test.groups];
+          let origGroup = newGroups[action.exercise.groupPosition];
+          origGroup.exercises = arrayMove(
+            origGroup.exercises,
+            action.exercise.exercisePosition,
             action.exercise.newPosition.exercisePosition
-          ) {
-            const beforeDest = before.slice(
-              0,
-              action.exercise.newPosition.exercisePosition
-            );
-            const afterDest = before.slice(
-              action.exercise.newPosition.exercisePosition + 1
-            );
-            list = [...beforeDest, exercise, ...afterDest, ...after];
-          } else {
-            const beforeDest = after.slice(
-              0,
-              action.exercise.newPosition.exercisePosition
-            );
-            const afterDest = after.slice(
-              action.exercise.newPosition.exercisePosition + 1
-            );
-            list = [...before, ...beforeDest, exercise, ...afterDest];
-          }
-          newGroups[action.exercise.groupPosition].exercises = list;
+          );
+          // const exercise =
+          //   origGroup.exercises[action.exercise.exercisePosition];
+
+          // const before = origGroup.exercises.slice(
+          //   0,
+          //   action.exercise.exercisePosition
+          // );
+          // const after = origGroup.exercises.slice(
+          //   action.exercise.exercisePosition + 1
+          // );
+          // var list;
+
+          // if (
+          //   action.exercise.exercisePosition >
+          //   action.exercise.newPosition.exercisePosition
+          // ) {
+          //   const beforeDest = before.slice(
+          //     0,
+          //     action.exercise.newPosition.exercisePosition
+          //   );
+          //   const afterDest = before.slice(
+          //     action.exercise.newPosition.exercisePosition + 1
+          //   );
+          //   list = [...beforeDest, exercise, ...afterDest, ...after];
+          // } else {
+          //   const beforeDest = after.slice(
+          //     0,
+          //     action.exercise.newPosition.exercisePosition
+          //   );
+          //   const afterDest = after.slice(
+          //     action.exercise.newPosition.exercisePosition + 1
+          //   );
+          //   list = [...before, ...beforeDest, exercise, ...afterDest];
+          // }
+          // newGroups[action.exercise.groupPosition].exercises = list;
+          newGroups[action.exercise.groupPosition] = origGroup;
           return {
             ...state,
             test: {
@@ -397,6 +410,24 @@ export function EditTestStateReducer(
             },
           } as EditTestState;
         }
+      }
+      throw new Error("Invalid Action");
+
+    case EditTestActionKind.MOVE_GROUP:
+      if (action.group && action.group.newPosition !== undefined) {
+        let newGroups = [...state.test.groups];
+        newGroups = arrayMove(
+          newGroups,
+          action.group.groupPosition,
+          action.group.newPosition
+        );
+        return {
+          ...state,
+          test: {
+            ...state.test,
+            groups: newGroups,
+          },
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getListExercises } from "../ListExercises/ListExercises";
 import { Exercise } from "../Exercise/Exercise";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
+import { SortableContext } from "@dnd-kit/sortable";
 
 function convertListExercises() {
   let listExercises = {} as { [key: string]: Exercise };
@@ -21,17 +22,20 @@ interface ExerciseBankDragDropProps {
     exercisePosition: number;
   }) => void;
   setSelectedMenu: (value: string) => void;
+  selectedExercise: string;
+  setSelectedExercise: (value: string) => void;
 }
 
 export function ExerciseBankDragDrop({
   exerciseID,
   setExerciseID,
   setSelectedMenu,
+  selectedExercise,
+  setSelectedExercise,
 }: ExerciseBankDragDropProps) {
   const [listExercises, setListExercises] = useState<{
     [key: string]: Exercise;
   }>({});
-  const [selectedExercise, setSelectedExercise] = useState("");
 
   useEffect(() => {
     setListExercises(convertListExercises());
@@ -49,20 +53,22 @@ export function ExerciseBankDragDrop({
             X
           </button>
         </div>
-        {Object.keys(listExercises).map((key, index) => (
-          <ShowExerciseDragDrop
-            key={index}
-            listExerciseButtons={true}
-            groupPosition={exerciseID.groupPosition}
-            exercise={listExercises[key]}
-            selectedMenu={"dd-list-exercises"}
-            setSelectedMenu={setSelectedMenu}
-            exerciseIsSelected={key === selectedExercise}
-            setSelectedExercise={(value) => setSelectedExercise(value)}
-            exercisePosition={index}
-            setExerciseID={setExerciseID}
-          ></ShowExerciseDragDrop>
-        ))}
+        <SortableContext items={Object.keys(listExercises)}>
+          {Object.keys(listExercises).map((key, index) => (
+            <ShowExerciseDragDrop
+              key={index}
+              listExerciseButtons={true}
+              groupPosition={exerciseID.groupPosition}
+              exercise={listExercises[key]}
+              selectedMenu={"dd-list-exercises"}
+              setSelectedMenu={setSelectedMenu}
+              exerciseIsSelected={key === selectedExercise}
+              setSelectedExercise={(value) => setSelectedExercise(value)}
+              exercisePosition={index}
+              setExerciseID={setExerciseID}
+            ></ShowExerciseDragDrop>
+          ))}
+        </SortableContext>
       </div>
     </>
   );

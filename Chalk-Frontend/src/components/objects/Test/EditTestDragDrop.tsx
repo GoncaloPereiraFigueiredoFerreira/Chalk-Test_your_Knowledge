@@ -7,6 +7,7 @@ import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import "./EditTestDragDrop.css";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import { SortableContext } from "@dnd-kit/sortable";
 
 interface EditTestProps {
   exerciseID: {
@@ -27,6 +28,7 @@ export function EditTestDragDrop({
   selectedMenu,
   setSelectedMenu,
 }: EditTestProps) {
+  const [draggingGroups, setDraggingGroups] = useState(false);
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
   const { testState, dispatch } = useEditTestContext();
 
@@ -62,17 +64,24 @@ export function EditTestDragDrop({
         </div>
       </div>
       <div className="flex flex-col px-4 gap-4">
-        {testState.test.groups.map((_, index) => (
-          <GroupDragDrop
-            key={index}
-            exerciseGroupID={index}
-            exerciseID={exerciseID}
-            setExerciseID={setExerciseID}
-            selectedMenu={selectedMenu}
-            setSelectedMenu={setSelectedMenu}
-            setNewExercisePopUp={(value: number) => setNewExercisePopUp(value)}
-          ></GroupDragDrop>
-        ))}
+        <SortableContext items={testState.test.groups.map((group) => group.id)}>
+          {testState.test.groups.map((group, index) => (
+            <GroupDragDrop
+              key={index}
+              exerciseGroupPosition={index}
+              exerciseGroupID={group.id}
+              exerciseID={exerciseID}
+              setExerciseID={setExerciseID}
+              selectedMenu={selectedMenu}
+              setSelectedMenu={setSelectedMenu}
+              setNewExercisePopUp={(value: number) =>
+                setNewExercisePopUp(value)
+              }
+              draggingGroups={draggingGroups}
+              setDraggingGroups={(value) => setDraggingGroups(value)}
+            ></GroupDragDrop>
+          ))}
+        </SortableContext>
         <div
           className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
           onClick={() => {
