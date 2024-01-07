@@ -24,6 +24,7 @@ interface ExerciseBankDragDropProps {
   setSelectedMenu: (value: string) => void;
   selectedExercise: string;
   setSelectedExercise: (value: string) => void;
+  draggingExercises: boolean;
 }
 
 export function ExerciseBankDragDrop({
@@ -32,6 +33,7 @@ export function ExerciseBankDragDrop({
   setSelectedMenu,
   selectedExercise,
   setSelectedExercise,
+  draggingExercises,
 }: ExerciseBankDragDropProps) {
   const [listExercises, setListExercises] = useState<{
     [key: string]: Exercise;
@@ -66,6 +68,7 @@ export function ExerciseBankDragDrop({
               setSelectedExercise={(value) => setSelectedExercise(value)}
               exercisePosition={index}
               setExerciseID={setExerciseID}
+              draggingExercises={draggingExercises}
             ></ShowExerciseDragDrop>
           ))}
         </SortableContext>

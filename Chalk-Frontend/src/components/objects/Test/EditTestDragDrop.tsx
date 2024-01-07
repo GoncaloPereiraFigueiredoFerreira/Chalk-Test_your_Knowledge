@@ -20,6 +20,7 @@ interface EditTestProps {
   }) => void;
   selectedMenu: string;
   setSelectedMenu: (value: string) => void;
+  draggingExercises: boolean;
 }
 
 export function EditTestDragDrop({
@@ -27,6 +28,7 @@ export function EditTestDragDrop({
   setExerciseID,
   selectedMenu,
   setSelectedMenu,
+  draggingExercises,
 }: EditTestProps) {
   const [draggingGroups, setDraggingGroups] = useState(false);
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
@@ -79,6 +81,7 @@ export function EditTestDragDrop({
               }
               draggingGroups={draggingGroups}
               setDraggingGroups={(value) => setDraggingGroups(value)}
+              draggingExercises={draggingExercises}
             ></GroupDragDrop>
           ))}
         </SortableContext>

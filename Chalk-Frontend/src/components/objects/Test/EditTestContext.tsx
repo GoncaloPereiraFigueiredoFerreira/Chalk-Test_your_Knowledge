@@ -12,7 +12,8 @@ import { arrayMove } from "@dnd-kit/sortable";
 export enum EditTestActionKind {
   EDIT_TEST_INFO = "EDIT_TEST_INFO",
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE", // Add a new exercise to a given group
-  ADD_EXERCISE = "ADD_EXERCISE", // Add an exercise from User Exercise List
+  ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE", // Add an exercise from ExerciseBank
+  SAVE_DD_NEW_EXERCISE = "SAVE_DD_NEW_EXERCISE", // Change the id of a newly added (dragdrop) exercise in the test
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   EDIT_EXERCISE = "EDIT_EXERCISE", // Edit an exercise
   ADD_GROUP = "ADD_GROUP",
@@ -42,6 +43,7 @@ export interface EditTestAction {
     exercisePosition: number;
     groupPosition: number;
     exercise?: Exercise;
+    tmp?: true;
     newPosition?: {
       exercisePosition: number;
       groupPosition: number;
@@ -92,7 +94,7 @@ export function EditTestStateReducer(
       }
       throw new Error("Invalid Action");
 
-    case EditTestActionKind.ADD_EXERCISE:
+    case EditTestActionKind.ADD_NEW_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
         let newGroups = [...state.test.groups];
         const before = newGroups[action.exercise.groupPosition].exercises.slice(
@@ -102,17 +104,19 @@ export function EditTestStateReducer(
         const after = newGroups[action.exercise.groupPosition].exercises.slice(
           action.exercise.exercisePosition
         );
-        const exercise = {
-          ...action.exercise.exercise,
-          identity: {
-            ...action.exercise.exercise.identity,
-            // <<<<<<<<<  ALTERAR  >>>>>>>>>
-            // Exercicio tem de ser sempre duplicado
-            // Novo id resultante de duplicar este exercicio no backend
-            id: "test-exercise-".concat(Math.random().toString()),
-            // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
-          },
-        } as Exercise;
+        const exercise = action.exercise.tmp
+          ? action.exercise.exercise
+          : ({
+              ...action.exercise.exercise,
+              identity: {
+                ...action.exercise.exercise.identity,
+                // <<<<<<<<<  ALTERAR  >>>>>>>>>
+                // Exercicio tem de ser sempre duplicado
+                // Novo id resultante de duplicar este exercicio no backend
+                id: "test-exercise-".concat(Math.random().toString()),
+                // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+              },
+            } as Exercise);
         let newExerciseGroup = {
           ...newGroups[action.exercise.groupPosition],
           groupCotation:
@@ -128,6 +132,35 @@ export function EditTestStateReducer(
             globalCotation:
               state.test.globalCotation +
               (action.exercise.exercise.identity.cotation ?? 0),
+            groups: newGroups,
+          },
+        } as EditTestState;
+      }
+      throw new Error("Invalid Action");
+
+    case EditTestActionKind.SAVE_DD_NEW_EXERCISE:
+      if (action.exercise && action.exercise.newPosition) {
+        let newGroups = [...state.test.groups];
+        let origGroup = newGroups[action.exercise.groupPosition];
+
+        // <<<<<<<<<  ALTERAR  >>>>>>>>>
+        // Exercicio tem de ser sempre duplicado
+        // Novo id resultante de duplicar este exercicio no backend
+        origGroup.exercises[action.exercise.exercisePosition].identity.id =
+          "test-exercise-".concat(Math.random().toString());
+        // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+
+        origGroup.exercises = arrayMove(
+          origGroup.exercises,
+          action.exercise.exercisePosition,
+          action.exercise.newPosition.exercisePosition
+        );
+        newGroups[action.exercise.groupPosition] = origGroup;
+        console.log(newGroups);
+        return {
+          ...state,
+          test: {
+            ...state.test,
             groups: newGroups,
           },
         } as EditTestState;
@@ -330,9 +363,11 @@ export function EditTestStateReducer(
 
           before = destGroup.exercises.slice(
             0,
-            action.exercise.exercisePosition
+            action.exercise.newPosition.exercisePosition
           );
-          after = destGroup.exercises.slice(action.exercise.exercisePosition);
+          after = destGroup.exercises.slice(
+            action.exercise.newPosition.exercisePosition
+          );
 
           let cleanDestGroup = {
             ...destGroup,

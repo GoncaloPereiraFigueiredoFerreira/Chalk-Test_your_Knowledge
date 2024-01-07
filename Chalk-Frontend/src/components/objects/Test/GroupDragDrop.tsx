@@ -23,6 +23,7 @@ interface GroupDragDropProps {
   setNewExercisePopUp: (value: number) => void;
   draggingGroups: boolean;
   setDraggingGroups: (value: boolean) => void;
+  draggingExercises: boolean;
 }
 
 export function GroupDragDrop({
@@ -35,6 +36,7 @@ export function GroupDragDrop({
   setNewExercisePopUp,
   draggingGroups,
   setDraggingGroups,
+  draggingExercises,
 }: GroupDragDropProps) {
   const { testState } = useEditTestContext();
 
@@ -195,7 +197,7 @@ export function GroupDragDrop({
             )}
           </div>
         </div>
-        <div className={"flex flex-col gap-4 min-h-max "}>
+        <div className={"flex flex-col min-h-max gap-4"}>
           <SortableContext
             items={testState.test.groups[exerciseGroupPosition].exercises.map(
               (exercise) => exercise.identity.id
@@ -232,6 +234,7 @@ export function GroupDragDrop({
                         exercisePosition: -1,
                       });
                   }}
+                  draggingExercises={draggingExercises}
                 ></ShowExerciseDragDrop>
               )
             )}
