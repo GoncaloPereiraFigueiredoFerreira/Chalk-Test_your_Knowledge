@@ -86,6 +86,10 @@ export function ShowExerciseDragDrop({
     },
   });
 
+  useEffect(() => {
+    setValue((exercise.identity.cotation ?? 0).toString());
+  }, [exercise]);
+
   function handleChange(value: string) {
     const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
     if (result) {
@@ -237,13 +241,13 @@ export function ShowExerciseDragDrop({
       }
       className={`${
         exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-1000 rounded-lg bg-3-2 group-hover`}
+      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-3-2 group`}
       {...listeners}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
           <button
-            className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
+            className="flex flex-col gap-1.5 h-14 justify-center"
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
@@ -263,7 +267,7 @@ export function ShowExerciseDragDrop({
                 : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-3-2 border-gray-1`}
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
@@ -364,7 +368,7 @@ export function ShowExerciseDragDrop({
               />
             ) : (
               <div
-                className="flex ml-4 min-w-fit rounded-lg appearance-none bg-3-1 bg-input-1"
+                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-3-1 bg-input-1"
                 onClick={() => handleClick()}
               >
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1">

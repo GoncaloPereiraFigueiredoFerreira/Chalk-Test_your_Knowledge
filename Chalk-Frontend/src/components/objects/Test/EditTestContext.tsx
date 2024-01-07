@@ -74,17 +74,15 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.CREATE_NEW_EXERCISE:
       if (action.group && action.group.exerciseType) {
-        let newGroups = [...state.test.groups];
-        let newExerciseGroup = {
-          ...newGroups[action.group.groupPosition],
-          exercises: [
-            ...newGroups[action.group.groupPosition].exercises,
-            InitExercise(action.group.exerciseType),
-          ],
-        } as ExerciseGroup;
-        newGroups[action.group.groupPosition] = newExerciseGroup;
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
+        newGroups[action.group.groupPosition].exercises.push(
+          InitExercise(action.group.exerciseType)
+        );
         return {
-          exercisePosition: newExerciseGroup.exercises.length - 1,
+          exercisePosition:
+            newGroups[action.group.groupPosition].exercises.length - 1,
           groupPosition: action.group.groupPosition,
           test: {
             ...state.test,
@@ -96,13 +94,8 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.ADD_NEW_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        let newGroups = [...state.test.groups];
-        const before = newGroups[action.exercise.groupPosition].exercises.slice(
-          0,
-          action.exercise.exercisePosition
-        );
-        const after = newGroups[action.exercise.groupPosition].exercises.slice(
-          action.exercise.exercisePosition
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
         );
         const exercise = action.exercise.tmp
           ? action.exercise.exercise
@@ -117,14 +110,14 @@ export function EditTestStateReducer(
                 // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
               },
             } as Exercise);
-        let newExerciseGroup = {
-          ...newGroups[action.exercise.groupPosition],
-          groupCotation:
-            newGroups[action.exercise.groupPosition].groupCotation +
-            (action.exercise.exercise.identity.cotation ?? 0),
-          exercises: [...before, exercise, ...after],
-        };
-        newGroups[action.exercise.groupPosition] = newExerciseGroup;
+        newGroups[action.exercise.groupPosition].exercises.splice(
+          action.exercise.exercisePosition,
+          0,
+          exercise
+        );
+        newGroups[action.exercise.groupPosition].groupCotation =
+          newGroups[action.exercise.groupPosition].groupCotation +
+          (action.exercise.exercise.identity.cotation ?? 0);
         return {
           ...state,
           test: {
@@ -140,7 +133,9 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.SAVE_DD_NEW_EXERCISE:
       if (action.exercise && action.exercise.newPosition) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         let origGroup = newGroups[action.exercise.groupPosition];
 
         // <<<<<<<<<  ALTERAR  >>>>>>>>>
@@ -169,7 +164,9 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.REMOVE_EXERCISE:
       if (action.exercise) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         if (
           newGroups[action.exercise.groupPosition] &&
           newGroups[action.exercise.groupPosition].exercises[
@@ -177,18 +174,10 @@ export function EditTestStateReducer(
           ]
         ) {
           // remove exercise
-          const before = newGroups[
-            action.exercise.groupPosition
-          ].exercises.slice(0, action.exercise.exercisePosition);
-          const after = newGroups[
-            action.exercise.groupPosition
-          ].exercises.slice(action.exercise.exercisePosition + 1);
-          // update newGroups
-          let cleanGroup = {
-            ...newGroups[action.exercise.groupPosition],
-            exercises: [...before, ...after],
-          };
-          newGroups[action.exercise.groupPosition] = cleanGroup;
+          newGroups[action.exercise.groupPosition].exercises.splice(
+            action.exercise.exercisePosition,
+            1
+          );
           // update groupCotation
           let auxCotation = 0;
           newGroups[action.exercise.groupPosition].exercises.forEach(
@@ -216,7 +205,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.EDIT_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = [...state.test.groups];
         newGroups[action.exercise.groupPosition].exercises[
           action.exercise.exercisePosition
         ] = action.exercise.exercise;
@@ -250,12 +239,11 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.REMOVE_GROUP:
       if (action.group) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         // remove group
-        const before = newGroups.slice(0, action.group.groupPosition);
-        const after = newGroups.slice(action.group.groupPosition + 1);
-        // update groups
-        let cleanGroups = [...before, ...after];
+        newGroups.splice(action.group.groupPosition, 1);
         // update globalCotation
         let auxCotation = 0;
         newGroups.forEach((element) => {
@@ -266,7 +254,7 @@ export function EditTestStateReducer(
           test: {
             ...state.test,
             globalCotation: auxCotation,
-            groups: cleanGroups,
+            groups: newGroups,
           },
         } as EditTestState;
       }
@@ -276,7 +264,9 @@ export function EditTestStateReducer(
       console.log(action);
 
       if (action.group && action.group.groupInstructions !== undefined) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         newGroups[action.group.groupPosition].groupInstructions =
           action.group.groupInstructions;
         return {
@@ -292,7 +282,9 @@ export function EditTestStateReducer(
     case EditTestActionKind.CHANGE_EXERCISE_COTATION:
       if (action.exercise && action.exercise.newCotation !== undefined) {
         if (action.exercise.newCotation >= 0) {
-          let newGroups = [...state.test.groups];
+          let newGroups: ExerciseGroup[] = JSON.parse(
+            JSON.stringify(state.test.groups)
+          );
           newGroups[action.exercise.groupPosition].exercises[
             action.exercise.exercisePosition
           ].identity.cotation = action.exercise.newCotation;
@@ -334,57 +326,37 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.MOVE_EXERCISE:
       if (action.exercise && action.exercise.newPosition) {
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         if (
           action.exercise.groupPosition !==
           action.exercise.newPosition.groupPosition
         ) {
           // Move to another group
-          let newGroups = [...state.test.groups];
-          const origGroup = state.test.groups[action.exercise.groupPosition];
-          const destGroup =
-            state.test.groups[action.exercise.newPosition.groupPosition];
-          let before = origGroup.exercises.slice(
+          const exercise = newGroups[
+            action.exercise.groupPosition
+          ].exercises.splice(action.exercise.exercisePosition, 1);
+          newGroups[action.exercise.newPosition.groupPosition].exercises.splice(
+            action.exercise.newPosition.exercisePosition,
             0,
-            action.exercise.exercisePosition
+            exercise[0]
           );
-          let after = origGroup.exercises.slice(
-            action.exercise.exercisePosition + 1
-          );
-
-          let cleanOriginGroup = {
-            ...origGroup,
-            exercises: [...before, ...after],
-          };
           let auxCotation = 0;
-          cleanOriginGroup.exercises.forEach((element) => {
-            auxCotation += element.identity.cotation ?? 0;
-          });
-          cleanOriginGroup.groupCotation = auxCotation;
-
-          before = destGroup.exercises.slice(
-            0,
-            action.exercise.newPosition.exercisePosition
+          newGroups[action.exercise.groupPosition].exercises.forEach(
+            (element) => {
+              auxCotation += element.identity.cotation ?? 0;
+            }
           );
-          after = destGroup.exercises.slice(
-            action.exercise.newPosition.exercisePosition
-          );
-
-          let cleanDestGroup = {
-            ...destGroup,
-            exercises: [
-              ...before,
-              origGroup.exercises[action.exercise.exercisePosition],
-              ...after,
-            ],
-          };
+          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
           auxCotation = 0;
-          cleanDestGroup.exercises.forEach((element) => {
+          newGroups[
+            action.exercise.newPosition.groupPosition
+          ].exercises.forEach((element) => {
             auxCotation += element.identity.cotation ?? 0;
           });
-          cleanDestGroup.groupCotation = auxCotation;
-
-          newGroups[action.exercise.groupPosition] = cleanOriginGroup;
-          newGroups[action.exercise.newPosition.groupPosition] = cleanDestGroup;
+          newGroups[action.exercise.newPosition.groupPosition].groupCotation =
+            auxCotation;
           return {
             ...state,
             test: {
@@ -394,14 +366,11 @@ export function EditTestStateReducer(
           } as EditTestState;
         } else {
           // Move within the same group
-          let newGroups = [...state.test.groups];
-          let origGroup = newGroups[action.exercise.groupPosition];
-          origGroup.exercises = arrayMove(
-            origGroup.exercises,
+          newGroups[action.exercise.groupPosition].exercises = arrayMove(
+            newGroups[action.exercise.groupPosition].exercises,
             action.exercise.exercisePosition,
             action.exercise.newPosition.exercisePosition
           );
-          newGroups[action.exercise.groupPosition] = origGroup;
           return {
             ...state,
             test: {
@@ -415,7 +384,12 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.MOVE_GROUP:
       if (action.group && action.group.newPosition !== undefined) {
-        let newGroups = [...state.test.groups];
+        // let newGroups: ExerciseGroup[] = JSON.parse(
+        //   JSON.stringify(state.test.groups)
+        // );
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         newGroups = arrayMove(
           newGroups,
           action.group.groupPosition,

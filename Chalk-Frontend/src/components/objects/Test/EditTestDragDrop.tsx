@@ -40,6 +40,7 @@ export function EditTestDragDrop({
         <div className="text-title-1">
           {testState.test.title ? testState.test.title : "Novo Teste"}
         </div>
+        {/* <div className="flex gap-4"></div> */}
       </div>
       <div className="flex flex-col pb-4 mb-8 gap-4 border-b-2 border-gray-2-2">
         <div className="mx-4 mt-4">
@@ -59,7 +60,7 @@ export function EditTestDragDrop({
             <strong>Autor: </strong>
             <p>{testState.test.author}</p>
             <strong>Cotação máxima do teste: </strong>
-            <p>{testState.test.globalCotation}</p>
+            <p>{testState.test.globalCotation} pts</p>
             <strong>Instruções do Teste: </strong>
             <p>{textToHTML(testState.test.globalInstructions)}</p>
           </div>

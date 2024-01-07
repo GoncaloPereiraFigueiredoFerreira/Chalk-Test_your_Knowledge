@@ -146,13 +146,9 @@ export function GroupDragDrop({
       <div
         {...attributes}
         ref={setNodeRef}
-        style={{
-          transition,
-          transform: CSS.Translate.toString(transform),
-        }}
         className={`${
           isDragging && "opacity-50"
-        } flex flex-col gap-4 rounded-lg px-7 py-5 bg-3-1`}
+        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-3-1`}
       >
         <div
           className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2"
