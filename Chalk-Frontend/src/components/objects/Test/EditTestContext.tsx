@@ -97,6 +97,9 @@ export function EditTestStateReducer(
         let newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
+        // DRAG and DROP needs to add an element here
+        // but <<<<< ID CANNOT BE CHANGED >>>>>
+        // SAVE_DD_NEW_EXERCISE will save it later
         const exercise = action.exercise.tmp
           ? action.exercise.exercise
           : ({
@@ -106,6 +109,7 @@ export function EditTestStateReducer(
                 // <<<<<<<<<  ALTERAR  >>>>>>>>>
                 // Exercicio tem de ser sempre duplicado
                 // Novo id resultante de duplicar este exercicio no backend
+                // => utilizado para adicionar carregando no botão
                 id: "test-exercise-".concat(Math.random().toString()),
                 // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
               },
@@ -141,6 +145,7 @@ export function EditTestStateReducer(
         // <<<<<<<<<  ALTERAR  >>>>>>>>>
         // Exercicio tem de ser sempre duplicado
         // Novo id resultante de duplicar este exercicio no backend
+        // => utilizado para adicionar atravez do drag and drop
         origGroup.exercises[action.exercise.exercisePosition].identity.id =
           "test-exercise-".concat(Math.random().toString());
         // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
@@ -151,7 +156,6 @@ export function EditTestStateReducer(
           action.exercise.newPosition.exercisePosition
         );
         newGroups[action.exercise.groupPosition] = origGroup;
-        console.log(newGroups);
         return {
           ...state,
           test: {
@@ -261,8 +265,6 @@ export function EditTestStateReducer(
       throw new Error("Invalid Action");
 
     case EditTestActionKind.EDIT_GROUP:
-      console.log(action);
-
       if (action.group && action.group.groupInstructions !== undefined) {
         let newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)

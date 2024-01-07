@@ -78,9 +78,10 @@ export function CreateTest({ test }: CreateTestProps) {
     exercisePosition: 0,
     groupPosition: 0,
   };
+  const [listExercises, setListExercises] = useState<Exercise[]>([]);
   const [testState, dispatch] = useReducer(EditTestStateReducer, inicialState);
   const [selectedMenu, setSelectedMenu] = useState("");
-  const [selectedExercise, setSelectedExercise] = useState("");
+  const [selectedExercise, setSelectedExercise] = useState(-1);
   const [exerciseID, setExerciseID] = useState({
     // exercicio selecionado atualmente
     groupPosition: 0,
@@ -110,7 +111,7 @@ export function CreateTest({ test }: CreateTestProps) {
       });
       setDraggingExercises(true);
       if (info.type === "add") {
-        setSelectedExercise("");
+        setSelectedExercise(-1);
         setActiveDnD({
           type: "add",
           exercise: info.exercise,
@@ -174,96 +175,130 @@ export function CreateTest({ test }: CreateTestProps) {
       // Add an Exercise to the Test
       if (activeDnD.type === "add") {
         // Add the new Exercise to the Test => over is an Group
-        if (activeInfo.type === "add" && overInfo.type === "group") {
-          // if (activeDnD.added) {
-          //   // Move the new Exercise to another Group
-          //   let insertPosition = 0;
-          //   if (activeDnD.added.groupPosition > overInfo.groupPosition)
-          //     insertPosition =
-          //       testState.test.groups[overInfo.groupPosition].exercises.length;
-          //   setActiveDnD({
-          //     ...activeDnD,
-          //     added: {
-          //       exercisePosition: insertPosition,
-          //       groupPosition: overInfo.groupPosition,
-          //     },
-          //   });
-          //   dispatch({
-          //     type: EditTestActionKind.MOVE_EXERCISE,
-          //     exercise: {
-          //       exercisePosition: activeInfo.exercisePosition,
-          //       groupPosition: activeInfo.groupPosition,
-          //       newPosition: {
-          //         exercisePosition: insertPosition,
-          //         groupPosition: overInfo.groupPosition,
-          //       },
-          //     },
-          //   });
-          // } else {
-          //   // Add the new Exercise to the Test => over is an Group
-          //   dispatch({
-          //     type: EditTestActionKind.ADD_NEW_EXERCISE,
-          //     exercise: {
-          //       groupPosition: overInfo.groupPosition,
-          //       exercisePosition: 0,
-          //       exercise: activeInfo.exercise,
-          //       tmp: true,
-          //     },
-          //   });
-          //   setActiveDnD({
-          //     ...activeDnD,
-          //     added: {
-          //       exercisePosition: 0,
-          //       groupPosition: overInfo.groupPosition,
-          //     },
-          //   });
-          // }
+        if (overInfo.type === "group") {
+          if (activeDnD.added) {
+            // Move the new Exercise to another Group
+            let insertPosition = 0;
+            if (activeDnD.added.groupPosition > overInfo.groupPosition)
+              insertPosition =
+                testState.test.groups[overInfo.groupPosition].exercises.length;
+            dispatch({
+              type: EditTestActionKind.MOVE_EXERCISE,
+              exercise: {
+                exercisePosition: activeDnD.added.exercisePosition,
+                groupPosition: activeDnD.added.groupPosition,
+                newPosition: {
+                  exercisePosition: insertPosition,
+                  groupPosition: overInfo.groupPosition,
+                },
+              },
+            });
+            setActiveDnD({
+              ...activeDnD,
+              added: {
+                exercisePosition: insertPosition,
+                groupPosition: overInfo.groupPosition,
+              },
+            });
+          } else {
+            // Add the new Exercise to the Test => over is an Group
+            let newListExercises: Exercise[] = JSON.parse(
+              JSON.stringify(listExercises)
+            );
+            newListExercises.splice(activeDnD.exercisePosition, 1);
+            setListExercises(newListExercises);
+            dispatch({
+              type: EditTestActionKind.ADD_NEW_EXERCISE,
+              exercise: {
+                groupPosition: overInfo.groupPosition,
+                exercisePosition: 0,
+                exercise: activeInfo.exercise,
+                tmp: true,
+              },
+            });
+            setActiveDnD({
+              ...activeDnD,
+              added: {
+                exercisePosition: 0,
+                groupPosition: overInfo.groupPosition,
+              },
+            });
+          }
         }
         // Add the new Exercise to the Test => over is an Exercise
-        else if (activeInfo.type === "add" && overInfo.type === "exercise") {
-          // if (activeDnD.added) {
-          //   // Move the new Exercise to another Group
-          //   let insertPosition = 0;
-          //   if (activeDnD.added.groupPosition > overInfo.groupPosition)
-          //     insertPosition =
-          //       testState.test.groups[overInfo.groupPosition].exercises.length;
-          //   setActiveDnD({
-          //     ...activeDnD,
-          //     added: {
-          //       exercisePosition: insertPosition,
-          //       groupPosition: overInfo.groupPosition,
-          //     },
-          //   });
-          //   dispatch({
-          //     type: EditTestActionKind.MOVE_EXERCISE,
-          //     exercise: {
-          //       exercisePosition: activeInfo.exercisePosition,
-          //       groupPosition: activeInfo.groupPosition,
-          //       newPosition: {
-          //         exercisePosition: insertPosition,
-          //         groupPosition: overInfo.groupPosition,
-          //       },
-          //     },
-          //   });
-          // } else {
-          //   // Add the new Exercise to the Test => over is an Exercise
-          //   dispatch({
-          //     type: EditTestActionKind.ADD_NEW_EXERCISE,
-          //     exercise: {
-          //       groupPosition: overInfo.groupPosition,
-          //       exercisePosition: overInfo.exercisePosition,
-          //       exercise: activeInfo.exercise,
-          //       tmp: true,
-          //     },
-          //   });
-          //   setActiveDnD({
-          //     ...activeDnD,
-          //     added: {
-          //       exercisePosition: overInfo.exercisePosition,
-          //       groupPosition: overInfo.groupPosition,
-          //     },
-          //   });
-          // }
+        else if (overInfo.type === "exercise") {
+          if (activeDnD.added) {
+            // Move the new Exercise to another Group
+            let insertPosition = 0;
+            if (activeDnD.added.groupPosition > overInfo.groupPosition)
+              insertPosition =
+                testState.test.groups[overInfo.groupPosition].exercises.length;
+            dispatch({
+              type: EditTestActionKind.MOVE_EXERCISE,
+              exercise: {
+                exercisePosition: activeDnD.added.exercisePosition,
+                groupPosition: activeDnD.added.groupPosition,
+                newPosition: {
+                  exercisePosition: insertPosition,
+                  groupPosition: overInfo.groupPosition,
+                },
+              },
+            });
+            setActiveDnD({
+              ...activeDnD,
+              added: {
+                exercisePosition: insertPosition,
+                groupPosition: overInfo.groupPosition,
+              },
+            });
+          } else {
+            // Add the new Exercise to the Test => over is an Exercise
+            let newListExercises: Exercise[] = JSON.parse(
+              JSON.stringify(listExercises)
+            );
+            newListExercises.splice(activeDnD.exercisePosition, 1);
+            setListExercises(newListExercises);
+            dispatch({
+              type: EditTestActionKind.ADD_NEW_EXERCISE,
+              exercise: {
+                groupPosition: overInfo.groupPosition,
+                exercisePosition: overInfo.exercisePosition,
+                exercise: activeInfo.exercise,
+                tmp: true,
+              },
+            });
+            setActiveDnD({
+              ...activeDnD,
+              added: {
+                exercisePosition: overInfo.exercisePosition,
+                groupPosition: overInfo.groupPosition,
+              },
+            });
+          }
+        }
+        // Add the new Exercise to the Test => over is an Exercise
+        else if (overInfo.type === "add" && activeDnD.added) {
+          // Add the new Exercise to the Test => over is an Exercise
+          let newListExercises: Exercise[] = JSON.parse(
+            JSON.stringify(listExercises)
+          );
+          newListExercises.splice(
+            activeDnD.exercisePosition,
+            0,
+            activeDnD.exercise
+          );
+          setListExercises(newListExercises);
+          dispatch({
+            type: EditTestActionKind.REMOVE_EXERCISE,
+            exercise: {
+              groupPosition: activeDnD.added.groupPosition,
+              exercisePosition: activeDnD.added.exercisePosition,
+            },
+          });
+          setActiveDnD({
+            ...activeDnD,
+            added: false,
+          });
         }
       } else {
         // Moving an Exercise to another Group => over is an Exercise
@@ -360,35 +395,34 @@ export function CreateTest({ test }: CreateTestProps) {
     const overID = over.id;
     let overInfo = over.data.current as EventInfo;
 
-    // console.log(activeDnD);
-    // console.log(activeInfo);
-    // console.log(overInfo);
-
     // save exercise
     if (activeDnD && activeDnD.type === "add" && activeDnD.added) {
       if (overInfo.type !== "add") {
-        // dispatch({
-        //   type: EditTestActionKind.SAVE_DD_NEW_EXERCISE,
-        //   exercise: {
-        //     exercisePosition: activeDnD.added.exercisePosition,
-        //     groupPosition: activeDnD.added.groupPosition,
-        //     newPosition: {
-        //       exercisePosition:
-        //         overInfo.type === "exercise" ? overInfo.exercisePosition : 0,
-        //       groupPosition: activeDnD.added.groupPosition,
-        //     },
-        //   },
-        // });
-        // setActiveDnD(null);
-        // return;
-      } else {
-        // dispatch({
-        //   type: EditTestActionKind.REMOVE_EXERCISE,
-        //   exercise: {
-        //     exercisePosition: activeDnD.added.exercisePosition,
-        //     groupPosition: activeDnD.added.groupPosition,
-        //   },
-        // });
+        dispatch({
+          type: EditTestActionKind.SAVE_DD_NEW_EXERCISE,
+          exercise: {
+            exercisePosition: activeDnD.added.exercisePosition,
+            groupPosition: activeDnD.added.groupPosition,
+            newPosition: {
+              exercisePosition:
+                overInfo.type === "exercise" ? overInfo.exercisePosition : 0,
+              groupPosition: activeDnD.added.groupPosition,
+            },
+          },
+        });
+        let newListExercises: Exercise[] = JSON.parse(
+          JSON.stringify(listExercises)
+        );
+        let replaceExercise: Exercise = JSON.parse(
+          JSON.stringify(activeDnD.exercise)
+        );
+        replaceExercise.identity.id = "new-exercise-".concat(
+          Math.random().toString()
+        );
+        newListExercises.splice(activeDnD.exercisePosition, 0, replaceExercise);
+        setListExercises(newListExercises);
+        setActiveDnD(null);
+        return;
       }
     }
     if (activeID !== overID) {
@@ -480,6 +514,8 @@ export function CreateTest({ test }: CreateTestProps) {
                   selectedExercise={selectedExercise}
                   setSelectedExercise={(value) => setSelectedExercise(value)}
                   draggingExercises={draggingExercises}
+                  listExercises={listExercises}
+                  setListExercises={(value) => setListExercises(value)}
                 ></ExerciseBankDragDrop>
               </>
             )}
@@ -615,8 +651,8 @@ export function CreateTest({ test }: CreateTestProps) {
                 exerciseIsSelected={false}
                 groupPosition={exerciseID.groupPosition}
                 selectedMenu={selectedMenu}
-                setSelectedMenu={(value) => setSelectedMenu(value)}
-                setSelectedExercise={(value) => setSelectedExercise(value)}
+                setSelectedMenu={() => {}}
+                setSelectedExercise={() => {}}
                 exercisePosition={activeDnD.exercisePosition}
                 setExerciseID={setExerciseID}
                 draggingExercises={true}
@@ -631,8 +667,8 @@ export function CreateTest({ test }: CreateTestProps) {
                 exerciseIsSelected={false}
                 groupPosition={exerciseID.groupPosition}
                 selectedMenu={selectedMenu}
-                setSelectedMenu={(value) => setSelectedMenu(value)}
-                setSelectedExercise={(value) => setSelectedExercise(value)}
+                setSelectedMenu={() => {}}
+                setSelectedExercise={() => {}}
                 exercisePosition={activeDnD.exercisePosition}
                 setExerciseID={setExerciseID}
                 draggingExercises={true}

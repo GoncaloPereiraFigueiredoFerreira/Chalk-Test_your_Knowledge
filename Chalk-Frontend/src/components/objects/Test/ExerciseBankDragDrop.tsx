@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getListExercises } from "../ListExercises/ListExercises";
 import { Exercise } from "../Exercise/Exercise";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
 import { SortableContext } from "@dnd-kit/sortable";
 
 function convertListExercises() {
-  let listExercises = {} as { [key: string]: Exercise };
+  let listExercises: Exercise[] = [];
   getListExercises().forEach((value) => {
-    listExercises[value.identity.id] = value;
+    let exercise: Exercise = JSON.parse(JSON.stringify(value));
+    exercise.identity.id = "new-exercise-".concat(Math.random().toString());
+    listExercises.push(exercise);
   });
   return listExercises;
 }
@@ -22,8 +24,10 @@ interface ExerciseBankDragDropProps {
     exercisePosition: number;
   }) => void;
   setSelectedMenu: (value: string) => void;
-  selectedExercise: string;
-  setSelectedExercise: (value: string) => void;
+  selectedExercise: number;
+  setSelectedExercise: (value: number) => void;
+  listExercises: Exercise[];
+  setListExercises: (value: Exercise[]) => void;
   draggingExercises: boolean;
 }
 
@@ -34,11 +38,9 @@ export function ExerciseBankDragDrop({
   selectedExercise,
   setSelectedExercise,
   draggingExercises,
+  listExercises,
+  setListExercises,
 }: ExerciseBankDragDropProps) {
-  const [listExercises, setListExercises] = useState<{
-    [key: string]: Exercise;
-  }>({});
-
   useEffect(() => {
     setListExercises(convertListExercises());
   }, []);
@@ -55,17 +57,22 @@ export function ExerciseBankDragDrop({
             X
           </button>
         </div>
-        <SortableContext items={Object.keys(listExercises)}>
-          {Object.keys(listExercises).map((key, index) => (
+        <SortableContext
+          items={listExercises.map((exercise) => exercise.identity.id)}
+        >
+          {listExercises.map((exercise, index) => (
             <ShowExerciseDragDrop
               key={index}
               listExerciseButtons={true}
               groupPosition={exerciseID.groupPosition}
-              exercise={listExercises[key]}
+              exercise={exercise}
               selectedMenu={"dd-list-exercises"}
               setSelectedMenu={setSelectedMenu}
-              exerciseIsSelected={key === selectedExercise}
-              setSelectedExercise={(value) => setSelectedExercise(value)}
+              exerciseIsSelected={index === selectedExercise}
+              setSelectedExercise={(value) => {
+                if (value === "") setSelectedExercise(-1);
+                else setSelectedExercise(index);
+              }}
               exercisePosition={index}
               setExerciseID={setExerciseID}
               draggingExercises={draggingExercises}
