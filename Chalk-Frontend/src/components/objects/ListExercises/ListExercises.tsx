@@ -1,7 +1,6 @@
 import { ShowExercise } from "./ShowExercise";
 import "./ListExercises.css";
 import { useContext, useEffect, useState } from "react";
-import { PopUp } from "../../interactiveElements/PopUp";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import { CreateNewExercisePopUp } from "./CreateNewExercisePopUp";
 import {
@@ -226,8 +225,8 @@ export function ListExercises({
         )}
       </div>
       <CreateNewExercisePopUp
-        newExercisePopUp={newExercisePopUp}
-        setNewExercisePopUp={() => setNewExercisePopUp(false)}
+        show={newExercisePopUp}
+        closePopUp={() => setNewExercisePopUp(false)}
         createNewExercise={(newExerciseType: ExerciseType) => {
           dispatch({
             type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
