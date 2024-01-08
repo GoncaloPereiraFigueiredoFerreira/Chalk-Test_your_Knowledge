@@ -33,7 +33,7 @@ export function Searchbar() {
             </div>
             <input
               type="text"
-              className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border-l-0 border bg-input-1"
+              className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border border-l-0 bg-input-1"
               placeholder="Search..."
               value={searchText}
               onChange={(text) => setSearchText(text.target.value)}

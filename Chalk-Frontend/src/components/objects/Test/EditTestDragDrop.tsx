@@ -1,12 +1,13 @@
 import { useState } from "react";
-import {
-  CreateTestActionKind,
-  useCreateTestContext,
-} from "./CreateTestContext";
+import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import { GroupDragDrop } from "./GroupDragDrop";
 import { CreateNewExercisePopUp } from "../ListExercises/CreateNewExercisePopUp";
 import { ExerciseType } from "../Exercise/Exercise";
 import { RiAddFill } from "react-icons/ri";
+import { FaPencil } from "react-icons/fa6";
+import "./EditTestDragDrop.css";
+import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import { SortableContext } from "@dnd-kit/sortable";
 
 interface EditTestProps {
   exerciseID: {
@@ -19,6 +20,7 @@ interface EditTestProps {
   }) => void;
   selectedMenu: string;
   setSelectedMenu: (value: string) => void;
+  draggingExercises: boolean;
 }
 
 export function EditTestDragDrop({
@@ -26,9 +28,11 @@ export function EditTestDragDrop({
   setExerciseID,
   selectedMenu,
   setSelectedMenu,
+  draggingExercises,
 }: EditTestProps) {
+  const [draggingGroups, setDraggingGroups] = useState(false);
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
-  const { testState, dispatch } = useCreateTestContext();
+  const { testState, dispatch } = useEditTestContext();
 
   return (
     <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8">
@@ -36,49 +40,80 @@ export function EditTestDragDrop({
         <div className="text-title-1">
           {testState.test.title ? testState.test.title : "Novo Teste"}
         </div>
-        <div className="flex space-x-4">
-          <div className="flex flex-col">
-            <label>group:{exerciseID.groupPosition}</label>
-            <label>exercise:{exerciseID.exercisePosition}</label>
-          </div>
-        </div>
+        {/* <div className="flex gap-4"></div> */}
       </div>
-      <div className="flex flex-col pb-4 mb-4 gap-4 border-b-2 border-gray-2-2">
-        <div className="ml-4 mt-4">
-          <h2 className="text-xl">Informações Gerais do Teste:</h2>
-          <div className="grid grid-cols-2 w-fit text-md m-4 gap-4">
+      <div className="flex flex-col pb-4 mb-8 gap-4 border-b-2 border-gray-2-2">
+        <div className="mx-4 mt-4">
+          <div className="flex items-center justify-between">
+            <strong className="text-xl">Informações Gerais do Teste:</strong>
+            <button
+              className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+              onClick={() => {
+                setSelectedMenu("edit-test-info");
+              }}
+            >
+              <FaPencil className="size-5" />
+              Editar
+            </button>
+          </div>
+          <div className="gridTestInfo text-md m-4 gap-4">
             <strong>Autor: </strong>
             <p>{testState.test.author}</p>
             <strong>Cotação máxima do teste: </strong>
-            <p>{testState.test.globalCotation}</p>
+            <p>{testState.test.globalCotation} pts</p>
             <strong>Instruções do Teste: </strong>
-            <p>{testState.test.globalInstructions}</p>
+            <p>{textToHTML(testState.test.globalInstructions)}</p>
           </div>
         </div>
       </div>
-      <div className="flex flex-col p-2 gap-4">
-        {testState.test.groups.map((_, index) => (
-          <GroupDragDrop
-            key={index}
-            exerciseGroupID={index}
-            exerciseID={exerciseID}
-            setExerciseID={setExerciseID}
-            selectedMenu={selectedMenu}
-            setSelectedMenu={setSelectedMenu}
-            setNewExercisePopUp={(value: number) => setNewExercisePopUp(value)}
-          ></GroupDragDrop>
-        ))}
+      <div className="flex flex-col px-4 gap-4">
+        <SortableContext items={testState.test.groups.map((group) => group.id)}>
+          {testState.test.groups.map((group, index) => (
+            <GroupDragDrop
+              key={index}
+              exerciseGroupPosition={index}
+              exerciseGroupID={group.id}
+              exerciseID={exerciseID}
+              setExerciseID={setExerciseID}
+              selectedMenu={selectedMenu}
+              setSelectedMenu={setSelectedMenu}
+              setNewExercisePopUp={(value: number) =>
+                setNewExercisePopUp(value)
+              }
+              draggingGroups={draggingGroups}
+              setDraggingGroups={(value) => setDraggingGroups(value)}
+              draggingExercises={draggingExercises}
+            ></GroupDragDrop>
+          ))}
+        </SortableContext>
         <div
           className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
           onClick={() => {
             setSelectedMenu("edit-group");
-            dispatch({ type: CreateTestActionKind.ADD_GROUP });
+            dispatch({ type: EditTestActionKind.ADD_GROUP });
           }}
         >
           <RiAddFill className="group-gray-icon size-8" />
           <label className="group-gray-icon font-medium text-lg">
             Novo Grupo
           </label>
+        </div>
+      </div>
+      <div className="flex flex-col pt-4 mt-8 gap-4 border-t-2 border-gray-2-2">
+        <div className="mx-4 mt-4">
+          <div className="flex items-center justify-between">
+            <strong className="text-md">Conclusão</strong>
+            <button
+              className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+              onClick={() => {
+                setSelectedMenu("edit-test-info");
+              }}
+            >
+              <FaPencil className="size-5" />
+              Editar
+            </button>
+          </div>
+          <p className="text-md m-4">{textToHTML(testState.test.conclusion)}</p>
         </div>
       </div>
       <CreateNewExercisePopUp
@@ -91,7 +126,7 @@ export function EditTestDragDrop({
               testState.test.groups[newExercisePopUp].exercises.length,
           });
           dispatch({
-            type: CreateTestActionKind.CREATE_NEW_EXERCISE,
+            type: EditTestActionKind.CREATE_NEW_EXERCISE,
             group: {
               groupPosition: newExercisePopUp,
               exerciseType: newExerciseType,
