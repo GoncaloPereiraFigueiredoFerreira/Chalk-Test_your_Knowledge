@@ -1,15 +1,15 @@
 package pt.uminho.di.chalktyk.services;
 
-import org.springframework.data.domain.Page;
-import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 public interface ISeedService {
     /**
      * Seed database
-     **/
-    void seed() throws BadInputException, NotFoundException, InterruptedException;
+     *
+     * @return 'true' if the database was seeded. 'false' if the database was already seeded.
+     */
+    boolean seed() throws BadInputException, NotFoundException, InterruptedException;
 
     String addSpecialistChang() throws BadInputException;
 

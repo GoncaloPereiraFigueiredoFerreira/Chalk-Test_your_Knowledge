@@ -1,7 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
@@ -32,7 +31,6 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class SeedService implements ISeedService{
@@ -56,7 +54,11 @@ public class SeedService implements ISeedService{
     }
 
     @Override
-    public void seed() throws BadInputException, NotFoundException, InterruptedException {
+    public boolean seed() throws BadInputException, NotFoundException, InterruptedException {
+        // If the tag already exists. Assumes was already done previously.
+        if(tagsService.existsTagByNameAndPath("Biologia", "/"))
+            return false;
+
         //List of tags
         Tag tagBiologia = tagsService.createTag("Biologia","/");
         Tag tagPortugues = tagsService.createTag("Português","/");
@@ -98,7 +100,6 @@ public class SeedService implements ISeedService{
         coursesService.addStudentsToCourse(course2, l1);
         coursesService.addStudentsToCourse(course3, l2);
 
-        TimeUnit.SECONDS.sleep(1);
         //Create tests
         createPortugueseExam(s1,c1, Arrays.asList(tagPortugues,tagPoesia));
         //Filosofia
@@ -107,6 +108,8 @@ public class SeedService implements ISeedService{
         //testsService.startTest(test1, student1);
         //TestResolution tr1 = new TestResolution(null, LocalDateTime.now(), null, 0, null, st1, t1, TestResolutionStatus.ONGOING, List.of());
         //testsService.createTestResolution(test1, tr1);
+
+        return true;
     }
 
     public String addSpecialistChang() throws BadInputException {
