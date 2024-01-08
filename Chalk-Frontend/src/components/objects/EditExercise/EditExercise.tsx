@@ -280,7 +280,7 @@ export function EditExercise({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 px-16 pb-8 bg-2-1">
+      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
           <label className="flex text-title-1">Editar</label>
           <button
@@ -290,23 +290,29 @@ export function EditExercise({
             Guardar e fechar
           </button>
         </div>
-        <ExerciseComponent
-          position={position ? position : "1"}
-          exercise={state.exercise}
-          context={{
-            context: ExerciseContext.PREVIEW,
-          }}
-        ></ExerciseComponent>
-        <EditHeader dispatch={editDispatch} state={state.exercise} />
-        <ExerciseComponent
-          position="1"
-          exercise={state.exercise}
-          context={{
-            context: ExerciseContext.EDIT,
-            dispatch: editDispatch,
-            solutionData: state.solution,
-          }}
-        ></ExerciseComponent>
+        <div className="rounded-lg bg-3-2">
+          <ExerciseComponent
+            position={position ? position : "1"}
+            exercise={state.exercise}
+            context={{
+              context: ExerciseContext.PREVIEW,
+            }}
+          ></ExerciseComponent>
+        </div>
+        <div className="px-5 py-2 rounded-lg bg-3-2">
+          <EditHeader dispatch={editDispatch} state={state.exercise} />
+        </div>
+        <div className="px-5 py-2 rounded-lg bg-3-2">
+          <ExerciseComponent
+            position="1"
+            exercise={state.exercise}
+            context={{
+              context: ExerciseContext.EDIT,
+              dispatch: editDispatch,
+              solutionData: state.solution,
+            }}
+          ></ExerciseComponent>
+        </div>
         <div className="flex gap-2">
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
