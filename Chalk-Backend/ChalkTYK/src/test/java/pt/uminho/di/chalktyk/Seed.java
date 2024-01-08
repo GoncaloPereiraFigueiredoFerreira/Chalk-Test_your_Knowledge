@@ -1204,7 +1204,7 @@ public class Seed {
         
         List<OAStandard> oaStandards3 = Arrays.asList(oaOrganizacao3,oaOrganizacao5,oaOrganizacao8,oaOrganizacao10);
 
-        ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Género/Formato Textual", 33.3f, oaStandards),new OACriterion("Nivel de desempenho", 33.3f, oaStandards2),new OACriterion("Nivel de desempenho", 33.3f, oaStandards3)));
+        ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Género/Formato Textual", 100.0f/3, oaStandards),new OACriterion("Nivel de desempenho", 100.0f/3, oaStandards2),new OACriterion("Nivel de desempenho", 100.0f/3, oaStandards3)));
         //Exercise
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement(texto+"\nNum texto de opinião bem estruturado, com um mínimo de duzentas e um máximo de trezentas e cinquenta\r\n" + //
