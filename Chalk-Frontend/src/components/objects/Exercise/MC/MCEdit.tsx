@@ -8,6 +8,7 @@ import {
 } from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
+import "../Exercise.css";
 
 interface MCEditProps {
   context: CreateEditProps;
@@ -29,6 +30,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           return (
             <MCStatementEdit
               key={index}
+              position={index}
               id={value}
               solution={context.solutionData}
               dispatch={context.dispatch}
@@ -38,7 +40,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
       </ul>
       <input
         type="button"
-        className="edit-btn"
+        className="edit-btn mt-2 mr-2 px-2 hover:font-bold hover:scale-110 text-lg float-right"
         value="Add"
         onClick={() => {
           for (
@@ -116,14 +118,20 @@ interface MCStatementEditProps {
   dispatch: React.Dispatch<EditAction>;
   solution: ResolutionData;
   id: string;
+  position: number;
 }
-function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
-  let name = "mc";
+function MCStatementEdit({
+  dispatch,
+  id,
+  solution,
+  position,
+}: MCStatementEditProps) {
+  let name = "mc" + position;
   if (solution.type === ExerciseType.MULTIPLE_CHOICE) {
     let solutionItem = solution.items[id];
     return (
       <>
-        <li className="flex items-center">
+        <li className="flex items-center space-y-1">
           <input
             className="radio-blue mr-3"
             type="radio"
@@ -138,7 +146,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
           ></input>
           <input
             type="text"
-            className="basic-input-text"
+            className="basic-input-text rounded-md"
             onChange={(e) =>
               dispatch({
                 type: EditActionKind.CHANGE_ITEM_TEXT,
@@ -151,7 +159,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
             value={solutionItem.text}
           ></input>
           <input
-            className="edit-btn"
+            className="edit-btn mx-2 px-1 hover:border-2 hover:font-bold"
             type="button"
             onClick={() =>
               dispatch({

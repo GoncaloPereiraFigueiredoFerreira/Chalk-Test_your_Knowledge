@@ -1,7 +1,11 @@
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
-import { useCreateTestContext } from "./CreateTestContext";
+import {
+  CreateTestActionKind,
+  useCreateTestContext,
+} from "./CreateTestContext";
+import { GarbageIcon } from "../SVGImages/SVGImages";
 
 interface GroupDragDropProps {
   exerciseGroupID: number;
@@ -26,11 +30,11 @@ export function GroupDragDrop({
   setSelectedMenu,
   setNewExercisePopUp,
 }: GroupDragDropProps) {
-  const { testState } = useCreateTestContext();
+  const { testState, dispatch } = useCreateTestContext();
 
   return (
     <>
-      <div className="flex flex-col rounded-lg px-7 py-5 bg-3-1">
+      <div className="flex flex-col rounded-lg px-7 py-5 bg-3-2">
         <div
           className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 mb-4"
           onClick={() =>
@@ -87,7 +91,7 @@ export function GroupDragDrop({
           )}
           <div className="flex gap-7 w-full">
             <div
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
               onClick={() => {
                 setExerciseID({
                   groupPosition: exerciseGroupID,
@@ -102,7 +106,7 @@ export function GroupDragDrop({
               </label>
             </div>
             <div
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
               onClick={() => {
                 setSelectedMenu("");
                 setNewExercisePopUp(exerciseGroupID);
@@ -111,6 +115,27 @@ export function GroupDragDrop({
               <RiAddFill className="group-gray-icon size-8" />
               <label className="group-gray-icon font-medium text-lg">
                 Criar Novo
+              </label>
+            </div>
+            <div
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
+              onClick={() => {
+                setExerciseID({
+                  groupPosition: -1,
+                  exercisePosition: -1,
+                });
+                dispatch({
+                  type: CreateTestActionKind.REMOVE_GROUP,
+                  exercise: {
+                    groupPosition: exerciseID.groupPosition,
+                    exercisePosition: exerciseID.exercisePosition,
+                  },
+                });
+              }}
+            >
+              <GarbageIcon style="group-gray-icon size-8" />
+              <label className="group-gray-icon font-medium text-lg">
+                Remove
               </label>
             </div>
           </div>

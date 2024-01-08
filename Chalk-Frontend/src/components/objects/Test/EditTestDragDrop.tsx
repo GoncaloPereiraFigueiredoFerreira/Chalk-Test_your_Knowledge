@@ -31,7 +31,7 @@ export function EditTestDragDrop({
   const { testState, dispatch } = useCreateTestContext();
 
   return (
-    <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8">
+    <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8 dark:text-white">
       <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
         <div className="text-title-1">
           {testState.test.title ? testState.test.title : "Novo Teste"}
@@ -69,7 +69,7 @@ export function EditTestDragDrop({
           ></GroupDragDrop>
         ))}
         <div
-          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
           onClick={() => {
             setSelectedMenu("edit-group");
             dispatch({ type: CreateTestActionKind.ADD_GROUP });

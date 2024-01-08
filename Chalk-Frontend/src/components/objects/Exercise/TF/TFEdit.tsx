@@ -9,6 +9,8 @@ import {
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
 
+import "../Exercise.css";
+
 interface TFEditProps {
   context: CreateEditProps;
   exercise: TFExercise;
@@ -48,7 +50,7 @@ export function TFEdit({ exercise, context }: TFEditProps) {
       </table>
       <input
         type="button"
-        className="edit-btn"
+        className="edit-btn mt-2 mr-2 px-2 hover:font-bold hover:scale-110 text-lg items-center"
         value="Add"
         onClick={() => {
           for (
@@ -175,7 +177,7 @@ function TFStatementEdit({
           <td>
             <input
               type="text"
-              className="basic-input-text"
+              className="basic-input-text rounded-md resize-y"
               onChange={(e) =>
                 dispatch({
                   type: EditActionKind.CHANGE_ITEM_TEXT,
@@ -190,7 +192,7 @@ function TFStatementEdit({
           </td>
           <td>
             <input
-              className="edit-btn"
+              className="edit-btn  mx-2 px-1 hover:border-2 hover:font-bold"
               type="button"
               onClick={() =>
                 dispatch({

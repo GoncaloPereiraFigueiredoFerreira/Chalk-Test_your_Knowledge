@@ -50,11 +50,11 @@ export function OAExerciseComp({
   return (
     <>
       {context.context !== ExerciseContext.EDIT ? (
-        <div className="m-5 text-title-2">
+        <div className="m-5 text-title-2 dark:text-black">
           {position + ") " + exercise.base.title}
         </div>
       ) : null}
-      <div className="m-5 text-lg">{exerciseDisplay}</div>
+      <div className="m-5 text-lg ">{exerciseDisplay}</div>
     </>
   );
 }

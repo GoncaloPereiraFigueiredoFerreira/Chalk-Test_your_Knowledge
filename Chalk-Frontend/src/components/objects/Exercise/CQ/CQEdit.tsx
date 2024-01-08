@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EditActionKind } from "../../EditExercise/EditExercise";
 import { CQExercise, CreateEditProps } from "../Exercise";
+import "../Exercise.css";
 
 interface CQEditProps {
   context: CreateEditProps;
@@ -47,12 +48,17 @@ export function CQEdit({ context, exercise }: CQEditProps) {
               <input
                 type="text"
                 value={topic}
+                className="w-full rounded-md"
                 onChange={(e) => {
                   changeTopic(index, e.target.value);
                 }}
               />
-              <button type="button" onClick={() => deleteTopic(index)}>
-                X
+              <button
+                type="button"
+                className="edit-btn bg-[#5555ce] mx-2 px-1 hover:border-2 hover:font-bold"
+                onClick={() => deleteTopic(index)}
+              >
+                Remove
               </button>
             </div>
           );
@@ -63,11 +69,11 @@ export function CQEdit({ context, exercise }: CQEditProps) {
 
   return (
     <div className="flex-col flex space-y-4">
-      <div className="flex space-x-8">
+      <div className="flex space-x-8 dark:text-white">
         <label>Indique o número máximo de respostas do aluno:</label>
         <input
           type="number"
-          className="basic-input-text"
+          className="basic-input-text rounded-md w-20 mb-1"
           min={1}
           onChange={(e) =>
             context.dispatch({
@@ -78,18 +84,21 @@ export function CQEdit({ context, exercise }: CQEditProps) {
           value={exercise.props.maxAnswers}
         ></input>
       </div>
-      <div className="flex space-x-8">
-        <label>Indique os tópicos que a AI deverá abordar:</label>
+      <div className="flex space-x-8 dark:text-white">
+        <label className="pt-2">
+          Indique os tópicos que a AI deverá abordar:
+        </label>
+        <button
+          type="button"
+          className="edit-btn mt-2 px-2 hover:scale-110 text-lg bg-[#5555ce] w-fit self-center cursor-pointer p-1 rounded-md hover:font-bold"
+          onClick={() => {
+            addTopic();
+          }}
+        >
+          Add
+        </button>
       </div>
       {renderTopics()}
-      <button
-        type="button"
-        onClick={() => {
-          addTopic();
-        }}
-      >
-        Add
-      </button>
     </div>
   );
 }

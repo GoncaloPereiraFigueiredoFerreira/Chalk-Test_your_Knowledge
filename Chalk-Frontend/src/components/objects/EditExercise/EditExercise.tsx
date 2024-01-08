@@ -332,7 +332,9 @@ export function EditExercise({
           }}
         ></ExerciseComponent>
         <EditHeader dispatch={editDispatch} state={state.exercise} />
-        <h3 className="font-medium text-xl">Detalhes do Exercício:</h3>
+        <h3 className="font-medium text-xl dark:text-white">
+          Detalhes do Exercício:
+        </h3>
         <ExerciseComponent
           position={position ?? "1"}
           exercise={state.exercise}
@@ -345,7 +347,7 @@ export function EditExercise({
         {state.exercise.type === ExerciseType.CHAT ||
         state.exercise.type === ExerciseType.OPEN_ANSWER ? (
           <>
-            <h3 className="font-medium text-xl">Rúbrica:</h3>
+            <h3 className="font-medium text-xl dark:text-white">Rúbrica:</h3>
             <Rubric
               context={RubricContext.EDIT}
               rubric={{ criteria: [] }}

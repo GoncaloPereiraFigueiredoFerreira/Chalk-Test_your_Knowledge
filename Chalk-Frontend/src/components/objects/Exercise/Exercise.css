@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .edit-btn {
+    @apply bg-[#5555ce] cursor-pointer rounded-md p-1;
+  }
+}

@@ -91,7 +91,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           >
             <li>
               <Link to={`groups/${selectedGroup.name}/alunos`}>
-                <button className="sidebar-item bg-btn-1 group">
+                <button className="sidebar-item bg-btn-1 group ">
                   <GraduateIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Alunos</span>
                 </button>
@@ -99,7 +99,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </li>
             <li>
               <Link to={`groups/${selectedGroup.name}/testes`}>
-                <button className="sidebar-item bg-btn-1 group">
+                <button className="sidebar-item bg-btn-1 group items-center">
                   <WorldIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>
                     Testes Partilhados
@@ -124,7 +124,9 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   return (
     <>
       <aside
-        className={`sidebar-background bg-1-3 ${isOpen ? "" : "w-max"}`}
+        className={`sidebar-background overflow-auto bg-1-3 ${
+          isOpen ? "" : "w-max"
+        }`}
         aria-label="Sidebar"
       >
         <div className="flex flex-row gap-3">
@@ -148,7 +150,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
         <ul className="sidebar-divisions border-t-0">
           <li>
             <button
-              className="relative inline-block text-lg group"
+              className="relative inline-block text-lg group mb-2"
               onClick={() => {
                 toggle(false);
                 navigate("/webapp/create-test");
@@ -157,9 +159,9 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               {/*Bloco inicial*/}
               <span className="relative z-10 block px-3 py-3 overflow-hidden font-bold leading-tight transition-colors duration-500 ease-out border-2 text-gray-700 group-hover:text-white dark:text-gray-300 dark:group-hover:text-gray-800 bg-white group-hover:bg-gray-700 dark:bg-gray-800 dark:group-hover:bg-gray-500 border-gray-700 dark:border-gray-600 rounded-lg">
                 {/*Bloco que surge*/}
-                <span className="absolute left-0 w-64 h-64 -ml-2 transition-all duration-200 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-700 dark:bg-gray-300 group-hover:-rotate-180 ease"></span>
+                <span className="absolute overflow-auto left-0 w-64 h-64 -ml-2 ease-in-out transition-all duration-200 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-700 dark:bg-gray-300 group-hover:-rotate-180"></span>
                 {/*Conteudo*/}
-                <span className="relative flex space-x-2 items-center">
+                <span className="relative flex space-x-2 items-center overflow-auto">
                   <PlusIcon
                     style={
                       "group-hover:text-white text-gray-700 dark:text-gray-300 dark:group-hover:text-black transition-colors duration-500"
@@ -191,7 +193,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 navigate("/webapp/search");
               }}
             >
-              <SearchIcon style={"group-gray-icon"} />
+              <SearchIcon style={"group-gray-icon ml-[1px]"} />
               <span className={isOpen ? "" : "hidden"}>Procurar conteúdos</span>
             </button>
           </li>
@@ -203,7 +205,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 navigate("/webapp/tests");
               }}
             >
-              <CheckListIcon style={"group-gray-icon"} />
+              <CheckListIcon style={"group-gray-icon ml-[1px]"} />
               <span className={isOpen ? "" : "hidden"}>Os meus testes</span>
             </button>
           </li>
@@ -215,7 +217,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 navigate("/webapp/exercise-bank");
               }}
             >
-              <PenIcon style={"group-gray-icon"} />
+              <PenIcon style={"group-gray-icon  ml-[1px]"} />
               <span className={isOpen ? "" : "hidden"}>
                 Banco de Exercícios
               </span>
@@ -223,82 +225,88 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
         </ul>
 
-        <ul className="sidebar-divisions border-gray-3">
-          <li>
+        <div className="sidebar-divisions border-gray-3 transform transition-all duration-75">
+          <div className="">
             <button
-              type="button"
-              onClick={() => {
-                toggle(true);
-                setShowGroup(!showGroup);
-              }}
-              className="sidebar-item bg-btn-1 group"
-            >
-              {getGroup()}
-            </button>
-
-            <ul
-              className={`${
-                showGroup && isOpen ? "" : "hidden"
-              } sidebar-dropdown`}
-            >
-              {user.user?.courses.map((item, index) => (
-                <li key={index}>
-                  <button
-                    onClick={() => {
-                      setShowGroup(false);
-                      setSelectedGroup(item);
-                      navigate(`groups/${item.name}/alunos`);
-                    }}
-                    className={`sidebar-item ${
-                      item === selectedGroup ? "bg-btn-1-selected" : "bg-btn-1"
-                    } group`}
-                  >
-                    <TeacherIcon style={"group-gray-icon"} />
-                    <span className={isOpen ? "" : "hidden"}>{item.name}</span>
-                  </button>
-                </li>
-              ))}
-              <li>
-                <button
-                  onClick={() => {
-                    setShowGroup(false);
-                    setSelectedGroup({
-                      id: "all",
-                      name: "Grupos",
-                    });
-                    navigate(`groups`);
-                  }}
-                  className={`sidebar-item ${
-                    "all" === selectedGroup.id
-                      ? "bg-btn-1-selected"
-                      : "bg-btn-1"
-                  } group`}
-                >
-                  <GroupIcon style={"group-gray-icon"} />
-                  <span className={isOpen ? "" : "hidden"}>Outros Grupos</span>
-                </button>
-              </li>
-            </ul>
-            {showGrupOptions()}
-          </li>
-          <li>
-            <button
-              className="sidebar-item bg-btn-1 group"
+              className="sidebar-item bg-btn-1 group "
               onClick={() => setOpenCreateModal(true)}
             >
-              <WorldIcon style={"group-gray-icon"} />
+              <PlusIcon style={"group-gray-icon ml-1"} />
               <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
             </button>
             <CreateGroupModal
               open={openCreateModal}
               close={() => setOpenCreateModal(false)}
             />
-          </li>
-        </ul>
+          </div>
+          <div className="">
+            <button
+              type="button"
+              onClick={() => {
+                toggle(true);
+                setShowGroup(!showGroup);
+              }}
+              className=" sidebar-item bg-btn-1 group"
+            >
+              {getGroup()}
+            </button>
+
+            <div
+              className={` transform transition-all ease-in-out duration-200 ${
+                showGroup && isOpen
+                  ? "max-h-[350px] h-auto opacity-1 translate-y-0"
+                  : "max-h-0 opacity-1 -translate-y-4 overflow-hidden"
+              } sidebar-dropdown  `}
+            >
+              <div className="overflow-auto">
+                {user.user?.courses.map((item, index) => (
+                  <div key={index}>
+                    <button
+                      onClick={() => {
+                        setShowGroup(false);
+                        setSelectedGroup(item);
+                        navigate(`groups/${item.name}/alunos`);
+                      }}
+                      className={`sidebar-item ${
+                        item === selectedGroup
+                          ? "bg-btn-1-selected"
+                          : "bg-btn-1"
+                      } group`}
+                    >
+                      <TeacherIcon style={"group-gray-icon  ml-[1px]"} />
+                      <span>{item.name}</span>
+                    </button>
+                  </div>
+                ))}
+                <div className={` ${showGroup && isOpen ? "" : "hidden"} `}>
+                  <button
+                    onClick={() => {
+                      setShowGroup(true);
+                      setSelectedGroup({
+                        id: "all",
+                        name: "Grupos",
+                      });
+                      navigate(`groups`);
+                    }}
+                    className={`sidebar-item ${
+                      "all" === selectedGroup.id
+                        ? "bg-btn-1-selected"
+                        : "bg-btn-1"
+                    } group`}
+                  >
+                    <GroupIcon style={"group-gray-icon  ml-[2px]"} />
+                    <span>Outros Grupos</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            {showGrupOptions()}
+          </div>
+        </div>
 
         <div className="sidebar-divisions border-gray-3 mt-auto">
           <ul>
-            <li onClick={() => toggle(true)}>
+            <li onClick={() => toggle(true)} className="flex justify-center">
               <Dropdown
                 label=""
                 placement="top"
@@ -309,7 +317,6 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                       className={`${
                         isOpen ? "w-10 h-10 " : "size-6"
                       } rounded-full ease-linear duration-75`}
-                      alt="user photo"
                     />
 
                     <span className={isOpen ? "" : "hidden"}>

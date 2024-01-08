@@ -77,7 +77,7 @@ export function About() {
           <div className="grid gap-y-0 grid-cols-1 lg:justify-around  w-3/4">
             <div
               ref={ref2}
-              className={` m-3 py-3 py-3 md:mb-0 bg-gray-100 px-4 flex flex-row rounded-lg hover:scale-105 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-300
+              className={` m-3 py-3 md:mb-0 bg-gray-100 px-4 flex flex-row rounded-lg hover:scale-105 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-300
             transform duration-1000 transition-all animate-slide_in ${
               isVisible2
                 ? " translate-x-0 opacity-100"

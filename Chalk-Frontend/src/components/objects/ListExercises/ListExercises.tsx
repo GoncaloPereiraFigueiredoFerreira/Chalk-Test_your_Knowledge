@@ -226,8 +226,8 @@ export function ListExercises({
         )}
       </div>
       <CreateNewExercisePopUp
-        newExercisePopUp={newExercisePopUp}
-        setNewExercisePopUp={() => setNewExercisePopUp(false)}
+        show={newExercisePopUp != false}
+        closePopUp={() => setNewExercisePopUp(false)}
         createNewExercise={(newExerciseType: ExerciseType) => {
           dispatch({
             type: ListExerciseActionKind.CREATE_NEW_EXERCISE,

@@ -39,7 +39,7 @@ export function CreateTest({ test }: CreateTestProps) {
       <div
         className={`${
           selectedMenu === "" ? "" : "divide-x-2"
-        } flex flex-row border-gray-2-2`}
+        } flex flex-row border-gray-2-2  bg-2-1`}
       >
         <div
           className={`${

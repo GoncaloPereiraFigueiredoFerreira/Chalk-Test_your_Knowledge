@@ -17,15 +17,16 @@ export function CreateGroupModal({ open, close }: any) {
     <Modal dismissible show={open} size="md" onClose={close} popup>
       <Modal.Header />
       <Modal.Body>
-        <div className="space-y-6">
+        <div className="space-y-6 w-full">
           <h3 className="text-xl font-medium text-gray-900 dark:text-white">
             Criar um Novo Grupo
           </h3>
           <div>
-            <div className="mb-2 block">
+            <div className="mb-2 block w-full dark:text-white">
               <label htmlFor="name">Nome do Grupo</label>
             </div>
             <input
+              className="w-full rounded-md"
               type="text"
               id="name"
               value={name}
@@ -34,7 +35,7 @@ export function CreateGroupModal({ open, close }: any) {
             />
             <button
               type="button"
-              className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
+              className="p-2 mt-4 w-full rounded-lg bg-[#acacff] hover:bg-[#5555ce] hover:text-white  hover:scale-105"
               onClick={() => onCloseModal()}
             >
               Submeter Novo Grupo

@@ -2,11 +2,13 @@ import { Profile } from "./Profile";
 import { Subscription } from "./Subscription";
 import { Account } from "./Account";
 import { Dashboard } from "./Dashboard";
-//import { useState } from "react";
+import { useState } from "react";
 
 import "./Settings.css";
 
 export function Settings() {
+  const [tab, setTab] = useState("profile");
+
   function openTab(tabID: string) {
     // Declare all variables
     //var i, tabcontent;
@@ -29,15 +31,15 @@ export function Settings() {
   }
 
   return (
-    <div className="h-screen overflow-auto">
-      <div className=" min-h-full mt-0 mb-20 sm:mx-10 md:mx-26 lg:mx-36  mx-4 pt-20">
+    <div className="h-screen overflow-auto bg-2-1">
+      <div className=" h-screen sm:mx-10 md:mx-26 lg:mx-36 px-4 pt-7 ">
         <div className=" md:max-w-xl lg:max-w-3xl flex flex-row justify-between">
           <h2 className="mb-12 text-3xl font-bold">Settings</h2>
           {/**<!-- Mobile menu -->*/}
-          <div className="dropdown w-fit h-fit p-0 first-letter:absolute inset-y-0 right-0 flex items-center sm:hidden">
+          <div className=" dropdown w-fit h-fit p-0 first-letter:absolute inset-y-0 right-0 flex items-center sm:hidden">
             <button
               type="button"
-              className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              className="relative inline-flex items-center justify-center rounded-md p-2  hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             >
               <span className="absolute -inset-0.5"></span>
               <span className="sr-only">Open main menu</span>
@@ -71,35 +73,53 @@ export function Settings() {
               </svg>
             </button>
             <div
-              className="dropdown-content hidden absolute sm:hidden right-0 z-10 mt-44 mr-4 w-fit h-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              role="menu"
+              className=" opacity-100 dropdown-content hidden absolute sm:hidden z-40 w-fit h-fit origin-top-right rounded-md py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               id="mobile-menu"
-              aria-orientation="vertical"
             >
               <a
-                className=" px-4 py-2 text-md text-gray-700"
-                onClick={() => openTab("profile")}
+                className={` px-4 py-2 text-lg  z-40  ${
+                  tab == "profile" ? " bg-black text-white" : ""
+                }`}
+                onClick={() => {
+                  setTab("profile");
+                  openTab("profile");
+                }}
                 id="profileButton"
               >
                 Profile
               </a>
               <a
-                className=" px-4 py-2 text-md text-gray-700"
-                onClick={() => openTab("dashboard")}
+                className={` px-4 py-2 text-lg  z-40  ${
+                  tab == "dashboard" ? " bg-black text-white" : ""
+                }`}
+                onClick={() => {
+                  setTab("dashboard");
+                  openTab("dashboard");
+                }}
                 id="dashboardButton"
               >
                 Appearance
               </a>
               <a
-                className=" px-4 py-2 text-md text-gray-700"
-                onClick={() => openTab("subscription")}
+                className={` px-4 py-2 text-lg  z-40  ${
+                  tab == "subscription" ? " bg-black text-white" : ""
+                }`}
+                onClick={() => {
+                  setTab("subscription");
+                  openTab("subscription");
+                }}
                 id="subscriptionButton"
               >
                 Billing and plans
               </a>
               <a
-                className=" px-4 py-2 text-md text-gray-700"
-                onClick={() => openTab("account")}
+                className={` px-4 py-2 text-lg  z-40  ${
+                  tab == "account" ? " bg-black text-white" : ""
+                }`}
+                onClick={() => {
+                  setTab("account");
+                  openTab("account");
+                }}
                 id="accountButton"
               >
                 Account
@@ -107,52 +127,72 @@ export function Settings() {
             </div>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex h-fit">
           <div
-            className=" hidden sm:grid h-fit grid-cols-1 border-r border-gray-200 dark:border-gray-700 text-right space-y-4 text-md font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0"
+            className=" flex justify-normal sm:grid h-5/6 grid-cols-1 border-r border-black dark:border-gray-700 text-right space-y-4 text-md font-medium dark:text-gray-400 md:me-4 mb-4 md:mb-0"
             id="tabs"
           >
             <button
-              className="inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300"
-              onClick={() => openTab("profile")}
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg${
+                tab == "profile" ? " bg-black text-white" : ""
+              }`}
+              onClick={() => {
+                setTab("profile");
+                openTab("profile");
+              }}
               id="profileButton"
             >
               Profile
             </button>
 
             <button
-              className="inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300"
-              onClick={() => openTab("dashboard")}
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg  ${
+                tab == "dashboard" ? " bg-black text-white" : ""
+              }`}
+              onClick={() => {
+                setTab("dashboard");
+                openTab("dashboard");
+              }}
               id="dashboardButton"
             >
               Appearance
             </button>
 
             <button
-              className="inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300"
-              onClick={() => openTab("subscription")}
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg  ${
+                tab == "subscription" ? " bg-black text-white" : ""
+              }`}
+              onClick={() => {
+                setTab("subscription");
+                openTab("subscription");
+              }}
               id="subscriptionButton"
             >
               Billing and plans
             </button>
             <button
-              className="inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300"
-              onClick={() => openTab("account")}
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg  ${
+                tab == "account" ? " bg-black text-white" : ""
+              }`}
+              onClick={() => {
+                setTab("account");
+                openTab("account");
+              }}
               id="accountButton"
             >
               Account
             </button>
           </div>
-          <div className="px-0 lg:px-8 w-10/12">
+          <div className=" h-5/6 px-0 lg:px-8 w-10/12">
             <div
-              className=" rounded-lg bg-white p-4 dark:bg-gray-800 tabcontent"
+              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent"
               id="profile"
             >
               <Profile></Profile>
             </div>
 
             <div
-              className=" rounded-lg bg-white p-4 dark:bg-gray-800 tabcontent hidden"
+              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent hidden"
               id="dashboard"
               role="tabpanel"
               aria-labelledby="dashboard-tab"
@@ -160,7 +200,7 @@ export function Settings() {
               <Dashboard></Dashboard>
             </div>
             <div
-              className=" rounded-lg bg-white p-4 dark:bg-gray-800 tabcontent hidden"
+              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent hidden"
               id="subscription"
               role="tabpanel"
               aria-labelledby="subscription-tab"
@@ -168,7 +208,7 @@ export function Settings() {
               <Subscription></Subscription>
             </div>
             <div
-              className=" rounded-lg bg-white p-4 dark:bg-gray-800 tabcontent hidden"
+              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent hidden"
               id="account"
               role="tabpanel"
               aria-labelledby="account-tab"
