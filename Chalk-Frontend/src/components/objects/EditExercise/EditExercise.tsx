@@ -314,7 +314,7 @@ export function EditExercise({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 px-16 pb-8 bg-2-1">
+      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
           <label className="flex text-title-1">Editar</label>
           <button

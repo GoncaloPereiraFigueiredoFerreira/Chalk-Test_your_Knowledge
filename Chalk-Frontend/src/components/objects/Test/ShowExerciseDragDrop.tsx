@@ -227,18 +227,77 @@ export function ShowExerciseDragDrop({
       />
     );
 
+  if (draggingExercises)
+    return (
+      <div
+        {...attributes}
+        ref={setNodeRef}
+        style={
+          listExerciseButtons
+            ? {}
+            : {
+                transition,
+                transform: CSS.Translate.toString(transform),
+              }
+        }
+        className="h-[78px] overflow-hidden cursor-default rounded-lg bg-3-2 group"
+        {...listeners}
+      >
+        <div className="flex flex-col h-full px-5 py-2.5">
+          <div className="flex items-center text-sm font-normal transition-all mb-4 group">
+            <button className="flex flex-col gap-1.5 h-14 justify-center">
+              <label className="flex min-w-max font-medium text-xl">
+                {exercise.base.title}
+              </label>
+            </button>
+            <button
+              className={` ${
+                listExerciseButtons
+                  ? "group-hover:mr-[75px]"
+                  : "group-hover:mr-[118px]"
+              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-3-2 border-gray-1`}
+            >
+              <div className="flex flex-col justify-around items-end">
+                {visibility}
+                {typeLabel}
+              </div>
+            </button>
+            <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
+              {listExerciseButtons ? (
+                <button className="btn-options-exercise gray-icon">
+                  <FaArrowRightToBracket />
+                  Adicionar
+                </button>
+              ) : (
+                <>
+                  <button className="btn-options-exercise gray-icon">
+                    <HiOutlineTrash className="size-5" />
+                    Eliminar
+                  </button>
+                  <button className="btn-options-exercise gray-icon">
+                    <FaPencil className="size-5" />
+                    Editar
+                  </button>
+                </>
+              )}
+            </div>
+
+            {!listExerciseButtons && (
+              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-3-1 bg-input-1">
+                <p className="flex justify-center text-base min-w-[56px] px-2 py-1">
+                  {value} pts
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div
       {...attributes}
       ref={setNodeRef}
-      style={
-        draggingExercises && !listExerciseButtons
-          ? {
-              transition,
-              transform: CSS.Translate.toString(transform),
-            }
-          : {}
-      }
       className={`${
         exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
       } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-3-2 group`}
