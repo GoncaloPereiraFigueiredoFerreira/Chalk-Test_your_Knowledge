@@ -56,20 +56,14 @@ import pt.uminho.di.chalktyk.models.tests.TestExercise.ReferenceExercise;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.repositories.TestTagsDAO;
-import pt.uminho.di.chalktyk.services.ICoursesService;
-import pt.uminho.di.chalktyk.services.IExercisesService;
-import pt.uminho.di.chalktyk.services.IInstitutionsService;
-import pt.uminho.di.chalktyk.services.ISpecialistsService;
-import pt.uminho.di.chalktyk.services.IStudentsService;
-import pt.uminho.di.chalktyk.services.ITagsService;
-import pt.uminho.di.chalktyk.services.ITestsService;
+import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @SpringBootTest
 @Transactional
 public class TestsServiceTest {
-    private final Seed seed;
+    private final ISeedService seedService;
     private final ITestsService testsService;
     private final ICoursesService coursesService;
     private final ISpecialistsService specialistsService;
@@ -80,9 +74,10 @@ public class TestsServiceTest {
     private final TestTagsDAO testTagsDAO;
 
     @Autowired
-    public TestsServiceTest(ITestsService testsService, ICoursesService coursesService, ISpecialistsService specialistsService, 
-                            IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, 
+    public TestsServiceTest(ISeedService seedService, ITestsService testsService, ICoursesService coursesService, ISpecialistsService specialistsService,
+                            IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService,
                             ITagsService tagsService, TestTagsDAO testTagsDAO){
+        this.seedService = seedService;
         this.testsService = testsService;
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
@@ -90,7 +85,6 @@ public class TestsServiceTest {
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.tagsService = tagsService;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, tagsService,exercisesService);
         this.testTagsDAO = testTagsDAO;
     }
 
@@ -99,12 +93,12 @@ public class TestsServiceTest {
 
     @BeforeEach
     public void setup() throws BadInputException {
-        this.specialistId = seed.addSpecialistChang();
-        this.specialist2Id = seed.addSpecialistWhitman();
-        this.courseId = seed.addCourse(specialistId);
-        this.course2Id = seed.addCourse2(specialist2Id);
-        this.studentId = seed.addStudentAnnie();
-        this.student2Id = seed.addStudentGeorge();
+        this.specialistId = seedService.addSpecialistChang();
+        this.specialist2Id = seedService.addSpecialistWhitman();
+        this.courseId = seedService.addCourse(specialistId);
+        this.course2Id = seedService.addCourse2(specialist2Id);
+        this.studentId = seedService.addStudentAnnie();
+        this.student2Id = seedService.addStudentGeorge();
 
         // create tags
         this.tag1 = tagsService.createTag("Espanol","/");
