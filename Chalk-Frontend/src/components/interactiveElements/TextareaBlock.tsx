@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { FileUploadIcon } from "../objects/SVGImages/SVGImages";
 import { Root, createRoot } from "react-dom/client";
+import { MdOutlineAttachFile } from "react-icons/md";
+import { FaBold } from "react-icons/fa";
+import { FaItalic } from "react-icons/fa";
+import { ImUnderline } from "react-icons/im";
 
 interface TextareaBlockProps {
   className?: string;
@@ -100,6 +103,11 @@ export function TextareaBlock({
     pRef.current?.focus();
   }
 
+  function toggleUnderline() {
+    document.execCommand("underline");
+    pRef.current?.focus();
+  }
+
   return (
     <>
       <div
@@ -120,14 +128,21 @@ export function TextareaBlock({
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleBold()}
               >
-                B
+                <FaBold className="size-4" />
               </button>
               <button
                 type="button"
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleItalic()}
               >
-                I
+                <FaItalic className="size-4" />
+              </button>
+              <button
+                type="button"
+                className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
+                onClick={() => toggleUnderline()}
+              >
+                <ImUnderline className="size-4" />
               </button>
             </div>
             <div className="flex flex-wrap items-center space-x-1 sm:pl-4">
@@ -135,7 +150,7 @@ export function TextareaBlock({
                 type="button"
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
               >
-                <FileUploadIcon></FileUploadIcon>
+                <MdOutlineAttachFile className="size-5" />
               </button>
             </div>
           </div>

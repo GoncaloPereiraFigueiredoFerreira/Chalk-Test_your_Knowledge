@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import {
   Exercise,
   ExerciseComponent,
@@ -9,20 +12,15 @@ import {
 import { FaArrowRightToBracket } from "react-icons/fa6";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
+import { CiCircleList } from "react-icons/ci";
+import { PiTextTBold } from "react-icons/pi";
+import { TbCheckbox } from "react-icons/tb";
 import { PiChatsBold } from "react-icons/pi";
-import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
-import {
-  CheckboxIcon,
-  CheckedListIcon,
-  GraduateIcon,
-  LinkIcon,
-  LockIcon,
-  SchoolIcon,
-  TextIcon,
-  WorldSearchIcon,
-} from "../SVGImages/SVGImages";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { BiSolidLock } from "react-icons/bi";
+import { TbLink } from "react-icons/tb";
+import { FaUserGraduate } from "react-icons/fa";
+import { LuSchool } from "react-icons/lu";
+import { MdPublic } from "react-icons/md";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;
@@ -122,7 +120,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <CheckedListIcon size="size-4" />
+            <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
         );
@@ -132,7 +130,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <TextIcon size="size-4" />
+            <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
         );
@@ -141,7 +139,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <CheckboxIcon size="size-4" />
+            <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
         );
@@ -151,9 +149,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.CHAT:
         setTypeLabel(
           <label className="caracteristics-exercise gray-icon">
-            <div className="h-full scale-125">
-              <PiChatsBold />
-            </div>
+            <PiChatsBold className="size-5" />
             Chat Question
           </label>
         );
@@ -167,7 +163,7 @@ export function ShowExerciseDragDrop({
       case "private":
         setVisibility(
           <label className="caracteristics-exercise gray-icon">
-            <LockIcon size="size-4" />
+            <BiSolidLock className="size-5" />
             Privado
           </label>
         );
@@ -175,7 +171,7 @@ export function ShowExerciseDragDrop({
       case "not-listed":
         setVisibility(
           <label className="caracteristics-exercise gray-icon">
-            <LinkIcon size="size-4" />
+            <TbLink className="size-5" />
             Não listado
           </label>
         );
@@ -183,7 +179,7 @@ export function ShowExerciseDragDrop({
       case "course":
         setVisibility(
           <label className="caracteristics-exercise gray-icon">
-            <GraduateIcon size="size-4" />
+            <FaUserGraduate className="size-5" />
             Curso
           </label>
         );
@@ -191,7 +187,7 @@ export function ShowExerciseDragDrop({
       case "institutional":
         setVisibility(
           <label className="caracteristics-exercise gray-icon">
-            <SchoolIcon size="size-4" />
+            <LuSchool className="size-5" />
             Institucional
           </label>
         );
@@ -199,7 +195,7 @@ export function ShowExerciseDragDrop({
       case "public":
         setVisibility(
           <label className="caracteristics-exercise gray-icon">
-            <WorldSearchIcon size="size-4" />
+            <MdPublic className="size-5" />
             Público
           </label>
         );

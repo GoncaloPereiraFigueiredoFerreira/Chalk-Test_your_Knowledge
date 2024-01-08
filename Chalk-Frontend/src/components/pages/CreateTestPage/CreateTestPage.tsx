@@ -28,6 +28,7 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { ShowExerciseDragDrop } from "../../objects/Test/ShowExerciseDragDrop";
 import { Exercise } from "../../objects/Exercise/Exercise";
 import { GroupDragDrop } from "../../objects/Test/GroupDragDrop";
+import { HiOutlineTrash } from "react-icons/hi";
 
 type EventInfo =
   | {
@@ -408,6 +409,7 @@ export function CreateTest({ test }: CreateTestProps) {
         newListExercises.splice(activeDnD.exercisePosition, 0, replaceExercise);
         setListExercises(newListExercises);
         setActiveDnD(null);
+        setDraggingExercises(false);
         return;
       }
     }
@@ -480,7 +482,7 @@ export function CreateTest({ test }: CreateTestProps) {
         >
           <div
             className={`${
-              selectedMenu === "dd-list-exercises" ? "w-full px-16 pb-8" : "w-0"
+              selectedMenu === "dd-list-exercises" ? "w-[60%] px-8 pb-8" : "w-0"
             } flex flex-col transition-[width] h-screen overflow-y-auto bg-2-1`}
           >
             {selectedMenu === "dd-list-exercises" && (
@@ -499,7 +501,7 @@ export function CreateTest({ test }: CreateTestProps) {
               </>
             )}
           </div>
-          <div className="flex flex-col w-full h-screen px-16 pb-8 overflow-y-auto bg-2-1">
+          <div className="flex flex-col w-full h-screen px-8 pb-8 overflow-y-auto bg-2-1">
             <EditTestDragDrop
               exerciseID={exerciseID}
               setExerciseID={(value) => setExerciseID(value)}
@@ -518,77 +520,77 @@ export function CreateTest({ test }: CreateTestProps) {
                 : "w-0"
             } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
           >
-            {selectedMenu === "edit-exercise" ||
-              (selectedMenu === "create-exercise" && (
-                <EditExercise
-                  position={(testState.exercisePosition + 1).toString()}
-                  exercise={
-                    testState.test.groups[testState.groupPosition].exercises[
-                      testState.exercisePosition
-                    ]
-                  }
-                  saveEdit={(state) => {
-                    if (selectedMenu === "create-exercise") {
-                      // <<< ALTERAR ESTE IF >>>
-                      // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                      // PARA SE SABER O ID DO NOVO EXERCICIO
-                      dispatch({
-                        type: EditTestActionKind.EDIT_EXERCISE,
+            {(selectedMenu === "edit-exercise" ||
+              selectedMenu === "create-exercise") && (
+              <EditExercise
+                position={(testState.exercisePosition + 1).toString()}
+                exercise={
+                  testState.test.groups[testState.groupPosition].exercises[
+                    testState.exercisePosition
+                  ]
+                }
+                saveEdit={(state) => {
+                  if (selectedMenu === "create-exercise") {
+                    // <<< ALTERAR ESTE IF >>>
+                    // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
+                    // PARA SE SABER O ID DO NOVO EXERCICIO
+                    dispatch({
+                      type: EditTestActionKind.EDIT_EXERCISE,
+                      exercise: {
+                        groupPosition: testState.groupPosition,
+                        exercisePosition: testState.exercisePosition,
                         exercise: {
-                          groupPosition: testState.groupPosition,
-                          exercisePosition: testState.exercisePosition,
-                          exercise: {
-                            ...state.exercise,
-                            identity: {
-                              ...state.exercise.identity,
-                              id: "novo id 1000",
-                              visibility:
-                                state.exercise.identity?.visibility ?? "",
-                              specialistId:
-                                state.exercise.identity?.specialistId ?? "",
-                            },
+                          ...state.exercise,
+                          identity: {
+                            ...state.exercise.identity,
+                            id: "novo id 1000",
+                            visibility:
+                              state.exercise.identity?.visibility ?? "",
+                            specialistId:
+                              state.exercise.identity?.specialistId ?? "",
                           },
                         },
-                      });
-                      // <<< ALTERAR ESTE IF (final)>>>
-                    } else {
-                      // <<< MANTER >>>
-                      dispatch({
-                        type: EditTestActionKind.EDIT_EXERCISE,
-                        exercise: {
-                          groupPosition: testState.groupPosition,
-                          exercisePosition: testState.exercisePosition,
-                          exercise: state.exercise,
-                        },
-                      });
-                      // <<< MANTER (final)>>>
-                    }
-                    setSelectedMenu("");
-                  }}
-                  cancelEdit={() => {
-                    if (selectedMenu === "create-exercise")
-                      dispatch({
-                        type: EditTestActionKind.REMOVE_EXERCISE,
-                        exercise: {
-                          groupPosition: testState.groupPosition,
-                          exercisePosition: testState.exercisePosition,
-                        },
-                      });
-                    setSelectedMenu("");
-                  }}
-                ></EditExercise>
-              ))}
+                      },
+                    });
+                    // <<< ALTERAR ESTE IF (final)>>>
+                  } else {
+                    // <<< MANTER >>>
+                    dispatch({
+                      type: EditTestActionKind.EDIT_EXERCISE,
+                      exercise: {
+                        groupPosition: testState.groupPosition,
+                        exercisePosition: testState.exercisePosition,
+                        exercise: state.exercise,
+                      },
+                    });
+                    // <<< MANTER (final)>>>
+                  }
+                  setSelectedMenu("");
+                }}
+                cancelEdit={() => {
+                  if (selectedMenu === "create-exercise")
+                    dispatch({
+                      type: EditTestActionKind.REMOVE_EXERCISE,
+                      exercise: {
+                        groupPosition: testState.groupPosition,
+                        exercisePosition: testState.exercisePosition,
+                      },
+                    });
+                  setSelectedMenu("");
+                }}
+              ></EditExercise>
+            )}
             {selectedMenu === "edit-group" && (
               <EditGroup
                 exerciseInstructions={
-                  testState.test.groups[exerciseID.groupPosition]
+                  testState.test.groups[testState.groupPosition]
                     .groupInstructions
                 }
                 saveEdit={(state) => {
                   dispatch({
                     type: EditTestActionKind.EDIT_GROUP,
                     group: {
-                      groupPosition: exerciseID.groupPosition,
+                      groupPosition: testState.groupPosition,
                       groupInstructions: state,
                     },
                   });

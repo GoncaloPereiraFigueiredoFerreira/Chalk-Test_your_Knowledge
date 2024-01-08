@@ -8,8 +8,10 @@
       items-center
       justify-start
       gap-4
-      p-4
+      py-4
+      pl-8
       m-2
+      w-60
       rounded-xl;
   }
 }
