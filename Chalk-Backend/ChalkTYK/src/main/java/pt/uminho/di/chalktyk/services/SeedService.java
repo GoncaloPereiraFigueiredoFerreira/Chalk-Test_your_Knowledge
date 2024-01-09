@@ -84,16 +84,18 @@ public class SeedService implements ISeedService{
 
         // specialists
         Specialist s1 = new Specialist(null, "Senor Chang", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg","senor@chang.com", "#1", null);
+        Specialist ganso = new Specialist(null, "Gonçalo Figueiredo", "https://cdn.pixabay.com/photo/2021/11/05/08/19/goose-6770659_1280.jpg","goncaloff13@gmail.com", "Very important specialist", null);
         Specialist s2 = new Specialist(null, "Professor Ian Duncan", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg", "iduncan@gmail.com", "#2", null);
         Specialist s3 = new Specialist(null, "Professor Whitman", "https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg","whitman@yahoo.com", "#3", null);
+        String gansoId = specialistsService.createSpecialist(ganso);
         String specialist1 = specialistsService.createSpecialist(s1);
         String specialist2 = specialistsService.createSpecialist(s2);
         String specialist3 = specialistsService.createSpecialist(s3);
 
         // courses
-        Course c1 = new Course(null, "Spanish 101", "#1", specialist1, null, null);
-        Course c2 = new Course(null, "Anthropology", "#2", specialist2, null, null);
-        Course c3 = new Course(null, "Seize the Day", "#3", specialist3, null, null);
+        Course c1 = new Course(null, "Spanish 101", "#1", gansoId, null, null);
+        Course c2 = new Course(null, "Anthropology", "#2", gansoId, null, null);
+        Course c3 = new Course(null, "Seize the Day", "#3", gansoId, null, null);
         String course1 = coursesService.createCourse(c1);
         String course2 = coursesService.createCourse(c2);
         String course3 = coursesService.createCourse(c3);
@@ -101,7 +103,7 @@ public class SeedService implements ISeedService{
         coursesService.addStudentsToCourse(course3, l2);
 
         //Create tests
-        createPortugueseExam(s1,c1, Arrays.asList(tagPortugues,tagPoesia));
+        createPortugueseExam(ganso,c1, Arrays.asList(tagPortugues,tagPoesia));
         //Filosofia
 
         // test resolutions
@@ -565,7 +567,6 @@ public class SeedService implements ISeedService{
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
-
         exercise2.setRubric(exerciseRubric);
         exercise2.setSolution(exerciseSolution);
         exercise2.setTags(new HashSet<>(tags));
@@ -612,7 +613,7 @@ public class SeedService implements ISeedService{
         exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
-        exercise.setStatement(new ExerciseStatement("Selecione a opção que completa corretamente a frase seguinte.\r\n" + //
+        exercise2.setStatement(new ExerciseStatement("Selecione a opção que completa corretamente a frase seguinte.\r\n" + //
                 "Na segunda quadra, o sujeito poético pretende enfatizar","",""));
         exercise2.setTitle("Pergunta 6");
         exercise2.setSpecialist(new Specialist(specialistId));
