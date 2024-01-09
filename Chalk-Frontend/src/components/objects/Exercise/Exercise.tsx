@@ -437,6 +437,58 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
   return newRes;
 }
 
+export function TranslateResolutionIN(
+  solution: any,
+  exercise: Exercise
+): ResolutionData {
+  let newRes: ResolutionData;
+  switch (exercise.type) {
+    case ExerciseType.CHAT:
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [solution.chat], // CHECK WITH BRONZE
+      };
+      newRes = CQRes;
+      break;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+      let MCRes: MCResolutionData = {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
+      };
+      Object.keys(solution.items).map((key) => {
+        MCRes.items[key].value = solution.items[key].value;
+        MCRes.items[key].justification = solution.items[key].justification;
+      });
+
+      newRes = MCRes;
+      break;
+
+    case ExerciseType.TRUE_OR_FALSE:
+      let TFRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
+      };
+      Object.keys(solution.items).map((key) => {
+        MCRes.items[key].value = solution.items[key].value;
+        MCRes.items[key].justification = solution.items[key].justification;
+      });
+      newRes = TFRes;
+      break;
+
+    case ExerciseType.OPEN_ANSWER:
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: solution.text,
+      };
+      newRes = OARes;
+      break;
+  }
+  return newRes;
+}
+
 //----------------------------------------//
 //                                        //
 //      Translate exercise functions      //
@@ -470,7 +522,7 @@ export function TranslateExerciseOUT(exercise: Exercise): {
 
     case ExerciseType.MULTIPLE_CHOICE:
     case ExerciseType.TRUE_OR_FALSE:
-      let mcType = ExerciseType.MULTIPLE_CHOICE ? "1" : "2";
+      let mcType = exercise.type === ExerciseType.MULTIPLE_CHOICE ? "1" : "2";
       switch (exercise.props.justifyType) {
         case ExerciseJustificationKind.NO_JUSTIFICATION:
           mcType += "0";
@@ -478,12 +530,12 @@ export function TranslateExerciseOUT(exercise: Exercise): {
         case ExerciseJustificationKind.JUSTIFY_ALL:
           mcType += "1";
           break;
-        case ExerciseJustificationKind.JUSTIFY_UNMARKED ||
-          ExerciseJustificationKind.JUSTIFY_FALSE:
+        case ExerciseJustificationKind.JUSTIFY_UNMARKED:
+        case ExerciseJustificationKind.JUSTIFY_FALSE:
           mcType += "2";
           break;
-        case ExerciseJustificationKind.JUSTIFY_MARKED ||
-          ExerciseJustificationKind.JUSTIFY_TRUE:
+        case ExerciseJustificationKind.JUSTIFY_MARKED:
+        case ExerciseJustificationKind.JUSTIFY_TRUE:
           mcType += "3";
           break;
       }
@@ -504,7 +556,7 @@ export function TranslateExerciseOUT(exercise: Exercise): {
       exerciseTR = {
         ...exerciseBASE,
         type: "MC",
-        mcType: Number.parseInt(mcType),
+        mctype: Number.parseInt(mcType),
         items: newExItems,
       };
       solutionTR = {
@@ -559,10 +611,17 @@ export function TranslateExerciseIN(exercise: any): Exercise {
           justification = ExerciseJustificationKind.JUSTIFY_ALL;
           break;
         case "2":
-          justification = ExerciseJustificationKind.JUSTIFY_FALSE;
+          justification =
+            type === ExerciseType.MULTIPLE_CHOICE
+              ? ExerciseJustificationKind.JUSTIFY_UNMARKED
+              : ExerciseJustificationKind.JUSTIFY_FALSE;
+
           break;
         case "3":
-          justification = ExerciseJustificationKind.JUSTIFY_TRUE;
+          justification =
+            type === ExerciseType.MULTIPLE_CHOICE
+              ? ExerciseJustificationKind.JUSTIFY_MARKED
+              : ExerciseJustificationKind.JUSTIFY_TRUE;
           break;
         default:
           justification = ExerciseJustificationKind.NO_JUSTIFICATION;

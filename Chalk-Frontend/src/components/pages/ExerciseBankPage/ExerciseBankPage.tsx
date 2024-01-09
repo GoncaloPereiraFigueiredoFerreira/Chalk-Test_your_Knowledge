@@ -1,7 +1,7 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useContext, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import {
   ListExerciseActionKind,
   ListExerciseContext,
@@ -9,14 +9,21 @@ import {
 } from "../../objects/ListExercises/ListExerciseContext";
 import { APIContext } from "../../../APIContext";
 import {
-  TranslateExerciseIN,
+  ExerciseType,
+  ResolutionData,
   TranslateExerciseOUT,
+  TranslateResolutionIN,
 } from "../../objects/Exercise/Exercise";
+import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
 
 export function ExerciseBankPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
   const [exerciseID, setExerciseID] = useState("");
   const { contactBACK } = useContext(APIContext);
+  const [rubrics, setRubrics] = useState<{ [id: string]: Rubric }>({});
+  const [solutions, setSolutions] = useState<{ [id: string]: ResolutionData }>(
+    {}
+  );
 
   const inicialState = {
     listExercises: {},
@@ -27,6 +34,61 @@ export function ExerciseBankPage() {
     ListExerciseStateReducer,
     inicialState
   );
+
+  const setRubric = (id: string, rubric?: Rubric) => {
+    if (rubric) {
+      let newRubrics = { ...rubrics };
+      newRubrics[id] = rubric;
+      setRubrics(newRubrics);
+    }
+  };
+
+  const setSolution = (id: string, solution?: ResolutionData) => {
+    if (solution) {
+      let newSol = { ...solutions };
+      newSol[id] = solution;
+      setSolutions(newSol);
+    }
+  };
+
+  useEffect(() => {
+    if (editMenuIsOpen && exerciseID !== "-1") {
+      switch (listExerciseState.listExercises[exerciseID].type) {
+        case ExerciseType.OPEN_ANSWER:
+        case ExerciseType.CHAT:
+          if (!(exerciseID in rubrics)) {
+            setRubric(exerciseID, { criteria: [] });
+            contactBACK("exercises/" + exerciseID + "/rubric", "GET").then(
+              (response) => {
+                response.json().then((json) => {
+                  setRubric(exerciseID, json);
+                });
+              }
+            );
+          }
+          break;
+        case ExerciseType.MULTIPLE_CHOICE:
+        case ExerciseType.TRUE_OR_FALSE:
+          if (!(exerciseID in solutions)) {
+            contactBACK("exercises/" + exerciseID + "/solution", "GET").then(
+              (response) => {
+                response.json().then((json) => {
+                  setSolution(
+                    exerciseID,
+                    TranslateResolutionIN(
+                      json.data,
+                      listExerciseState.listExercises[exerciseID]
+                    )
+                  );
+                });
+              }
+            );
+          }
+
+          break;
+      }
+    }
+  }, [editMenuIsOpen]);
 
   return (
     <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
@@ -47,16 +109,23 @@ export function ExerciseBankPage() {
           {editMenuIsOpen ? (
             <EditExercise
               exercise={listExerciseState.listExercises[exerciseID]}
+              rubric={rubrics[exerciseID]}
+              solution={solutions[exerciseID]}
               saveEdit={(state) => {
                 const { exerciseTR, solutionTR } = TranslateExerciseOUT(
                   state.exercise
                 );
+                const rubricTR = TranslateRubricOut(
+                  state.exercise.type,
+                  state.rubric
+                );
+                setRubric(exerciseID, state.rubric);
+                setSolution(exerciseID, state.solution);
                 if (exerciseID === "-1") {
                   contactBACK("exercises", "POST", undefined, {
                     exercise: exerciseTR,
                     solution: solutionTR,
-                    //falta a rubrica
-                    tags: ["Português"],
+                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
                   }).then((response) => {
                     response.text().then((jsonRes) => {
                       dispatch({
@@ -81,7 +150,7 @@ export function ExerciseBankPage() {
                   contactBACK("exercises/" + exerciseID, "PUT", undefined, {
                     exercise: exerciseTR,
                     solution: solutionTR,
-                    //falta a rubrica
+                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
                   }).then((response) => {
                     dispatch({
                       type: ListExerciseActionKind.EDIT_EXERCISE,

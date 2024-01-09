@@ -44,11 +44,12 @@ function App() {
           <Route path="exercise-bank" element={<ExerciseBankPage />} />
           <Route path="create-test" element={<CreateTest />} />
           <Route path="tests">
-            <Route index path="" element={<TestPage />} />
-            <Route path="preview" element={<PreviewTest />} />
-            <Route path="solve" element={<SolveTest />} />
-            <Route path="correction" element={<Correction />} />
-            <Route path="group/:id" />
+            <Route path="" element={<TestPage />} />
+            <Route path=":testID">
+              <Route path="preview" element={<PreviewTest />} />
+              <Route path="solve" element={<SolveTest />} />
+              <Route path="correction" element={<Correction />} />
+            </Route>
           </Route>
           <Route path="profile" element={<Settings />} />
           <Route path="groups" element={<GroupsPage />} />
@@ -60,18 +61,6 @@ function App() {
               <Route path=":results_id" element={<EvaluationPage />} />
             </Route>
           </Route>
-
-          {/*<Route path="correction" element={<Correction />} />*/}
-
-          {/* <Route path="edit" element={<EditExercisePage />} /> */}
-          {/*<Route path="catalog" element={<Catalog />} />*/}
-          {/*<Route path="test"  element={<TestCreator />} />*/}
-          {/*<Route path="group" element={<Group />} />*/}
-          {/*<Route path="search" element={<Group />} />*/}
-
-          {/*<Route path="upgrade" element={<Group />} />*/}
-          {/*<Route path="history" element={<Group />} />*/}
-          {/*<Route path="exercise-list" element={<Group />} />*/}
         </Route>
       </Routes>
     </Router>

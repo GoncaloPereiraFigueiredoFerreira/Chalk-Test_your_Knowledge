@@ -61,7 +61,7 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
     <>
       {role == UserRole.STUDENT ? (
         <Link
-          to="/webapp/tests/preview"
+          to="/webapp/tests/1/preview"
           key={index}
           className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
         >
@@ -92,7 +92,7 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
               </div>
 
               <Link
-                to="/webapp/tests/solve"
+                to="/webapp/tests/1/solve"
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -102,7 +102,7 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
         </Link>
       ) : (
         <Link
-          to="/webapp/tests/preview"
+          to="/webapp/tests/1/preview"
           key={index}
           className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
         >
@@ -135,14 +135,14 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
               </Link>
 
               <Link
-                to="/webapp/tests/correction"
+                to="/webapp/tests/1/correction"
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Evaluate
               </Link>
 
               <Link
-                to="/webapp/tests/solve"
+                to="/webapp/tests/1/solve"
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -160,7 +160,7 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
     <>
       {role == UserRole.STUDENT ? (
         <Link
-          to="/webapp/tests/preview"
+          to="/webapp/tests/1/preview"
           key={index}
           className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
@@ -213,7 +213,7 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
               </div>
 
               <Link
-                to="/webapp/tests/solve"
+                to="/webapp/tests/1/solve"
                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -223,7 +223,7 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
         </Link>
       ) : (
         <Link
-          to="/webapp/tests/preview"
+          to="/webapp/tests/1/preview"
           key={index}
           className=" max-w-lg  bg-white  border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
@@ -258,14 +258,14 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
               </Link>
 
               <Link
-                to="/webapp/tests/correction"
+                to="/webapp/tests/1/correction"
                 className="inline-flex items-center px-6 h-12 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Evaluate
               </Link>
 
               <Link
-                to="/webapp/tests/solve"
+                to="/webapp/tests/1/solve"
                 className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-green-700  hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve

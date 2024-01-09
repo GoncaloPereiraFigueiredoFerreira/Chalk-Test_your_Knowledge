@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import "./EditExercise.css";
 import { EditHeader } from "../Exercise/Header/EditHeader";
@@ -38,6 +38,8 @@ export enum EditActionKind {
   CHANGE_JUSTIFY_KIND = "CHANGE_JUSTIFY_KIND",
   CHANGE_MAX_ANSWERS = "CHANGE_MAX_ANSWERS",
   SET_TOPIC = "SET_TOPIC",
+  SET_RUBRIC = "SET_RUBRIC",
+  SET_SOLUTION = "SET_SOLUTION",
 }
 
 export interface EditAction {
@@ -50,6 +52,8 @@ export interface EditAction {
     justification?: string;
     value?: boolean;
   };
+  dataSolution?: ResolutionData;
+  dataRubric?: Rubric;
   dataJK?: ExerciseJustificationKind;
 }
 
@@ -278,6 +282,27 @@ function EditReducer(state: EditState, action: EditAction) {
       }
       throw new Error("Invalid action");
 
+    case EditActionKind.SET_RUBRIC:
+      if (
+        exercise.type === ExerciseType.OPEN_ANSWER ||
+        exercise.type === ExerciseType.CHAT
+      ) {
+        return { ...state, rubric: action.dataRubric };
+      }
+      throw new Error("Invalid action");
+
+    case EditActionKind.SET_SOLUTION:
+      if (
+        exercise.type === ExerciseType.MULTIPLE_CHOICE ||
+        exercise.type === ExerciseType.TRUE_OR_FALSE
+      ) {
+        return {
+          ...state,
+          solution: action.dataSolution ?? InitResolutionDataEx(exercise),
+        };
+      }
+      throw new Error("Invalid action");
+
     default:
       return state;
   }
@@ -285,6 +310,7 @@ function EditReducer(state: EditState, action: EditAction) {
 
 interface EditState {
   exercise: Exercise;
+  rubric?: Rubric;
   solution: ResolutionData;
 }
 
@@ -297,6 +323,7 @@ interface EditState {
 interface EditExerciseProps {
   position?: string;
   exercise: Exercise;
+  solution: ResolutionData;
   rubric?: Rubric;
   saveEdit: (state: EditState) => void;
   cancelEdit: (state: EditState) => void;
@@ -305,13 +332,39 @@ interface EditExerciseProps {
 export function EditExercise({
   position,
   exercise,
+  solution,
+  rubric,
   saveEdit,
   cancelEdit,
 }: EditExerciseProps) {
-  let solution = InitResolutionDataEx(exercise);
-
-  let initState: EditState = { exercise: exercise, solution: solution };
+  const initState: EditState = {
+    exercise: exercise,
+    solution: solution ?? InitResolutionDataEx(exercise),
+    rubric: rubric,
+  };
   const [state, editDispatch] = useReducer(EditReducer, initState);
+
+  useEffect(() => {
+    if (
+      exercise.type == ExerciseType.CHAT ||
+      exercise.type == ExerciseType.OPEN_ANSWER
+    )
+      editDispatch({
+        type: EditActionKind.SET_RUBRIC,
+        dataRubric: rubric,
+      });
+  }, [rubric]);
+
+  useEffect(() => {
+    if (
+      exercise.type == ExerciseType.MULTIPLE_CHOICE ||
+      exercise.type == ExerciseType.TRUE_OR_FALSE
+    )
+      editDispatch({
+        type: EditActionKind.SET_SOLUTION,
+        dataSolution: solution,
+      });
+  }, [solution]);
 
   return (
     <>
@@ -348,8 +401,16 @@ export function EditExercise({
           <>
             <h3 className="font-medium text-xl">Rúbrica:</h3>
             <Rubric
-              context={RubricContext.EDIT}
-              rubric={{ criteria: [] }}
+              context={{
+                context: RubricContext.EDIT,
+                setRubric: (rubric: Rubric) => {
+                  editDispatch({
+                    type: EditActionKind.SET_RUBRIC,
+                    dataRubric: rubric,
+                  });
+                },
+              }}
+              rubric={state.rubric ?? { criteria: [] }}
             ></Rubric>
           </>
         ) : (
