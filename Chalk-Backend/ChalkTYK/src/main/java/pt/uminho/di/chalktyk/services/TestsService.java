@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -85,8 +86,16 @@ public class TestsService implements ITestsService {
                 throw new NotFoundException("There is no specialist with the given id");
         }
         Page<Test> tests = testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, visibility, institutionId, courseId, specialistId, title);
-        tests.stream().forEach(e->e.setGroups(null)); //Só porque o Ganso pediu
-        return tests;
+
+        // turning groups to null
+        List<Test> tmpTests = new ArrayList<>();
+        for (Test t: tests){
+            tmpTests.add(new Test(t.getId(), t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(), 
+                        t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), null));
+        }
+
+        Page<Test> resTests = new PageImpl<>(tmpTests);
+        return resTests;
     }
 
     @Override
@@ -98,16 +107,19 @@ public class TestsService implements ITestsService {
 
         // getting concrete exercises
         List<TestGroup> newGroups = new ArrayList<>();
-        for (TestGroup tg: t.getGroups()){
-            TestGroup newGroup = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), new ArrayList<>());
-            List<TestExercise> newExes = new ArrayList<>();
-            for (TestExercise ref: tg.getExercises()){
-                Exercise exe = exercisesService.getExerciseById(ref.getId());
-                TestExercise newExe = new ConcreteExercise(ref.getPoints(), exe);
-                newExes.add(newExe);
+        List<TestGroup> groups = t.getGroups();
+        if (groups != null){
+            for (TestGroup tg: groups){
+                TestGroup newGroup = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), new ArrayList<>());
+                List<TestExercise> newExes = new ArrayList<>();
+                for (TestExercise ref: tg.getExercises()){
+                    Exercise exe = exercisesService.getExerciseById(ref.getId());
+                    TestExercise newExe = new ConcreteExercise(ref.getPoints(), exe);
+                    newExes.add(newExe);
+                }
+                newGroup.setExercises(newExes);
+                newGroups.add(newGroup);
             }
-            newGroup.setExercises(newExes);
-            newGroups.add(newGroup);
         }
 
         return new Test(testId, t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(), 
@@ -1281,6 +1293,7 @@ public class TestsService implements ITestsService {
             Map<String, TestExerciseResolutionBasic> mapExeRes = trg.getResolutions();
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: mapExeRes.entrySet()){
                 if (entry.getKey().equals(exeId)){
+                    // TODO: maybe remove old exe resolution?
                     ExerciseResolution exeRes = exercisesService.createExerciseResolution(testRes.getStudentId(), exeId, resolution.getData());
                     TestExerciseResolutionBasic newExeResPair = new TestExerciseResolutionBasic(exeRes.getId(), exeRes.getPoints());
                     res = exeRes.getId();
