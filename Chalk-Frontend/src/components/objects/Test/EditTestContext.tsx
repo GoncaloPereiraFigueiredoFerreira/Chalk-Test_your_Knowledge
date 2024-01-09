@@ -1,6 +1,7 @@
 import { useContext, createContext } from "react";
 import { ExerciseGroup, Test } from "./Test";
 import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
+import { arrayMove } from "@dnd-kit/sortable";
 
 //------------------------------------//
 //                                    //
@@ -11,7 +12,8 @@ import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 export enum EditTestActionKind {
   EDIT_TEST_INFO = "EDIT_TEST_INFO",
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE", // Add a new exercise to a given group
-  ADD_EXERCISE = "ADD_EXERCISE", // Add an exercise from User Exercise List
+  ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE", // Add an exercise from ExerciseBank
+  SAVE_DD_NEW_EXERCISE = "SAVE_DD_NEW_EXERCISE", // Change the id of a newly added (dragdrop) exercise in the test
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   EDIT_EXERCISE = "EDIT_EXERCISE", // Edit an exercise
   ADD_GROUP = "ADD_GROUP",
@@ -20,6 +22,7 @@ export enum EditTestActionKind {
   CHANGE_EXERCISE_COTATION = "CHANGE_EXERCISE_COTATION",
   SELECT_EXERCISE_POSITION = "SELECT_EXERCISE_POSITION",
   MOVE_EXERCISE = "MOVE_EXERCISE",
+  MOVE_GROUP = "MOVE_GROUP",
 }
 
 export interface EditTestAction {
@@ -34,11 +37,13 @@ export interface EditTestAction {
     groupPosition: number;
     groupInstructions?: string;
     exerciseType?: ExerciseType;
+    newPosition?: number;
   };
   exercise?: {
     exercisePosition: number;
     groupPosition: number;
     exercise?: Exercise;
+    tmp?: true;
     newPosition?: {
       exercisePosition: number;
       groupPosition: number;
@@ -69,17 +74,15 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.CREATE_NEW_EXERCISE:
       if (action.group && action.group.exerciseType) {
-        let newGroups = [...state.test.groups];
-        let newExerciseGroup = {
-          ...newGroups[action.group.groupPosition],
-          exercises: [
-            ...newGroups[action.group.groupPosition].exercises,
-            InitExercise(action.group.exerciseType),
-          ],
-        } as ExerciseGroup;
-        newGroups[action.group.groupPosition] = newExerciseGroup;
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
+        newGroups[action.group.groupPosition].exercises.push(
+          InitExercise(action.group.exerciseType)
+        );
         return {
-          exercisePosition: newExerciseGroup.exercises.length - 1,
+          exercisePosition:
+            newGroups[action.group.groupPosition].exercises.length - 1,
           groupPosition: action.group.groupPosition,
           test: {
             ...state.test,
@@ -89,35 +92,36 @@ export function EditTestStateReducer(
       }
       throw new Error("Invalid Action");
 
-    case EditTestActionKind.ADD_EXERCISE:
+    case EditTestActionKind.ADD_NEW_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        let newGroups = [...state.test.groups];
-        const before = newGroups[action.exercise.groupPosition].exercises.slice(
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
+        // DRAG and DROP needs to add an element here
+        // but <<<<< ID CANNOT BE CHANGED >>>>>
+        // SAVE_DD_NEW_EXERCISE will save it later
+        const exercise = action.exercise.tmp
+          ? action.exercise.exercise
+          : ({
+              ...action.exercise.exercise,
+              identity: {
+                ...action.exercise.exercise.identity,
+                // <<<<<<<<<  ALTERAR  >>>>>>>>>
+                // Exercicio tem de ser sempre duplicado
+                // Novo id resultante de duplicar este exercicio no backend
+                // => utilizado para adicionar carregando no botão
+                id: "test-exercise-".concat(Math.random().toString()),
+                // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+              },
+            } as Exercise);
+        newGroups[action.exercise.groupPosition].exercises.splice(
+          action.exercise.exercisePosition,
           0,
-          action.exercise.exercisePosition
+          exercise
         );
-        const after = newGroups[action.exercise.groupPosition].exercises.slice(
-          action.exercise.exercisePosition
-        );
-        const exercise = {
-          ...action.exercise.exercise,
-          identity: {
-            ...action.exercise.exercise.identity,
-            // <<<<<<<<<  ALTERAR  >>>>>>>>>
-            // Exercicio tem de ser sempre duplicado
-            // Novo id resultante de duplicar este exercicio no backend
-            id: "test-exercise-".concat(Math.random().toString()),
-            // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
-          },
-        } as Exercise;
-        let newExerciseGroup = {
-          ...newGroups[action.exercise.groupPosition],
-          groupCotation:
-            newGroups[action.exercise.groupPosition].groupCotation +
-            (action.exercise.exercise.identity.cotation ?? 0),
-          exercises: [...before, exercise, ...after],
-        };
-        newGroups[action.exercise.groupPosition] = newExerciseGroup;
+        newGroups[action.exercise.groupPosition].groupCotation =
+          newGroups[action.exercise.groupPosition].groupCotation +
+          (action.exercise.exercise.identity.cotation ?? 0);
         return {
           ...state,
           test: {
@@ -131,9 +135,42 @@ export function EditTestStateReducer(
       }
       throw new Error("Invalid Action");
 
+    case EditTestActionKind.SAVE_DD_NEW_EXERCISE:
+      if (action.exercise && action.exercise.newPosition) {
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
+        let origGroup = newGroups[action.exercise.groupPosition];
+
+        // <<<<<<<<<  ALTERAR  >>>>>>>>>
+        // Exercicio tem de ser sempre duplicado
+        // Novo id resultante de duplicar este exercicio no backend
+        // => utilizado para adicionar atravez do drag and drop
+        origGroup.exercises[action.exercise.exercisePosition].identity.id =
+          "test-exercise-".concat(Math.random().toString());
+        // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+
+        origGroup.exercises = arrayMove(
+          origGroup.exercises,
+          action.exercise.exercisePosition,
+          action.exercise.newPosition.exercisePosition
+        );
+        newGroups[action.exercise.groupPosition] = origGroup;
+        return {
+          ...state,
+          test: {
+            ...state.test,
+            groups: newGroups,
+          },
+        } as EditTestState;
+      }
+      throw new Error("Invalid Action");
+
     case EditTestActionKind.REMOVE_EXERCISE:
       if (action.exercise) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         if (
           newGroups[action.exercise.groupPosition] &&
           newGroups[action.exercise.groupPosition].exercises[
@@ -141,18 +178,10 @@ export function EditTestStateReducer(
           ]
         ) {
           // remove exercise
-          const before = newGroups[
-            action.exercise.groupPosition
-          ].exercises.slice(0, action.exercise.exercisePosition);
-          const after = newGroups[
-            action.exercise.groupPosition
-          ].exercises.slice(action.exercise.exercisePosition + 1);
-          // update newGroups
-          let cleanGroup = {
-            ...newGroups[action.exercise.groupPosition],
-            exercises: [...before, ...after],
-          };
-          newGroups[action.exercise.groupPosition] = cleanGroup;
+          newGroups[action.exercise.groupPosition].exercises.splice(
+            action.exercise.exercisePosition,
+            1
+          );
           // update groupCotation
           let auxCotation = 0;
           newGroups[action.exercise.groupPosition].exercises.forEach(
@@ -180,7 +209,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.EDIT_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = [...state.test.groups];
         newGroups[action.exercise.groupPosition].exercises[
           action.exercise.exercisePosition
         ] = action.exercise.exercise;
@@ -214,12 +243,11 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.REMOVE_GROUP:
       if (action.group) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         // remove group
-        const before = newGroups.slice(0, action.group.groupPosition);
-        const after = newGroups.slice(action.group.groupPosition + 1);
-        // update groups
-        let cleanGroups = [...before, ...after];
+        newGroups.splice(action.group.groupPosition, 1);
         // update globalCotation
         let auxCotation = 0;
         newGroups.forEach((element) => {
@@ -230,17 +258,17 @@ export function EditTestStateReducer(
           test: {
             ...state.test,
             globalCotation: auxCotation,
-            groups: cleanGroups,
+            groups: newGroups,
           },
         } as EditTestState;
       }
       throw new Error("Invalid Action");
 
     case EditTestActionKind.EDIT_GROUP:
-      console.log(action);
-
       if (action.group && action.group.groupInstructions !== undefined) {
-        let newGroups = [...state.test.groups];
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         newGroups[action.group.groupPosition].groupInstructions =
           action.group.groupInstructions;
         return {
@@ -256,7 +284,9 @@ export function EditTestStateReducer(
     case EditTestActionKind.CHANGE_EXERCISE_COTATION:
       if (action.exercise && action.exercise.newCotation !== undefined) {
         if (action.exercise.newCotation >= 0) {
-          let newGroups = [...state.test.groups];
+          let newGroups: ExerciseGroup[] = JSON.parse(
+            JSON.stringify(state.test.groups)
+          );
           newGroups[action.exercise.groupPosition].exercises[
             action.exercise.exercisePosition
           ].identity.cotation = action.exercise.newCotation;
@@ -298,51 +328,37 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.MOVE_EXERCISE:
       if (action.exercise && action.exercise.newPosition) {
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         if (
           action.exercise.groupPosition !==
           action.exercise.newPosition.groupPosition
         ) {
           // Move to another group
-          const newGroups = [...state.test.groups];
-          const origGroup = state.test.groups[action.exercise.groupPosition];
-          const destGroup =
-            state.test.groups[action.exercise.newPosition.groupPosition];
-          let before = origGroup.exercises.slice(
+          const exercise = newGroups[
+            action.exercise.groupPosition
+          ].exercises.splice(action.exercise.exercisePosition, 1);
+          newGroups[action.exercise.newPosition.groupPosition].exercises.splice(
+            action.exercise.newPosition.exercisePosition,
             0,
-            action.exercise.exercisePosition
+            exercise[0]
           );
-          let after = origGroup.exercises.slice(
-            action.exercise.exercisePosition + 1
+          let auxCotation = 0;
+          newGroups[action.exercise.groupPosition].exercises.forEach(
+            (element) => {
+              auxCotation += element.identity.cotation ?? 0;
+            }
           );
-
-          const cleanOriginGroup = {
-            ...origGroup,
-            groupCotation:
-              origGroup.groupCotation -
-              (origGroup.exercises[action.exercise.exercisePosition].identity
-                .cotation ?? 0),
-            exercises: [...before, ...after],
-          };
-          before = destGroup.exercises.slice(
-            0,
-            action.exercise.exercisePosition
-          );
-          after = destGroup.exercises.slice(action.exercise.exercisePosition);
-
-          const cleanDestGroup = {
-            ...destGroup,
-            groupCotation:
-              destGroup.groupCotation +
-              (origGroup.exercises[action.exercise.exercisePosition].identity
-                .cotation ?? 0),
-            exercises: [
-              ...before,
-              origGroup.exercises[action.exercise.exercisePosition],
-              ...after,
-            ],
-          };
-          newGroups[action.exercise.groupPosition] = cleanOriginGroup;
-          newGroups[action.exercise.newPosition.groupPosition] = cleanDestGroup;
+          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
+          auxCotation = 0;
+          newGroups[
+            action.exercise.newPosition.groupPosition
+          ].exercises.forEach((element) => {
+            auxCotation += element.identity.cotation ?? 0;
+          });
+          newGroups[action.exercise.newPosition.groupPosition].groupCotation =
+            auxCotation;
           return {
             ...state,
             test: {
@@ -352,43 +368,11 @@ export function EditTestStateReducer(
           } as EditTestState;
         } else {
           // Move within the same group
-          const newGroups = [...state.test.groups];
-          const origGroup = state.test.groups[action.exercise.groupPosition];
-          const exercise =
-            origGroup.exercises[action.exercise.exercisePosition];
-
-          const before = origGroup.exercises.slice(
-            0,
-            action.exercise.exercisePosition
-          );
-          const after = origGroup.exercises.slice(
-            action.exercise.exercisePosition + 1
-          );
-          var list;
-
-          if (
-            action.exercise.exercisePosition >
+          newGroups[action.exercise.groupPosition].exercises = arrayMove(
+            newGroups[action.exercise.groupPosition].exercises,
+            action.exercise.exercisePosition,
             action.exercise.newPosition.exercisePosition
-          ) {
-            const beforeDest = before.slice(
-              0,
-              action.exercise.newPosition.exercisePosition
-            );
-            const afterDest = before.slice(
-              action.exercise.newPosition.exercisePosition + 1
-            );
-            list = [...beforeDest, exercise, ...afterDest, ...after];
-          } else {
-            const beforeDest = after.slice(
-              0,
-              action.exercise.newPosition.exercisePosition
-            );
-            const afterDest = after.slice(
-              action.exercise.newPosition.exercisePosition + 1
-            );
-            list = [...before, ...beforeDest, exercise, ...afterDest];
-          }
-          newGroups[action.exercise.groupPosition].exercises = list;
+          );
           return {
             ...state,
             test: {
@@ -397,6 +381,29 @@ export function EditTestStateReducer(
             },
           } as EditTestState;
         }
+      }
+      throw new Error("Invalid Action");
+
+    case EditTestActionKind.MOVE_GROUP:
+      if (action.group && action.group.newPosition !== undefined) {
+        // let newGroups: ExerciseGroup[] = JSON.parse(
+        //   JSON.stringify(state.test.groups)
+        // );
+        let newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
+        newGroups = arrayMove(
+          newGroups,
+          action.group.groupPosition,
+          action.group.newPosition
+        );
+        return {
+          ...state,
+          test: {
+            ...state.test,
+            groups: newGroups,
+          },
+        } as EditTestState;
       }
       throw new Error("Invalid Action");
 

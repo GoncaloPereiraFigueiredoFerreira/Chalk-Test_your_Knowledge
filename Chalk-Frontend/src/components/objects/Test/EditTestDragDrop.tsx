@@ -7,6 +7,7 @@ import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import "./EditTestDragDrop.css";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import { SortableContext } from "@dnd-kit/sortable";
 
 interface EditTestProps {
   exerciseID: {
@@ -19,6 +20,7 @@ interface EditTestProps {
   }) => void;
   selectedMenu: string;
   setSelectedMenu: (value: string) => void;
+  draggingExercises: boolean;
 }
 
 export function EditTestDragDrop({
@@ -26,7 +28,9 @@ export function EditTestDragDrop({
   setExerciseID,
   selectedMenu,
   setSelectedMenu,
+  draggingExercises,
 }: EditTestProps) {
+  const [draggingGroups, setDraggingGroups] = useState(false);
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
   const { testState, dispatch } = useEditTestContext();
 
@@ -36,6 +40,7 @@ export function EditTestDragDrop({
         <div className="text-title-1">
           {testState.test.title ? testState.test.title : "Novo Teste"}
         </div>
+        {/* <div className="flex gap-4"></div> */}
       </div>
       <div className="flex flex-col pb-4 mb-8 gap-4 border-b-2 border-gray-2-2">
         <div className="mx-4 mt-4">
@@ -55,24 +60,32 @@ export function EditTestDragDrop({
             <strong>Autor: </strong>
             <p>{testState.test.author}</p>
             <strong>Cotação máxima do teste: </strong>
-            <p>{testState.test.globalCotation}</p>
+            <p>{testState.test.globalCotation} pts</p>
             <strong>Instruções do Teste: </strong>
             <p>{textToHTML(testState.test.globalInstructions)}</p>
           </div>
         </div>
       </div>
       <div className="flex flex-col px-4 gap-4">
-        {testState.test.groups.map((_, index) => (
-          <GroupDragDrop
-            key={index}
-            exerciseGroupID={index}
-            exerciseID={exerciseID}
-            setExerciseID={setExerciseID}
-            selectedMenu={selectedMenu}
-            setSelectedMenu={setSelectedMenu}
-            setNewExercisePopUp={(value: number) => setNewExercisePopUp(value)}
-          ></GroupDragDrop>
-        ))}
+        <SortableContext items={testState.test.groups.map((group) => group.id)}>
+          {testState.test.groups.map((group, index) => (
+            <GroupDragDrop
+              key={index}
+              exerciseGroupPosition={index}
+              exerciseGroupID={group.id}
+              exerciseID={exerciseID}
+              setExerciseID={setExerciseID}
+              selectedMenu={selectedMenu}
+              setSelectedMenu={setSelectedMenu}
+              setNewExercisePopUp={(value: number) =>
+                setNewExercisePopUp(value)
+              }
+              draggingGroups={draggingGroups}
+              setDraggingGroups={(value) => setDraggingGroups(value)}
+              draggingExercises={draggingExercises}
+            ></GroupDragDrop>
+          ))}
+        </SortableContext>
         <div
           className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
           onClick={() => {

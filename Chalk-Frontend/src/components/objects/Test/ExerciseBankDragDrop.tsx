@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getListExercises } from "../ListExercises/ListExercises";
 import { Exercise } from "../Exercise/Exercise";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
+import { SortableContext } from "@dnd-kit/sortable";
 
 function convertListExercises() {
-  let listExercises = {} as { [key: string]: Exercise };
+  let listExercises: Exercise[] = [];
   getListExercises().forEach((value) => {
-    listExercises[value.identity.id] = value;
+    let exercise: Exercise = JSON.parse(JSON.stringify(value));
+    exercise.identity.id = "new-exercise-".concat(Math.random().toString());
+    listExercises.push(exercise);
   });
   return listExercises;
 }
@@ -21,25 +24,30 @@ interface ExerciseBankDragDropProps {
     exercisePosition: number;
   }) => void;
   setSelectedMenu: (value: string) => void;
+  selectedExercise: number;
+  setSelectedExercise: (value: number) => void;
+  listExercises: Exercise[];
+  setListExercises: (value: Exercise[]) => void;
+  draggingExercises: boolean;
 }
 
 export function ExerciseBankDragDrop({
   exerciseID,
   setExerciseID,
   setSelectedMenu,
+  selectedExercise,
+  setSelectedExercise,
+  draggingExercises,
+  listExercises,
+  setListExercises,
 }: ExerciseBankDragDropProps) {
-  const [listExercises, setListExercises] = useState<{
-    [key: string]: Exercise;
-  }>({});
-  const [selectedExercise, setSelectedExercise] = useState("");
-
   useEffect(() => {
     setListExercises(convertListExercises());
   }, []);
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 ">
+      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
           <label className="flex text-title-1">Exercícios</label>
           <button
@@ -49,20 +57,28 @@ export function ExerciseBankDragDrop({
             X
           </button>
         </div>
-        {Object.keys(listExercises).map((key, index) => (
-          <ShowExerciseDragDrop
-            key={index}
-            listExerciseButtons={true}
-            groupPosition={exerciseID.groupPosition}
-            exercise={listExercises[key]}
-            selectedMenu={"dd-list-exercises"}
-            setSelectedMenu={setSelectedMenu}
-            exerciseIsSelected={key === selectedExercise}
-            setSelectedExercise={(value) => setSelectedExercise(value)}
-            exercisePosition={index}
-            setExerciseID={setExerciseID}
-          ></ShowExerciseDragDrop>
-        ))}
+        <SortableContext
+          items={listExercises.map((exercise) => exercise.identity.id)}
+        >
+          {listExercises.map((exercise, index) => (
+            <ShowExerciseDragDrop
+              key={index}
+              listExerciseButtons={true}
+              groupPosition={exerciseID.groupPosition}
+              exercise={exercise}
+              selectedMenu={"dd-list-exercises"}
+              setSelectedMenu={setSelectedMenu}
+              exerciseIsSelected={index === selectedExercise}
+              setSelectedExercise={(value) => {
+                if (value === "") setSelectedExercise(-1);
+                else setSelectedExercise(index);
+              }}
+              exercisePosition={index}
+              setExerciseID={setExerciseID}
+              draggingExercises={draggingExercises}
+            ></ShowExerciseDragDrop>
+          ))}
+        </SortableContext>
       </div>
     </>
   );

@@ -21,6 +21,8 @@ import {
   TextIcon,
   WorldSearchIcon,
 } from "../SVGImages/SVGImages";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;
@@ -38,6 +40,7 @@ interface ShowExerciseDragDropProps {
     groupPosition: number;
     exercisePosition: number;
   }) => void;
+  draggingExercises: boolean;
 }
 
 export function ShowExerciseDragDrop({
@@ -50,22 +53,42 @@ export function ShowExerciseDragDrop({
   exerciseIsSelected,
   setSelectedExercise,
   setExerciseID,
+  draggingExercises,
 }: ShowExerciseDragDropProps) {
-  const [typeLabel, setTypeLabel] = useState(<></>);
-  const [visibility, setVisibility] = useState(<></>);
-  const [preview, setPreview] = useState(<></>);
-  const { testState, dispatch } = useEditTestContext();
-
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
     position: (exercisePosition + 1).toString(),
     context: { context: ExerciseContext.PREVIEW },
   };
-
+  const [typeLabel, setTypeLabel] = useState(<></>);
+  const [visibility, setVisibility] = useState(<></>);
+  const [preview, setPreview] = useState(<></>);
+  const { testState, dispatch } = useEditTestContext();
   const [value, setValue] = useState(
     (exercise.identity.cotation ?? 0).toString()
   );
   const [changeCotationIsActive, setChangeCotationIsActive] = useState(false);
+
+  const {
+    attributes,
+    setNodeRef,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: exercise.identity.id,
+    data: {
+      type: listExerciseButtons ? "add" : "exercise", // exercise from ExerciseBankDragDrop/EditTestDragDrop
+      exercise: exercise,
+      groupPosition: listExerciseButtons ? -1 : groupPosition, // exercise on ExerciseBankDragDrop / exercise group position
+      exercisePosition: exercisePosition, // exercise position on listExercise / selected exercise position
+    },
+  });
+
+  useEffect(() => {
+    setValue((exercise.identity.cotation ?? 0).toString());
+  }, [exercise]);
 
   function handleChange(value: string) {
     const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
@@ -186,16 +209,45 @@ export function ShowExerciseDragDrop({
     }
   }, [exercise]);
 
+  if (isDragging)
+    return (
+      <div
+        {...attributes}
+        ref={setNodeRef}
+        style={
+          listExerciseButtons
+            ? {}
+            : {
+                transition,
+                transform: CSS.Translate.toString(transform),
+              }
+        }
+        {...listeners}
+        className="flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-3-2"
+      />
+    );
+
   return (
     <div
+      {...attributes}
+      ref={setNodeRef}
+      style={
+        draggingExercises && !listExerciseButtons
+          ? {
+              transition,
+              transform: CSS.Translate.toString(transform),
+            }
+          : {}
+      }
       className={`${
         exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2 group-hover`}
+      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-3-2 group`}
+      {...listeners}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
           <button
-            className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
+            className="flex flex-col gap-1.5 h-14 justify-center"
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
@@ -215,14 +267,14 @@ export function ShowExerciseDragDrop({
                 : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-3-2 border-gray-1`}
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-around items-end">
               {visibility}
               {typeLabel}
             </div>
@@ -238,7 +290,7 @@ export function ShowExerciseDragDrop({
                       testState.test.groups[groupPosition].exercises.length,
                   });
                   dispatch({
-                    type: EditTestActionKind.ADD_EXERCISE,
+                    type: EditTestActionKind.ADD_NEW_EXERCISE,
                     exercise: {
                       groupPosition: groupPosition,
                       exercisePosition:
@@ -300,33 +352,32 @@ export function ShowExerciseDragDrop({
             )}
           </div>
 
-          {!listExerciseButtons ? (
-            changeCotationIsActive ? (
+          {!listExerciseButtons &&
+            (changeCotationIsActive ? (
               <input
                 id="cotation"
                 className="flex ml-4 w-14 px-2 py-1 rounded-lg bg-input-2"
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter") return;
+                  handleBlur();
+                }}
                 onBlur={() => handleBlur()}
                 autoFocus
               />
             ) : (
               <div
-                className="flex ml-4 min-w-fit rounded-lg appearance-none bg-3-1 bg-input-1"
+                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-3-1 bg-input-1"
                 onClick={() => handleClick()}
               >
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1">
                   {value} pts
                 </p>
               </div>
-            )
-          ) : null}
+            ))}
         </div>
-        <div
-          className={`${
-            !exerciseIsSelected ? "hidden" : "flex"
-          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
-        >
+        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1">
           <div className="bg-yellow-600 tag-exercise">Matemática</div>
           <div className="bg-blue-600 tag-exercise">4º ano</div>
           <div className="bg-green-600 tag-exercise">escolinha</div>

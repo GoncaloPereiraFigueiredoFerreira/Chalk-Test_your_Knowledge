@@ -92,8 +92,8 @@ export function ExerciseBankPage() {
 
   return (
     <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
-      <div className="flex flex-row divide-x-2 border-gray-2-2">
-        <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
+      <div className="flex flex-row divide-x-2 border-gray-2-2 w-full">
+        <div className="flex flex-col w-full h-screen overflow-auto px-8 pb-8 bg-2-1">
           <Searchbar></Searchbar>
           <ListExercises
             setExerciseID={(value) => setExerciseID(value)}
@@ -103,7 +103,7 @@ export function ExerciseBankPage() {
         </div>
         <div
           className={`${
-            editMenuIsOpen ? "w-full" : "w-0"
+            editMenuIsOpen ? "w-full px-8 pb-8" : "w-0"
           } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
         >
           {editMenuIsOpen ? (
