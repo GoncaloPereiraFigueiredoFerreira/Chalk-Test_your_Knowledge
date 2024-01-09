@@ -565,7 +565,6 @@ public class SeedService implements ISeedService{
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
-
         exercise2.setRubric(exerciseRubric);
         exercise2.setSolution(exerciseSolution);
         exercise2.setTags(new HashSet<>(tags));
@@ -612,7 +611,7 @@ public class SeedService implements ISeedService{
         exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
-        exercise.setStatement(new ExerciseStatement("Selecione a opção que completa corretamente a frase seguinte.\r\n" + //
+        exercise2.setStatement(new ExerciseStatement("Selecione a opção que completa corretamente a frase seguinte.\r\n" + //
                 "Na segunda quadra, o sujeito poético pretende enfatizar","",""));
         exercise2.setTitle("Pergunta 6");
         exercise2.setSpecialist(new Specialist(specialistId));
