@@ -32,4 +32,7 @@ public interface TestResolutionDAO extends JpaRepository<TestResolution,String> 
 
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM TestResolution r WHERE r.id = :testId")
     boolean existsTestResolutions(@Param("testId") String testId);
+
+    @Query(value = "SELECT DISTINCT studentid FROM test_resolution WHERE testid = :testId", nativeQuery = true)
+    List<String> getDistinctStudentsForTest(@Param("testId") String testId);
 }
