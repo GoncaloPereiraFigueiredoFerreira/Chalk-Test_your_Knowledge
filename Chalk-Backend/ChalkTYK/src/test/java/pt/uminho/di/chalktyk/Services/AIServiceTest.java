@@ -30,14 +30,7 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Specialist;
-import pt.uminho.di.chalktyk.services.IAIService;
-import pt.uminho.di.chalktyk.services.ICoursesService;
-import pt.uminho.di.chalktyk.services.IExercisesService;
-import pt.uminho.di.chalktyk.services.IInstitutionsService;
-import pt.uminho.di.chalktyk.services.ISpecialistsService;
-import pt.uminho.di.chalktyk.services.IStudentsService;
-import pt.uminho.di.chalktyk.services.ITagsService;
-import pt.uminho.di.chalktyk.services.ITestsService;
+import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.ApiConnectionException;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -55,12 +48,12 @@ public class AIServiceTest {
     private final IInstitutionsService institutionsService;
     private final IStudentsService studentsService;
     private final ITagsService tagsService;
-    private final Seed seed;
+    private final ISeedService seedService;
 
     @Autowired
-    public AIServiceTest(IAIService aiService,ICoursesService coursesService, ISpecialistsService specialistsService,
-            IExercisesService exercisesService, IInstitutionsService institutionsService,
-            IStudentsService studentsService,ITestsService testsService ,ITagsService iTagsService) {
+    public AIServiceTest(IAIService aiService, ICoursesService coursesService, ISpecialistsService specialistsService,
+                         IExercisesService exercisesService, IInstitutionsService institutionsService,
+                         IStudentsService studentsService , ITagsService iTagsService, ISeedService seedService) {
         this.aiService = aiService;
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
@@ -68,16 +61,16 @@ public class AIServiceTest {
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.tagsService = iTagsService;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, iTagsService, exercisesService);
+        this.seedService = seedService;
     }
 
     private String specialistId,courseId,studentId;
 
     @BeforeEach
     public void setup() throws BadInputException {
-        this.specialistId = seed.addSpecialistChang();
-        this.courseId = seed.addCourse(specialistId);
-        this.studentId = seed.addStudentAnnie();
+        this.specialistId = seedService.addSpecialistChang();
+        this.courseId = seedService.addCourse(specialistId);
+        this.studentId = seedService.addStudentAnnie();
     }
 
     private ExerciseSolution createOASolution(){

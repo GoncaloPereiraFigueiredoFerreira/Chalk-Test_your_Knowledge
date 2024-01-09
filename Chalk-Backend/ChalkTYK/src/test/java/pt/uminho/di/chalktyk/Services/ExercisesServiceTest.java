@@ -46,19 +46,19 @@ public class ExercisesServiceTest {
     private final IInstitutionsService institutionsService;
     private final IStudentsService studentsService;
     private final ITagsService tagsService;
-    private final Seed seed;
+    private final ISeedService seedService;
     private final EntityManager entityManager;
 
     @Autowired
-    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITestsService testsService, ITagsService tagsService, EntityManager entityManager){
+    public ExercisesServiceTest(ICoursesService coursesService, ISpecialistsService specialistsService, IExercisesService exercisesService, IInstitutionsService institutionsService, IStudentsService studentsService, ITagsService tagsService, ISeedService seedService, EntityManager entityManager){
         this.coursesService = coursesService;
         this.specialistsService = specialistsService;
         this.exercisesService = exercisesService;
         this.institutionsService = institutionsService;
         this.studentsService = studentsService;
         this.tagsService = tagsService;
+        this.seedService = seedService;
         this.entityManager = entityManager;
-        this.seed = new Seed(institutionsService,studentsService,specialistsService,coursesService,testsService, tagsService,exercisesService);
     }
 
 
@@ -74,12 +74,12 @@ public class ExercisesServiceTest {
 
     @BeforeEach
     public void setup() throws BadInputException {
-        this.specialistId = seed.addSpecialistChang();
-        this.specialist2Id = seed.addSpecialistWhitman();
-        this.courseId = seed.addCourse(specialistId);
-        this.course2Id = seed.addCourse2(specialist2Id);
-        this.studentId = seed.addStudentAnnie();
-        this.student2Id = seed.addStudentGeorge();
+        this.specialistId = seedService.addSpecialistChang();
+        this.specialist2Id = seedService.addSpecialistWhitman();
+        this.courseId = seedService.addCourse(specialistId);
+        this.course2Id = seedService.addCourse2(specialist2Id);
+        this.studentId = seedService.addStudentAnnie();
+        this.student2Id = seedService.addStudentGeorge();
     }
 
     /* ******* CREATE METHODS ******* */

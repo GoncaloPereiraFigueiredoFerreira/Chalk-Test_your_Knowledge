@@ -57,13 +57,13 @@ public class Test implements Serializable {
 	@Column(name="Title")
 	private String title;
 
-	@Column(name="GlobalInstructions")
+	@Column(name="GlobalInstructions",columnDefinition = "text")
 	private String globalInstructions;
 
 	@Column(name="Points")
 	private Float globalPoints;
 
-	@Column(name="Conclusion")
+	@Column(name = "Conclusion",columnDefinition = "text")
 	private String conclusion;
 
 	@Column(name="CreationDate")
