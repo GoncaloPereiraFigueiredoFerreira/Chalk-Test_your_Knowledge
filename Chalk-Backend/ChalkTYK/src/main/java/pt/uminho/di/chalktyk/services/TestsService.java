@@ -361,8 +361,12 @@ public class TestsService implements ITestsService {
         return newTest.getId();
     }
 
+    /**
+     * Updates test basic properties: title, conclusion, globalInstructions, publishDate and visibility.
+     * @param body body containing the new basic properties.
+     */
     @Transactional(rollbackFor = ServiceException.class)
-    public void updateTest(String testId, Test body) throws NotFoundException, BadInputException {
+    public void updateTestBasicProperties(String testId, Test body) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
@@ -370,14 +374,48 @@ public class TestsService implements ITestsService {
         if(body == null)
             throw new BadInputException("Couldn't update test: new body is null");
 
-        test.setTitle(body.getTitle());
-        test.setGlobalInstructions(body.getGlobalInstructions());
-        test.setConclusion(body.getConclusion());
+        body.setId(testId);
+        body.setCreationDate(test.getCreationDate());
+        body.copyBasicDataTo(test);
+        test.verifyProperties();
         testDAO.save(test);
-        _updateTestPublishDate(test, body.getPublishDate());
-        _updateTestVisibility(test, body.getVisibility());
-        if (body.getGroups() != null)
-            _updateTestGroups(test, body.getGroups());
+    }
+
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public void updateTestExercisePoints(String testId, int groupIndex, String exerciseId, float points) throws NotFoundException, BadInputException {
+        if(points <= 0.0f)
+            throw new BadInputException("Couldn't update test: Points must be positive.");
+
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
+
+        if(exerciseId == null)
+            throw new BadInputException("Couldn't update test: exercise is null.");
+
+        List<TestGroup> testGroups = test.getGroups();
+        if(testGroups == null || groupIndex >= testGroups.size())
+            throw new BadInputException("Couldn't update test: invalid group index.");
+
+        TestGroup group = testGroups.get(groupIndex);
+        assert group != null;
+
+        List<TestExercise> groupExercises = group.getExercises();
+        if(groupExercises == null)
+            throw new BadInputException("Couldn't update test: exercise does not belong to the given group.");
+
+        for(TestExercise te : groupExercises){
+            if(te.getId().equals(exerciseId)){
+                float pointsDiff = points - te.getPoints();
+                te.setPoints(points); // update exercise points
+                test.setGlobalPoints(test.getGlobalPoints() + pointsDiff); // update test points
+                group.setGroupPoints(group.getGroupPoints() + pointsDiff); // update group points
+                break;
+            }
+        }
+
+        testDAO.save(test);
     }
 
     @Override

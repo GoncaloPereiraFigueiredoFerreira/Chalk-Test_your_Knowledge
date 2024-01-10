@@ -1,6 +1,10 @@
 package pt.uminho.di.chalktyk.apis;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
@@ -21,9 +25,6 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -228,9 +229,13 @@ public class TestsApiController implements TestsApi {
         }
     }
 
-    /*
+
+    /**
+     * Updates test basic properties: title, conclusion, globalInstructions, publishDate and visibility.
+     * @param body body containing the new basic properties.
+     */
     @Override
-    public ResponseEntity<Void> updateTest(String testId, Test body, String jwt) {
+    public ResponseEntity<Void> updateTestBasicProperties(String testId, Test body, String jwt) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);
@@ -239,7 +244,7 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
-                    testsService.updateTest(testId);
+                    testsService.updateTestBasicProperties(testId, body);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
@@ -247,10 +252,33 @@ public class TestsApiController implements TestsApi {
             return new ExceptionResponseEntity<Void>().createRequest(
                     HttpStatus.UNAUTHORIZED.value(),
                     "User does not have permission to delete the test.");
-        } catch (UnauthorizedException | NotFoundException e) {
+        } catch (UnauthorizedException | NotFoundException | BadInputException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
         }
-    }*/
+    }
+
+    @Override
+    public ResponseEntity<Void> updateTestExercisePoints( String testId, int groupIndex, String exerciseId, float points, String jwt){
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            if(role.equals("SPECIALIST")) {
+                if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
+                    testsService.updateTestExercisePoints(testId, groupIndex, exerciseId, points);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "User does not have permission to delete the test.");
+        } catch (UnauthorizedException | NotFoundException | BadInputException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
 
     public ResponseEntity<Void> automaticCorrection(String testId, String correctionType, String jwt) {
         try {

@@ -173,21 +173,36 @@ public interface TestsApi {
                                              @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody DuplicateTestDTO duplicateTestDTO);
 
 
-    /*
-    @Operation(summary = "Update a test", description = "This method is used to update an existing test. Check the schema", tags = {"tests"})
+
+    @Operation(summary = "Update the basic properties of a test.", description = "Updates test basic properties: title, conclusion, globalInstructions, publishDate and visibility.", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Test updated successfully."),
             @ApiResponse(responseCode = "400", description = "Bad input."),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
-    @RequestMapping(value = "/{testId}",
+    @RequestMapping(value = "/{testId}/basicProperties",
             consumes = {"application/json"},
             method = RequestMethod.PUT)
-    ResponseEntity<Void> updateTest(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
-                                    @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody Test body,
-                                    @CookieValue("chalkauthtoken") String jwt);*/
+    ResponseEntity<Void> updateTestBasicProperties(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
+                                                   @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody Test body,
+                                                   @CookieValue("chalkauthtoken") String jwt);
 
+    @Operation(summary = "Update the points of a test exercise.", description = "", tags = {"tests"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Test updated successfully."),
+            @ApiResponse(responseCode = "400", description = "Bad input."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Test not found.")
+    })
+    @RequestMapping(value = "/{testId}/exercise/points",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> updateTestExercisePoints(
+            @Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
+            @Parameter(in = ParameterIn.QUERY, description = "Group index", required = true, schema = @Schema()) @RequestParam("groupIndex") int groupIndex,
+            @Parameter(in = ParameterIn.QUERY, description = "Exercise identifier", required = true, schema = @Schema()) @RequestParam("exerciseId") String exerciseId,
+            @Parameter(in = ParameterIn.QUERY, description = "Points", required = true, schema = @Schema()) @RequestParam("points") float points,
+            @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Issue the automatic correction of the test resolutions.", description = "", tags = {"tests"})
     @ApiResponses(value = {
