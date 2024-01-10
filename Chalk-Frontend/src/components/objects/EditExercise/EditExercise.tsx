@@ -26,6 +26,7 @@ import { IoClose } from "react-icons/io5";
 //------------------------------------//
 
 export enum EditActionKind {
+  CHANGE_TITLE = "CHANGE_TITLE",
   CHANGE_STATEMENT = "CHANGE_STATEMENT",
   ADD_IMG = "ADD_IMG",
   REMOVE_IMG = "REMOVE_IMG",
@@ -70,6 +71,21 @@ function EditReducer(state: EditState, action: EditAction) {
   };
 
   switch (action.type) {
+    case EditActionKind.CHANGE_TITLE:
+      if (action.dataString) {
+        return {
+          ...state,
+          exercise: {
+            ...exercise,
+            base: {
+              ...exercise.base,
+              title: action.dataString,
+            },
+          },
+        } as EditState;
+      }
+      throw new Error("Invalid action");
+
     case EditActionKind.CHANGE_STATEMENT:
       let newStatement1: ExerciseHeader = {
         ...exercise.base.statement,
@@ -334,6 +350,22 @@ export function EditExercise({
             context: ExerciseContext.PREVIEW,
           }}
         ></ExerciseComponent>
+        <div className="flex gap-4 px-4">
+          <strong>Título:</strong>
+          <div className="px-4">
+            <input
+              className="rounded-lg bg-input-2"
+              placeholder="Novo Teste"
+              value={state.exercise.base.title}
+              onChange={(e) =>
+                editDispatch({
+                  type: EditActionKind.CHANGE_TITLE,
+                  dataString: e.target.value,
+                } as EditAction)
+              }
+            />
+          </div>
+        </div>
         <EditHeader dispatch={editDispatch} state={state.exercise} />
         <h3 className="font-medium text-xl">Detalhes do Exercício:</h3>
         <ExerciseComponent
