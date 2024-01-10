@@ -37,4 +37,8 @@ public class Tag {
 				", path='" + path + '\'' +
 				'}';
 	}
+
+	public Tag clone(){
+		return new Tag(id, name, path);
+	}
 }
