@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Root, createRoot } from "react-dom/client";
+import { Root } from "react-dom/client";
 import { MdOutlineAttachFile } from "react-icons/md";
 import { FaBold } from "react-icons/fa";
 import { FaItalic } from "react-icons/fa";
@@ -33,15 +33,11 @@ export function TextareaBlock({
 
   useEffect(() => {
     if (pRef.current) {
-      if (!rootRef.current) {
-        rootRef.current = createRoot(pRef.current);
-      }
+      pRef.current.innerHTML = value ?? "";
 
-      const root = rootRef.current;
-      root.render(textToHTML(value ?? ""));
       setText(value ? value : "");
     }
-  }, [id]);
+  }, [value]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -181,9 +177,6 @@ export function TextareaBlock({
           ) : null}
         </div>
       </div>
-      <div className="bg-yellow-400">id: {id}</div>
-      <div className="bg-red-400">value: {value}</div>
-      <div className="bg-lime-400">text: {text}</div>
     </>
   );
 }
