@@ -25,15 +25,23 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
     }
 
     public boolean canStudentGetExercise(String studentId, Visibility vis, String courseId, String institutionId) {
+        if(vis == null)
+            return false;
         switch (vis){
             case PRIVATE, TEST, DELETED:
                 return false;
             case INSTITUTION:
-                try { return institutionsService.isStudentOfInstitution(studentId, institutionId); }
-                catch (NotFoundException e) { return false; }
+                try {
+                    if(institutionId==null)
+                        return false;
+                    return institutionsService.isStudentOfInstitution(studentId, institutionId);
+                } catch (NotFoundException e) { return false; }
             case COURSE:
-                try { return coursesService.checkStudentInCourse(courseId, studentId); }
-                catch (NotFoundException e) { return false; }
+                try {
+                    if(courseId==null)
+                        return false;
+                    return coursesService.checkStudentInCourse(courseId, studentId);
+                } catch (NotFoundException e) { return false; }
             default:
                 return true;
         }
@@ -77,6 +85,9 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
         // specialist is the owner of the exercise
         if(specialistId.equals(ownerId))
             return true;
+
+        if(vis == null)
+            return false;
 
         switch (vis){
             case TEST, PRIVATE, DELETED:
@@ -126,6 +137,9 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
         // specialist is the owner of the exercise
         if(specialistId.equals(ownerId))
             return true;
+
+        if(vis == null)
+            return false;
 
         // Aside from the exercise owner, only specialists from the same course/institution can update the exercise, if the visibility is set to COURSE or INSTITUTION respectively.
         switch (vis){

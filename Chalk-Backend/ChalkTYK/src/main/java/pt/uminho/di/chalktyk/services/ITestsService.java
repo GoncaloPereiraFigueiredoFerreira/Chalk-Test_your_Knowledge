@@ -3,8 +3,6 @@ package pt.uminho.di.chalktyk.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
@@ -34,7 +32,7 @@ public interface ITestsService {
      *                      *                         'false' does not verify database logic
      * @return page of tests
      **/
-     Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException;
+     List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException;
 
     /**
      * Get test using its id

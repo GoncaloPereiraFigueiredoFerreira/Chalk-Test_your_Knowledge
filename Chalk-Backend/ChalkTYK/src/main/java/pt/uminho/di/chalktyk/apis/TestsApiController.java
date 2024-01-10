@@ -48,12 +48,13 @@ public class TestsApiController implements TestsApi {
         Visibility vis = test.getVisibility();
         String courseId = test.getCourseId();
         String institutionId = test.getInstitutionId();
+        String ownerId = test.getSpecialistId();
 
         if(userRole.equals("STUDENT")) {
             if (exercisesTestsAuthorization.canStudentGetTest(userId, vis, courseId, institutionId))
                 return test;
         }else if (userRole.equals("SPECIALIST")) {
-            if (exercisesTestsAuthorization.canSpecialistGetTest(userId, test.getId(), vis, courseId, institutionId))
+            if (exercisesTestsAuthorization.canSpecialistGetTest(userId, ownerId, vis, courseId, institutionId))
                 return test;
         }
         return null;
