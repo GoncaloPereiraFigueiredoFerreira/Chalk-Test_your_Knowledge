@@ -52,6 +52,7 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import javax.swing.*;
 
 @SpringBootTest
+@Transactional
 public class Seed {
     private final ISeedService seedService;
 

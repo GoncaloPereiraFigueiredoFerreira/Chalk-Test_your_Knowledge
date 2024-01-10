@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.checkerframework.checker.units.qual.g;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
@@ -44,8 +42,6 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
-import pt.uminho.di.chalktyk.models.tests.DeliverDateTest;
-import pt.uminho.di.chalktyk.models.tests.LiveTest;
 import pt.uminho.di.chalktyk.models.tests.TestGroup;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;

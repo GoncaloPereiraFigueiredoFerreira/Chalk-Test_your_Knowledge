@@ -12,6 +12,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import java.util.List;
 
 @SpringBootTest
+@Transactional
 public class TestTags {
 
     private final ITagsService iTagsService;

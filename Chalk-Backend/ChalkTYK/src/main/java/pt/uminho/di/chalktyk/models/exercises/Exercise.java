@@ -46,6 +46,7 @@ import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 				@NamedAttributeNode("tags")
 		}
 )
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Exercise {
 	@Id
 	@Column(name = "ID")

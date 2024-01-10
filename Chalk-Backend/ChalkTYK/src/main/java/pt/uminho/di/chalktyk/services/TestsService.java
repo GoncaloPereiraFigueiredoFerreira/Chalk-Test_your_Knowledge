@@ -890,7 +890,7 @@ public class TestsService implements ITestsService {
             throw new NotFoundException("Can't start test: couldn't find student with id '" + studentId + "'");
 
         TestResolution resolution = new TestResolution(null,
-                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
                 null,
                 0,
                 null,

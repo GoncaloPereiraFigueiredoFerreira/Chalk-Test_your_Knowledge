@@ -14,6 +14,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 @SpringBootTest
+@Transactional
 public class StudentsServiceTest {
     private final IStudentsService studentsService;
     private final UserDAO userDAO;
