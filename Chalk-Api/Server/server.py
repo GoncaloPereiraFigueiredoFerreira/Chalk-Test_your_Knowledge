@@ -139,7 +139,7 @@ def create_open():
 
 @api.route('/create_true_false', methods=['GET'])
 def create_true_false():
-    req = request.json
+    req = request.get_json()
 
     h_text = hash(req["Text"])
     user_input = ""
@@ -181,6 +181,7 @@ def parse_chat(chat,topics):
 {
     "Topics": [str] 
     "Chat": [str] 
+    "StudentID": str
 }
 
 {
@@ -192,13 +193,25 @@ def parse_chat(chat,topics):
 def get_oral():
     req = request.get_json()
 
+    id = req["Topics"] + [req["StudentID"]]
+    h = str(hash(str(id)))
+    prev_chat = cache.get(h)
 
-    prev = parse_chat(req["Chat"],req["Topics"])
+    if prev_chat: prev_chat = json.loads(prev_chat)
+    else: prev_chat = []
+
+    if (prev_chat and prev_chat[:-1] == req["Chat"]):
+        ret = {"Question": prev_chat[-1]}
+    else:
+        prev = parse_chat(req["Chat"],req["Topics"])
         
-    resp = api_ai.send_oral(prev)
-    prev.append({"role":"assistant","content":resp})
+        resp = api_ai.send_oral(prev)
+        prev.append({"role":"assistant","content":resp})
+   
+        req["Chat"].append(resp)
 
-    ret = {"Question":resp}
+        cache.set(h,json.dumps(req["Chat"], ensure_ascii=False),cache_timeout)
+        ret = {"Question":resp}
 
     return ret
 

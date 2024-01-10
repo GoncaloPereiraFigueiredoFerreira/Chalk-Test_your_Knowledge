@@ -13,7 +13,6 @@ model = "gpt-3.5-turbo"
 requests_sem = Semaphore(int(os.getenv("N_REQ",3)))  
 
 def send_request(message,temperature = 0,presence = 0,frequency = 0):
-    print(message,flush=True)
     requests_sem.acquire()
     tokens = 1000 #Todo 
 
