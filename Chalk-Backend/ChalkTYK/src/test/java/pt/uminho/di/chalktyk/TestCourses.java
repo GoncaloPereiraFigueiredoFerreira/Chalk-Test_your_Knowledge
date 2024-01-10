@@ -17,6 +17,7 @@ import pt.uminho.di.chalktyk.services.ISpecialistsService;
 import pt.uminho.di.chalktyk.services.IStudentsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-@Transactional
+@Transactional(noRollbackFor = ServiceException.class)
 public class TestCourses {
     private final EntityManager entityManager;
     private final IInstitutionsService institutionsService;

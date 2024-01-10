@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
+import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -17,26 +18,6 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -105,10 +86,12 @@ public class Test implements Serializable {
 	@Setter(AccessLevel.NONE)
 	private String institutionId;
 
-
 	@Type(JsonBinaryType.class)
     @Column(name = "Groups", columnDefinition = "jsonb")
 	private List<TestGroup> groups;
+
+	@Transient
+	private List<Tag> tags = new ArrayList<>();
 
 	public void setCourse(Course course) {
 		this.course = course;

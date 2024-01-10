@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.Hibernate;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -91,8 +92,11 @@ public class TestsService implements ITestsService {
         // turning groups to null
         List<Test> tmpTests = new ArrayList<>();
         for (Test t: tests){
-            tmpTests.add(new Test(t.getId(), t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(), 
-                        t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), null));
+            Test tmpTest = new Test(t.getId(), t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(),
+                    t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), null);
+            List<Tag> tmpTags = testTagsDAO.getTestTags(t.getId()).stream().map(tt -> tt.getTestTagPK().getTag().clone()).toList();
+            tmpTest.setTags(tmpTags);
+            tmpTests.add(tmpTest);
         }
 
         Page<Test> resTests = new PageImpl<>(tmpTests);
@@ -123,8 +127,14 @@ public class TestsService implements ITestsService {
             }
         }
 
-        return new Test(testId, t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(), 
-                        t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), newGroups); 
+        Test ret = new Test(testId, t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(),
+                t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), newGroups);
+
+        // get tags
+        List<Tag> tags = testTagsDAO.getTestTags(t.getId()).stream().map(tt -> tt.getTestTagPK().getTag().clone()).toList();
+        ret.setTags(tags);
+
+        return ret;
     }
 
     private Test _getTestById(String testId) throws NotFoundException {
