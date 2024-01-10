@@ -830,20 +830,26 @@ public class TestsService implements ITestsService {
                 if (!pair.getResolutionId().isEmpty()){
                     try {
                         exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
-                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
-                        if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
-                            isRevised = false;
-                            Float newPoints = exeRes.getPoints() * mapExePoints.get(entry.getKey()) / 100;
-                            pair.setPoints(newPoints);
-                            resMap.put(entry.getKey(), pair);
-
-                        // calculate points
-                        points += newPoints;
                     }
                     catch (BadInputException | UnauthorizedException ignored){
                         // If an exercise can't be corrected, using the chosen correctionType,
                         // it just is not corrected.
                     }
+
+                    ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
+                    if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
+                        isRevised = false;
+                    Float newPoints;
+                    if (exeRes.getPoints() != null)
+                        newPoints = exeRes.getPoints() * mapExePoints.get(entry.getKey()) / 100;
+                    else
+                        newPoints = 0.0F;
+
+                    pair.setPoints(newPoints);
+                    resMap.put(entry.getKey(), pair);
+
+                    // calculate points
+                    points += newPoints;
                 }
             }
             trg.setResolutions(resMap);
