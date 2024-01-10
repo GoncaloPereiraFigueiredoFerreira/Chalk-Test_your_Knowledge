@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class StudentsService implements IStudentsService{
      * @throws BadInputException if any property of the student is not valid.
      */
     @Override
-    @Transactional(rollbackFor = {BadInputException.class})
+    @Transactional(rollbackFor = ServiceException.class)
     public String createStudent(Student student) throws BadInputException {
         if (student == null)
             throw new BadInputException("Cannot create a student with a 'null' body.");

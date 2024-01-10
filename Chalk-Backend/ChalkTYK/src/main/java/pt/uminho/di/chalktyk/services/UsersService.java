@@ -1,7 +1,9 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -51,6 +53,7 @@ public class UsersService implements IUsersService{
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateBasicProperties(String userId, String name, String email, String photoPath, String description) throws NotFoundException, BadInputException {
         User user = getUserById(userId);
 

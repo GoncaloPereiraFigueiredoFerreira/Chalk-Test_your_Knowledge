@@ -73,6 +73,7 @@ public class InstitutionsService implements IInstitutionsService {
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateInstitutionById(String institutionId, Institution body) {
         if (body != null){
             Optional<Institution> obj = idao.findById(institutionId);
@@ -99,6 +100,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @param specialistsIds list of specialists identifiers
      */
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void addSpecialistsToInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException { //TODO test
         if(!existsInstitutionById(institutionId))
             throw new NotFoundException("Could not add specialists: Institution not found.");
@@ -116,6 +118,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @param studentsIds   list of students identifiers
      */
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void addStudentsToInstitution(String institutionId, List<String> studentsIds) throws NotFoundException { //TODO test
         if(!idao.existsById(institutionId))
             throw new NotFoundException("Could not add students: Institution not found.");
@@ -132,6 +135,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @param specialistsIds list of specialists identifiers
      */
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void removeSpecialistsFromInstitution(String institutionId, List<String> specialistsIds) throws NotFoundException { //TODO test
         if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
@@ -148,6 +152,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @param studentsIds   list of students identifiers
      */
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void removeStudentsFromInstitution(String institutionId, List<String> studentsIds) throws NotFoundException {  //TODO test
         if(!idao.existsById(institutionId))
             throw new NotFoundException("Institution not found.");
@@ -250,7 +255,6 @@ public class InstitutionsService implements IInstitutionsService {
      */
 
     @Override
-    @Transactional
     public Page<InstitutionManager> getInstitutionManagersFromInstitution(String institutionId, int page, int itemsPerPage) throws NotFoundException { // TODO test
         Pageable pageable = PageRequest.of(page, itemsPerPage);
 
@@ -341,7 +345,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @return number of specialists an institution has
      */
     @Override
-    public int countInstitutionSpecialists(String institutionId) {  //TODO test
+    public int countInstitutionSpecialists(String institutionId) {
         return idao.countInstitutionSpecialists(institutionId);
     }
 
@@ -350,7 +354,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @return number of institution managers an institution has
      */
     @Override
-    public int countInstitutionManagersFromInstitution(String institutionId) {  //TODO test
+    public int countInstitutionManagersFromInstitution(String institutionId) {
         return idao.countInstitutionManagersFromInstitution(institutionId);
     }
 
@@ -377,7 +381,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @throws BadInputException if any property of the manager is not valid.
      */
     @Override
-    @Transactional(rollbackFor = {BadInputException.class})
+    @Transactional(rollbackFor = ServiceException.class)
     public String createInstitutionManager(InstitutionManager manager, String institutionId) throws BadInputException, NotFoundException { //TODO test
         // check if manager is null
         if(manager == null)
@@ -411,7 +415,7 @@ public class InstitutionsService implements IInstitutionsService {
      * @throws BadInputException if any property of the institution or the manager is not valid.
      */
     @Override
-    @Transactional(rollbackFor = {BadInputException.class})
+    @Transactional(rollbackFor = ServiceException.class)
     public String createInstitutionAndManager(Institution institution, InstitutionManager manager) throws BadInputException {
         // check institution
         if(institution == null)

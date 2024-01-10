@@ -21,6 +21,7 @@ import pt.uminho.di.chalktyk.repositories.ExerciseRubricDAO;
 import pt.uminho.di.chalktyk.repositories.ExerciseSolutionDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
@@ -110,7 +111,7 @@ public class ExercisesService implements IExercisesService{
      */
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String createExercise(Exercise exercise, ExerciseSolution solution, ExerciseRubric rubric, List<String> tagsIds) throws BadInputException {
         if (exercise == null)
             throw new BadInputException("Cannot create exercise: Exercise is null");
@@ -205,7 +206,7 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the exercise was not found
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteExerciseById(String exerciseId) throws NotFoundException {
         // Checks if exercise exists
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
@@ -239,13 +240,13 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the exercise was not found
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException {
         return duplicateExerciseById(specialistId, exerciseId, null, null);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException {
         // checks if the specialist exists
         Specialist specialist = specialistsService.getSpecialistById(specialistId);
@@ -297,7 +298,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String updateAllOnExercise(String exerciseId, Exercise newBody, ExerciseRubric rubric, ExerciseSolution solution, List<String> tagsIds, Visibility visibility) throws NotFoundException, BadInputException {
         // gets exercise using the identifier, or throws not found exception
         Exercise exercise = _getExerciseById(exerciseId);
@@ -330,7 +331,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public Exercise updateExerciseBody(String exerciseId, Exercise newBody) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         exercise = _updateExerciseBody(exercise, newBody, false, false);
@@ -419,7 +420,7 @@ public class ExercisesService implements IExercisesService{
      * @param exerciseId   identifier of the exercise to be updated
      * @param tagsIds      new list of tags
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateExerciseTags(String exerciseId, List<String> tagsIds) throws BadInputException, NotFoundException {
         Exercise exercise = _getExerciseById(exerciseId);
@@ -444,7 +445,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateExerciseVisibility(String exerciseId, Visibility visibility) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _updateExerciseVisibility(exercise, visibility);
@@ -471,7 +472,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateExerciseCourse(String exerciseId, String courseId) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _updateExerciseCourse(exercise, courseId);
@@ -518,7 +519,7 @@ public class ExercisesService implements IExercisesService{
      * @throws BadInputException if the rubric is not correctly formulated
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _createExerciseRubric(exercise, rubric);
@@ -557,7 +558,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteExerciseRubric(String exerciseId) {
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
         if(exercise != null) {
@@ -571,13 +572,13 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateExerciseRubric(String exerciseId, ExerciseRubric rubric) throws BadInputException, NotFoundException {
         createExerciseRubric(exerciseId, rubric);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void createExerciseSolution(String exerciseId, ExerciseSolution solution) throws NotFoundException, BadInputException {
         Exercise exercise = _getExerciseById(exerciseId);
         _createExerciseSolution(exercise, solution);
@@ -623,13 +624,13 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateExerciseSolution(String exerciseId, ExerciseSolution exerciseSolution) throws NotFoundException, BadInputException {
         createExerciseSolution(exerciseId, exerciseSolution);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteExerciseSolution(String exerciseId) {
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
         if(exercise != null) {
@@ -643,14 +644,14 @@ public class ExercisesService implements IExercisesService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String getExerciseCourse(String exerciseId) throws NotFoundException {
         Exercise exercise = _getExerciseById(exerciseId);
         return exercise.getCourseId();
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String getExerciseInstitution(String exerciseId) throws NotFoundException {
         Exercise exercise = _getExerciseById(exerciseId);
         return exercise.getInstitutionId();
@@ -667,7 +668,7 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the exercise does not exist
      * @throws UnauthorizedException if the exercise does not support the requested correction type.
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException {
         // gets instance of the exercise and it's rubric
@@ -701,7 +702,7 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
      * @throws UnauthorizedException if the exercise does not support the requested correction type.
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException{
         // gets the identifier of the exercise
@@ -759,7 +760,7 @@ public class ExercisesService implements IExercisesService{
      * @param onlyNotRevised if 'true' only exercises resolutions that haven't been corrected will be returned.
      * @return list of pairs of a student and its latest exercise resolution for the requested exercise.
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised) {
         Page<ExerciseResolution> resolutions;
@@ -807,7 +808,7 @@ public class ExercisesService implements IExercisesService{
      *                           like the type of resolution does not match the type of the exercise
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
         // checks if exercise exists
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
@@ -955,7 +956,7 @@ public class ExercisesService implements IExercisesService{
      * @throws BadInputException if the comment is malformed or is null.
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void addCommentToExerciseResolution(String resolutionId, Comment comment) throws NotFoundException, BadInputException {
         // checks that the comment is valid
         if(comment == null)
@@ -979,7 +980,7 @@ public class ExercisesService implements IExercisesService{
      * @throws NotFoundException if the resolution does not exist
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void removeCommentFromExerciseResolution(String resolutionId) throws NotFoundException {
         ExerciseResolution resolution = getExerciseResolution(resolutionId);
         resolution.setComment(null);
@@ -994,13 +995,13 @@ public class ExercisesService implements IExercisesService{
      * @throws BadInputException if the points exceed the max points for the exercise.
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void manuallyCorrectExerciseResolution(String resolutionId, float points) throws NotFoundException, BadInputException {
         manuallyCorrectExerciseResolution(resolutionId, points, null);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void manuallyCorrectExerciseResolution(String resolutionId, float points, Comment comment) throws NotFoundException, BadInputException {
         // checks if the resolution exists
         ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);

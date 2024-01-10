@@ -1,7 +1,9 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
@@ -54,6 +56,7 @@ public class SeedService implements ISeedService{
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public boolean seed() throws BadInputException, NotFoundException, InterruptedException {
         // If the tag already exists. Assumes was already done previously.
         if(tagsService.existsTagByNameAndPath("Biologia", "/"))
@@ -260,7 +263,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Compare, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem à impossibilidade de usarem a mão esquerda.","",""));
@@ -269,7 +272,7 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
+        exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(null);
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
@@ -336,7 +339,7 @@ public class SeedService implements ISeedService{
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
-        exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("A forma como pai e filha são tratados no hotel permite concluir que são clientes habituais.\r\n" + //
@@ -346,7 +349,7 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
+        exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(null);
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
@@ -418,7 +421,7 @@ public class SeedService implements ISeedService{
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
-        exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Explique em que medida se pode afirmar que as expressões «Tu és Sete-Sóis porque vês às claras, tu\r\n" + //
@@ -429,7 +432,7 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
+        exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(null);
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
@@ -502,7 +505,7 @@ public class SeedService implements ISeedService{
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
-        exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Explicite, com base em dois aspetos significativos, o modo como o sujeito poético reage à figura feminina\r\n" + //
@@ -513,7 +516,7 @@ public class SeedService implements ISeedService{
         exercise2.setVisibility(Visibility.PUBLIC);
 
 
-        exercise2.setRubric(exerciseRubric);
+        exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(null);
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
@@ -535,7 +538,6 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("D",option4);
         itemResolutionsSol.put("E",option5);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -559,7 +561,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null,multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Considere as afirmações seguintes sobre o soneto. \r\nIdentifique as duas afirmações falsas","",""));
@@ -567,8 +569,8 @@ public class SeedService implements ISeedService{
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null,multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -586,7 +588,6 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -610,7 +611,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Selecione a opção que completa corretamente a frase seguinte.\r\n" + //
@@ -620,8 +621,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -676,7 +677,7 @@ public class SeedService implements ISeedService{
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
-        exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Escreva uma breve exposição na qual compare os poemas das partes B e C quanto às ideias expressas.\r\n" + //
@@ -690,7 +691,7 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
+        exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(null);
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
@@ -710,7 +711,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -733,7 +734,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement(texto+"\nSegundo o autor do texto, olhar o céu estrelado constitui uma experiência","",""));
@@ -742,8 +743,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -761,7 +762,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -789,7 +790,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Através da expressão «estranho e paradoxal» (linha 7), depreende-se que","",""));
@@ -798,8 +799,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -818,7 +819,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -841,7 +842,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
@@ -851,8 +852,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -871,7 +872,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -894,7 +895,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("A fim de pôr em destaque a intrínseca e inquebrável relação do homem com o Universo, o autor recorre a\r","",""));
@@ -903,8 +904,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -922,7 +923,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -946,7 +947,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("O pronome pessoal «nos» desempenha a função sintática de complemento direto em todas as expressões\r\n" + //
@@ -956,8 +957,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -975,7 +976,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -999,7 +1000,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Tal como em «que não somos nem estamos de todo no centro do mundo, do Universo» (linhas 19 e 20), está\r\n" + //
@@ -1009,8 +1010,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -1029,7 +1030,7 @@ public class SeedService implements ISeedService{
         itemResolutionsSol.put("C",option3);
         itemResolutionsSol.put("D",option4);
         MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
-        ExerciseSolution exerciseSolution = new ExerciseSolution(null,multipleChoiceData);
+
         //Rubric
         //HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
         //mcRubricMap.put("1",createOARubric());
@@ -1053,7 +1054,7 @@ public class SeedService implements ISeedService{
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
 
-        exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("A única expressão em que estão presentes exemplos dos três tipos de dêixis (temporal, espacial e pessoal) é","",""));
@@ -1062,8 +1063,8 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
-        exercise2.setSolution(exerciseSolution);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
     }
@@ -1192,7 +1193,7 @@ public class SeedService implements ISeedService{
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
-        exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Num texto de opinião bem estruturado, com um mínimo de duzentas e um máximo de trezentas e cinquenta\r\n" + //
@@ -1208,7 +1209,7 @@ public class SeedService implements ISeedService{
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
 
-        exercise2.setRubric(exerciseRubric);
+        exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(null);
         exercise2.setTags(new HashSet<>(tags));
         return exercise2;
