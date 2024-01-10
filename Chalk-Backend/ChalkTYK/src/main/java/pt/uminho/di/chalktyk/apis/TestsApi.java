@@ -292,6 +292,17 @@ public interface TestsApi {
                                                               @Parameter(in = ParameterIn.PATH, description = "student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId,
                                                               @CookieValue("chalkauthtoken") String jwt);
 
+    @Operation(summary = "Get latest test resolutions made by every student who did the test.", description = "", tags={ "tests" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TestResolution.class))),
+        @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+        @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(value = "/{testId}/resolutions/last",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<List<TestResolution>> getStudentLastResolutions(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") String testId,
+                                                            @CookieValue("chalkauthtoken") String jwt);
+
 
     @Operation(summary = "Get latest test resolution made by the student.", description = "", tags={ "tests" })
     @ApiResponses(value = { 

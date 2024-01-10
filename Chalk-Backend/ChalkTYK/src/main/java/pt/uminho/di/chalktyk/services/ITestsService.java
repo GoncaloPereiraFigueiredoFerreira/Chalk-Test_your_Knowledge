@@ -391,6 +391,15 @@ public interface ITestsService {
     List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException;
 
     /**
+     * Get latests test resolution made by every student who did the test
+     *
+     * @param testId
+     * @return list of submissions
+     * @throws NotFoundException if no test or student was found with the given ids
+     **/
+    List<TestResolution> getStudentLastResolutions(String testId) throws NotFoundException;
+
+    /**
      * Get latest test resolution made by the student
      *
      * @param testId

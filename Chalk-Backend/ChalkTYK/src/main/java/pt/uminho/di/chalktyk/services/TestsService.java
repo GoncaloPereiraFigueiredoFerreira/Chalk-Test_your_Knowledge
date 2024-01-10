@@ -1156,6 +1156,46 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional
+    public List<TestResolution> getStudentLastResolutions(String testId) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get last resolutions for test " + testId + ": couldn't find test with given id.");
+        List<String> studentIds = resolutionDAO.getDistinctStudentsForTest(testId);
+
+        List<TestResolution> resolutions = new ArrayList<>();
+        for (String studentId: studentIds){
+            resolutions.add(_getStudentLastResolution(testId, studentId));
+        }
+
+        return resolutions;
+    }
+
+    private TestResolution _getStudentLastResolution(String testId, String studentId) throws NotFoundException {
+        List<String> ids = getStudentTestResolutionsIds(testId, studentId);
+        TestResolution res = null;
+    
+        if (ids.isEmpty())
+            throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find any resolution.");
+        else {
+            int k;
+            for (k = 0; res == null && k < ids.size(); k++)
+                res = resolutionDAO.findById(ids.get(k)).orElse(null);
+
+            if (res == null)
+                throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": error finding resolution in DB.");
+            else {
+                for (int i = k; i < ids.size(); i++){
+                    TestResolution tmp = resolutionDAO.findById(ids.get(i)).orElse(null);
+                    if (tmp != null && res.getSubmissionNr() < tmp.getSubmissionNr())
+                        res = tmp;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    @Override
+    @Transactional
     public TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find test with given id.");
@@ -1218,8 +1258,6 @@ public class TestsService implements ITestsService {
 
         for(TestResolutionGroup testResolutionGroup: updatedGroups){
             Map<String, TestExerciseResolutionBasic> resMap = testResolutionGroup.getResolutions();
-
-            // TODO: check if points attributed are bigger than exercise points
 
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
                 TestExerciseResolutionBasic exeResPair = entry.getValue();

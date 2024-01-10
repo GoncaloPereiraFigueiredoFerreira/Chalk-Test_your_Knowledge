@@ -13,15 +13,17 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
+import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.ChatExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.OpenAnswerDTO;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OACriterion;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OAStandard;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.services.IAIService;
+import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.exceptions.ApiConnectionException;
+import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 /**
  * AIApiController
@@ -32,30 +34,34 @@ import pt.uminho.di.chalktyk.services.exceptions.ApiConnectionException;
 public class AIApiController implements AIApi{
     
     private final IAIService aiService;
+    private final ISecurityService securityService;
 
     @Autowired
-    public AIApiController(IAIService aiService) {
+    public AIApiController(IAIService aiService, ISecurityService securityService) {
         this.aiService = aiService;
+        this.securityService = securityService;
     }
 
     @Override
-    public ResponseEntity<String> getNewQuestion(ChatExerciseDTO chatExercise) {
-
-        JsonObjectBuilder request = Json.createObjectBuilder();
-        request.add("Topics", Json.createArrayBuilder(chatExercise.getTopics()));
-        request.add("Chat", Json.createArrayBuilder(chatExercise.getChat()));
-            
+    public ResponseEntity<String> getNewQuestion(ChatExerciseDTO chatExercise, String jwt) {
         try {
+            JWT token = securityService.validateJWT(jwt);
+
+            JsonObjectBuilder request = Json.createObjectBuilder();
+            request.add("Topics", Json.createArrayBuilder(chatExercise.getTopics()));
+            request.add("Chat", Json.createArrayBuilder(chatExercise.getChat()));
+            request.add("StudentID",token.getUserId());
+
             JsonObject response = aiService.bypassBackend("/get_oral",request.build().toString());
             String ret = response.getString("Question");
             return ResponseEntity.ok(ret);
-        } catch (ApiConnectionException e) {
+        } catch (ApiConnectionException | UnauthorizedException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
         }
     }
 
     @Override
-    public ResponseEntity<Float> getEvaluationChat(ChatExerciseDTO chatExercise) {
+    public ResponseEntity<Float> getEvaluationChat(ChatExerciseDTO chatExercise, String jwt) {
 
         JsonObjectBuilder request = Json.createObjectBuilder();
         request.add("Topics", Json.createArrayBuilder(chatExercise.getTopics()));
@@ -71,7 +77,7 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<Float> getEvaluationOpenAnswer(OpenAnswerDTO exercise) {
+    public ResponseEntity<Float> getEvaluationOpenAnswer(OpenAnswerDTO exercise, String jwt) {
         Float total = 0.0f;
 
         JsonObjectBuilder request = Json.createObjectBuilder();

@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.apis;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +29,7 @@ public interface AIApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })
     @RequestMapping(value = "/chat/new", produces = { "application/json" }, method = RequestMethod.POST)
-    ResponseEntity<String> getNewQuestion(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ChatExerciseDTO chatExercise);
+   ResponseEntity<String> getNewQuestion(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ChatExerciseDTO chatExercise, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return the evaluation the the chat exercise given by IA", description = "", tags = { "ai" })
     @ApiResponses(value = {
@@ -37,7 +38,7 @@ public interface AIApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })
     @RequestMapping(value = "/chat/evaluation", produces = { "application/json"}, method = RequestMethod.POST)
-    ResponseEntity<Float> getEvaluationChat(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ChatExerciseDTO chatExercise);
+    ResponseEntity<Float> getEvaluationChat(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ChatExerciseDTO chatExercise, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return the evaluation the the open answer exercise given by IA", description = "", tags = { "ai" })
     @ApiResponses(value = {
@@ -46,5 +47,5 @@ public interface AIApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })
     @RequestMapping(value = "/open/evaluation", produces = { "application/json"}, method = RequestMethod.POST)
-    ResponseEntity<Float> getEvaluationOpenAnswer(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody OpenAnswerDTO OAExercise);
+    ResponseEntity<Float> getEvaluationOpenAnswer(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody OpenAnswerDTO OAExercise, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 }

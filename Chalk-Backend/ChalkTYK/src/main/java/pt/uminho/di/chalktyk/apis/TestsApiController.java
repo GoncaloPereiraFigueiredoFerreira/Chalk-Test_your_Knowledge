@@ -413,6 +413,26 @@ public class TestsApiController implements TestsApi {
         }
     }
 
+    public ResponseEntity<List<TestResolution>> getStudentLastResolutions(String testId, String jwt) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            if((role.equals("SPECIALIST") || role.equals("STUDENT")) && canGetTest(userId, role, testId)!=null){
+                return ResponseEntity.ok(testsService.getStudentLastResolutions(testId));
+            }
+            else {
+                return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "User does not have permission to get student last submission for the test.");
+            }
+        } catch (NotFoundException | UnauthorizedException e) {
+            return new ExceptionResponseEntity<List<TestResolution>>().createRequest(e);
+        }
+    }
+
     public ResponseEntity<TestResolution> getStudentLastResolution(String testId, String studentId, String jwt) {
         try {
             // validate jwt token and get user id and role
