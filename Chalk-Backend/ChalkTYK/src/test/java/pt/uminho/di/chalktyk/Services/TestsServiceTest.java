@@ -1,6 +1,7 @@
 package pt.uminho.di.chalktyk.Services;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,9 +56,10 @@ import pt.uminho.di.chalktyk.repositories.TestTagsDAO;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 @SpringBootTest
-@Transactional
+@Transactional(noRollbackFor = ServiceException.class)
 public class TestsServiceTest {
     private final ISeedService seedService;
     private final ITestsService testsService;
@@ -116,7 +118,7 @@ public class TestsServiceTest {
 
     @Test
     public void createTest() throws BadInputException, NotFoundException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
 
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -135,7 +137,7 @@ public class TestsServiceTest {
     /*
     @Test
     public void createLiveTest() throws BadInputException, NotFoundException {
-        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false,75);
 
         LiveTest t1 = new LiveTest(null, tmp.getTitle(), tmp.getGlobalInstructions(), null, tmp.getConclusion(), tmp.getCreationDate(), 
             tmp.getPublishDate(), tmp.getSpecialist(), tmp.getVisibility(), tmp.getCourse(), tmp.getInstitution(), tmp.getGroups(),
@@ -158,7 +160,7 @@ public class TestsServiceTest {
 
     @Test
     public void createDDTest() throws BadInputException, NotFoundException {
-        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false,75);
 
         DeliverDateTest t1 = new DeliverDateTest(null, tmp.getTitle(), tmp.getGlobalInstructions(), null, tmp.getConclusion(), tmp.getCreationDate(), 
             tmp.getPublishDate(), tmp.getSpecialist(), tmp.getVisibility(), tmp.getCourse(), tmp.getInstitution(), tmp.getGroups(),
@@ -182,7 +184,7 @@ public class TestsServiceTest {
 
     @Test
     public void duplicateTest() throws BadInputException, NotFoundException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
 
         String testId = testsService.createTest(t1);
         String duplicateId = testsService.duplicateTestById(this.specialistId, testId, Visibility.PRIVATE, this.courseId);
@@ -197,7 +199,7 @@ public class TestsServiceTest {
     /* 
     @Test
     public void duplicateLiveTest() throws BadInputException, NotFoundException {
-        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false,75);
         LiveTest t1 = new LiveTest(null, tmp.getTitle(), tmp.getGlobalInstructions(), null, tmp.getConclusion(), tmp.getCreationDate(), 
             tmp.getPublishDate(), tmp.getSpecialist(), tmp.getVisibility(), tmp.getCourse(), tmp.getInstitution(), tmp.getGroups(),
             LocalDateTime.now().plusSeconds(100), 360, 10);
@@ -215,7 +217,7 @@ public class TestsServiceTest {
 
     @Test
     public void duplicateDDTest() throws BadInputException, NotFoundException {
-        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test tmp = buildTest(false,75);
         DeliverDateTest t1 = new DeliverDateTest(null, tmp.getTitle(), tmp.getGlobalInstructions(), null, tmp.getConclusion(), tmp.getCreationDate(), 
             tmp.getPublishDate(), tmp.getSpecialist(), tmp.getVisibility(), tmp.getCourse(), tmp.getInstitution(), tmp.getGroups(),
             LocalDateTime.now().plusDays(1));
@@ -234,12 +236,13 @@ public class TestsServiceTest {
 
     @Test
     public void deleteTest() throws BadInputException, NotFoundException, InterruptedException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
         pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
         assert tmp1 != null;
 
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id = testsService.startTest(testId, this.studentId);
         TestResolution tr = testsService.getTestResolutionById(tr_id);
         assert tr != null;
@@ -261,7 +264,7 @@ public class TestsServiceTest {
 
     @Test
     public void startTest() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
 
         String testId = testsService.createTest(t1);
         String tr_id = testsService.startTest(testId, this.studentId);
@@ -273,10 +276,11 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void submitTestNoResolution() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+    public void submitTestNoResolution() throws NotFoundException, BadInputException, InterruptedException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
 
         String testId = testsService.createTest(t1);
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id = testsService.startTest(testId, this.studentId);
 
         testsService.submitTestResolution(tr_id);
@@ -288,12 +292,13 @@ public class TestsServiceTest {
 
     @Test
     public void deleteTestResolution() throws BadInputException, NotFoundException, InterruptedException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
         pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
         assert tmp1 != null;
 
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id = testsService.startTest(testId, this.studentId);
         TestResolution tr = testsService.getTestResolutionById(tr_id);
         assert tr != null;
@@ -309,13 +314,14 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void getTestResolutions() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+    public void getTestResolutions() throws NotFoundException, BadInputException, InterruptedException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
         pt.uminho.di.chalktyk.models.tests.Test tmp1 = testsService.getTestById(testId);
         assert tmp1 != null;
 
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id1 = testsService.startTest(testId, this.studentId);
         String tr_id2 = testsService.startTest(testId, this.student2Id);
         String tr_id3 = testsService.startTest(testId, this.studentId);
@@ -335,14 +341,15 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void uploadResolution() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false);
+    public void uploadResolution() throws NotFoundException, BadInputException, InterruptedException {
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
         TestGroup tg = test.getGroups().get(1);
         TestExercise exe = tg.getExercises().get(1);
 
+        Thread.sleep(200); // wait some time before starting a test.
         String testResId = testsService.startTest(testId, this.studentId);
 
         ExerciseResolutionData rightMC = createRightMCResolution();
@@ -363,10 +370,11 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void automaticCorrectionCorrect() throws NotFoundException, BadInputException {
+    public void automaticCorrectionCorrect() throws NotFoundException, BadInputException, InterruptedException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildMCTest();
 
         String testId = testsService.createTest(t1);
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id = testsService.startTest(testId, this.studentId);
 
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -400,6 +408,7 @@ public class TestsServiceTest {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildMCTest();
 
         String testId = testsService.createTest(t1);
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id = testsService.startTest(testId, this.studentId);
 
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -429,10 +438,11 @@ public class TestsServiceTest {
     */
 
     @Test
-    public void manualCorrection() throws NotFoundException, BadInputException {
+    public void manualCorrection() throws NotFoundException, BadInputException, InterruptedException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildMCTest();
 
         String testId = testsService.createTest(t1);
+        Thread.sleep(200); // wait some time before starting a test.
         String tr_id = testsService.startTest(testId, this.studentId);
 
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -463,7 +473,7 @@ public class TestsServiceTest {
 
     @Test
     public void createTestExercise() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,100000);
 
         String testId = testsService.createTest(t1);
 
@@ -490,7 +500,7 @@ public class TestsServiceTest {
 
     @Test
     public void deleteTestExercise() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,75);
 
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -535,7 +545,7 @@ public class TestsServiceTest {
 
     @Test
     public void removeTestExercise() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,75);
 
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -583,7 +593,7 @@ public class TestsServiceTest {
     
     /* ******* CREATE METHODS ******* */
 
-    private pt.uminho.di.chalktyk.models.tests.Test buildTest(boolean latePublishDate) throws BadInputException, NotFoundException {
+    private pt.uminho.di.chalktyk.models.tests.Test buildTest(boolean latePublishDate, long delayPublishDateInMs) throws BadInputException, NotFoundException {
         // building exercises
         Exercise e1 = createOAExercise(specialistId, courseId);
         e1.setSolution(createOASolution());
@@ -631,7 +641,7 @@ public class TestsServiceTest {
         LocalDateTime date = LocalDateTime.now();
         LocalDateTime publishDate;
         if (latePublishDate)
-            publishDate = date.plusDays(1);
+            publishDate = date.plus(delayPublishDateInMs, ChronoUnit.MILLIS);
         else
             publishDate = date.plusNanos(100000000);
         pt.uminho.di.chalktyk.models.tests.Test test = new pt.uminho.di.chalktyk.models.tests.Test(null, "TEST #1", "instructions 1", 

@@ -30,6 +30,7 @@ import pt.uminho.di.chalktyk.repositories.StudentDAO;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 import java.util.*;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
+@Transactional(noRollbackFor = ServiceException.class)
 public class ExercisesServiceTest {
     private final ICoursesService coursesService;
     private final ISpecialistsService specialistsService;

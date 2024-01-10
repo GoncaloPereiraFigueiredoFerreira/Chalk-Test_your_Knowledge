@@ -12,9 +12,10 @@ import pt.uminho.di.chalktyk.services.IStudentsService;
 import pt.uminho.di.chalktyk.services.IUsersService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 @SpringBootTest
-@Transactional
+@Transactional(noRollbackFor = ServiceException.class)
 public class StudentsServiceTest {
     private final IStudentsService studentsService;
     private final UserDAO userDAO;
@@ -39,7 +40,6 @@ public class StudentsServiceTest {
     }
 
     @Test
-    @Transactional
     void createStudentSuccess() throws BadInputException {
         String alex_id = createStudentAlex();
 
@@ -56,7 +56,6 @@ public class StudentsServiceTest {
     }
 
     @Test
-    @Transactional
     void createStudentBadEmail(){
         // bad email format
         Student luis = new Student(null, "Luis", "google.com/some/path/to/image.png", "l-gmail.com", "description.");
@@ -80,7 +79,6 @@ public class StudentsServiceTest {
     }
 
     @Test
-    @Transactional
     void getStudent() throws BadInputException, NotFoundException {
         String id = createStudentAlex();
         Student s = studentsService.getStudentById(id);
@@ -88,14 +86,12 @@ public class StudentsServiceTest {
     }
 
     @Test
-    @Transactional
     void existsStudent() throws BadInputException {
         String id = createStudentAlex();
         assert studentsService.existsStudentById(id);
     }
 
     @Test
-    @Transactional
     void updateStudent() throws BadInputException, NotFoundException {
         String id = createStudentAlex();
         Student s = studentsService.getStudentById(id);
