@@ -204,44 +204,44 @@ public class TestsService implements ITestsService {
         List<TestGroup> newTGs = new ArrayList<>();
         List<String> allNewExesIds = new ArrayList<>();
 
-        for (TestGroup tg: tgs){
-            List<TestExercise> newExes = new ArrayList<>();
+        if(tgs != null) {
+            for (TestGroup tg : tgs) {
+                List<TestExercise> newExes = new ArrayList<>();
 
-            for (TestExercise exe: tg.getExercises()){
-                // duplicate or persist exercise
-                String dupExerciseId;
+                for (TestExercise exe : tg.getExercises()) {
+                    // duplicate or persist exercise
+                    String dupExerciseId;
 
-                // if the exercise is a concrete exercise, the exercise must be persisted
-                // and a reference, with the id of the persisted exercise, needs to be created.
-                // This allows the exercises to be persisted independently of the test.
-                if (exe instanceof ConcreteExercise ce){
-                    Exercise tmp = ce.getExercise();
-                    List<String> tagIds = new ArrayList<>();
-                    if (tmp.getTags() != null)
-                        tagIds = tmp.getTags().stream().map(Tag::getId).toList();
-                    tmp.setSpecialist(specialist);
-                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                    // if the exercise is a concrete exercise, the exercise must be persisted
+                    // and a reference, with the id of the persisted exercise, needs to be created.
+                    // This allows the exercises to be persisted independently of the test.
+                    if (exe instanceof ConcreteExercise ce) {
+                        Exercise tmp = ce.getExercise();
+                        List<String> tagIds = new ArrayList<>();
+                        if (tmp.getTags() != null)
+                            tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                        tmp.setSpecialist(specialist);
+                        dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                    }
+
+                    // Else the exercise is a reference to an existing exercise,
+                    // therefore the exercise needs to be duplicated and
+                    // a new reference, containing the id of the duplicate,
+                    // needs to be created.
+                    else if (exe instanceof ReferenceExercise re) {
+                        dupExerciseId = exercisesService.duplicateExerciseById(specialistId, re.getId(), null, Visibility.TEST);
+                    } else {
+                        break;
+                    }
+
+                    ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
+                    newExes.add(newExe);
+                    allNewExesIds.add(dupExerciseId);
                 }
 
-                // Else the exercise is a reference to an existing exercise,
-                // therefore the exercise needs to be duplicated and
-                // a new reference, containing the id of the duplicate,
-                // needs to be created.
-                else if (exe instanceof ReferenceExercise re) {
-                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, re.getId(), null, Visibility.TEST);
-                }
-
-                else {
-                    break;
-                }
-
-                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
-                newExes.add(newExe);
-                allNewExesIds.add(dupExerciseId);
+                TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
+                newTGs.add(newTG);
             }
-
-            TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
-            newTGs.add(newTG);
         }
         body.setGroups(newTGs);
 
@@ -361,8 +361,12 @@ public class TestsService implements ITestsService {
         return newTest.getId();
     }
 
+    /**
+     * Updates test basic properties: title, conclusion, globalInstructions, publishDate and visibility.
+     * @param body body containing the new basic properties.
+     */
     @Transactional(rollbackFor = ServiceException.class)
-    public void updateTest(String testId, Test body) throws NotFoundException, BadInputException {
+    public void updateTestBasicProperties(String testId, Test body) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
@@ -370,14 +374,48 @@ public class TestsService implements ITestsService {
         if(body == null)
             throw new BadInputException("Couldn't update test: new body is null");
 
-        test.setTitle(body.getTitle());
-        test.setGlobalInstructions(body.getGlobalInstructions());
-        test.setConclusion(body.getConclusion());
+        body.setId(testId);
+        body.setCreationDate(test.getCreationDate());
+        body.copyBasicDataTo(test);
+        test.verifyProperties();
         testDAO.save(test);
-        _updateTestPublishDate(test, body.getPublishDate());
-        _updateTestVisibility(test, body.getVisibility());
-        if (body.getGroups() != null)
-            _updateTestGroups(test, body.getGroups());
+    }
+
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public void updateTestExercisePoints(String testId, int groupIndex, String exerciseId, float points) throws NotFoundException, BadInputException {
+        if(points <= 0.0f)
+            throw new BadInputException("Couldn't update test: Points must be positive.");
+
+        Test test = testDAO.findById(testId).orElse(null);
+        if (test == null)
+            throw new NotFoundException("Couldn't update test: couldn't find test with id '" + testId + "'");
+
+        if(exerciseId == null)
+            throw new BadInputException("Couldn't update test: exercise is null.");
+
+        List<TestGroup> testGroups = test.getGroups();
+        if(testGroups == null || groupIndex >= testGroups.size())
+            throw new BadInputException("Couldn't update test: invalid group index.");
+
+        TestGroup group = testGroups.get(groupIndex);
+        assert group != null;
+
+        List<TestExercise> groupExercises = group.getExercises();
+        if(groupExercises == null)
+            throw new BadInputException("Couldn't update test: exercise does not belong to the given group.");
+
+        for(TestExercise te : groupExercises){
+            if(te.getId().equals(exerciseId)){
+                float pointsDiff = points - te.getPoints();
+                te.setPoints(points); // update exercise points
+                test.setGlobalPoints(test.getGlobalPoints() + pointsDiff); // update test points
+                group.setGroupPoints(group.getGroupPoints() + pointsDiff); // update group points
+                break;
+            }
+        }
+
+        testDAO.save(test);
     }
 
     @Override

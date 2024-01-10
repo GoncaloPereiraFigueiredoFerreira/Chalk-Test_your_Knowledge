@@ -78,14 +78,19 @@ public interface ITestsService {
     String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException;
 
     /**
-     * Updates a test
-     *
-     * @param testId
-     * @param body
-     * @throws NotFoundException if no test was found with the given id
-     * @throws BadInputException if any property of the test is not valid.
-     **/
-    void updateTest(String testId, Test body) throws NotFoundException, BadInputException;
+     * Updates test basic properties: title, conclusion, globalInstructions, publishDate and visibility.
+     * @param body body containing the new basic properties.
+     */
+    void updateTestBasicProperties(String testId, Test body) throws NotFoundException, BadInputException;
+
+    /**
+     * Update the points of an exercise that belongs to a test.
+     * @param testId identifier of the test
+     * @param groupIndex index of the group where the exercise is situated
+     * @param exerciseId exercise identifier
+     * @param points new points
+     */
+    void updateTestExercisePoints(String testId, int groupIndex, String exerciseId, float points) throws NotFoundException, BadInputException;
 
     /**
      * Updates a test's title

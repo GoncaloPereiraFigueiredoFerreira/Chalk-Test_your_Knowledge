@@ -199,4 +199,22 @@ public class Test implements Serializable {
 
 		return resolutionGroups;
 	}
+
+	/**
+	 * Copies all data which is not the groups (globalPoints refer to the groups, so it is not copied),
+	 * the visibility and the associations.
+	 * @param dest test that should receive the copied basic data
+	 */
+	public void copyBasicDataTo(Test dest){
+		if(dest == null)
+			return;
+
+		dest.setId(id);
+		dest.setTitle(title);
+		dest.setConclusion(conclusion);
+		dest.setGlobalInstructions(globalInstructions);
+		dest.setPublishDate(publishDate);
+		dest.setCreationDate(creationDate);
+		dest.setVisibility(visibility);
+	}
 }
