@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.Hibernate;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,7 +71,7 @@ public class TestsService implements ITestsService {
     
     @Override
     @Transactional
-    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException {
+    public List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException {
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
                 throw new NotFoundException("There is no course with the given id");
@@ -99,8 +98,7 @@ public class TestsService implements ITestsService {
             tmpTests.add(tmpTest);
         }
 
-        Page<Test> resTests = new PageImpl<>(tmpTests);
-        return resTests;
+        return tmpTests;
     }
 
     @Override
