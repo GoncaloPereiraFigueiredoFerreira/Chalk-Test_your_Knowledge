@@ -1,4 +1,5 @@
-import { DownArrowIcon, UpArrowIcon } from "../objects/SVGImages/SVGImages";
+import { IoChevronDown } from "react-icons/io5";
+import { IoChevronUp } from "react-icons/io5";
 import "./DropdownBlock.css";
 import { Dropdown } from "flowbite-react";
 
@@ -33,8 +34,8 @@ export function DropdownBlock({
           } dropdown bg-btn-2-hover border-gray-2-1 group`}
         >
           <label> {chosenOption === null ? text : chosenOption} </label>
-          {placement === "bottom" ? DownArrowIcon() : null}
-          {placement === "top" ? UpArrowIcon() : null}
+          {placement === "bottom" ? <IoChevronDown className="size-5" /> : null}
+          {placement === "top" ? <IoChevronUp className="size-5" /> : null}
         </button>
       )}
     >

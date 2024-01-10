@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Badge, Pagination } from "flowbite-react";
 import { Link } from "react-router-dom";
-import { UserRole, Course, UserContext } from "../../../UserContext.tsx";
+import { UserRole, UserContext } from "../../../UserContext.tsx";
 import {
   CircularProgressbar,
   CircularProgressbarWithChildren,
@@ -84,7 +84,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
             </div>
             <div className="flex space-x-2">
               <Link
-                to="#"
+                to={"/webapp/tests/" + test.id + "/edit"}
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Edit
@@ -207,7 +207,7 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
             </div>
             <div className="flex w-full px-2 justify-center">
               <Link
-                to="#"
+                to={"/webapp/tests/" + test.id + "/edit"}
                 className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Edit

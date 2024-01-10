@@ -14,6 +14,7 @@ import {
   useListExerciseContext,
 } from "./ListExerciseContext";
 import { APIContext } from "../../../APIContext";
+import { ChangeVisibility } from "./ChangeVisibilityExercisePopUp";
 
 const userExercises: Exercise[] = [
   {
@@ -162,6 +163,7 @@ export function ListExercises({
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
+  const [changeVisibilityPopUp, setChangeVisibilityPopUp] = useState("");
   const { listExerciseState, dispatch } = useListExerciseContext();
   const { contactBACK } = useContext(APIContext);
 
@@ -194,7 +196,10 @@ export function ListExercises({
           <label className="flex text-title-1">Exercícios</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => setNewExercisePopUp(true)}
+            onClick={() => {
+              setNewExercisePopUp(true);
+              setEditMenuIsOpen(false);
+            }}
           >
             Criar exercício
           </button>
@@ -214,6 +219,10 @@ export function ListExercises({
                   selectedExercise: value,
                 },
               })
+            }
+            changeVisibilityPopUp=""
+            setChangeVisibilityPopUp={(value) =>
+              setChangeVisibilityPopUp(value)
             }
           ></ShowExercise>
         ) : null}
@@ -235,21 +244,40 @@ export function ListExercises({
                   },
                 })
               }
+              changeVisibilityPopUp=""
+              setChangeVisibilityPopUp={(value) =>
+                setChangeVisibilityPopUp(value)
+              }
             ></ShowExercise>
           )
         )}
       </div>
+      <ChangeVisibility
+        show={changeVisibilityPopUp !== ""}
+        closePopUp={() => setChangeVisibilityPopUp("")}
+        changeVisibility={(newVisibility: string) => {
+          console.log(changeVisibilityPopUp);
+          dispatch({
+            type: ListExerciseActionKind.CHANGE_VISIBILITY_EXERCISE,
+            payload: {
+              selectedExercise: changeVisibilityPopUp,
+              visibility: newVisibility,
+            },
+          });
+          setChangeVisibilityPopUp("");
+        }}
+      />
       <CreateNewExercisePopUp
         show={newExercisePopUp}
         closePopUp={() => setNewExercisePopUp(false)}
         createNewExercise={(newExerciseType: ExerciseType) => {
-          dispatch({
-            type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
-            payload: {
-              newExerciseType: newExerciseType,
-            },
-          });
           if (!editMenuIsOpen) {
+            dispatch({
+              type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
+              payload: {
+                newExerciseType: newExerciseType,
+              },
+            });
             setEditMenuIsOpen(true);
             setExerciseID("-1");
           }

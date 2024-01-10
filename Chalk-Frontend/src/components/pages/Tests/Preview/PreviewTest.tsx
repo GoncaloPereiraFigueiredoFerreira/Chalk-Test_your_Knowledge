@@ -37,7 +37,7 @@ export function PreviewTest() {
             </div>
             <div className="flex space-x-4">
               <Link
-                to="../solve"
+                to="../edit"
                 className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
               >
                 Editar teste

@@ -36,6 +36,7 @@ import {
 import { GroupDragDrop } from "../../objects/Test/GroupDragDrop";
 import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
 import { APIContext } from "../../../APIContext";
+import { HiOutlineTrash } from "react-icons/hi";
 
 type EventInfo =
   | {
@@ -421,6 +422,7 @@ export function CreateTest({ test }: CreateTestProps) {
         newListExercises.splice(activeDnD.exercisePosition, 0, replaceExercise);
         setListExercises(newListExercises);
         setActiveDnD(null);
+        setDraggingExercises(false);
         return;
       }
     }
@@ -549,7 +551,7 @@ export function CreateTest({ test }: CreateTestProps) {
         >
           <div
             className={`${
-              selectedMenu === "dd-list-exercises" ? "w-full" : "w-0"
+              selectedMenu === "dd-list-exercises" ? "w-[60%] px-8 pb-8" : "w-0"
             } flex flex-col transition-[width] h-screen overflow-y-auto bg-2-1`}
           >
             {selectedMenu === "dd-list-exercises" && (
@@ -568,7 +570,7 @@ export function CreateTest({ test }: CreateTestProps) {
               </>
             )}
           </div>
-          <div className="flex flex-col w-full h-screen overflow-y-auto bg-2-1">
+          <div className="flex flex-col w-full h-screen px-8 pb-8 overflow-y-auto bg-2-1">
             <EditTestDragDrop
               exerciseID={exerciseID}
               setExerciseID={(value) => setExerciseID(value)}
@@ -583,7 +585,7 @@ export function CreateTest({ test }: CreateTestProps) {
               selectedMenu === "create-exercise" ||
               selectedMenu === "edit-group" ||
               selectedMenu === "edit-test-info"
-                ? "w-full"
+                ? "w-full px-16 pb-8"
                 : "w-0"
             } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
           >
@@ -684,14 +686,14 @@ export function CreateTest({ test }: CreateTestProps) {
             {selectedMenu === "edit-group" && (
               <EditGroup
                 exerciseInstructions={
-                  testState.test.groups[exerciseID.groupPosition]
+                  testState.test.groups[testState.groupPosition]
                     .groupInstructions
                 }
                 saveEdit={(state) => {
                   dispatch({
                     type: EditTestActionKind.EDIT_GROUP,
                     group: {
-                      groupPosition: exerciseID.groupPosition,
+                      groupPosition: testState.groupPosition,
                       groupInstructions: state,
                     },
                   });

@@ -6,6 +6,8 @@
     @apply flex
     flex-col
     gap-1
+    justify-around
+    h-12
     items-center;
   }
 

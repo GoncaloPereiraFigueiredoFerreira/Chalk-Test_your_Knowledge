@@ -1,11 +1,12 @@
-import { RiAddFill } from "react-icons/ri";
-import { FaPencil } from "react-icons/fa6";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
-import { useEditTestContext } from "./EditTestContext";
+import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useEffect } from "react";
+import { RiAddFill } from "react-icons/ri";
+import { FaPencil } from "react-icons/fa6";
+import { HiOutlineTrash } from "react-icons/hi";
 
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
@@ -38,7 +39,7 @@ export function GroupDragDrop({
   setDraggingGroups,
   draggingExercises,
 }: GroupDragDropProps) {
-  const { testState } = useEditTestContext();
+  const { testState, dispatch } = useEditTestContext();
 
   const {
     attributes,
@@ -87,16 +88,7 @@ export function GroupDragDrop({
           <div className="px-4">
             <div className="flex items-center justify-between">
               <strong>Instruções do grupo:</strong>
-              <button
-                className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
-                onClick={() => {
-                  setExerciseID({
-                    groupPosition: exerciseGroupPosition,
-                    exercisePosition: -1,
-                  });
-                  setSelectedMenu("edit-group");
-                }}
-              >
+              <button className="flex p-2 gap-2 rounded-md bg-btn-4-1 group">
                 <FaPencil className="size-5" />
                 Editar
               </button>
@@ -108,28 +100,13 @@ export function GroupDragDrop({
             </div>
           </div>
           <div className="flex gap-7 w-full">
-            <button
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
-              onClick={() => {
-                setExerciseID({
-                  groupPosition: exerciseGroupPosition,
-                  exercisePosition: -1,
-                });
-                setSelectedMenu("dd-list-exercises");
-              }}
-            >
+            <button className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group">
               <FaPencil className="group-gray-icon size-6" />
               <label className="group-gray-icon font-medium text-lg">
                 Lista de Exercicios
               </label>
             </button>
-            <button
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
-              onClick={() => {
-                setSelectedMenu("");
-                setNewExercisePopUp(exerciseGroupPosition);
-              }}
-            >
+            <button className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group">
               <RiAddFill className="group-gray-icon size-8" />
               <label className="group-gray-icon font-medium text-lg">
                 Criar Novo
@@ -163,10 +140,33 @@ export function GroupDragDrop({
           <label className="w-full text-xl font-medium">
             Grupo {exerciseGroupPosition + 1}
           </label>
-          <div className="flex w-full justify-end items-center gap-3">
+          <div className="flex w-full justify-end items-center gap-4">
             Cotação do Grupo:
             <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
               {testState.test.groups[exerciseGroupPosition].groupPoints} pts
+            </div>
+            <div className="flex border-l-2 pl-4 border-gray-1">
+              <button
+                className="btn-options-exercise gray-icon"
+                onClick={() => {
+                  if (
+                    selectedMenu === "" ||
+                    selectedMenu === "dd-list-exercises" ||
+                    selectedMenu === "edit-test-info"
+                  ) {
+                    setSelectedMenu("");
+                    dispatch({
+                      type: EditTestActionKind.REMOVE_GROUP,
+                      group: {
+                        groupPosition: testState.groupPosition,
+                      },
+                    });
+                  }
+                }}
+              >
+                <HiOutlineTrash className="size-5" />
+                Eliminar
+              </button>
             </div>
           </div>
         </div>
@@ -176,11 +176,20 @@ export function GroupDragDrop({
             <button
               className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
               onClick={() => {
-                setExerciseID({
-                  groupPosition: exerciseGroupPosition,
-                  exercisePosition: -1,
-                });
-                setSelectedMenu("edit-group");
+                if (selectedMenu !== "edit-group") {
+                  setExerciseID({
+                    groupPosition: exerciseGroupPosition,
+                    exercisePosition: -1,
+                  });
+                  setSelectedMenu("edit-group");
+                  dispatch({
+                    type: EditTestActionKind.SELECT_EXERCISE_POSITION,
+                    exercise: {
+                      groupPosition: exerciseGroupPosition,
+                      exercisePosition: -1,
+                    },
+                  });
+                }
               }}
             >
               <FaPencil className="size-5" />

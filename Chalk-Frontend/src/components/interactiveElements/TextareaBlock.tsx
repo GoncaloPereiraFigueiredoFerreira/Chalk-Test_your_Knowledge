@@ -6,7 +6,6 @@ import { FaItalic } from "react-icons/fa";
 import { ImUnderline } from "react-icons/im";
 
 interface TextareaBlockProps {
-  id?: string;
   className?: string;
   toolbar?: boolean;
   rows?: number;
@@ -16,14 +15,13 @@ interface TextareaBlockProps {
   disabled?: boolean;
 }
 export function TextareaBlock({
-  id,
+  disabled,
   className,
   toolbar,
   rows = 1,
   placeholder,
   value,
   onChange,
-  disabled,
 }: TextareaBlockProps) {
   let hasToolbar = toolbar ? toolbar : false;
   const [text, setText] = useState(value ? value : "");
