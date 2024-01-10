@@ -60,7 +60,7 @@ export function EditTestDragDrop({
             <strong>Autor: </strong>
             <p>{testState.test.author}</p>
             <strong>Cotação máxima do teste: </strong>
-            <p>{testState.test.globalCotation} pts</p>
+            <p>{testState.test.globalPoints} pts</p>
             <strong>Instruções do Teste: </strong>
             <p>{textToHTML(testState.test.globalInstructions)}</p>
           </div>

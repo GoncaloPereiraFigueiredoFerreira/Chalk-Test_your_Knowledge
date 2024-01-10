@@ -12,56 +12,12 @@ import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
 
-const exampleData = [
-  {
-    id: "1",
-    author: "JCR",
-    title: "Teste de RPCW 2022",
-    tags: ["Desenvolvimento Web", "Informática"],
-    grade: 10,
-  },
-  {
-    id: "2",
-    author: "JCR",
-    title: "1º Teste de PL 2023",
-    tags: ["Python", "Processamento de Linguagens"],
-    grade: 25,
-  },
-  {
-    id: "3",
-    author: "JMF",
-    title: "Teste de RAS 2023",
-    tags: ["Arquitetura de Software", "Modelagem"],
-    grade: 50,
-  },
-  {
-    id: "4",
-    author: "JBB",
-    title: "Teste de PI 2020",
-    tags: ["Programação Imperatica", "C"],
-    grade: 75,
-  },
-  {
-    id: "5",
-    author: "JNO",
-    title: "Teste de CP 2021",
-    tags: ["Calcúlo de Programas", "Haskell"],
-    grade: 100,
-  },
-  {
-    id: "6",
-    author: "JNO",
-    title: "Teste de CSI 2023",
-    tags: ["Metodos Formais", "Haskell"],
-  },
-];
-
-function ShowTestList(test: Test, index: number, role: UserRole) {
+function ShowTestList(test: TestPreview, index: number, role: UserRole) {
   return (
     <>
       {role == UserRole.STUDENT ? (
         <Link
-          to="/webapp/tests/1/preview"
+          to={"/webapp/tests/" + test.id + "/preview"}
           key={index}
           className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
         >
@@ -92,7 +48,7 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
               </div>
 
               <Link
-                to="/webapp/tests/1/solve"
+                to={"/webapp/tests/" + test.id + "/solve"}
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -102,7 +58,7 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
         </Link>
       ) : (
         <Link
-          to="/webapp/tests/1/preview"
+          to={"/webapp/tests/" + test.id + "/preview"}
           key={index}
           className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
         >
@@ -135,14 +91,14 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
               </Link>
 
               <Link
-                to="/webapp/tests/1/correction"
+                to={"/webapp/tests/" + test.id + "/correction"}
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Evaluate
               </Link>
 
               <Link
-                to="/webapp/tests/1/solve"
+                to={"/webapp/tests/" + test.id + "/solve"}
                 className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -155,12 +111,12 @@ function ShowTestList(test: Test, index: number, role: UserRole) {
   );
 }
 
-function ShowTestGrid(test: Test, index: number, role: UserRole) {
+function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
   return (
     <>
       {role == UserRole.STUDENT ? (
         <Link
-          to="/webapp/tests/1/preview"
+          to={"/webapp/tests/" + test.id + "/preview"}
           key={index}
           className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
@@ -213,7 +169,7 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
               </div>
 
               <Link
-                to="/webapp/tests/1/solve"
+                to={"/webapp/tests/" + test.id + "/solve"}
                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -223,7 +179,7 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
         </Link>
       ) : (
         <Link
-          to="/webapp/tests/1/preview"
+          to={"/webapp/tests/" + test.id + "/preview"}
           key={index}
           className=" max-w-lg  bg-white  border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
@@ -258,14 +214,14 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
               </Link>
 
               <Link
-                to="/webapp/tests/1/correction"
+                to={"/webapp/tests/" + test.id + "/correction"}
                 className="inline-flex items-center px-6 h-12 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Evaluate
               </Link>
 
               <Link
-                to="/webapp/tests/1/solve"
+                to={"/webapp/tests/" + test.id + "/solve"}
                 className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-green-700  hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
@@ -278,7 +234,7 @@ function ShowTestGrid(test: Test, index: number, role: UserRole) {
   );
 }
 
-interface Test {
+interface TestPreview {
   id: string;
   author: string;
   title: string;
@@ -287,7 +243,7 @@ interface Test {
   grade?: number;
 }
 
-type TestList = Test[];
+type TestList = TestPreview[];
 
 export enum ViewType {
   LIST = "LIST",
@@ -297,18 +253,18 @@ export enum ViewType {
 export function ListTests({ view }: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
-  const [testList, setTesList] = useState<TestList>([]);
+  const [testList, setTestList] = useState<TestList>([]);
   const { user } = useContext(UserContext);
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    // load different test
-    contactBACK("tests", "GET", { page: "1", itemsPerPage: "20" }).then(
+    contactBACK("tests", "GET", { page: "0", itemsPerPage: "20" }).then(
       (response) => {
         response.json().then((tests) => {
-          console.log(tests);
-          if (currentPage != 1) setTesList([]);
-          else setTesList(exampleData);
+          tests.map((test: any) => {
+            return (test["tags"] = []);
+          });
+          setTestList(tests);
         });
       }
     );

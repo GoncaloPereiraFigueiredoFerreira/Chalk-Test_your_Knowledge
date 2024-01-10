@@ -95,21 +95,30 @@ export function Register() {
             photoPath: "",
             role: result.user.role,
             courses: [],
+            id: "",
           };
           switch (result.user.role) {
             case "STUDENT":
               contactBACK("students", "POST", undefined, userInfo).then(
                 (response) => {
-                  login(userInfo);
-                  navigate("/webapp");
+                  response.json().then((user) => {
+                    userInfo["id"] = user.id;
+                    userInfo["photoPath"] = user.photoPath;
+                    login(userInfo);
+                    navigate("/webapp");
+                  });
                 }
               );
               break;
             case "SPECIALIST":
               contactBACK("specialists", "POST", undefined, userInfo).then(
                 (response) => {
-                  login(userInfo);
-                  navigate("/webapp");
+                  response.json().then((user) => {
+                    userInfo["id"] = user.id;
+                    userInfo["photoPath"] = user.photoPath;
+                    login(userInfo);
+                    navigate("/webapp");
+                  });
                 }
               );
               break;

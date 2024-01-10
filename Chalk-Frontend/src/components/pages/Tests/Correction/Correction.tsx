@@ -1,15 +1,14 @@
 import "./Correction.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
-import { Test } from "../SolveTest/SolveTest";
 import { TestPreview } from "../TestPreview";
 import {
   ExerciseJustificationKind,
   ExerciseType,
   Resolution,
   ResolutionType,
+  TranslateTestExerciseIN,
 } from "../../../objects/Exercise/Exercise";
-import { exampleTest } from "../Preview/PreviewTest";
 import { Answer } from "../../../objects/Answer/Answer";
 import {
   Rubric,
@@ -18,6 +17,9 @@ import {
 } from "../../../objects/Rubric/Rubric";
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 import { LuGhost } from "react-icons/lu";
+import { InitTest, Test } from "../../../objects/Test/Test";
+import { APIContext } from "../../../../APIContext";
+import { useParams } from "react-router-dom";
 
 export interface Resolutions {
   [exerciseID: string]: {
@@ -28,417 +30,6 @@ export interface Resolutions {
     studentRes: { [resolutionID: string]: Resolution };
   };
 }
-
-const exampleRes: Resolutions = {
-  "11111": {
-    rubric: {
-      criteria: [
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção de Conteúdo",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-      ],
-    },
-    cotation: 10,
-    position: "1.1",
-    studentRes: {
-      "1298401204801248": {
-        id: "1233441243",
-        student: {
-          name: "Luis Silva",
-          id: "lisinhogamer@hotmail.com",
-          email: "lisinhogamer@hotmail.com",
-        },
-        exerciseID: "11111",
-        cotation: 0,
-        type: ResolutionType.PENDING,
-        data: {
-          type: ExerciseType.OPEN_ANSWER,
-          text: "Coisas sobre pica",
-        },
-      },
-    },
-  },
-
-  "22222": {
-    solution: {
-      id: "12341243",
-      exerciseID: "22222",
-      cotation: 0,
-      type: ResolutionType.SOLUTION,
-      data: {
-        type: ExerciseType.TRUE_OR_FALSE,
-        items: {
-          1: { text: "Portugal", value: true },
-          2: { text: "Polo norte", value: true },
-          3: { text: "Pigs", value: true },
-          4: { text: "Setúbal", value: false },
-        },
-        justifyType: ExerciseJustificationKind.JUSTIFY_FALSE,
-      },
-    },
-    cotation: 10,
-    position: "1.2",
-    studentRes: {
-      "2134213412": {
-        id: "12341243",
-        exerciseID: "22222",
-        cotation: 0,
-        student: {
-          name: "Luis Silva",
-          id: "lisinhogamer@hotmail.com",
-          email: "lisinhogamer@hotmail.com",
-        },
-        type: ResolutionType.PENDING,
-        data: {
-          type: ExerciseType.TRUE_OR_FALSE,
-          items: {
-            1: { text: "Portugal", value: true },
-            2: {
-              text: "Polo norte",
-              value: false,
-              justification:
-                "Eu sei que não é o polo norte porque lá há mamutes!",
-            },
-            3: { text: "Pigs", value: true },
-            4: { text: "Setúbal", value: true },
-          },
-          justifyType: ExerciseJustificationKind.JUSTIFY_FALSE,
-        },
-      },
-      "21342134432141212": {
-        id: "12341243",
-        exerciseID: "22222",
-        cotation: 0,
-        student: {
-          name: "Luis Silva",
-          id: "lisinhogamer@hotmail.com",
-          email: "lisinhogamer@hotmail.com",
-        },
-        type: ResolutionType.PENDING,
-        data: {
-          type: ExerciseType.TRUE_OR_FALSE,
-          items: {
-            1: { text: "Portugal", value: true },
-            2: { text: "Polo norte", value: false },
-            3: { text: "Pigs", value: true },
-            4: { text: "Setúbal", value: true },
-          },
-          justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-      },
-      "21342134432134214123441212": {
-        id: "12341243",
-        exerciseID: "22222",
-        student: {
-          name: "Luis Silva",
-          id: "lisinhogamer@hotmail.com",
-          email: "lisinhogamer@hotmail.com",
-        },
-        cotation: 0,
-        type: ResolutionType.PENDING,
-        data: {
-          type: ExerciseType.TRUE_OR_FALSE,
-          items: {
-            1: { text: "Portugal", value: true },
-            2: { text: "Polo norte", value: false },
-            3: { text: "Pigs", value: true },
-            4: { text: "Setúbal", value: true },
-          },
-          justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
-        },
-      },
-    },
-  },
-
-  "33333": {
-    position: "1.3",
-    rubric: {
-      criteria: [
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção de Conteúdo",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-        {
-          title: "Correção Ortográfica",
-          points: 2,
-          standards: [
-            {
-              title: StardardLevels.EXCELENT,
-              description: "Sem erros",
-              percentage: 100,
-            },
-            {
-              title: StardardLevels.WELL_DONE,
-              description: "(1-3) erros",
-              percentage: 80,
-            },
-            {
-              title: StardardLevels.SATISFACTORY,
-              description: "(3-10) erros",
-              percentage: 60,
-            },
-            {
-              title: StardardLevels.INSATISFACTORY,
-              description: "10+ erros",
-              percentage: 0,
-            },
-          ],
-        },
-      ],
-    },
-    cotation: 10,
-    studentRes: {
-      "213442134213412": {
-        id: "213442134213412",
-        exerciseID: "33333",
-        cotation: 0,
-        student: {
-          name: "Luis Silva",
-          id: "lisinhogamer@hotmail.com",
-          email: "lisinhogamer@hotmail.com",
-        },
-        type: ResolutionType.PENDING,
-        data: {
-          type: ExerciseType.CHAT,
-          msgs: [
-            "Espanha",
-            "E com França?",
-            "Portugal",
-
-            "Qual o pais que faz fronteira com Espanha?",
-          ],
-        },
-      },
-    },
-  },
-};
 
 function renderResolutions(
   resolutions: Resolutions,
@@ -464,9 +55,19 @@ function renderResolutions(
     setExId("");
   };
 
-  return selResolution !== undefined && exID !== ""
-    ? renderResolution(selResolution, resolutions[exID].cotation, backToList)
-    : renderResolutionList(resolutions, selectResolution);
+  if (Object.keys(resolutions).length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-xl text-gray-500">
+          Não existem mais resoluções para corrigir neste teste.
+        </p>
+      </div>
+    );
+  } else {
+    return selResolution !== undefined && exID !== ""
+      ? renderResolution(selResolution, resolutions[exID].cotation, backToList)
+      : renderResolutionList(resolutions, selectResolution);
+  }
 }
 
 function renderResolutionList(resolutions: Resolutions, setExId: Function) {
@@ -559,7 +160,7 @@ function renderSolution(resolutions: Resolutions, exid: string) {
       <>
         {exid in resolutions && resolutions[exid].rubric ? (
           <Rubric
-            context={RubricContext.PREVIEW}
+            context={{ context: RubricContext.PREVIEW }}
             rubric={resolutions[exid].rubric!}
           />
         ) : (
@@ -581,11 +182,68 @@ function renderSolution(resolutions: Resolutions, exid: string) {
 }
 
 export function Correction() {
-  const [test, setTest] = useState<Test>(exampleTest);
-  const [resolutions, setResolutions] = useState<Resolutions>(exampleRes);
+  const [test, setTest] = useState<Test>(InitTest());
+  const [resolutions, setResolutions] = useState<Resolutions>({});
   const [exID, setExID] = useState<string>("");
+  const { contactBACK } = useContext(APIContext);
+  const { testID } = useParams();
 
-  const [solutionC, setSolutionC] = useState(<></>);
+  const setRubric = (id: string, rubric: Rubric) => {
+    let cpyResolutions = { ...resolutions };
+    if (id in resolutions) {
+      cpyResolutions[id] = { ...cpyResolutions[id], rubric: rubric };
+    } else {
+      cpyResolutions[id] = {
+        rubric: rubric,
+        cotation: 0,
+        studentRes: {},
+      };
+    }
+    setResolutions(cpyResolutions);
+  };
+
+  useEffect(() => {
+    contactBACK("tests/" + testID, "GET").then((response) => {
+      response.json().then((testJson: any) => {
+        testJson.groups = testJson.groups.map((group: any) => {
+          group.exercises = group.exercises.map((ex: any) => {
+            return TranslateTestExerciseIN(ex);
+          });
+          return group;
+        });
+        setTest(testJson);
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (exID !== "" && !(exID in resolutions)) {
+      contactBACK("exercises/" + exID + "/rubric", "GET")
+        .then((response) => {
+          response
+            .json()
+            .then((json) => {
+              if (json.type === "OA" || json.type === "CE") {
+                contactBACK("exercises/" + exID + "/resolutions", "GET", {
+                  page: "0",
+                  itemsPerPage: "50",
+                  onlyNotRevised: "true",
+                }).then((response2) => {
+                  response2
+                    .json()
+                    .then((resJson) => {
+                      console.log(resJson);
+                    })
+                    .catch(() => {});
+                });
+                setRubric(exID, json);
+              }
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
+    }
+  }, [exID]);
 
   return (
     <>
@@ -620,15 +278,7 @@ export function Correction() {
                   </div>
                   {/* Resoluçoes */}
                   <div className=" bg-3-1 w-full h-full rounded-lg p-4">
-                    {Object.keys(resolutions).length !== 0 ? (
-                      renderResolutions(resolutions, exID, setExID)
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <p className="text-xl text-gray-500">
-                          Não existem mais resoluções para corrigir neste teste.
-                        </p>
-                      </div>
-                    )}
+                    {renderResolutions(resolutions, exID, setExID)}
                   </div>
                 </div>
               </div>

@@ -45,6 +45,7 @@ export function OASolve(props: OASolveProps) {
         <div className="w-full mb-4">
           <div className="px-4 py-2 rounded-b-lg">
             <TextareaBlock
+              id={props.exercise.identity.id}
               toolbar
               className="w-full focus:ring-0 bg-white"
               value={state.text}

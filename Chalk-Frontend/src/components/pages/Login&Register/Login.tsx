@@ -75,6 +75,7 @@ export function Login() {
       case 200:
         response.json().then((result: any) => {
           let userInfo: User = {
+            id: "",
             email: result.user.username,
             name: result.user.name,
             photoPath: "",
@@ -84,6 +85,8 @@ export function Login() {
           contactBACK("users/login", "POST", undefined, userInfo).then(
             (response) => {
               response.json().then((user) => {
+                userInfo["id"] = user.id;
+                userInfo["photoPath"] = user.photoPath;
                 console.log(user);
                 contactBACK(
                   "courses",

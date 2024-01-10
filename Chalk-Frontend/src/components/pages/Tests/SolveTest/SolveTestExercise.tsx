@@ -4,9 +4,12 @@ import {
   ExerciseContext,
   Resolution,
   ExerciseComponent,
+  TranslateResolutionOUT,
 } from "../../../objects/Exercise/Exercise";
 import { SolveTestContext } from "./SolveTest";
 import { Test } from "../../../objects/Test/Test";
+import { APIContext } from "../../../../APIContext";
+import { UserContext } from "../../../../UserContext";
 
 export function Progress(
   test: Test,
@@ -52,7 +55,8 @@ function NextExerciseButton(
   nGroups: number,
   nGroupExercises: number,
   setCurrentEx: (ex: number) => void,
-  setCurrentGroup: (gr: number) => void
+  setCurrentGroup: (gr: number) => void,
+  sendResolution: () => Promise<any>
 ) {
   if (currentEx < nGroupExercises || currentGroup < nGroups) {
     return (
@@ -60,10 +64,12 @@ function NextExerciseButton(
         type="button"
         className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
         onClick={() => {
-          if (currentGroup < nGroups && currentEx == nGroupExercises) {
-            setCurrentEx(1);
-            setCurrentGroup(currentGroup + 1);
-          } else setCurrentEx(currentEx + 1);
+          sendResolution().then(() => {
+            if (currentGroup < nGroups && currentEx == nGroupExercises) {
+              setCurrentEx(1);
+              setCurrentGroup(currentGroup + 1);
+            } else setCurrentEx(currentEx + 1);
+          });
         }}
       >
         Próximo Exercício
@@ -72,8 +78,10 @@ function NextExerciseButton(
   } else return <></>;
 }
 
-export function SolveTestExercise({ endTest }: any) {
+export function SolveTestExercise({ endTest, resolutionID }: any) {
   const [currentGroup, setCurrentGroup] = useState(1);
+  const { contactBACK } = useContext(APIContext);
+  const { user } = useContext(UserContext);
   const [currentEx, setCurrentEx] = useState(1);
   const { test, resolutions, setExerciseSolution, nExercises } =
     useContext(SolveTestContext);
@@ -81,12 +89,31 @@ export function SolveTestExercise({ endTest }: any) {
   const groupData = test.groups[currentGroup - 1];
   const exerciseData = groupData.exercises[currentEx - 1];
 
-  let exerciseContext: SolveProps = {
+  const exerciseContext: SolveProps = {
     context: ExerciseContext.SOLVE,
     resolutionData: resolutions[currentGroup - 1][currentEx - 1],
     setExerciseSolution: (resolution: Resolution) => {
       setExerciseSolution(currentGroup, currentEx, resolution);
     },
+  };
+
+  const sendResolution = () => {
+    return contactBACK(
+      "tests/resolutions/" + resolutionID + "/exercise",
+      "PUT",
+      undefined,
+      {
+        data: TranslateResolutionOUT(
+          resolutions[currentGroup - 1][currentEx - 1]
+        ),
+        exerciseId: exerciseData.identity.id,
+        studentId: user.user?.id,
+      }
+    );
+  };
+
+  const endTestResolution = () => {
+    return contactBACK("tests/resolutions/" + resolutionID + "/submit", "PUT");
   };
 
   return (
@@ -110,13 +137,13 @@ export function SolveTestExercise({ endTest }: any) {
           <h2 className="ml-5 text-justify">{groupData.groupInstructions}</h2>
         </div>
         <p className="absolute right-4 top-0 text-xl ">
-          Cotação do Grupo: {groupData.groupCotation} valores
+          Cotação do Grupo: {groupData.groupPoints} valores
         </p>
       </div>
 
       <div className=" relative ml-8 dark:text-white">
         <p className="absolute right-4 top-3 text-xl ">
-          Cotação do Exercício: {exerciseData.identity.cotation} valores
+          Cotação do Exercício: {exerciseData.identity.points} valores
         </p>
       </div>
       <div className="mb-10">
@@ -143,14 +170,17 @@ export function SolveTestExercise({ endTest }: any) {
           test.groups.length,
           groupData.exercises.length,
           setCurrentEx,
-          setCurrentGroup
+          setCurrentGroup,
+          sendResolution
         )}
 
         <button
           type="button"
           className="p-4 rounded-lg bg-red-300  dark:bg-red-800"
           onClick={() => {
-            endTest(true);
+            endTestResolution().then(() => {
+              endTest(true);
+            });
           }}
         >
           Finalizar Teste

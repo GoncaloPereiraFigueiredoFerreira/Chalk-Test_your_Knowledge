@@ -1,15 +1,16 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   InitResolutionDataEx,
   ResolutionData,
+  TranslateTestExerciseIN,
 } from "../../../objects/Exercise/Exercise";
-import { exampleTest } from "../Preview/PreviewTest";
-import { Test } from "../../../objects/Test/Test";
+
+import { InitTest, Test } from "../../../objects/Test/Test";
 import { SolveTestEnd } from "./SolveTestEnd";
 import { SolveTestExercise } from "./SolveTestExercise";
 import { SolveTestLanding } from "./SolveTestStart";
-
-const basictest: Test = exampleTest;
+import { useParams } from "react-router-dom";
+import { APIContext } from "../../../../APIContext";
 
 function CountExercises(test: Test) {
   let result: number = 0;
@@ -31,7 +32,7 @@ export const SolveTestContext = createContext<{
     author: "",
     title: "",
     creationDate: "",
-    globalCotation: 0,
+    globalPoints: 0,
     globalInstructions: "",
     groups: [],
   },
@@ -57,16 +58,28 @@ function initResolutions(test: Test): ResolutionData[][] {
 export function SolveTest() {
   const [started, startTest] = useState(false);
   const [ended, endTest] = useState(false);
-  const [test, setTest] = useState<Test>(basictest);
+  const [test, setTest] = useState<Test>(InitTest());
+  const { testID } = useParams();
+  const { contactBACK } = useContext(APIContext);
+  const [resolutions, setResolution] = useState<ResolutionData[][]>([]);
+  const [resolutionID, setResolutionID] = useState<string>("");
 
-  // Fill in the resolution data with undefined to avoid errors
-
-  // TODO: Fetch test from BE
-  // TODO: Start resolution on test start /tests/{testId}/resolutions/sta
-
-  const [resolutions, setResolution] = useState<ResolutionData[][]>(
-    initResolutions(test)
-  );
+  useEffect(() => {
+    contactBACK("tests/" + testID, "GET").then((response) => {
+      response.json().then((testJson: any) => {
+        console.log(testJson);
+        testJson.groups = testJson.groups.map((group: any) => {
+          group.exercises = group.exercises.map((ex: any) => {
+            return TranslateTestExerciseIN(ex);
+          });
+          return group;
+        });
+        console.log(testJson);
+        setTest(testJson);
+        setResolution(initResolutions(testJson));
+      });
+    });
+  }, []);
 
   const setExerciseResolution = (
     groupID: number,
@@ -78,6 +91,20 @@ export function SolveTest() {
     tmpRes2[exerciseID - 1] = resolutionData;
     tmpRes[groupID - 1] = tmpRes2;
     setResolution(tmpRes);
+  };
+
+  const startTestResolution = () => {
+    contactBACK("tests/" + testID + "/resolutions/start", "POST").then(
+      (response) => {
+        response.text().then((id) => {
+          console.log("ResolutionID:", id);
+          if (id !== "") {
+            setResolutionID(id);
+            startTest(true);
+          }
+        });
+      }
+    );
   };
 
   return (
@@ -97,11 +124,16 @@ export function SolveTest() {
               }}
             >
               {!started ? (
-                <SolveTestLanding startTest={startTest}></SolveTestLanding>
+                <SolveTestLanding
+                  startTest={startTestResolution}
+                ></SolveTestLanding>
               ) : (
                 <>
                   {!ended ? (
-                    <SolveTestExercise endTest={endTest}></SolveTestExercise>
+                    <SolveTestExercise
+                      endTest={endTest}
+                      resolutionID={resolutionID}
+                    ></SolveTestExercise>
                   ) : (
                     <SolveTestEnd></SolveTestEnd>
                   )}

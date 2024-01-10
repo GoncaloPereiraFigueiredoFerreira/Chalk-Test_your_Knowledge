@@ -167,10 +167,9 @@ export function ShowExercise({
             <div
               className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
             >
-              <div className="bg-yellow-600 tag-exercise">Matemática</div>
-              <div className="bg-blue-600 tag-exercise">4º ano</div>
-              <div className="bg-green-600 tag-exercise">escolinha</div>
-              <div className="bg-gray-500 tag-exercise">+8</div>
+              {exercise.base.tags.map((tag) => {
+                return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
+              })}
             </div>
           </button>
           <button
@@ -226,17 +225,9 @@ export function ShowExercise({
             !selectedExercise ? "hidden" : "flex"
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
         >
-          <div className="bg-yellow-600 tag-exercise">Matemática</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
+          {exercise.base.tags.map((tag) => {
+            return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
+          })}
         </div>
         <div
           className={`${

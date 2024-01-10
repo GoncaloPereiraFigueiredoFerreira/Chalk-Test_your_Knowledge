@@ -80,7 +80,7 @@ export function GroupDragDrop({
             <div className="flex w-full justify-end items-center gap-3">
               Cotação do Grupo:
               <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
-                {testState.test.groups[exerciseGroupPosition].groupCotation} pts
+                {testState.test.groups[exerciseGroupPosition].groupPoints} pts
               </div>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function GroupDragDrop({
           <div className="flex w-full justify-end items-center gap-3">
             Cotação do Grupo:
             <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
-              {testState.test.groups[exerciseGroupPosition].groupCotation} pts
+              {testState.test.groups[exerciseGroupPosition].groupPoints} pts
             </div>
           </div>
         </div>

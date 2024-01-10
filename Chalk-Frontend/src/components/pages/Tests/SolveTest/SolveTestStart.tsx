@@ -35,13 +35,13 @@ export function SolveTestLanding(props: any) {
 
         <button
           className="absolute right-4 bottom-4 p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
-          onClick={() => props.startTest(true)}
+          onClick={() => props.startTest()}
         >
           Começar o teste {"->"}
         </button>
         <div className="absolute right-4 top-0 text-2xl">
-          <p>Cotação máxima: {test.globalCotation} valores</p>
-          <p>Duração da prova: {test.globalCotation} minutos</p>
+          <p>Cotação máxima: {test.globalPoints} valores</p>
+          <p>Duração da prova: {test.globalPoints} minutos</p>
         </div>
       </div>
     </>

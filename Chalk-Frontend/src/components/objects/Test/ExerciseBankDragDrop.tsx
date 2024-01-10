@@ -1,18 +1,8 @@
-import { useEffect } from "react";
-import { getListExercises } from "../ListExercises/ListExercises";
-import { Exercise } from "../Exercise/Exercise";
+import { useContext, useEffect } from "react";
+import { Exercise, TranslateExerciseIN } from "../Exercise/Exercise";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
 import { SortableContext } from "@dnd-kit/sortable";
-
-function convertListExercises() {
-  let listExercises: Exercise[] = [];
-  getListExercises().forEach((value) => {
-    let exercise: Exercise = JSON.parse(JSON.stringify(value));
-    exercise.identity.id = "new-exercise-".concat(Math.random().toString());
-    listExercises.push(exercise);
-  });
-  return listExercises;
-}
+import { APIContext } from "../../../APIContext";
 
 interface ExerciseBankDragDropProps {
   exerciseID: {
@@ -41,8 +31,23 @@ export function ExerciseBankDragDrop({
   listExercises,
   setListExercises,
 }: ExerciseBankDragDropProps) {
+  const { contactBACK } = useContext(APIContext);
+
   useEffect(() => {
-    setListExercises(convertListExercises());
+    contactBACK("exercises", "GET", {
+      page: "0",
+      itemsPerPage: "10",
+      visibility: "public",
+    }).then((response) => {
+      response.json().then((exercises) => {
+        console.log(exercises);
+        let exerciseL: Exercise[] = [];
+        exercises.map((ex: any) => {
+          exerciseL.push(TranslateExerciseIN(ex));
+        });
+        setListExercises(exerciseL);
+      });
+    });
   }, []);
 
   return (

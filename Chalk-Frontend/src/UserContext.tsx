@@ -12,6 +12,7 @@ export interface Course {
 }
 
 export interface User {
+  id: string;
   email: string;
   name: string;
   photoPath: string;

@@ -119,16 +119,16 @@ export function EditTestStateReducer(
           0,
           exercise
         );
-        newGroups[action.exercise.groupPosition].groupCotation =
-          newGroups[action.exercise.groupPosition].groupCotation +
-          (action.exercise.exercise.identity.cotation ?? 0);
+        newGroups[action.exercise.groupPosition].groupPoints =
+          newGroups[action.exercise.groupPosition].groupPoints +
+          (action.exercise.exercise.identity.points ?? 0);
         return {
           ...state,
           test: {
             ...state.test,
-            globalCotation:
-              state.test.globalCotation +
-              (action.exercise.exercise.identity.cotation ?? 0),
+            globalPoints:
+              state.test.globalPoints +
+              (action.exercise.exercise.identity.points ?? 0),
             groups: newGroups,
           },
         } as EditTestState;
@@ -186,20 +186,20 @@ export function EditTestStateReducer(
           let auxCotation = 0;
           newGroups[action.exercise.groupPosition].exercises.forEach(
             (element) => {
-              auxCotation += element.identity.cotation ?? 0;
+              auxCotation += element.identity.points ?? 0;
             }
           );
-          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
+          newGroups[action.exercise.groupPosition].groupPoints = auxCotation;
           // update globalCotation
           auxCotation = 0;
           newGroups.forEach((element) => {
-            auxCotation += element.groupCotation;
+            auxCotation += element.groupPoints;
           });
           return {
             ...state,
             test: {
               ...state.test,
-              globalCotation: auxCotation,
+              globalPoints: auxCotation,
               groups: newGroups,
             },
           } as EditTestState;
@@ -235,7 +235,7 @@ export function EditTestStateReducer(
               id: "test-group-" + state.test.groups.length,
               groupInstructions: "",
               exercises: [],
-              groupCotation: 0,
+              groupPoints: 0,
             },
           ],
         },
@@ -251,13 +251,13 @@ export function EditTestStateReducer(
         // update globalCotation
         let auxCotation = 0;
         newGroups.forEach((element) => {
-          auxCotation += element.groupCotation;
+          auxCotation += element.groupPoints;
         });
         return {
           ...state,
           test: {
             ...state.test,
-            globalCotation: auxCotation,
+            globalPoints: auxCotation,
             groups: newGroups,
           },
         } as EditTestState;
@@ -289,23 +289,23 @@ export function EditTestStateReducer(
           );
           newGroups[action.exercise.groupPosition].exercises[
             action.exercise.exercisePosition
-          ].identity.cotation = action.exercise.newCotation;
+          ].identity.points = action.exercise.newCotation;
           let auxCotation = 0;
           newGroups[action.exercise.groupPosition].exercises.forEach(
             (element) => {
-              auxCotation += element.identity.cotation ?? 0;
+              auxCotation += element.identity.points ?? 0;
             }
           );
-          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
+          newGroups[action.exercise.groupPosition].groupPoints = auxCotation;
           auxCotation = 0;
           newGroups.forEach((element) => {
-            auxCotation += element.groupCotation;
+            auxCotation += element.groupPoints;
           });
           return {
             ...state,
             test: {
               ...state.test,
-              globalCotation: auxCotation,
+              globalPoints: auxCotation,
               groups: newGroups,
             },
           } as EditTestState;
@@ -347,17 +347,17 @@ export function EditTestStateReducer(
           let auxCotation = 0;
           newGroups[action.exercise.groupPosition].exercises.forEach(
             (element) => {
-              auxCotation += element.identity.cotation ?? 0;
+              auxCotation += element.identity.points ?? 0;
             }
           );
-          newGroups[action.exercise.groupPosition].groupCotation = auxCotation;
+          newGroups[action.exercise.groupPosition].groupPoints = auxCotation;
           auxCotation = 0;
           newGroups[
             action.exercise.newPosition.groupPosition
           ].exercises.forEach((element) => {
-            auxCotation += element.identity.cotation ?? 0;
+            auxCotation += element.identity.points ?? 0;
           });
-          newGroups[action.exercise.newPosition.groupPosition].groupCotation =
+          newGroups[action.exercise.newPosition.groupPosition].groupPoints =
             auxCotation;
           return {
             ...state,

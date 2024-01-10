@@ -174,7 +174,7 @@ export interface ExerciseBase {
 
 export interface ExerciseIdentity {
   id: string;
-  cotation?: number;
+  points?: number;
   specialistId: string;
   visibility: string;
 }
@@ -189,7 +189,7 @@ export interface ExerciseIdentity {
 export interface ExerciseGroup {
   exercises: Exercise[];
   groupInstructions: string;
-  groupCotation: number;
+  groupPoints: number;
 }
 
 //------------------------------------//
@@ -580,11 +580,16 @@ export function TranslateExerciseOUT(exercise: Exercise): {
 }
 
 export function TranslateExerciseIN(exercise: any): Exercise {
+  let tags: string[] = [];
+  exercise.tags.map((tag: any) => {
+    tags.push(tag.name);
+  });
+
   let exerciseBase = {
     base: {
       title: exercise.title,
       statement: exercise.statement,
-      tags: exercise.tags,
+      tags: tags,
     },
     identity: {
       id: exercise.id,
@@ -662,4 +667,24 @@ export function TranslateExerciseIN(exercise: any): Exercise {
   }
 
   return exerciseTR;
+}
+
+export function TranslateTestExerciseIN(exercise: any): Exercise {
+  let newEx = TranslateExerciseIN(exercise.exercise);
+  newEx.identity.points = exercise.points;
+  return newEx;
+}
+
+export function TranslateResolutionOUT(resolution: ResolutionData) {
+  switch (resolution.type) {
+    case ExerciseType.CHAT:
+      return { type: "CE", chat: [...resolution.msgs] };
+
+    case ExerciseType.OPEN_ANSWER:
+      return { type: "OA", text: resolution.text };
+
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.TRUE_OR_FALSE:
+      return { type: "MC", items: { ...resolution.items } };
+  }
 }

@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { FileUploadIcon } from "../objects/SVGImages/SVGImages";
 import { Root, createRoot } from "react-dom/client";
+import { MdOutlineAttachFile } from "react-icons/md";
+import { FaBold } from "react-icons/fa";
+import { FaItalic } from "react-icons/fa";
+import { ImUnderline } from "react-icons/im";
 
 interface TextareaBlockProps {
+  id?: string;
   className?: string;
   toolbar?: boolean;
   rows?: number;
@@ -12,6 +16,7 @@ interface TextareaBlockProps {
   disabled?: boolean;
 }
 export function TextareaBlock({
+  id,
   className,
   toolbar,
   rows = 1,
@@ -34,8 +39,9 @@ export function TextareaBlock({
 
       const root = rootRef.current;
       root.render(textToHTML(value ?? ""));
+      setText(value ? value : "");
     }
-  }, []);
+  }, [id]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -111,7 +117,7 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full rounded-lg ex-1 pb-2" +
+          "w-full mb-4 border-2 rounded-lg ex-1" +
           (className !== undefined ? className : "")
         }
       >
@@ -127,21 +133,21 @@ export function TextareaBlock({
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleBold()}
               >
-                <strong>B</strong>
+                <FaBold className="size-4" />
               </button>
               <button
                 type="button"
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleItalic()}
               >
-                <em>I</em>
+                <FaItalic className="size-4" />
               </button>
               <button
                 type="button"
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
                 onClick={() => toggleUnderline()}
               >
-                <u>U</u>
+                <ImUnderline className="size-4" />
               </button>
             </div>
             <div className="flex flex-wrap items-center space-x-1 sm:pl-4">
@@ -149,13 +155,13 @@ export function TextareaBlock({
                 type="button"
                 className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
               >
-                <FileUploadIcon></FileUploadIcon>
+                <MdOutlineAttachFile className="size-5" />
               </button>
             </div>
           </div>
         </div>
         <div
-          className="flex flex-row w-full px-4 py-2 overflow-x-auto"
+          className="flex flex-row w-full px-4 py-2"
           style={{ minHeight: 24 * rows + "px" }}
           onClick={() => pRef.current?.focus()}
         >
@@ -175,6 +181,9 @@ export function TextareaBlock({
           ) : null}
         </div>
       </div>
+      <div className="bg-yellow-400">id: {id}</div>
+      <div className="bg-red-400">value: {value}</div>
+      <div className="bg-lime-400">text: {text}</div>
     </>
   );
 }

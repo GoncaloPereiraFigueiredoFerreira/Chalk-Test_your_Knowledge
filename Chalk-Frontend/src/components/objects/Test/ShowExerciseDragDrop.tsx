@@ -65,7 +65,7 @@ export function ShowExerciseDragDrop({
   const [preview, setPreview] = useState(<></>);
   const { testState, dispatch } = useEditTestContext();
   const [value, setValue] = useState(
-    (exercise.identity.cotation ?? 0).toString()
+    (exercise.identity.points ?? 0).toString()
   );
   const [changeCotationIsActive, setChangeCotationIsActive] = useState(false);
 
@@ -87,7 +87,7 @@ export function ShowExerciseDragDrop({
   });
 
   useEffect(() => {
-    setValue((exercise.identity.cotation ?? 0).toString());
+    setValue((exercise.identity.points ?? 0).toString());
   }, [exercise]);
 
   function handleChange(value: string) {

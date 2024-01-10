@@ -2,7 +2,7 @@ import { EditTestDragDrop } from "../../objects/Test/EditTestDragDrop";
 import { ExerciseBankDragDrop } from "../../objects/Test/ExerciseBankDragDrop";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import {
   EditTestActionKind,
   EditTestContext,
@@ -26,8 +26,16 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { ShowExerciseDragDrop } from "../../objects/Test/ShowExerciseDragDrop";
-import { Exercise } from "../../objects/Exercise/Exercise";
+import {
+  Exercise,
+  ExerciseType,
+  ResolutionData,
+  TranslateExerciseOUT,
+  TranslateResolutionIN,
+} from "../../objects/Exercise/Exercise";
 import { GroupDragDrop } from "../../objects/Test/GroupDragDrop";
+import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
+import { APIContext } from "../../../APIContext";
 
 type EventInfo =
   | {
@@ -82,6 +90,11 @@ export function CreateTest({ test }: CreateTestProps) {
   const [testState, dispatch] = useReducer(EditTestStateReducer, inicialState);
   const [selectedMenu, setSelectedMenu] = useState("");
   const [selectedExercise, setSelectedExercise] = useState(-1);
+  const [rubrics, setRubrics] = useState<{ [id: string]: Rubric }>({});
+  const [solutions, setSolutions] = useState<{ [id: string]: ResolutionData }>(
+    {}
+  );
+  const { contactBACK } = useContext(APIContext);
   const [exerciseID, setExerciseID] = useState({
     // exercicio selecionado atualmente
     groupPosition: 0,
@@ -464,6 +477,62 @@ export function CreateTest({ test }: CreateTestProps) {
     setActiveDnD(null);
   }
 
+  const setRubric = (id: string, rubric?: Rubric) => {
+    if (rubric) {
+      let newRubrics = { ...rubrics };
+      newRubrics[id] = rubric;
+      setRubrics(newRubrics);
+    }
+  };
+
+  const setSolution = (id: string, solution?: ResolutionData) => {
+    if (solution) {
+      let newSol = { ...solutions };
+      newSol[id] = solution;
+      setSolutions(newSol);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedMenu === "edit-exercise") {
+      let exercise =
+        testState.test.groups[testState.groupPosition].exercises[
+          testState.exercisePosition
+        ];
+      switch (exercise.type) {
+        case ExerciseType.OPEN_ANSWER:
+        case ExerciseType.CHAT:
+          if (!(exercise.identity.id in rubrics)) {
+            setRubric(exercise.identity.id, { criteria: [] });
+            contactBACK("exercises/" + exercise.identity.id + "/rubric", "GET")
+              .then((response) => {
+                response.json().then((json) => {
+                  setRubric(exercise.identity.id, json);
+                });
+              })
+              .catch(() => {});
+          }
+          break;
+        case ExerciseType.MULTIPLE_CHOICE:
+        case ExerciseType.TRUE_OR_FALSE:
+          if (!(exercise.identity.id in rubrics)) {
+            contactBACK("exercises/" + exerciseID + "/solution", "GET").then(
+              (response) => {
+                response.json().then((json) => {
+                  setSolution(
+                    exercise.identity.id,
+                    TranslateResolutionIN(json.data, exercise)
+                  );
+                });
+              }
+            );
+          }
+
+          break;
+      }
+    }
+  }, [selectedMenu]);
+
   return (
     <EditTestContext.Provider value={{ testState, dispatch }}>
       <DndContext
@@ -527,41 +596,75 @@ export function CreateTest({ test }: CreateTestProps) {
                       testState.exercisePosition
                     ]
                   }
+                  rubric={
+                    rubrics[
+                      testState.test.groups[testState.groupPosition].exercises[
+                        testState.exercisePosition
+                      ].identity.id
+                    ]
+                  }
+                  solution={
+                    solutions[
+                      testState.test.groups[testState.groupPosition].exercises[
+                        testState.exercisePosition
+                      ].identity.id
+                    ]
+                  }
                   saveEdit={(state) => {
+                    const id = state.exercise.identity.id;
+                    const { exerciseTR, solutionTR } = TranslateExerciseOUT(
+                      state.exercise
+                    );
+                    const rubricTR = TranslateRubricOut(
+                      state.exercise.type,
+                      state.rubric
+                    );
+                    setRubric(id, state.rubric);
+                    setSolution(id, state.solution);
                     if (selectedMenu === "create-exercise") {
-                      // <<< ALTERAR ESTE IF >>>
-                      // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                      // PARA SE SABER O ID DO NOVO EXERCICIO
-                      dispatch({
-                        type: EditTestActionKind.EDIT_EXERCISE,
-                        exercise: {
-                          groupPosition: testState.groupPosition,
-                          exercisePosition: testState.exercisePosition,
-                          exercise: {
-                            ...state.exercise,
-                            identity: {
-                              ...state.exercise.identity,
-                              id: "novo id 1000",
-                              visibility:
-                                state.exercise.identity?.visibility ?? "",
-                              specialistId:
-                                state.exercise.identity?.specialistId ?? "",
+                      contactBACK("exercises", "POST", undefined, {
+                        exercise: exerciseTR,
+                        solution: solutionTR,
+                        rubric:
+                          Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                      }).then((response) => {
+                        response.text().then((jsonRes) => {
+                          dispatch({
+                            type: EditTestActionKind.EDIT_EXERCISE,
+                            exercise: {
+                              groupPosition: testState.groupPosition,
+                              exercisePosition: testState.exercisePosition,
+                              exercise: {
+                                ...state.exercise,
+                                identity: {
+                                  ...state.exercise.identity,
+                                  id: jsonRes,
+                                  visibility:
+                                    state.exercise.identity?.visibility ?? "",
+                                  specialistId:
+                                    state.exercise.identity?.specialistId ?? "",
+                                },
+                              },
                             },
-                          },
-                        },
+                          });
+                        });
                       });
-                      // <<< ALTERAR ESTE IF (final)>>>
                     } else {
-                      // <<< MANTER >>>
-                      dispatch({
-                        type: EditTestActionKind.EDIT_EXERCISE,
-                        exercise: {
-                          groupPosition: testState.groupPosition,
-                          exercisePosition: testState.exercisePosition,
-                          exercise: state.exercise,
-                        },
+                      contactBACK("exercises/" + exerciseID, "PUT", undefined, {
+                        exercise: exerciseTR,
+                        solution: solutionTR,
+                        rubric:
+                          Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                      }).then((response) => {
+                        dispatch({
+                          type: EditTestActionKind.EDIT_EXERCISE,
+                          exercise: {
+                            groupPosition: testState.groupPosition,
+                            exercisePosition: testState.exercisePosition,
+                            exercise: state.exercise,
+                          },
+                        });
                       });
-                      // <<< MANTER (final)>>>
                     }
                     setSelectedMenu("");
                   }}
