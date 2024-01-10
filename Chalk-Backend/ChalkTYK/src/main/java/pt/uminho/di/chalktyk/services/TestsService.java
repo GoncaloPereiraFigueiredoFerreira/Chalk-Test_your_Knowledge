@@ -204,44 +204,44 @@ public class TestsService implements ITestsService {
         List<TestGroup> newTGs = new ArrayList<>();
         List<String> allNewExesIds = new ArrayList<>();
 
-        for (TestGroup tg: tgs){
-            List<TestExercise> newExes = new ArrayList<>();
+        if(tgs != null) {
+            for (TestGroup tg : tgs) {
+                List<TestExercise> newExes = new ArrayList<>();
 
-            for (TestExercise exe: tg.getExercises()){
-                // duplicate or persist exercise
-                String dupExerciseId;
+                for (TestExercise exe : tg.getExercises()) {
+                    // duplicate or persist exercise
+                    String dupExerciseId;
 
-                // if the exercise is a concrete exercise, the exercise must be persisted
-                // and a reference, with the id of the persisted exercise, needs to be created.
-                // This allows the exercises to be persisted independently of the test.
-                if (exe instanceof ConcreteExercise ce){
-                    Exercise tmp = ce.getExercise();
-                    List<String> tagIds = new ArrayList<>();
-                    if (tmp.getTags() != null)
-                        tagIds = tmp.getTags().stream().map(Tag::getId).toList();
-                    tmp.setSpecialist(specialist);
-                    dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                    // if the exercise is a concrete exercise, the exercise must be persisted
+                    // and a reference, with the id of the persisted exercise, needs to be created.
+                    // This allows the exercises to be persisted independently of the test.
+                    if (exe instanceof ConcreteExercise ce) {
+                        Exercise tmp = ce.getExercise();
+                        List<String> tagIds = new ArrayList<>();
+                        if (tmp.getTags() != null)
+                            tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                        tmp.setSpecialist(specialist);
+                        dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                    }
+
+                    // Else the exercise is a reference to an existing exercise,
+                    // therefore the exercise needs to be duplicated and
+                    // a new reference, containing the id of the duplicate,
+                    // needs to be created.
+                    else if (exe instanceof ReferenceExercise re) {
+                        dupExerciseId = exercisesService.duplicateExerciseById(specialistId, re.getId(), null, Visibility.TEST);
+                    } else {
+                        break;
+                    }
+
+                    ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
+                    newExes.add(newExe);
+                    allNewExesIds.add(dupExerciseId);
                 }
 
-                // Else the exercise is a reference to an existing exercise,
-                // therefore the exercise needs to be duplicated and
-                // a new reference, containing the id of the duplicate,
-                // needs to be created.
-                else if (exe instanceof ReferenceExercise re) {
-                    dupExerciseId = exercisesService.duplicateExerciseById(specialistId, re.getId(), null, Visibility.TEST);
-                }
-
-                else {
-                    break;
-                }
-
-                ReferenceExercise newExe = new ReferenceExercise(dupExerciseId, exe.getPoints());
-                newExes.add(newExe);
-                allNewExesIds.add(dupExerciseId);
+                TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
+                newTGs.add(newTG);
             }
-
-            TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
-            newTGs.add(newTG);
         }
         body.setGroups(newTGs);
 

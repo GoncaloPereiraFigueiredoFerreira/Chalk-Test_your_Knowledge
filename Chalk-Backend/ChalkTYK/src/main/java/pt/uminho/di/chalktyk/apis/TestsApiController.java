@@ -106,7 +106,6 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("SPECIALIST")) {
                 body.setSpecialist(new Specialist(userId));
-                testsService.createTest(body);
                 String testId = testsService.createTest(body);
                 return ResponseEntity.ok(testId);
             }
