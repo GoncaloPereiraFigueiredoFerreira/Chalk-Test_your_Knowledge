@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class SpecialistsService implements ISpecialistsService{
      * @throws BadInputException if any property of the specialist is not valid.
      */
     @Override
-    @Transactional(rollbackFor = {BadInputException.class})
+    @Transactional(rollbackFor = ServiceException.class)
     public String createSpecialist(Specialist specialist) throws BadInputException {
         if (specialist == null)
             throw new BadInputException("Cannot create a specialist with a 'null' body.");

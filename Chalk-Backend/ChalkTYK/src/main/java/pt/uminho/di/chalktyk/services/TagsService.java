@@ -1,7 +1,9 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.repositories.TagDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
@@ -40,6 +42,7 @@ public class TagsService implements ITagsService {
      * @return the tag
      */
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public Tag createTag(String name, String path) throws BadInputException {
         if (name.contains("/"))
             throw new BadInputException("The name of a tag cannot contain the '/' character.");
@@ -148,6 +151,7 @@ public class TagsService implements ITagsService {
      * and with the search starting at the given path
      * @throws BadInputException if 'levels' is not -1 or a positive number, or if there are any invalid paths.
      */
+    @Transactional(rollbackFor = ServiceException.class)
     public List<Tag> listTags(String path, Integer levels) throws BadInputException{
         StringBuilder pathRegexBuilder = new StringBuilder("^" + path);
         String pathRegex;

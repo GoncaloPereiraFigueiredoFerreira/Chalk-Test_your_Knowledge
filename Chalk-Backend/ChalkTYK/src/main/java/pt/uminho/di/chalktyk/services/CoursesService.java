@@ -12,6 +12,7 @@ import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.repositories.CourseDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +42,7 @@ public class CoursesService implements ICoursesService {
      *                           invalid institution id (if given), or an invalid (specialist) owner id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String createCourse(Course course) throws BadInputException {
         if(course == null)
             throw new BadInputException("Cannot create course: course is null.");
@@ -106,7 +107,7 @@ public class CoursesService implements ICoursesService {
      * @param courseId       identifier of the course
      * @param specialistsIds list of specialists identifiers
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void addSpecialistsToCourse(String courseId, List<String> specialistsIds) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -123,7 +124,7 @@ public class CoursesService implements ICoursesService {
      * @param courseId    identifier of the course
      * @param studentsIds list of students identifiers
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void addStudentsToCourse(String courseId, List<String> studentsIds) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -140,7 +141,7 @@ public class CoursesService implements ICoursesService {
      * @param courseId       identifier of the course
      * @param specialistsIds list of specialists identifiers
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void removeSpecialistsFromCourse(String courseId, List<String> specialistsIds) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -157,7 +158,7 @@ public class CoursesService implements ICoursesService {
      * @param courseId    identifier of the course
      * @param studentsIds list of students identifiers
      */
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void removeStudentsFromCourse(String courseId, List<String> studentsIds) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -168,7 +169,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void addSpecialistsToCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
         if (!courseDAO.existsById(courseId))
@@ -180,7 +181,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void addStudentsToCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -192,7 +193,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void removeSpecialistsFromCourseByEmails(String courseId, List<String> specialistsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -204,7 +205,7 @@ public class CoursesService implements ICoursesService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void removeStudentsFromCourseByEmails(String courseId, List<String> studentsEmails) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
@@ -224,7 +225,7 @@ public class CoursesService implements ICoursesService {
      * @param description
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateCourseBasicProperties(String courseId, String name, String description) throws BadInputException, NotFoundException {
         if(courseId == null)
             throw new BadInputException("Cannot update course: identifier of the course is null");

@@ -8,10 +8,12 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.repositories.TagDAO;
 import pt.uminho.di.chalktyk.services.ITagsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.List;
 
 @SpringBootTest
+@Transactional(noRollbackFor = ServiceException.class)
 public class TestTags {
 
     private final ITagsService iTagsService;

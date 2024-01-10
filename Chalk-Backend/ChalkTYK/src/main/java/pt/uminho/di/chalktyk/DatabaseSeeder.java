@@ -9,6 +9,8 @@ import pt.uminho.di.chalktyk.services.ISeedService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
+import java.util.Arrays;
+
 @Component
 @Slf4j
 public class DatabaseSeeder implements ApplicationRunner {
@@ -24,8 +26,10 @@ public class DatabaseSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         // Execute your seeding logic here
         try {
-            if(seedService.seed())
-                log.info("Seeded database.");
+            if(Arrays.asList(args.getSourceArgs()).contains("seed")){
+                if(seedService.seed())
+                    log.info("Seeded database.");
+            } else log.info("Database was not seeded.");
         } catch (BadInputException | NotFoundException | InterruptedException e) {
             throw new RuntimeException(e);
         }

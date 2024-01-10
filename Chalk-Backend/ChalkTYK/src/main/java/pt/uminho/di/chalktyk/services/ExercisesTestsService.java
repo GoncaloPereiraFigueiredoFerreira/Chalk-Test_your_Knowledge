@@ -2,8 +2,10 @@ package pt.uminho.di.chalktyk.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 /**
@@ -28,6 +30,7 @@ public class ExercisesTestsService implements IExercisesTestsService{
      * @throws UnauthorizedException if the exercise belongs to a test
      */
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteExerciseById(String exerciseId) throws NotFoundException, UnauthorizedException {
         Visibility vis = exercisesService.getExerciseVisibility(exerciseId);
         if(vis.equals(Visibility.TEST))

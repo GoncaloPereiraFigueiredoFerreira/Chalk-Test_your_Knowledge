@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.Hibernate;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
@@ -90,8 +92,11 @@ public class TestsService implements ITestsService {
         // turning groups to null
         List<Test> tmpTests = new ArrayList<>();
         for (Test t: tests){
-            tmpTests.add(new Test(t.getId(), t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(), 
-                        t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), null));
+            Test tmpTest = new Test(t.getId(), t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(),
+                    t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), null);
+            List<Tag> tmpTags = testTagsDAO.getTestTags(t.getId()).stream().map(tt -> tt.getTestTagPK().getTag().clone()).toList();
+            tmpTest.setTags(tmpTags);
+            tmpTests.add(tmpTest);
         }
 
         Page<Test> resTests = new PageImpl<>(tmpTests);
@@ -122,8 +127,14 @@ public class TestsService implements ITestsService {
             }
         }
 
-        return new Test(testId, t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(), 
-                        t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), newGroups); 
+        Test ret = new Test(testId, t.getTitle(), t.getGlobalInstructions(), t.getGlobalPoints(), t.getConclusion(), t.getCreationDate(),
+                t.getPublishDate(), t.getSpecialist(), t.getVisibility(), t.getCourse(), t.getInstitution(), newGroups);
+
+        // get tags
+        List<Tag> tags = testTagsDAO.getTestTags(t.getId()).stream().map(tt -> tt.getTestTagPK().getTag().clone()).toList();
+        ret.setTags(tags);
+
+        return ret;
     }
 
     private Test _getTestById(String testId) throws NotFoundException {
@@ -134,7 +145,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String createTest(Test body) throws BadInputException, NotFoundException {
         if (body == null)
             throw new BadInputException("Cannot create test: test is null.");
@@ -255,7 +266,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteTestById(String testId) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -283,7 +294,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String duplicateTestById(String specialistId, String testId, Visibility visibility, String courseId) throws BadInputException, NotFoundException {
         // if test does not exist, a not found exception will be thrown
         // fetch original models
@@ -352,7 +363,7 @@ public class TestsService implements ITestsService {
         return newTest.getId();
     }
 
-    @Transactional 
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTest(String testId, Test body) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -372,7 +383,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestTitle(String testId, String title) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -382,7 +393,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestGlobalInstructions(String testId, String globalInstructions) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -392,7 +403,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestConclusion(String testId, String conclusion) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -402,7 +413,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestPublishDate(String testId, LocalDateTime publishDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -434,7 +445,7 @@ public class TestsService implements ITestsService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestVisibility(String testId, Visibility visibility) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -462,7 +473,7 @@ public class TestsService implements ITestsService {
         testDAO.save(test);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestCourse(String testId, String courseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -483,7 +494,7 @@ public class TestsService implements ITestsService {
         testDAO.save(test);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestGroups(String testId, List<TestGroup> groups) throws NotFoundException, BadInputException {
         if(groups == null)
@@ -578,7 +589,7 @@ public class TestsService implements ITestsService {
             exercisesService.deleteExerciseById(exId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestGroup(String testId, Integer groupIndex, TestGroup group) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -657,7 +668,7 @@ public class TestsService implements ITestsService {
             exercisesService.deleteExerciseById(exId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestDeliverDate(String testId, LocalDateTime deliverDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -675,7 +686,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestStartDate(String testId, LocalDateTime startDate) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -693,7 +704,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestDuration(String testId, long duration) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -711,7 +722,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestStartTolerance(String testId, long startTolerance) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -729,7 +740,7 @@ public class TestsService implements ITestsService {
         testDAO.save(lt);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void automaticCorrection(String testId, String correctionType) throws NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
@@ -819,20 +830,20 @@ public class TestsService implements ITestsService {
                 if (!pair.getResolutionId().isEmpty()){
                     try {
                         exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
+                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
+                        if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
+                            isRevised = false;
+                            Float newPoints = exeRes.getPoints() * mapExePoints.get(entry.getKey()) / 100;
+                            pair.setPoints(newPoints);
+                            resMap.put(entry.getKey(), pair);
+
+                        // calculate points
+                        points += newPoints;
                     }
                     catch (BadInputException | UnauthorizedException ignored){
                         // If an exercise can't be corrected, using the chosen correctionType,
                         // it just is not corrected.
                     }
-                    ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
-                    if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
-                        isRevised = false;
-                    Float newPoints = exeRes.getPoints() * mapExePoints.get(entry.getKey()) / 100;
-                    pair.setPoints(newPoints);
-                    resMap.put(entry.getKey(), pair);
-
-                    // calculate points
-                    points += newPoints;
                 }
             }
             trg.setResolutions(resMap);
@@ -850,7 +861,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public Integer countStudentsTestResolutions(String testId, Boolean total) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
@@ -861,7 +872,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public List<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
@@ -870,7 +881,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public TestResolution getTestResolutionById(String resolutionId) throws NotFoundException{
         TestResolution tr = resolutionDAO.findById(resolutionId).orElse(null);
         if (tr == null)
@@ -879,7 +890,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String startTest(String testId, String studentId) throws BadInputException, NotFoundException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -901,7 +912,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public TestResolution createTestResolution(String testId, TestResolution resolution) throws BadInputException, NotFoundException {
         // check test
         if (testId == null)
@@ -962,7 +973,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteTestResolutionById(String resolutionId) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(resolutionId).orElse(null);
         if (resolution == null)
@@ -980,7 +991,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestResolution(String testResId, TestResolution body) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -993,7 +1004,7 @@ public class TestsService implements ITestsService {
         _updateTestResolutionSubmissionDate(resolution, body.getSubmissionDate());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void updateTestResolutionStartDate(String testResId, LocalDateTime startDate) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
@@ -1038,7 +1049,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestResolutionSubmissionDate(String testResId, LocalDateTime submissionDate) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -1070,7 +1081,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestResolutionSubmissionNr(String testResId, int submissionNr) throws NotFoundException, BadInputException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -1084,7 +1095,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void updateTestResolutionStatus(String testResId, TestResolutionStatus status) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
@@ -1096,7 +1107,7 @@ public class TestsService implements ITestsService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't find test with given id.");
@@ -1135,7 +1146,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public Integer countStudentSubmissionsForTest(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot count " + studentId + " submissions for test " + testId + ": couldn't find test with given id.");
@@ -1145,7 +1156,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public List<String> getStudentTestResolutionsIds(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get student " + studentId + " resolutions for test " + testId + ": couldn't find test with given id.");
@@ -1155,7 +1166,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public List<TestResolution> getStudentLastResolutions(String testId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get last resolutions for test " + testId + ": couldn't find test with given id.");
@@ -1195,7 +1206,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get student " + studentId + " last resolution for test " + testId + ": couldn't find test with given id.");
@@ -1227,7 +1238,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
 	public void manualCorrectionForExercise(String exeResId, String testResId, Float points, String comment) throws NotFoundException, BadInputException {
         TestResolution updatedTR = getTestResolutionById(testResId);
         ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
@@ -1321,7 +1332,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
         TestResolution testRes = getTestResolutionById(testResId);
 
@@ -1425,7 +1436,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
@@ -1468,7 +1479,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void removeExerciseFromTest(String testId, String exerciseId) throws NotFoundException, BadInputException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
