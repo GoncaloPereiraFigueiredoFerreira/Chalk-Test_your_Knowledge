@@ -8,6 +8,9 @@ import {
 } from "../../objects/SVGImages/SVGImages";
 import { APIContext } from "../../../APIContext";
 
+import { CreateStudentModal } from "./CreateStudent";
+import { Button, Modal, TextInput } from "flowbite-react";
+
 interface Student {
   id: string;
   name: string;
@@ -20,6 +23,8 @@ export function AlunosPage() {
   const { id } = useParams();
   const [searchKey, setSearch] = useState("");
   const { contactBACK } = useContext(APIContext);
+  const [email, setEmail] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     contactBACK("courses/" + id + "/students", "GET", {
@@ -34,18 +39,23 @@ export function AlunosPage() {
   }, [id]);
 
   const addStudent = () => {
-    const newStudent: Student = {
-      id: "1",
-      name: "Luis",
-      photoPath: "",
-      email: "alexandrinho@gmail.com",
-    };
+    if (email !== "") {
+      contactBACK("courses/" + id + "/students/add", "POST", undefined, [
+        email,
+      ]).then((response) => {
+        setEmail("");
 
-    contactBACK("courses/" + id + "/students/add", "POST", undefined, [
-      "alexandrinho@gmail.com",
-    ]).then((response) => {
-      setStudentList([...studentList, newStudent]);
-    });
+        setOpenModal(false);
+      });
+    }
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      // If Enter key is pressed, prevent the default behavior and call the addStudent function
+      event.preventDefault();
+      addStudent();
+    }
   };
 
   const removeStudent = (emailToRemove: string) => {
@@ -78,12 +88,36 @@ export function AlunosPage() {
             </div>
           </div>
           <div className="flex  ">
-            <button
-              className=" items-center justify-center w-24 h-10 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              onClick={addStudent}
+            <Button onClick={() => setOpenModal(true)}>Adicionar Aluno</Button>
+            <Modal
+              dismissible
+              show={openModal}
+              onClose={() => setOpenModal(false)}
             >
-              Adicionar Estudante
-            </button>
+              <Modal.Header> Criar um Novo Grupo</Modal.Header>
+              <Modal.Body>
+                <div className="space-y-6">
+                  <div>
+                    <div className="mb-2 block">
+                      <label htmlFor="name">Email do aluno:</label>
+                    </div>
+                    <TextInput
+                      type="text"
+                      id="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      onKeyDown={handleKeyDown}
+                      required
+                    />
+                  </div>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => addStudent()}>
+                  Criar novo Estudante
+                </Button>
+              </Modal.Footer>
+            </Modal>
             <button
               className="px-2 w-12"
               onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
