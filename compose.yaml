@@ -1,0 +1,5 @@
+include:
+  - ./Chalk-Api/compose.yaml
+  - ./Chalk-Backend/ChalkTYK/compose.yaml
+  - ./Chalk-Auth/compose.yaml
+  - ./Chalk-Frontend/compose.yaml 

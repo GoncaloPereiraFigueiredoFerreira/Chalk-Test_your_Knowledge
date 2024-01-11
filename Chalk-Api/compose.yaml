@@ -1,6 +1,8 @@
 services:
   redis:
     image: redis:7.2.3
+    networks: 
+      - api
 
   server:
     build: ./Server/
@@ -14,4 +16,10 @@ services:
       - 5000:5000
     environment:
       API_KEY: ${API_KEY}
-      REDIS: "chalk-api-redis-1"
+      REDIS: redis
+    networks:
+      - api
+
+networks:
+  api:
+    driver: bridge
