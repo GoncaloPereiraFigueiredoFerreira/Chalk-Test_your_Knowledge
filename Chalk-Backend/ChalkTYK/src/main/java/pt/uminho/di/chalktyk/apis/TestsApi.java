@@ -537,12 +537,12 @@ public interface TestsApi {
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
-            value = "/{testId}/deleteExercise",
-            method = RequestMethod.PUT)
+            value = "/{testId}/exercises/{exerciseId}",
+            method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteExerciseFromTest(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
-            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String exerciseId);
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId")  String exerciseId);
 
     @Operation(summary = "If an exercise belongs to a test removes it from the test.", description = "", tags={ "tests" })
     @ApiResponses(value = {
