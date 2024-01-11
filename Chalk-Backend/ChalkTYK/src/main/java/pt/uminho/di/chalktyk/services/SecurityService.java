@@ -14,6 +14,7 @@ import pt.uminho.di.chalktyk.repositories.BlackListedJWTDao;
 import pt.uminho.di.chalktyk.repositories.LoginDao;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Service("securityService")
@@ -115,7 +116,7 @@ public class SecurityService implements ISecurityService{
      * @throws UnauthorizedException
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public JWT validateJWT(String jwtTokenString) throws UnauthorizedException {
         JWT jwt = parseJWT(jwtTokenString);
         setsJWTUserId(jwt);
@@ -124,7 +125,7 @@ public class SecurityService implements ISecurityService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public User login(String jwtToken) throws UnauthorizedException, NotFoundException {
         if(blackListedJWTDao.existsById(jwtToken))
             throw new UnauthorizedException("Authentication token is blacklisted.");
@@ -157,7 +158,7 @@ public class SecurityService implements ISecurityService{
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void logout(String jwtToken) throws UnauthorizedException {
         JWT jwt = validateJWT(jwtToken);
         String userId = checkAndUpdateLogin(jwt);

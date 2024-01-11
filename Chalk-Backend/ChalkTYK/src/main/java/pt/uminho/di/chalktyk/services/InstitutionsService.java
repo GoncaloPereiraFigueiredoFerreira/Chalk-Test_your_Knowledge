@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,6 +24,7 @@ import pt.uminho.di.chalktyk.repositories.InstitutionManagerDAO;
 import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 @Service("institutionsService")
 public class InstitutionsService implements IInstitutionsService {
@@ -74,7 +74,7 @@ public class InstitutionsService implements IInstitutionsService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public void updateInstitutionById(String institutionId, Institution body) {
+    public void updateInstitutionById(String institutionId, Institution body) throws NotFoundException, BadInputException {
         if (body != null){
             Optional<Institution> obj = idao.findById(institutionId);
             if (obj.isPresent()){
@@ -85,10 +85,10 @@ public class InstitutionsService implements IInstitutionsService {
                 idao.save(res);
             }
             else
-                throw new ServiceException("Couldn't update institution with id: " + institutionId);
+                throw new NotFoundException("Couldn't update institution with id: " + institutionId);
         }
         else
-            throw new ServiceException("Couldn't update institution: institution is null");
+            throw new BadInputException("Couldn't update institution: institution is null");
     }
 
 
