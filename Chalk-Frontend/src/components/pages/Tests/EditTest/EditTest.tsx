@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { APIContext } from "../../../../APIContext";
 import { TranslateTestExerciseIN } from "../../../objects/Exercise/Exercise";
-import { Test, InitTest } from "../../../objects/Test/Test";
+import { Test } from "../../../objects/Test/Test";
 import { CreateTest } from "../../CreateTestPage/CreateTestPage";
 
 export function EditTest() {

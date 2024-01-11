@@ -2,6 +2,7 @@ import { useContext, createContext } from "react";
 import { ExerciseGroup, Test } from "./Test";
 import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 import { arrayMove } from "@dnd-kit/sortable";
+import { contact } from "../../../APIContext";
 
 //------------------------------------//
 //                                    //
@@ -40,6 +41,8 @@ export interface EditTestAction {
     newPosition?: number;
   };
   exercise?: {
+    newID?: string;
+    specialist?: string;
     exercisePosition: number;
     groupPosition: number;
     exercise?: Exercise;
@@ -54,9 +57,9 @@ export interface EditTestAction {
 
 export interface EditTestState {
   test: Test;
-  // posição do exercicio/grupo selecionado para edição
   exercisePosition: number;
   groupPosition: number;
+  contactBACK: contact;
 }
 
 export function EditTestStateReducer(
@@ -65,21 +68,35 @@ export function EditTestStateReducer(
 ) {
   switch (action.type) {
     case EditTestActionKind.EDIT_TEST_INFO:
-      if (action.testInfo)
+      if (action.testInfo) {
+        state.contactBACK(
+          "tests/" + state.test.id + "/basicProperties",
+          "PUT",
+          undefined,
+          {
+            id: state.test.id,
+            title: action.testInfo.title,
+            globalInstructions: action.testInfo.globalInstructions,
+            conclusion: action.testInfo.conclusion,
+            visibility: state.test.visibility,
+          }
+        );
         return {
           ...state,
           test: { ...state.test, ...action.testInfo },
         };
+      }
+
       throw new Error("Invalid Action");
 
     case EditTestActionKind.CREATE_NEW_EXERCISE:
-      if (action.group && action.group.exerciseType) {
+      if (action.group && action.group.exerciseType && action.exercise) {
         let newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
-        newGroups[action.group.groupPosition].exercises.push(
-          InitExercise(action.group.exerciseType)
-        );
+        let newEx = InitExercise(action.group.exerciseType);
+        newEx.identity.specialistId = action.exercise!.specialist!;
+        newGroups[action.group.groupPosition].exercises.push(newEx);
         return {
           exercisePosition:
             newGroups[action.group.groupPosition].exercises.length - 1,
@@ -97,21 +114,14 @@ export function EditTestStateReducer(
         let newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
-        // DRAG and DROP needs to add an element here
-        // but <<<<< ID CANNOT BE CHANGED >>>>>
-        // SAVE_DD_NEW_EXERCISE will save it later
+
         const exercise = action.exercise.tmp
           ? action.exercise.exercise
           : ({
               ...action.exercise.exercise,
               identity: {
                 ...action.exercise.exercise.identity,
-                // <<<<<<<<<  ALTERAR  >>>>>>>>>
-                // Exercicio tem de ser sempre duplicado
-                // Novo id resultante de duplicar este exercicio no backend
-                // => utilizado para adicionar carregando no botão
-                id: "test-exercise-".concat(Math.random().toString()),
-                // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+                id: action.exercise.newID!,
               },
             } as Exercise);
         newGroups[action.exercise.groupPosition].exercises.splice(
@@ -142,13 +152,8 @@ export function EditTestStateReducer(
         );
         let origGroup = newGroups[action.exercise.groupPosition];
 
-        // <<<<<<<<<  ALTERAR  >>>>>>>>>
-        // Exercicio tem de ser sempre duplicado
-        // Novo id resultante de duplicar este exercicio no backend
-        // => utilizado para adicionar atravez do drag and drop
         origGroup.exercises[action.exercise.exercisePosition].identity.id =
-          "test-exercise-".concat(Math.random().toString());
-        // <<<<<<<<<  ALTERAR (fim)  >>>>>>>>>
+          action.exercise.newID!;
 
         origGroup.exercises = arrayMove(
           origGroup.exercises,
@@ -177,6 +182,16 @@ export function EditTestStateReducer(
             action.exercise.exercisePosition
           ]
         ) {
+          state.contactBACK(
+            "tests/" +
+              state.test.id +
+              "/exercises/" +
+              newGroups[action.exercise.groupPosition].exercises[
+                action.exercise.exercisePosition
+              ].identity.id,
+            "PUT"
+          );
+
           // remove exercise
           newGroups[action.exercise.groupPosition].exercises.splice(
             action.exercise.exercisePosition,
@@ -195,6 +210,7 @@ export function EditTestStateReducer(
           newGroups.forEach((element) => {
             auxCotation += element.groupPoints;
           });
+
           return {
             ...state,
             test: {
@@ -224,20 +240,24 @@ export function EditTestStateReducer(
       throw new Error("Invalid Action");
 
     case EditTestActionKind.ADD_GROUP:
+      let newGroup = {
+        id: "test-group-" + state.test.groups.length,
+        groupInstructions: "",
+        exercises: [],
+        groupPoints: 0,
+      };
+      state.contactBACK(
+        "tests/" + state.test.id + "/groups",
+        "PUT",
+        undefined,
+        [...state.test.groups, newGroup]
+      );
       return {
         ...state,
         groupPosition: state.test.groups.length,
         test: {
           ...state.test,
-          groups: [
-            ...state.test.groups,
-            {
-              id: "test-group-" + state.test.groups.length,
-              groupInstructions: "",
-              exercises: [],
-              groupPoints: 0,
-            },
-          ],
+          groups: [...state.test.groups, newGroup],
         },
       } as EditTestState;
 
@@ -248,6 +268,14 @@ export function EditTestStateReducer(
         );
         // remove group
         newGroups.splice(action.group.groupPosition, 1);
+
+        state.contactBACK(
+          "tests/" + state.test.id + "/groups",
+          "PUT",
+          undefined,
+          newGroups
+        );
+
         // update globalCotation
         let auxCotation = 0;
         newGroups.forEach((element) => {
@@ -271,6 +299,13 @@ export function EditTestStateReducer(
         );
         newGroups[action.group.groupPosition].groupInstructions =
           action.group.groupInstructions;
+
+        state.contactBACK(
+          "tests/" + state.test.id + "/groups",
+          "PUT",
+          undefined,
+          newGroups
+        );
         return {
           ...state,
           test: {
@@ -301,6 +336,13 @@ export function EditTestStateReducer(
           newGroups.forEach((element) => {
             auxCotation += element.groupPoints;
           });
+
+          state.contactBACK(
+            "tests/" + state.test.id + "/groups",
+            "PUT",
+            undefined,
+            newGroups
+          );
           return {
             ...state,
             test: {
@@ -359,6 +401,13 @@ export function EditTestStateReducer(
           });
           newGroups[action.exercise.newPosition.groupPosition].groupPoints =
             auxCotation;
+
+          state.contactBACK(
+            "tests/" + state.test.id + "/groups",
+            "PUT",
+            undefined,
+            newGroups
+          );
           return {
             ...state,
             test: {
@@ -372,6 +421,13 @@ export function EditTestStateReducer(
             newGroups[action.exercise.groupPosition].exercises,
             action.exercise.exercisePosition,
             action.exercise.newPosition.exercisePosition
+          );
+
+          state.contactBACK(
+            "tests/" + state.test.id + "/groups",
+            "PUT",
+            undefined,
+            newGroups
           );
           return {
             ...state,
@@ -396,6 +452,12 @@ export function EditTestStateReducer(
           newGroups,
           action.group.groupPosition,
           action.group.newPosition
+        );
+        state.contactBACK(
+          "tests/" + state.test.id + "/groups",
+          "PUT",
+          undefined,
+          newGroups
         );
         return {
           ...state,

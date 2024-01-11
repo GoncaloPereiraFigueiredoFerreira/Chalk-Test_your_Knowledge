@@ -1,10 +1,12 @@
 import { Exercise } from "../Exercise/Exercise";
 
 export interface Test {
+  id: string;
   type: string;
   conclusion: string;
   author: string;
   title: string;
+  visibility: string;
   creationDate: string;
   globalPoints: number;
   globalInstructions: string;
@@ -32,15 +34,23 @@ export interface ExerciseGroup {
 
 export function InitTest() {
   return {
+    id: "",
     type: "",
     conclusion: "",
     author: "",
-    title: "",
+    visibility: "private",
+    title: "Novo Teste",
     creationDate: new Date().toISOString(),
     globalPoints: 0,
     globalInstructions: "",
-    groups: [InitGroup()],
+    groups: [],
   } as Test;
+}
+
+export function CreateTest(author: string) {
+  let test: Test = InitTest();
+  test.author = author;
+  return test;
 }
 
 export function InitGroup() {

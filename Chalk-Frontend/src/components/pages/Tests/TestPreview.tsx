@@ -3,10 +3,9 @@ import {
   Exercise,
   ExerciseComponent,
   ExerciseContext,
-  ExerciseGroup,
   ExerciseTypeToString,
 } from "../../objects/Exercise/Exercise";
-import { Test } from "../../objects/Test/Test";
+import { Test, ExerciseGroup } from "../../objects/Test/Test";
 
 function renderExercise(
   exercise: Exercise,

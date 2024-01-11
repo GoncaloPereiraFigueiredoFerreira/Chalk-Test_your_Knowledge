@@ -36,7 +36,7 @@ import {
 import { GroupDragDrop } from "../../objects/Test/GroupDragDrop";
 import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
 import { APIContext } from "../../../APIContext";
-import { HiOutlineTrash } from "react-icons/hi";
+import { useParams } from "react-router-dom";
 
 type EventInfo =
   | {
@@ -82,10 +82,17 @@ interface CreateTestProps {
 
 export function CreateTest({ test }: CreateTestProps) {
   const [draggingExercises, setDraggingExercises] = useState(false);
+  test?.groups.map((group) => {
+    group.id = Math.random().toString();
+    return group;
+  });
+  const { testID } = useParams();
+  const { contactBACK } = useContext(APIContext);
   const inicialState: EditTestState = {
     test: test !== undefined ? test : InitTest(),
     exercisePosition: 0,
     groupPosition: 0,
+    contactBACK: contactBACK,
   };
   const [listExercises, setListExercises] = useState<Exercise[]>([]);
   const [testState, dispatch] = useReducer(EditTestStateReducer, inicialState);
@@ -95,7 +102,7 @@ export function CreateTest({ test }: CreateTestProps) {
   const [solutions, setSolutions] = useState<{ [id: string]: ResolutionData }>(
     {}
   );
-  const { contactBACK } = useContext(APIContext);
+
   const [exerciseID, setExerciseID] = useState({
     // exercicio selecionado atualmente
     groupPosition: 0,
@@ -263,24 +270,27 @@ export function CreateTest({ test }: CreateTestProps) {
             let newListExercises: Exercise[] = JSON.parse(
               JSON.stringify(listExercises)
             );
-            newListExercises.splice(activeDnD.exercisePosition, 1);
-            setListExercises(newListExercises);
-            dispatch({
-              type: EditTestActionKind.ADD_NEW_EXERCISE,
-              exercise: {
-                groupPosition: overInfo.groupPosition,
-                exercisePosition: overInfo.exercisePosition,
-                exercise: activeInfo.exercise,
-                tmp: true,
-              },
-            });
-            setActiveDnD({
-              ...activeDnD,
-              added: {
-                exercisePosition: overInfo.exercisePosition,
-                groupPosition: overInfo.groupPosition,
-              },
-            });
+
+            if (overInfo.type == "exercise" && activeInfo.type === "exercise") {
+              newListExercises.splice(activeDnD.exercisePosition, 1);
+              setListExercises(newListExercises);
+              dispatch({
+                type: EditTestActionKind.ADD_NEW_EXERCISE,
+                exercise: {
+                  groupPosition: overInfo.groupPosition,
+                  exercisePosition: overInfo.exercisePosition,
+                  exercise: activeInfo.exercise,
+                  tmp: true,
+                },
+              });
+              setActiveDnD({
+                ...activeDnD,
+                added: {
+                  exercisePosition: overInfo.exercisePosition,
+                  groupPosition: overInfo.groupPosition,
+                },
+              });
+            }
           }
         }
         // Add the new Exercise to the Test => over is an Exercise
@@ -398,26 +408,42 @@ export function CreateTest({ test }: CreateTestProps) {
     // save exercise
     if (activeDnD && activeDnD.type === "add" && activeDnD.added) {
       if (overInfo.type !== "add") {
-        dispatch({
-          type: EditTestActionKind.SAVE_DD_NEW_EXERCISE,
+        contactBACK("tests/" + testID + "/createExercise", "PUT", undefined, {
           exercise: {
-            exercisePosition: activeDnD.added.exercisePosition,
-            groupPosition: activeDnD.added.groupPosition,
-            newPosition: {
-              exercisePosition:
-                overInfo.type === "exercise" ? overInfo.exercisePosition : 0,
-              groupPosition: activeDnD.added.groupPosition,
-            },
+            points: 1,
+            id: activeDnD.exercise.identity.id,
+            Type: "reference",
           },
+          groupIndex: overInfo.groupPosition,
+          exeIndex:
+            overInfo.type === "exercise" ? overInfo.exercisePosition : 0,
+        }).then((response) => {
+          response.text().then((id) => {
+            if (overInfo.type !== "add" && activeDnD.added) {
+              dispatch({
+                type: EditTestActionKind.SAVE_DD_NEW_EXERCISE,
+                exercise: {
+                  exercisePosition: activeDnD.added.exercisePosition,
+                  groupPosition: activeDnD.added.groupPosition,
+                  newID: id,
+                  newPosition: {
+                    exercisePosition:
+                      overInfo.type === "exercise"
+                        ? overInfo.exercisePosition
+                        : 0,
+                    groupPosition: activeDnD.added.groupPosition,
+                  },
+                },
+              });
+            }
+          });
         });
+
         let newListExercises: Exercise[] = JSON.parse(
           JSON.stringify(listExercises)
         );
         let replaceExercise: Exercise = JSON.parse(
           JSON.stringify(activeDnD.exercise)
-        );
-        replaceExercise.identity.id = "new-exercise-".concat(
-          Math.random().toString()
         );
         newListExercises.splice(activeDnD.exercisePosition, 0, replaceExercise);
         setListExercises(newListExercises);
@@ -624,12 +650,28 @@ export function CreateTest({ test }: CreateTestProps) {
                     setRubric(id, state.rubric);
                     setSolution(id, state.solution);
                     if (selectedMenu === "create-exercise") {
-                      contactBACK("exercises", "POST", undefined, {
-                        exercise: exerciseTR,
-                        solution: solutionTR,
-                        rubric:
-                          Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                      }).then((response) => {
+                      contactBACK(
+                        "tests/" + testID + "/createExercise",
+                        "PUT",
+                        undefined,
+                        {
+                          exercise: {
+                            points: 1,
+                            Type: "concrete",
+                            exercise: {
+                              ...exerciseTR,
+
+                              solution: solutionTR,
+                              rubric:
+                                Object.keys(rubricTR).length == 0
+                                  ? null
+                                  : rubricTR,
+                            },
+                          },
+                          groupIndex: testState.groupPosition,
+                          exeIndex: testState.exercisePosition,
+                        }
+                      ).then((response) => {
                         response.text().then((jsonRes) => {
                           dispatch({
                             type: EditTestActionKind.EDIT_EXERCISE,

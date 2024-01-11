@@ -24,6 +24,7 @@ import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
 import "./App.css";
 import "./components/interactiveElements/Icon.css";
 import { EditTest } from "./components/pages/Tests/EditTest/EditTest";
+import { CreateTestPage } from "./components/pages/Tests/EditTest/CreateTest";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -43,7 +44,7 @@ function App() {
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
           <Route path="exercise-bank" element={<ExerciseBankPage />} />
-          <Route path="create-test" element={<CreateTest />} />
+          <Route path="create-test" element={<CreateTestPage />} />
           <Route path="tests">
             <Route path="" element={<TestPage />} />
             <Route path=":testID">

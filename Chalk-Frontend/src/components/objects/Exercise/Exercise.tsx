@@ -181,19 +181,6 @@ export interface ExerciseIdentity {
 
 //------------------------------------//
 //                                    //
-//          ExerciseGroup             //
-//                                    //
-//------------------------------------//
-
-// REDUNDANTE -> importar de Test
-export interface ExerciseGroup {
-  exercises: Exercise[];
-  groupInstructions: string;
-  groupPoints: number;
-}
-
-//------------------------------------//
-//                                    //
 //         ExerciseComponent          //
 //                                    //
 //------------------------------------//
@@ -506,6 +493,7 @@ export function TranslateExerciseOUT(exercise: Exercise): {
     title: exercise.base.title,
     visibility: exercise.identity.visibility,
     statement: exercise.base.statement,
+    specialistId: exercise.identity.specialistId,
   };
 
   let solutionTR: any = {};

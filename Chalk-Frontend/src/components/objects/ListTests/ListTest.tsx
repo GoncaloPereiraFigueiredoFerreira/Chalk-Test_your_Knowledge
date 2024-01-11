@@ -258,16 +258,18 @@ export function ListTests({ view }: any) {
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    contactBACK("tests", "GET", { page: "0", itemsPerPage: "20" }).then(
-      (response) => {
-        response.json().then((tests) => {
-          tests.map((test: any) => {
-            return (test["tags"] = []);
-          });
-          setTestList(tests);
+    contactBACK("tests", "GET", {
+      page: "0",
+      itemsPerPage: "20",
+      specialistId: user.user?.id ?? "",
+    }).then((response) => {
+      response.json().then((tests) => {
+        tests.map((test: any) => {
+          return (test["tags"] = []);
         });
-      }
-    );
+        setTestList(tests);
+      });
+    });
   }, [currentPage]);
 
   return (

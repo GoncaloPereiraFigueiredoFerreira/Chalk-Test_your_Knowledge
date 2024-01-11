@@ -27,25 +27,17 @@ function ContactAPI(
   });
 }
 
+export type contact = (
+  adress: string,
+  method: "POST" | "PUT" | "GET" | "DELETE",
+  params?: { [key: string]: string },
+  body?: object
+) => Promise<Response>;
+
 export const APIContext = createContext<{
-  contactBACK: (
-    adress: string,
-    method: "POST" | "PUT" | "GET" | "DELETE",
-    params?: { [key: string]: string },
-    body?: object
-  ) => Promise<Response>;
-  contactAUTH: (
-    adress: string,
-    method: "POST" | "PUT" | "GET" | "DELETE",
-    params?: { [key: string]: string },
-    body?: object
-  ) => Promise<Response>;
-  contactCHALKY: (
-    adress: string,
-    method: "POST" | "PUT" | "GET" | "DELETE",
-    params?: { [key: string]: string },
-    body?: object
-  ) => Promise<Response>;
+  contactBACK: contact;
+  contactAUTH: contact;
+  contactCHALKY: contact;
 }>({
   contactBACK: (
     adress: string,
@@ -73,7 +65,7 @@ export function APIProvider({ children }: any) {
   const CHALKYSERVER = import.meta.env.VITE_AI_API;
   const [cookies, setCookie] = useCookies(["chalkauthtoken"]);
 
-  const ContactAUTH = (
+  const ContactAUTH: contact = (
     endpoint: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
@@ -87,7 +79,7 @@ export function APIProvider({ children }: any) {
       body
     );
   };
-  const ContactBACK = (
+  const ContactBACK: contact = (
     endpoint: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
@@ -101,7 +93,7 @@ export function APIProvider({ children }: any) {
       body
     );
   };
-  const ContactCHALKY = (
+  const ContactCHALKY: contact = (
     endpoint: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },

@@ -3,18 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { TestPreview } from "../TestPreview";
 import {
-  ExerciseJustificationKind,
-  ExerciseType,
   Resolution,
-  ResolutionType,
   TranslateTestExerciseIN,
 } from "../../../objects/Exercise/Exercise";
 import { Answer } from "../../../objects/Answer/Answer";
-import {
-  Rubric,
-  RubricContext,
-  StardardLevels,
-} from "../../../objects/Rubric/Rubric";
+import { Rubric, RubricContext } from "../../../objects/Rubric/Rubric";
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 import { LuGhost } from "react-icons/lu";
 import { InitTest, Test } from "../../../objects/Test/Test";

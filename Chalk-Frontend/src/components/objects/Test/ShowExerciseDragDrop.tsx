@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
@@ -21,6 +21,7 @@ import { TbLink } from "react-icons/tb";
 import { FaUserGraduate } from "react-icons/fa";
 import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
+import { APIContext } from "../../../APIContext";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;
@@ -62,6 +63,7 @@ export function ShowExerciseDragDrop({
   const [visibility, setVisibility] = useState(<></>);
   const [preview, setPreview] = useState(<></>);
   const { testState, dispatch } = useEditTestContext();
+  const { contactBACK } = useContext(APIContext);
   const [value, setValue] = useState(
     (exercise.identity.points ?? 0).toString()
   );
@@ -339,19 +341,39 @@ export function ShowExerciseDragDrop({
               <button
                 className="btn-options-exercise gray-icon"
                 onClick={() => {
-                  setExerciseID({
-                    groupPosition: groupPosition,
-                    exercisePosition:
-                      testState.test.groups[groupPosition].exercises.length,
-                  });
-                  dispatch({
-                    type: EditTestActionKind.ADD_NEW_EXERCISE,
-                    exercise: {
-                      groupPosition: groupPosition,
-                      exercisePosition:
+                  contactBACK(
+                    "tests/" + testState.test.id + "/createExercise",
+                    "PUT",
+                    undefined,
+                    {
+                      exercise: {
+                        points: 1,
+                        id: exercise.identity.id,
+                        Type: "reference",
+                      },
+                      groupIndex: groupPosition,
+                      exeIndex:
                         testState.test.groups[groupPosition].exercises.length,
-                      exercise: exercise,
-                    },
+                    }
+                  ).then((response) => {
+                    response.text().then((id) => {
+                      setExerciseID({
+                        groupPosition: groupPosition,
+                        exercisePosition:
+                          testState.test.groups[groupPosition].exercises.length,
+                      });
+                      dispatch({
+                        type: EditTestActionKind.ADD_NEW_EXERCISE,
+                        exercise: {
+                          groupPosition: groupPosition,
+                          newID: id,
+                          exercisePosition:
+                            testState.test.groups[groupPosition].exercises
+                              .length,
+                          exercise: exercise,
+                        },
+                      });
+                    });
                   });
                 }}
               >

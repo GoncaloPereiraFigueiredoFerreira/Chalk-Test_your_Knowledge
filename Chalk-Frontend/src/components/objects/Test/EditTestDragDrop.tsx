@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import { GroupDragDrop } from "./GroupDragDrop";
 import { CreateNewExercisePopUp } from "../ListExercises/CreateNewExercisePopUp";
@@ -8,6 +8,8 @@ import { FaPencil } from "react-icons/fa6";
 import "./EditTestDragDrop.css";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
 import { SortableContext } from "@dnd-kit/sortable";
+import { useParams } from "react-router-dom";
+import { UserContext } from "../../../UserContext";
 
 interface EditTestProps {
   exerciseID: {
@@ -33,6 +35,7 @@ export function EditTestDragDrop({
   const [draggingGroups, setDraggingGroups] = useState(false);
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
   const { testState, dispatch } = useEditTestContext();
+  const { user } = useContext(UserContext);
 
   return (
     <div className="flex flex-col w-full bg-2-1 min-h-max">
@@ -91,8 +94,9 @@ export function EditTestDragDrop({
         <div
           className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
           onClick={() => {
-            if (selectedMenu !== "edit-group")
+            if (selectedMenu !== "edit-group") {
               dispatch({ type: EditTestActionKind.ADD_GROUP });
+            }
           }}
         >
           <RiAddFill className="group-gray-icon size-8" />
@@ -132,6 +136,11 @@ export function EditTestDragDrop({
             group: {
               groupPosition: newExercisePopUp,
               exerciseType: newExerciseType,
+            },
+            exercise: {
+              specialist: user.user?.id,
+              exercisePosition: 0,
+              groupPosition: 0,
             },
           });
           setNewExercisePopUp(-1);
