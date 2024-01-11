@@ -1,5 +1,5 @@
 FROM node:21
-COPY . Auth
-WORKDIR Auth
+WORKDIR /chalk-auth
+COPY . .
 RUN npm install
 CMD npm start

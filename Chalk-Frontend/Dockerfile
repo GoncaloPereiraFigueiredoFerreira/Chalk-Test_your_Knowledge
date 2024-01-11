@@ -1,5 +1,5 @@
 FROM node:21
-WORKDIR src
+WORKDIR /chalk-fe
 COPY ./package.json .
-RUN npm install
-CMD npm start
+RUN npm install --silent 
+CMD npm start -- --host 0.0.0.0
