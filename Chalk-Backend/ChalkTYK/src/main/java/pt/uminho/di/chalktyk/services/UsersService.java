@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.services;
 
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +7,7 @@ import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 @Service
 public class UsersService implements IUsersService{

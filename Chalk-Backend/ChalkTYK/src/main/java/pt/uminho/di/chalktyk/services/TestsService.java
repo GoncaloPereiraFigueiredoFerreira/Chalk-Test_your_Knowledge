@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,6 +33,7 @@ import pt.uminho.di.chalktyk.repositories.TestResolutionDAO;
 import pt.uminho.di.chalktyk.repositories.TestTagsDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @Service("testsService")
@@ -177,7 +177,7 @@ public class TestsService implements ITestsService {
         // then the test's visibility cannot be set to institution.
         if (visibility == Visibility.INSTITUTION && institution == null)
             throw new BadInputException("Cannot create test: cannot set visibility to INSTITUTION");
- 
+
         // Check if course is valid
         String courseId = body.getCourseId();
         try {
@@ -189,8 +189,7 @@ public class TestsService implements ITestsService {
                     Course course = coursesService.getCourseById(courseId);
                     body.setCourse(course);
                 }
-            }
-            else body.setCourse(null);
+            } else body.setCourse(null);
         } catch (NotFoundException nfe) {
             throw new BadInputException("Cannot create test: course not found.");
         }
@@ -204,7 +203,7 @@ public class TestsService implements ITestsService {
         List<TestGroup> newTGs = new ArrayList<>();
         List<String> allNewExesIds = new ArrayList<>();
 
-        if(tgs != null) {
+        if (tgs != null) {
             for (TestGroup tg : tgs) {
                 List<TestExercise> newExes = new ArrayList<>();
 

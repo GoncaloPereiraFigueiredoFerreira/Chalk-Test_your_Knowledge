@@ -41,7 +41,7 @@ public interface IInstitutionsService {
     * @param institutionId
     * @param institution
     **/
-    void updateInstitutionById(String institutionId, Institution institution);
+    void updateInstitutionById(String institutionId, Institution institution) throws NotFoundException, BadInputException;
 
     /**
      * Add specialists to institution

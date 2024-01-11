@@ -16,10 +16,34 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 @Getter
 @Setter
 public class JWT {
+    private static String privateKey = null;
+
     private final LinkedHashMap<String, Object> header;
     private final LinkedHashMap<String, Object> payload;
     private final String jwsString;
     private String userId;
+
+    private static String getPrivateKey(){
+        // if the private key is null, tries to get it from an environment variable or from a .env file
+        if(privateKey == null){
+            boolean retrieved = false;
+            try {
+                // searches for the key in the environment variables
+                privateKey = System.getenv("PRIVATE_JWT_KEY");
+
+                if(privateKey == null) {
+                    // Attempts to get the private key from a .env file
+                    Dotenv dotenv = Dotenv.load();
+                    privateKey = dotenv.get("PRIVATE_JWT_KEY");
+                }
+            }catch (Exception e){
+                // if any error occurs then the key could not be retrieved.
+                throw new JwtException("Could not find the secret key to decode JWT tokens.");
+            }
+        }
+        return privateKey;
+    }
+
     public JWT(String jws) throws JwtException, ParseException {
         if(jws == null)
             throw new ParseException("Token string is null.");
@@ -29,11 +53,8 @@ public class JWT {
         if(jws.startsWith("Bearer "))
             jws = jws.substring("Bearer ".length());
 
-        Dotenv dotenv = Dotenv.load();
-        String secretKeyString = dotenv.get("PRIVATE_JWT_KEY");
-
         // Convert the input string to a byte array for key creation
-        byte[] secretKeyBytes = secretKeyString.getBytes();
+        byte[] secretKeyBytes = getPrivateKey().getBytes();
 
         // Build the secret key using the specified algorithm (HS256)
         SecretKey key = Keys.hmacShaKeyFor(secretKeyBytes);

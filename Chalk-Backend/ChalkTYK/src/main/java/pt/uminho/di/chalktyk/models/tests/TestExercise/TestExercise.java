@@ -14,7 +14,7 @@ import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 @NoArgsConstructor
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "Type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ReferenceExercise.class, name = "reference"),
         @JsonSubTypes.Type(value = ConcreteExercise.class, name = "concrete")
