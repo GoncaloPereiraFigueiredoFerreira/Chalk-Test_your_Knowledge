@@ -76,18 +76,17 @@ function EditReducer(state: EditState, action: EditAction) {
 
   switch (action.type) {
     case EditActionKind.CHANGE_TITLE:
-      if (action.dataString) {
-        return {
-          ...state,
-          exercise: {
-            ...exercise,
-            base: {
-              ...exercise.base,
-              title: action.dataString,
-            },
+      return {
+        ...state,
+        exercise: {
+          ...exercise,
+          base: {
+            ...exercise.base,
+            title: action.dataString,
           },
-        } as EditState;
-      }
+        },
+      } as EditState;
+
       throw new Error("Invalid action");
 
     case EditActionKind.CHANGE_STATEMENT:

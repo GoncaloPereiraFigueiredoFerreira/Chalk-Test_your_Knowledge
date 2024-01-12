@@ -1,6 +1,12 @@
 import { useContext, createContext } from "react";
 import { ExerciseGroup, Test } from "./Test";
-import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
+import {
+  Exercise,
+  ExerciseType,
+  InitExercise,
+  TranslateTestExerciseIN,
+  TranslateTestExerciseOut,
+} from "../Exercise/Exercise";
 import { arrayMove } from "@dnd-kit/sortable";
 import { contact } from "../../../APIContext";
 
@@ -246,12 +252,23 @@ export function EditTestStateReducer(
         exercises: [],
         groupPoints: 0,
       };
+
+      let trGroups: any[] = JSON.parse(
+        JSON.stringify([...state.test.groups, newGroup])
+      );
+      trGroups = trGroups.map((group) => {
+        group.exercises = group.exercises.map((ex: any) => {
+          return TranslateTestExerciseOut(ex);
+        });
+        return group;
+      });
       state.contactBACK(
         "tests/" + state.test.id + "/groups",
         "PUT",
         undefined,
-        [...state.test.groups, newGroup]
+        trGroups
       );
+
       return {
         ...state,
         groupPosition: state.test.groups.length,
@@ -269,11 +286,18 @@ export function EditTestStateReducer(
         // remove group
         newGroups.splice(action.group.groupPosition, 1);
 
+        let trGroups: any[] = JSON.parse(JSON.stringify([...newGroups]));
+        trGroups = trGroups.map((group) => {
+          group.exercises = group.exercises.map((ex: any) => {
+            return TranslateTestExerciseOut(ex);
+          });
+          return group;
+        });
         state.contactBACK(
           "tests/" + state.test.id + "/groups",
           "PUT",
           undefined,
-          newGroups
+          trGroups
         );
 
         // update globalCotation
@@ -300,11 +324,18 @@ export function EditTestStateReducer(
         newGroups[action.group.groupPosition].groupInstructions =
           action.group.groupInstructions;
 
+        let trGroups: any[] = JSON.parse(JSON.stringify([...newGroups]));
+        trGroups = trGroups.map((group) => {
+          group.exercises = group.exercises.map((ex: any) => {
+            return TranslateTestExerciseOut(ex);
+          });
+          return group;
+        });
         state.contactBACK(
           "tests/" + state.test.id + "/groups",
           "PUT",
           undefined,
-          newGroups
+          trGroups
         );
         return {
           ...state,
@@ -337,11 +368,18 @@ export function EditTestStateReducer(
             auxCotation += element.groupPoints;
           });
 
+          let trGroups: any[] = JSON.parse(JSON.stringify([...newGroups]));
+          trGroups = trGroups.map((group) => {
+            group.exercises = group.exercises.map((ex: any) => {
+              return TranslateTestExerciseOut(ex);
+            });
+            return group;
+          });
           state.contactBACK(
             "tests/" + state.test.id + "/groups",
             "PUT",
             undefined,
-            newGroups
+            trGroups
           );
           return {
             ...state,
@@ -402,12 +440,20 @@ export function EditTestStateReducer(
           newGroups[action.exercise.newPosition.groupPosition].groupPoints =
             auxCotation;
 
+          let trGroups: any[] = JSON.parse(JSON.stringify([...newGroups]));
+          trGroups = trGroups.map((group) => {
+            group.exercises = group.exercises.map((ex: any) => {
+              return TranslateTestExerciseOut(ex);
+            });
+            return group;
+          });
           state.contactBACK(
             "tests/" + state.test.id + "/groups",
             "PUT",
             undefined,
-            newGroups
+            trGroups
           );
+
           return {
             ...state,
             test: {
@@ -423,11 +469,18 @@ export function EditTestStateReducer(
             action.exercise.newPosition.exercisePosition
           );
 
+          let trGroups: any[] = JSON.parse(JSON.stringify([...newGroups]));
+          trGroups = trGroups.map((group) => {
+            group.exercises = group.exercises.map((ex: any) => {
+              return TranslateTestExerciseOut(ex);
+            });
+            return group;
+          });
           state.contactBACK(
             "tests/" + state.test.id + "/groups",
             "PUT",
             undefined,
-            newGroups
+            trGroups
           );
           return {
             ...state,
@@ -453,11 +506,18 @@ export function EditTestStateReducer(
           action.group.groupPosition,
           action.group.newPosition
         );
+        let trGroups: any[] = JSON.parse(JSON.stringify([...newGroups]));
+        trGroups = trGroups.map((group) => {
+          group.exercises = group.exercises.map((ex: any) => {
+            return TranslateTestExerciseOut(ex);
+          });
+          return group;
+        });
         state.contactBACK(
           "tests/" + state.test.id + "/groups",
           "PUT",
           undefined,
-          newGroups
+          trGroups
         );
         return {
           ...state,
@@ -465,7 +525,7 @@ export function EditTestStateReducer(
             ...state.test,
             groups: newGroups,
           },
-        } as EditTestState;
+        };
       }
       throw new Error("Invalid Action");
 

@@ -663,6 +663,14 @@ export function TranslateTestExerciseIN(exercise: any): Exercise {
   return newEx;
 }
 
+export function TranslateTestExerciseOut(exercise: Exercise) {
+  return {
+    type: "reference",
+    points: exercise.identity.points,
+    id: exercise.identity.id,
+  };
+}
+
 export function TranslateResolutionOUT(resolution: ResolutionData) {
   switch (resolution.type) {
     case ExerciseType.CHAT:

@@ -412,7 +412,7 @@ export function CreateTest({ test }: CreateTestProps) {
           exercise: {
             points: 1,
             id: activeDnD.exercise.identity.id,
-            Type: "reference",
+            type: "reference",
           },
           groupIndex: overInfo.groupPosition,
           exeIndex:
@@ -657,7 +657,7 @@ export function CreateTest({ test }: CreateTestProps) {
                         {
                           exercise: {
                             points: 1,
-                            Type: "concrete",
+                            type: "concrete",
                             exercise: {
                               ...exerciseTR,
 
