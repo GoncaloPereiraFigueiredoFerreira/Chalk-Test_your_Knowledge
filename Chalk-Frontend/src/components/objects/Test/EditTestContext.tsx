@@ -4,7 +4,6 @@ import {
   Exercise,
   ExerciseType,
   InitExercise,
-  TranslateTestExerciseIN,
   TranslateTestExerciseOut,
 } from "../Exercise/Exercise";
 import { arrayMove } from "@dnd-kit/sortable";

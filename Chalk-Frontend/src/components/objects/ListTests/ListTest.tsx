@@ -258,18 +258,35 @@ export function ListTests({ view }: any) {
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    contactBACK("tests", "GET", {
-      page: "0",
-      itemsPerPage: "20",
-      specialistId: user.user?.id ?? "",
-    }).then((response) => {
-      response.json().then((tests) => {
-        tests.map((test: any) => {
-          return (test["tags"] = []);
+    if (user.user?.role == UserRole.SPECIALIST) {
+      contactBACK("tests", "GET", {
+        page: "0",
+        itemsPerPage: "20",
+        specialistId: user.user.id,
+      }).then((response) => {
+        response.json().then((tests) => {
+          tests.map((test: any) => {
+            return (test["tags"] = []);
+          });
+          setTestList(tests);
         });
-        setTestList(tests);
       });
-    });
+    } else {
+      contactBACK("tests", "GET", {
+        page: "0",
+        itemsPerPage: "20",
+        visibilityType: "public",
+      }).then((response) => {
+        response.json().then((tests) => {
+          tests.map((test: any) => {
+            return (test["tags"] = test.tags.map((tag: any) => {
+              return tag.name;
+            }));
+          });
+          setTestList(tests);
+        });
+      });
+    }
   }, [currentPage]);
 
   return (
