@@ -3,22 +3,12 @@ package pt.uminho.di.chalktyk;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.models.subscriptions.Subscription;
-import pt.uminho.di.chalktyk.models.users.InstitutionManager;
-import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.services.IInstitutionsService;
-import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 
 @SpringBootTest

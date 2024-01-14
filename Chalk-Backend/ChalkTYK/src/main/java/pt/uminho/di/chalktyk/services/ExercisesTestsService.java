@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 /**
  * Service that knowing about both tests and exercises, limits or enhances the behavior of a method.
@@ -27,14 +27,14 @@ public class ExercisesTestsService implements IExercisesTestsService{
      *
      * @param exerciseId identifier of the exercise
      * @throws NotFoundException if the exercise was not found
-     * @throws UnauthorizedException if the exercise belongs to a test
+     * @throws ForbiddenException if the exercise belongs to a test
      */
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public void deleteExerciseById(String exerciseId) throws NotFoundException, UnauthorizedException {
+    public void deleteExerciseById(String exerciseId) throws NotFoundException, ForbiddenException {
         Visibility vis = exercisesService.getExerciseVisibility(exerciseId);
         if(vis.equals(Visibility.TEST))
-            throw new UnauthorizedException("Cannot delete exercise: exercise belongs to a test.");
+            throw new ForbiddenException("Cannot delete exercise: exercise belongs to a test.");
         exercisesService.deleteExerciseById(exerciseId);
     }
 

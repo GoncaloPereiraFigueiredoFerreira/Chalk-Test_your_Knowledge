@@ -1,7 +1,7 @@
 package pt.uminho.di.chalktyk.services;
 
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 public interface IExercisesTestsService {
     /**
@@ -10,5 +10,5 @@ public interface IExercisesTestsService {
      * @param exerciseId identifier of the exercise
      * @throws NotFoundException     if the exercise was not found
      */
-    void deleteExerciseById(String exerciseId) throws NotFoundException, UnauthorizedException;
+    void deleteExerciseById(String exerciseId) throws NotFoundException, ForbiddenException;
 }

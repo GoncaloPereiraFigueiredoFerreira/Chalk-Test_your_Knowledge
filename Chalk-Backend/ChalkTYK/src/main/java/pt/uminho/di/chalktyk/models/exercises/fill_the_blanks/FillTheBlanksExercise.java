@@ -17,7 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 @Entity
 @AllArgsConstructor
@@ -60,12 +60,12 @@ public class FillTheBlanksExercise extends Exercise {
 	 * @param solution   solution of the exercise
 	 * @param rubric     rubric of the exercise
 	 * @return points to be attributed to the resolution
-	 * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+	 * @throws ForbiddenException if the resolution cannot be evaluated automatically.
 	 */
 	@Override
-	public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
+	public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws ForbiddenException {
 		// TODO - future work
-		throw new UnauthorizedException("Automatic evaluation for fill the blanks exercises is not implemented yet.");
+		throw new ForbiddenException("Automatic evaluation for fill the blanks exercises is not implemented yet.");
 	}
 
 	@Override

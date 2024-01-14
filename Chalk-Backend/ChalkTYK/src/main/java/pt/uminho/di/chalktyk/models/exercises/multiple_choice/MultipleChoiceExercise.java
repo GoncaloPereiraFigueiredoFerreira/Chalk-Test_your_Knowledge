@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.exercises.multiple_choice;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,7 +18,7 @@ import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
 import pt.uminho.di.chalktyk.models.exercises.items.ItemsMap;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 @Entity
 @AllArgsConstructor
@@ -71,18 +70,18 @@ public class MultipleChoiceExercise extends Exercise {
 	 * @param solution   solution of the exercise
 	 * @param rubric     rubric of the exercise
 	 * @return updated resolution
-	 * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+	 * @throws ForbiddenException if the resolution cannot be evaluated automatically.
 	 */
 	@Override
-	public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
+	public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws ForbiddenException {
 		if(resolution == null || resolution.getData() == null)
-			throw new UnauthorizedException("Cannot evaluate a null resolution.");
+			throw new ForbiddenException("Cannot evaluate a null resolution.");
 
 		if(solution == null)
-			throw new UnauthorizedException("Cannot evaluate the resolution if the solution is null.");
+			throw new ForbiddenException("Cannot evaluate the resolution if the solution is null.");
 
 		if(rubric == null)
-			throw new UnauthorizedException("Cannot evaluate the resolution if the rubric is null");
+			throw new ForbiddenException("Cannot evaluate the resolution if the rubric is null");
 
 		// casts objects to MultipleChoice...
 		MultipleChoiceData resolutionData = (MultipleChoiceData) resolution.getData(),
@@ -93,7 +92,7 @@ public class MultipleChoiceExercise extends Exercise {
 		// justification can be automatically corrected
 		if(mctype != Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION
 				&& mctype != Mctype.TRUE_FALSE_NO_JUSTIFICATION)
-			throw new UnauthorizedException("Justifications cannot be corrected automatically.");
+			throw new ForbiddenException("Justifications cannot be corrected automatically.");
 
 		float points = 0.0f;
 

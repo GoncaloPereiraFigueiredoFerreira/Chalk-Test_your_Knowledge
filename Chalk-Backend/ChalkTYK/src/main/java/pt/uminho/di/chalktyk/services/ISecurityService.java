@@ -4,6 +4,7 @@ import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 public interface ISecurityService {
@@ -64,25 +65,25 @@ public interface ISecurityService {
      * @param exerciseId
      * @return
      * @throws NotFoundException
-     * @throws UnauthorizedException
+     * @throws ForbiddenException
      */
-    public Boolean specialistOwnesExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException;
+    public Boolean specialistOwnesExercise(String specialistId, String exerciseId) throws NotFoundException, ForbiddenException;
 
     /**
      * @param studentId
      * @param exerciseId
      * @return
      * @throws NotFoundException
-     * @throws UnauthorizedException
+     * @throws ForbiddenException
      */
-    public Boolean studentCanSeeExercise(String studentId, String exerciseId) throws NotFoundException, UnauthorizedException;
+    public Boolean studentCanSeeExercise(String studentId, String exerciseId) throws NotFoundException, ForbiddenException;
 
     /**
      * @param specialistId
      * @param exerciseId
      * @return
      * @throws NotFoundException
-     * @throws UnauthorizedException
+     * @throws ForbiddenException
      */
-    public Boolean specialistCanSeeExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException;
+    public Boolean specialistCanSeeExercise(String specialistId, String exerciseId) throws NotFoundException, ForbiddenException;
 }

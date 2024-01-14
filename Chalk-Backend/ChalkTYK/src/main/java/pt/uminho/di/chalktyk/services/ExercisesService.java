@@ -22,7 +22,7 @@ import pt.uminho.di.chalktyk.repositories.ExerciseSolutionDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -666,11 +666,11 @@ public class ExercisesService implements IExercisesService{
      * @param correctionType type of correction. Can be 'auto' or 'ai'.
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the exercise does not exist
-     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     * @throws ForbiddenException if the exercise does not support the requested correction type.
      */
     @Transactional(rollbackFor = ServiceException.class)
     @Override
-    public void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException {
+    public void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, ForbiddenException {
         // gets instance of the exercise and it's rubric
         Exercise exercise = _getExerciseById(exerciseId);
         if(!exercise.supportsCorrectionType(correctionType))
@@ -687,7 +687,7 @@ public class ExercisesService implements IExercisesService{
         if(correctionType.equalsIgnoreCase("auto"))
             automaticExerciseResolutionsCorrection(exercise, rubric, solution);
         else // more correction types ...
-            throw new UnauthorizedException("Correction type is supported, but cannot be issued by this method.");
+            throw new ForbiddenException("Correction type is supported, but cannot be issued by this method.");
     }
 
     /**
@@ -700,11 +700,11 @@ public class ExercisesService implements IExercisesService{
      * @return points attributed to the resolution
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
-     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     * @throws ForbiddenException if the exercise does not support the requested correction type.
      */
     @Transactional(rollbackFor = ServiceException.class)
     @Override
-    public float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException{
+    public float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, ForbiddenException {
         // gets the identifier of the exercise
         ExerciseResolution resolution = exerciseResolutionDAO.findById(resolutionId).orElse(null);
         if(resolution == null)
@@ -731,7 +731,7 @@ public class ExercisesService implements IExercisesService{
         if(correctionType.equalsIgnoreCase("auto"))
             return automaticExerciseResolutionCorrection(resolution, exercise, rubric, solution);
         else // ... more correction types
-            throw new UnauthorizedException("Correction type is supported, but cannot be issued by this method.");
+            throw new ForbiddenException("Correction type is supported, but cannot be issued by this method.");
     }
 
     /**
@@ -1096,9 +1096,9 @@ public class ExercisesService implements IExercisesService{
      * @param rubric rubric of the exercise
      * @param solution solution of the exercise
      * @throws NotFoundException if the exercise, or its rubric, or its solution were not found
-     * @throws UnauthorizedException if the resolutions cannot be corrected automatically
+     * @throws ForbiddenException if the resolutions cannot be corrected automatically
      */
-    private void automaticExerciseResolutionsCorrection(Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws NotFoundException, UnauthorizedException {
+    private void automaticExerciseResolutionsCorrection(Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws NotFoundException, ForbiddenException {
         String exerciseId = exercise.getId();
 
         // Get number of resolutions not revised
@@ -1126,9 +1126,9 @@ public class ExercisesService implements IExercisesService{
      * @param rubric rubric of the exercise
      * @param solution solution of the exercise
      * @return points attributed to the resolution
-     * @throws UnauthorizedException if the resolution cannot be corrected automatically
+     * @throws ForbiddenException if the resolution cannot be corrected automatically
      */
-    private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws UnauthorizedException {
+    private float automaticExerciseResolutionCorrection(ExerciseResolution resolution, Exercise exercise, ExerciseRubric rubric, ExerciseSolution solution) throws ForbiddenException {
         assert resolution != null && exercise != null;
         ExerciseRubric unproxiedRubric = null;
         if(rubric != null)
