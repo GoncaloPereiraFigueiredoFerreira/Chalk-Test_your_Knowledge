@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect } from "react";
 import { useCookies } from "react-cookie";
+import { UserContext } from "./UserContext";
 
 function ContactAPI(
   address: string,
@@ -64,6 +65,7 @@ export function APIProvider({ children }: any) {
   const BACKSERVER = import.meta.env.VITE_BACKEND;
   const CHALKYSERVER = import.meta.env.VITE_AI_API;
   const [cookies, setCookie] = useCookies(["chalkauthtoken"]);
+  const { logout } = useContext(UserContext);
 
   const ContactAUTH: contact = (
     endpoint: string,
@@ -91,7 +93,10 @@ export function APIProvider({ children }: any) {
       cookies.chalkauthtoken,
       params,
       body
-    );
+    ).then((response) => {
+      if (response.status == 401) logout();
+      return response;
+    });
   };
   const ContactCHALKY: contact = (
     endpoint: string,

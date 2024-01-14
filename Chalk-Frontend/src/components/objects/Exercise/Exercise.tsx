@@ -424,58 +424,6 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
   return newRes;
 }
 
-export function TranslateResolutionIN(
-  solution: any,
-  exercise: Exercise
-): ResolutionData {
-  let newRes: ResolutionData;
-  switch (exercise.type) {
-    case ExerciseType.CHAT:
-      let CQRes: CQResolutionData = {
-        type: ExerciseType.CHAT,
-        msgs: [solution.chat], // CHECK WITH BRONZE
-      };
-      newRes = CQRes;
-      break;
-
-    case ExerciseType.MULTIPLE_CHOICE:
-      let MCRes: MCResolutionData = {
-        type: ExerciseType.MULTIPLE_CHOICE,
-        items: { ...exercise.props.items },
-        justifyType: exercise.props.justifyType,
-      };
-      Object.keys(solution.items).map((key) => {
-        MCRes.items[key].value = solution.items[key].value;
-        MCRes.items[key].justification = solution.items[key].justification;
-      });
-
-      newRes = MCRes;
-      break;
-
-    case ExerciseType.TRUE_OR_FALSE:
-      let TFRes: TFResolutionData = {
-        type: ExerciseType.TRUE_OR_FALSE,
-        items: { ...exercise.props.items },
-        justifyType: exercise.props.justifyType,
-      };
-      Object.keys(solution.items).map((key) => {
-        MCRes.items[key].value = solution.items[key].value;
-        MCRes.items[key].justification = solution.items[key].justification;
-      });
-      newRes = TFRes;
-      break;
-
-    case ExerciseType.OPEN_ANSWER:
-      let OARes: OAResolutionData = {
-        type: ExerciseType.OPEN_ANSWER,
-        text: solution.text,
-      };
-      newRes = OARes;
-      break;
-  }
-  return newRes;
-}
-
 //----------------------------------------//
 //                                        //
 //      Translate exercise functions      //
@@ -671,6 +619,58 @@ export function TranslateTestExerciseOut(exercise: Exercise) {
   };
 }
 
+export function TranslateResolutionIN(
+  solution: any,
+  exercise: Exercise
+): ResolutionData {
+  let newRes: ResolutionData;
+  switch (exercise.type) {
+    case ExerciseType.CHAT:
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [...solution.chat], // CHECK WITH BRONZE
+      };
+      newRes = CQRes;
+      break;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+      let MCRes: MCResolutionData = {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
+      };
+      Object.keys(solution.items).map((key) => {
+        MCRes.items[key].value = solution.items[key].value;
+        MCRes.items[key].justification = solution.items[key].justification;
+      });
+
+      newRes = MCRes;
+      break;
+
+    case ExerciseType.TRUE_OR_FALSE:
+      let TFRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
+      };
+      Object.keys(solution.items).map((key) => {
+        MCRes.items[key].value = solution.items[key].value;
+        MCRes.items[key].justification = solution.items[key].justification;
+      });
+      newRes = TFRes;
+      break;
+
+    case ExerciseType.OPEN_ANSWER:
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: solution.text,
+      };
+      newRes = OARes;
+      break;
+  }
+  return newRes;
+}
+
 export function TranslateResolutionOUT(resolution: ResolutionData) {
   switch (resolution.type) {
     case ExerciseType.CHAT:
@@ -683,4 +683,38 @@ export function TranslateResolutionOUT(resolution: ResolutionData) {
     case ExerciseType.TRUE_OR_FALSE:
       return { type: "MC", items: { ...resolution.items } };
   }
+}
+export function TranslateTestResolutionIN(resolution: any): ResolutionData {
+  let newRes: ResolutionData;
+  switch (resolution.type) {
+    case "CE":
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [...resolution.chat],
+      };
+      newRes = CQRes;
+      break;
+
+    case "MC":
+      // Got to fix this
+      let MCRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: {},
+        justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
+      };
+      newRes = MCRes;
+      break;
+
+    case "OA":
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: resolution.text,
+      };
+      newRes = OARes;
+      break;
+
+    default:
+      newRes = InitResolutionDataType(ExerciseType.MULTIPLE_CHOICE);
+  }
+  return newRes;
 }

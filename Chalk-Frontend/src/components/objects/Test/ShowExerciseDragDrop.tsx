@@ -349,7 +349,7 @@ export function ShowExerciseDragDrop({
                       exercise: {
                         points: 1,
                         id: exercise.identity.id,
-                        Type: "reference",
+                        type: "reference",
                       },
                       groupIndex: groupPosition,
                       exeIndex:
