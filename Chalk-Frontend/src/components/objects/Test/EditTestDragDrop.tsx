@@ -32,7 +32,7 @@ export function EditTestDragDrop({
 
   return (
     <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8 dark:text-white">
-      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
+      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2 dark:border-[#dddddd]">
         <div className="text-title-1">
           {testState.test.title ? testState.test.title : "Novo Teste"}
         </div>
@@ -43,7 +43,7 @@ export function EditTestDragDrop({
           </div>
         </div>
       </div>
-      <div className="flex flex-col pb-4 mb-4 gap-4 border-b-2 border-gray-2-2">
+      <div className="flex flex-col pb-4 mb-4 gap-4 border-b-2 border-gray-2-2 dark:border-[#dddddd]">
         <div className="ml-4 mt-4">
           <h2 className="text-xl">Informações Gerais do Teste:</h2>
           <div className="grid grid-cols-2 w-fit text-md m-4 gap-4">
@@ -75,10 +75,8 @@ export function EditTestDragDrop({
             dispatch({ type: CreateTestActionKind.ADD_GROUP });
           }}
         >
-          <RiAddFill className="group-gray-icon size-8" />
-          <label className="group-gray-icon font-medium text-lg">
-            Novo Grupo
-          </label>
+          <RiAddFill className=" size-8" />
+          <label className=" font-medium text-lg">Novo Grupo</label>
         </div>
       </div>
       <CreateNewExercisePopUp

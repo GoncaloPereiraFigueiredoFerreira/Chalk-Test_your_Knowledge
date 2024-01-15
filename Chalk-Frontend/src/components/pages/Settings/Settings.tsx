@@ -34,7 +34,7 @@ export function Settings() {
     <div className="h-screen overflow-auto bg-2-1">
       <div className=" h-screen sm:mx-10 md:mx-26 lg:mx-36 px-4 pt-7 ">
         <div className=" md:max-w-xl lg:max-w-3xl flex flex-row justify-between">
-          <h2 className="mb-12 text-3xl font-bold">Settings</h2>
+          <h2 className="mb-12 text-3xl font-bold text">Settings</h2>
           {/**<!-- Mobile menu -->*/}
           <div className=" dropdown w-fit h-fit p-0 first-letter:absolute inset-y-0 right-0 flex items-center sm:hidden">
             <button
@@ -129,12 +129,14 @@ export function Settings() {
         </div>
         <div className="flex h-fit">
           <div
-            className=" flex justify-normal sm:grid h-5/6 grid-cols-1 border-r border-black dark:border-gray-700 text-right space-y-4 text-md font-medium dark:text-gray-400 md:me-4 mb-4 md:mb-0"
+            className=" flex justify-normal sm:grid h-5/6 grid-cols-1 border-r border-black dark:text-white dark:border-gray-700 text-right space-y-4 text-md font-medium md:me-4 mb-4 md:mb-0"
             id="tabs"
           >
             <button
-              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg${
-                tab == "profile" ? " bg-black text-white" : ""
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 profileTab text-lg${
+                tab == "profile"
+                  ? " bg-black dark:bg-[#dddddd] text-white dark:text-black"
+                  : ""
               }`}
               onClick={() => {
                 setTab("profile");
@@ -146,8 +148,10 @@ export function Settings() {
             </button>
 
             <button
-              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg  ${
-                tab == "dashboard" ? " bg-black text-white" : ""
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 profileTab text-lg  ${
+                tab == "dashboard"
+                  ? " bg-black dark:bg-[#dddddd] text-white dark:text-black"
+                  : ""
               }`}
               onClick={() => {
                 setTab("dashboard");
@@ -159,8 +163,10 @@ export function Settings() {
             </button>
 
             <button
-              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg  ${
-                tab == "subscription" ? " bg-black text-white" : ""
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 profileTab text-lg  ${
+                tab == "subscription"
+                  ? " bg-black dark:bg-[#dddddd] text-white dark:text-black"
+                  : ""
               }`}
               onClick={() => {
                 setTab("subscription");
@@ -171,8 +177,10 @@ export function Settings() {
               Billing and plans
             </button>
             <button
-              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-lg  ${
-                tab == "account" ? " bg-black text-white" : ""
+              className={`h-fit inline-block rounded-l-lg border-b-2 border-transparent p-4 profileTab text-lg  ${
+                tab == "account"
+                  ? " bg-black dark:bg-[#dddddd] text-white dark:text-black"
+                  : ""
               }`}
               onClick={() => {
                 setTab("account");
@@ -184,15 +192,12 @@ export function Settings() {
             </button>
           </div>
           <div className=" h-5/6 px-0 lg:px-8 w-10/12">
-            <div
-              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent"
-              id="profile"
-            >
+            <div className=" rounded-lg p-4 text tabcontent" id="profile">
               <Profile></Profile>
             </div>
 
             <div
-              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent hidden"
+              className=" rounded-lg p-4  tabcontent hidden"
               id="dashboard"
               role="tabpanel"
               aria-labelledby="dashboard-tab"
@@ -200,7 +205,7 @@ export function Settings() {
               <Dashboard></Dashboard>
             </div>
             <div
-              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent hidden"
+              className=" rounded-lg p-4 text tabcontent hidden"
               id="subscription"
               role="tabpanel"
               aria-labelledby="subscription-tab"
@@ -208,7 +213,7 @@ export function Settings() {
               <Subscription></Subscription>
             </div>
             <div
-              className=" rounded-lg p-4 dark:bg-gray-800 tabcontent hidden"
+              className=" rounded-lg p-4  tabcontent hidden"
               id="account"
               role="tabpanel"
               aria-labelledby="account-tab"

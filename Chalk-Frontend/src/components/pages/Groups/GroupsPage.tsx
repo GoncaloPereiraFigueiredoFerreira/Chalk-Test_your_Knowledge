@@ -15,7 +15,7 @@ export function GroupsPage() {
           <label className="flex text-title-1">Todos os grupos</label>
         </div>
         <button
-          className="bg-white w-fit float-right border-2 hover:scale-110 border-black rounded-md p-1"
+          className=" px-2 w-fit float-right bg-btn-4-2 bg-[#acacff] rounded-md p-1"
           onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
         >
           Switch to {viewMode === "grid" ? "Row" : "Grid"} View

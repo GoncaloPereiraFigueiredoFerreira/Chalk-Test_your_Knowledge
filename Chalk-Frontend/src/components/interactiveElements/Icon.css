@@ -53,6 +53,14 @@
     dark:hover:text-white;
   }
 
+  .ex-icon {
+    @apply text-gray-600
+    transition-all
+    dark:text-[#dddddd]
+    hover:text-black
+    hover:dark:text-black;
+  }
+
   .black-icon {
     @apply text-black
     dark:text-white;

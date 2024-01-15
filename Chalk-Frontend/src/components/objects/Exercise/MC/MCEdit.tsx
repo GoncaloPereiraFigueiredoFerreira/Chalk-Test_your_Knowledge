@@ -22,8 +22,28 @@ export function MCEdit({ context, exercise }: MCEditProps) {
 
   return (
     <>
-      <p className="block mb-2 text-sm text-gray-900 dark:text-white">
+      <p className="block mb-2 text-md text-gray-900 dark:text-white">
         Adicione as afirmações e escolha a opção correta.
+        <input
+          type="button"
+          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg bg-btn-4-2 bg-[#acacff] ml-2"
+          value="Add"
+          onClick={() => {
+            for (
+              let newID = 0;
+              newID < Object.keys(exercise.props.items!).length + 1;
+              newID++
+            ) {
+              if (exercise.props.items![newID.toString()] === undefined) {
+                context.dispatch({
+                  type: EditActionKind.ADD_ITEM,
+                  dataString: newID.toString(),
+                });
+                break;
+              }
+            }
+          }}
+        ></input>
       </p>
       <ul>
         {Object.keys(exercise.props.items!).map((value, index) => {
@@ -38,26 +58,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           );
         })}
       </ul>
-      <input
-        type="button"
-        className="edit-btn mt-2 mr-2 px-2 hover:font-bold hover:scale-110 text-lg float-right"
-        value="Add"
-        onClick={() => {
-          for (
-            let newID = 0;
-            newID < Object.keys(exercise.props.items!).length + 1;
-            newID++
-          ) {
-            if (exercise.props.items![newID.toString()] === undefined) {
-              context.dispatch({
-                type: EditActionKind.ADD_ITEM,
-                dataString: newID.toString(),
-              });
-              break;
-            }
-          }
-        }}
-      ></input>
+
       <div className="flex flex-col">
         <div className="mt-5 flex items-center">
           <input
@@ -159,7 +160,7 @@ function MCStatementEdit({
             value={solutionItem.text}
           ></input>
           <input
-            className="edit-btn mx-2 px-1 hover:border-2 hover:font-bold"
+            className="edit-btn mx-2 px-1 bg-btn-4-2 bg-[#acacff] ml-2"
             type="button"
             onClick={() =>
               dispatch({

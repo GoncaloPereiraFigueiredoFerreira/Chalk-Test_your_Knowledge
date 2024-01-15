@@ -46,7 +46,7 @@ function SolveTestLanding(props: any) {
   let nExercises = CountExercises(test);
   return (
     <>
-      <div className="space-y-12 w-full  dark:text-white">
+      <div className="space-y-12 w-full  text">
         <div className="space-y-2 ">
           <p className="text-xl">
             <strong>Título:</strong> {test.title}
@@ -59,23 +59,23 @@ function SolveTestLanding(props: any) {
           </p>
           <div className="text-xl flex space-x-4">
             <strong>Tópicos:</strong>{" "}
-            <p className=" border border-gray-400 rounded-lg "> RPCW</p>
+            <p className=" px-1 mr-1 rounded-lg bg-gray-600 text-white dark:bg-[#dddddd] dark:text-black ">
+              RPCW
+            </p>
           </div>
         </div>
 
         <div className="w-full">
-          <h2 className=" font-bold text-md">Instruções básicas do teste:</h2>
+          <h2 className=" font-bold text-lg">Instruções básicas do teste:</h2>
 
-          <p className="w-full border-2 rounded-lg border-gray-200 p-4">
-            {test.globalInstructions}
-          </p>
+          <p className="w-full text-lg p-4">{test.globalInstructions}</p>
         </div>
-        <p>
+        <p className=" text-lg">
           <strong>Número de exercicios:</strong> {nExercises}
         </p>
 
         <button
-          className="absolute right-4 bottom-4 p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
+          className="absolute right-4 bottom-4 p-4 rounded-lg bg-btn-4-2 font-bold hover:scale-110 transition-all duration-100"
           onClick={() => props.startTest(true)}
         >
           Começar o teste {"->"}
@@ -112,19 +112,61 @@ function SolveTestExercise({ endTest }: any) {
         <div className="flex justify-between mb-1"></div>
         <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
           <div
-            className="bg-yellow-300 h-2.5 rounded-full"
+            className="bg-[#ffd025] h-2.5 rounded-full"
             style={{ width: Progress(test, currentGroup, currentEx) + "%" }}
           ></div>
         </div>
       </div>
 
-      <div className="w-full relative border-b-2 pb-4 dark:text-white">
-        <div className="space-y-4">
-          <h1 className="text-2xl font-bold">Grupo {currentGroup}</h1>
+      <div className="w-full relative border-b-2 pb-4 border-black dark:border-[#dddddd] dark:text-white">
+        <div className="space-y-4 ">
+          <h1 className="text-2xl font-bold">
+            Grupo {currentGroup}
+            <div className="float-right right-4 bottom-4 space-x-5 dark:text-white ">
+              {currentEx > 1 || currentGroup > 1 ? (
+                <button
+                  type="button"
+                  className="py-1 px-2 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold text-lg"
+                  onClick={() => {
+                    if (currentGroup > 1 && currentEx == 1) {
+                      setCurrentEx(
+                        test.groups[currentGroup - 2].exercises.length
+                      );
+                      setCurrentGroup(currentGroup - 1);
+                    } else setCurrentEx(currentEx - 1);
+                  }}
+                >
+                  Exercício Anterior
+                </button>
+              ) : (
+                <></>
+              )}
+              {currentEx < groupData.exercises.length ||
+              currentGroup < test.groups.length ? (
+                <button
+                  type="button"
+                  className="py-1 px-2 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold text-lg"
+                  onClick={() => {
+                    if (
+                      currentGroup < test.groups.length &&
+                      currentEx == groupData.exercises.length
+                    ) {
+                      setCurrentEx(1);
+                      setCurrentGroup(currentGroup + 1);
+                    } else setCurrentEx(currentEx + 1);
+                  }}
+                >
+                  Próximo Exercício
+                </button>
+              ) : (
+                <></>
+              )}
+            </div>
+          </h1>
 
           <h2 className="ml-5 text-justify">{groupData.groupInstructions}</h2>
         </div>
-        <p className="absolute right-4 top-0 text-xl ">
+        <p className=" mt-2  text-xl ">
           Cotação do Grupo: {groupData.groupCotation} valores
         </p>
       </div>
@@ -141,11 +183,11 @@ function SolveTestExercise({ endTest }: any) {
           position={currentGroup + "." + currentEx}
         />
       </div>
-      <div className="absolute right-4 bottom-4 space-x-5 dark:text-white ">
+      <div className="float-right right-4 bottom-4 space-x-5 dark:text-white ">
         {currentEx > 1 || currentGroup > 1 ? (
           <button
             type="button"
-            className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
+            className="p-4 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold"
             onClick={() => {
               if (currentGroup > 1 && currentEx == 1) {
                 setCurrentEx(test.groups[currentGroup - 2].exercises.length);
@@ -162,7 +204,7 @@ function SolveTestExercise({ endTest }: any) {
         currentGroup < test.groups.length ? (
           <button
             type="button"
-            className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
+            className="p-4 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold"
             onClick={() => {
               if (
                 currentGroup < test.groups.length &&
@@ -181,7 +223,7 @@ function SolveTestExercise({ endTest }: any) {
 
         <button
           type="button"
-          className="p-4 rounded-lg bg-red-300  dark:bg-red-800"
+          className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
           onClick={() => {
             endTest(true);
           }}

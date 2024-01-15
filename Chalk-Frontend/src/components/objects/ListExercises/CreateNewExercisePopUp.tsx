@@ -78,7 +78,7 @@ export function CreateNewExercisePopUp({
         <div className="flex justify-end">
           <button
             onClick={() => createNewExercise(newExercisetype)}
-            className="btn-selected btn-ListExercises group"
+            className="bg-btn-4-1 btn-ListExercises group"
           >
             Seguinte
           </button>

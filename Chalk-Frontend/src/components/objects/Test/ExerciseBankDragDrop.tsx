@@ -43,7 +43,7 @@ export function ExerciseBankDragDrop({
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
           <label className="flex text-title-1">Exercícios</label>
           <button
-            className="transition-all duration-100 rounded-lg text-4xl hover:scale-125"
+            className="transition-all duration-100 rounded-lg text-4xl hover:scale-125 dark:text-white"
             onClick={() => setSelectedMenu("")}
           >
             x

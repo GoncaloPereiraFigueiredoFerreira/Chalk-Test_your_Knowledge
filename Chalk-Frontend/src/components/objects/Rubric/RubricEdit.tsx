@@ -89,10 +89,10 @@ export function RubricEdit(rubric: Rubric) {
 
   function renderCriteria() {
     return (
-      <div className="flex-col space-y-8">
+      <div className="flex-col space-y-16 mb-3">
         {state.criteria.map((crt, critIndex) => {
           return (
-            <div className="flex-col space-y-4 border-t-2 pt-3 border-t-black">
+            <div className="flex-col space-y-4 border-t-2 pt-3 border-t-black dark:border-[#dddddd]">
               <div className="flex flex-row space-x-4">
                 <label
                   htmlFor="title-inpt"
@@ -167,7 +167,7 @@ export function RubricEdit(rubric: Rubric) {
               </div>
               <button
                 type="button"
-                className="edit-btn bg-[#5555ce] mx-2 px-1 hover:border-2 hover:font-bold float-right"
+                className="edit-btn mx-2 px-1 float-right bg-btn-4-2 bg-[#acacff]"
                 onClick={() => remCriteria(critIndex)}
               >
                 Remove
@@ -184,7 +184,7 @@ export function RubricEdit(rubric: Rubric) {
       <Rubric context={RubricContext.PREVIEW} rubric={state} />
       <button
         type="button"
-        className="bg-[#5555ce] w-fit self-center cursor-pointer p-1 rounded-md hover:font-bold"
+        className=" w-fit self-center cursor-pointer p-1 rounded-md bg-btn-4-2 bg-[#acacff]"
         onClick={() => addCriteria()}
       >
         Add a new Criteria

@@ -29,44 +29,38 @@ export function Profile() {
                 type="button"
                 data-te-ripple-init
                 data-te-ripple-color="light"
-                className="mb-6 inline-block w-fit h-fit rounded bg-blue-600 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                className="mb-6 inline-block w-fit h-fit rounded bg-btn-4-1 bg-[#acacff] dark:text-black px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal"
               >
                 Change Avatar
               </button>
             </div>
           </div>
           <div className="px-0 sm:px-4 pb-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
-            <dt className="text-md font-medium leading-6 text-gray-900">
-              Full name
-            </dt>
-            <dd className="mt-1 text-md leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <dt className="text-md font-medium leading-6 ">Full name</dt>
+            <dd className="mt-1 text-md leading-6  sm:col-span-2 sm:mt-0">
               Francisco Faria
             </dd>
           </div>
           <div className="px-0 sm:px-4 py-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
-            <dt className="text-md font-medium leading-6 text-gray-900">
-              Email address
-            </dt>
-            <dd className="mt-1 text-md leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <dt className="text-md font-medium leading-6 ">Email address</dt>
+            <dd className="mt-1 text-md leading-6 sm:col-span-2 sm:mt-0">
               kikodabeira@example.com
             </dd>
           </div>
 
           <div className="px-0 sm:px-4 py-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
-            <dt className="text-md font-medium leading-6 text-gray-900">
-              About
-            </dt>
-            <dd className="mt-1 text-md leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <dt className="text-md font-medium leading-6 ">About</dt>
+            <dd className="mt-1 text-md leading-6  sm:col-span-2 sm:mt-0">
               Student at Uminho, Engenharia Informática
             </dd>
           </div>
           <div className="px-0 sm:px-4 pb-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
-            <Button
-              className="mt-6 inline-block w-fit h-fit rounded bg-blue-600 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            <button
+              className="mt-6 inline-block w-fit h-fit rounded bg-btn-4-1 px-6 pt-2.5 pb-2 text-xs font-medium uppercase p-4"
               onClick={() => setOpenModal(true)}
             >
               Edit Profile
-            </Button>
+            </button>
             <Modal
               dismissible
               show={openModal}
@@ -77,7 +71,7 @@ export function Profile() {
               <Modal.Header />
               <Modal.Body>
                 <div className="space-y-6">
-                  <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  <h3 className="text-xl font-medium  dark:text-black">
                     Edit your profile
                   </h3>
                   <div>
@@ -115,7 +109,7 @@ export function Profile() {
                   </div>
 
                   <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">
-                    <Button>Edit</Button>
+                    <button className="bg-btn-4-1 rounded-md p-3">Edit</button>
                   </div>
                 </div>
               </Modal.Body>

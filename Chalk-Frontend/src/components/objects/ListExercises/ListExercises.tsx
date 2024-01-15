@@ -176,7 +176,7 @@ export function ListExercises({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 ">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2 dark:border-[#dddddd]">
           <label className="flex text-title-1">Exercícios</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"

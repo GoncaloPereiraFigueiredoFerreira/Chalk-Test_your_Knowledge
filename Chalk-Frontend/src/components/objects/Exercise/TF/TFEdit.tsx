@@ -25,14 +25,34 @@ export function TFEdit({ exercise, context }: TFEditProps) {
 
   return (
     <>
-      <p className="block mb-2 text-sm text-gray-900 dark:text-white">
+      <p className="block mb-2 text-md text-black dark:text-white">
         Adicione as afirmações e indique se são verdadeiras ou falsas
+        <input
+          type="button"
+          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg items-center bg-btn-4-2 bg-[#acacff] ml-2"
+          value="Add"
+          onClick={() => {
+            for (
+              let newID = 0;
+              newID < Object.keys(exercise.props.items).length + 1;
+              newID++
+            ) {
+              if (exercise.props.items[newID.toString()] === undefined) {
+                context.dispatch({
+                  type: EditActionKind.ADD_ITEM,
+                  dataString: newID.toString(),
+                });
+                break;
+              }
+            }
+          }}
+        ></input>
       </p>
       <table className="table-auto mt-4">
         <thead>
           <tr>
-            <th className="p-3">V</th>
-            <th className="p-3">F</th>
+            <th className="p-3 text">V</th>
+            <th className="p-3 text">F</th>
             <th></th>
           </tr>
         </thead>
@@ -48,26 +68,6 @@ export function TFEdit({ exercise, context }: TFEditProps) {
           ))}
         </tbody>
       </table>
-      <input
-        type="button"
-        className="edit-btn mt-2 mr-2 px-2 hover:font-bold hover:scale-110 text-lg items-center"
-        value="Add"
-        onClick={() => {
-          for (
-            let newID = 0;
-            newID < Object.keys(exercise.props.items).length + 1;
-            newID++
-          ) {
-            if (exercise.props.items[newID.toString()] === undefined) {
-              context.dispatch({
-                type: EditActionKind.ADD_ITEM,
-                dataString: newID.toString(),
-              });
-              break;
-            }
-          }
-        }}
-      ></input>
       <div className="flex flex-col">
         <div className="mt-5 flex items-center">
           <input
@@ -192,7 +192,7 @@ function TFStatementEdit({
           </td>
           <td>
             <input
-              className="edit-btn  mx-2 px-1 hover:border-2 hover:font-bold"
+              className="edit-btn  mx-2 px-1 hover:border-2  bg-btn-4-2 bg-[#acacff] ml-2  "
               type="button"
               onClick={() =>
                 dispatch({

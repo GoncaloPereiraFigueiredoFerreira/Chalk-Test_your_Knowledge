@@ -106,7 +106,7 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full rounded-lg ex-1 pb-2" +
+          "w-full rounded-lg ex-1 pb-2 border-2" +
           (className !== undefined ? className : "")
         }
       >

@@ -41,7 +41,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
 
   const renderTopics = () => {
     return (
-      <div className="flex-col flex space-y-4">
+      <div className="flex-col flex space-y-4 mb-3">
         {topics.map((topic, index) => {
           return (
             <div className="flex flex-row space-x-4 items-center">
@@ -55,7 +55,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
               />
               <button
                 type="button"
-                className="edit-btn bg-[#5555ce] mx-2 px-1 hover:border-2 hover:font-bold"
+                className="edit-btn bg-[#acacff] bg-btn-4-2 mx-2 px-1"
                 onClick={() => deleteTopic(index)}
               >
                 Remove
@@ -90,7 +90,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
         </label>
         <button
           type="button"
-          className="edit-btn mt-2 px-2 hover:scale-110 text-lg bg-[#5555ce] w-fit self-center cursor-pointer p-1 rounded-md hover:font-bold"
+          className="edit-btn mt-2 px-2 text-lg bg-[#acacff] bg-btn-4-2 w-fit self-center cursor-pointer p-1 rounded-md"
           onClick={() => {
             addTopic();
           }}

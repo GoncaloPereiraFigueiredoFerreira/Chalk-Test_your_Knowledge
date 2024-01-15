@@ -36,130 +36,130 @@ const exampleRes: Resolutions = {
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção de Conteúdo",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
@@ -195,10 +195,30 @@ const exampleRes: Resolutions = {
       data: {
         type: ExerciseType.TRUE_OR_FALSE,
         items: {
-          1: { text: "Portugal", value: true },
-          2: { text: "Polo norte", value: true },
-          3: { text: "Pigs", value: true },
-          4: { text: "Setúbal", value: false },
+          1: {
+            text: "Portugal",
+            value: true,
+            justification:
+              "Eu sei que não é o polo norte porque lá há mamutes!",
+          },
+          2: {
+            text: "Polo norte",
+            value: true,
+            justification:
+              "Eu sei que não é o polo norte porque lá há mamutes!",
+          },
+          3: {
+            text: "Pigs",
+            value: true,
+            justification:
+              "Eu sei que não é o polo norte porque lá há mamutes!",
+          },
+          4: {
+            text: "Setúbal",
+            value: false,
+            justification:
+              "Eu sei que não é o polo norte porque lá há mamutes!",
+          },
         },
         justifyType: ExerciseJustificationKind.JUSTIFY_FALSE,
       },
@@ -219,15 +239,30 @@ const exampleRes: Resolutions = {
         data: {
           type: ExerciseType.TRUE_OR_FALSE,
           items: {
-            1: { text: "Portugal", value: true },
+            1: {
+              text: "Portugal",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
             2: {
               text: "Polo norte",
               value: false,
               justification:
                 "Eu sei que não é o polo norte porque lá há mamutes!",
             },
-            3: { text: "Pigs", value: true },
-            4: { text: "Setúbal", value: true },
+            3: {
+              text: "Pigs",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            4: {
+              text: "Setúbal",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
           },
           justifyType: ExerciseJustificationKind.JUSTIFY_FALSE,
         },
@@ -245,10 +280,30 @@ const exampleRes: Resolutions = {
         data: {
           type: ExerciseType.TRUE_OR_FALSE,
           items: {
-            1: { text: "Portugal", value: true },
-            2: { text: "Polo norte", value: false },
-            3: { text: "Pigs", value: true },
-            4: { text: "Setúbal", value: true },
+            1: {
+              text: "Portugal",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            2: {
+              text: "Polo norte",
+              value: false,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            3: {
+              text: "Pigs",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            4: {
+              text: "Setúbal",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
           },
           justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
         },
@@ -266,10 +321,30 @@ const exampleRes: Resolutions = {
         data: {
           type: ExerciseType.TRUE_OR_FALSE,
           items: {
-            1: { text: "Portugal", value: true },
-            2: { text: "Polo norte", value: false },
-            3: { text: "Pigs", value: true },
-            4: { text: "Setúbal", value: true },
+            1: {
+              text: "Portugal",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            2: {
+              text: "Polo norte",
+              value: false,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            3: {
+              text: "Pigs",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
+            4: {
+              text: "Setúbal",
+              value: true,
+              justification:
+                "Eu sei que não é o polo norte porque lá há mamutes!",
+            },
           },
           justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
         },
@@ -284,130 +359,130 @@ const exampleRes: Resolutions = {
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção de Conteúdo",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
         {
           title: "Correção Ortográfica",
           points: 2,
-          standarts: [
+          standards: [
             {
               title: StardardLevels.EXCELENT,
               description: "Sem erros",
-              percentage: "100",
+              percentage: 100,
             },
             {
               title: StardardLevels.WELL_DONE,
               description: "(1-3) erros",
-              percentage: "80",
+              percentage: 80,
             },
             {
               title: StardardLevels.SATISFACTORY,
               description: "(3-10) erros",
-              percentage: "60",
+              percentage: 60,
             },
             {
               title: StardardLevels.INSATISFACTORY,
               description: "10+ erros",
-              percentage: "0",
+              percentage: 0,
             },
           ],
         },
@@ -509,14 +584,17 @@ function renderResolution(
       <div className="flex items-center space-x-2 justify-between">
         <div className="flex items-center space-x-2">
           <div
-            className=" rounded-full hover:bg-gray-600 p-2 cursor-auto"
+            className=" rounded-full hover:dark:text-black hover:text-white p-2 cursor-pointer"
             onClick={() => backToList()}
           >
             <FaArrowLeft />
           </div>
           <h1 className="text-xl">Resolução de {resolution.student?.name}</h1>
         </div>
-        <button type="button" className="p-4 bg-yellow-200">
+        <button
+          type="button"
+          className="p-4 bg-btn-4-1 bg-[#acacff] rounded-md"
+        >
           <p className="text-sm">Assistência na Correção</p>
         </button>
       </div>
@@ -525,7 +603,7 @@ function renderResolution(
         <strong>Aluno</strong>: {resolution.student?.name}
       </h2>
       <label className="font-bold">Resposta:</label>
-      <div className="bg-white rounded-lg border-2 border-gray-600 p-1">
+      <div className="bg-white rounded-lg border-2 border-gray-600">
         <Answer solution={resolution} />
       </div>
       <label className="font-bold">Comentário:</label>
@@ -544,7 +622,7 @@ function renderResolution(
 
       <button
         type="button"
-        className="p-3 bg-yellow-300 rounded-md mt-auto"
+        className=" w-fit self-end p-3 bg-btn-4-1 bg-[#acacff] text-lg rounded-md mt-auto"
         onClick={() => backToList()}
       >
         Submit
@@ -574,7 +652,7 @@ function renderSolution(resolutions: Resolutions, exid: string) {
     );
   else
     return (
-      <p className="text-gray-600">
+      <p className=" text">
         Selecione um exercício para ver os seus críterios de correção
       </p>
     );
@@ -612,7 +690,7 @@ export function Correction() {
               >
                 <div className="p-4 flex flex-col w-full h-screen space-y-4">
                   {/* Solução se houver */}
-                  <div className="bg-3-1 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto">
+                  <div className="bg-3-1 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto border-2 border-[#dddddd] dark:border-gray-600">
                     <h3 className="text-xl font-medium">
                       Critérios de Correção
                     </h3>
@@ -624,7 +702,7 @@ export function Correction() {
                       renderResolutions(resolutions, exID, setExID)
                     ) : (
                       <div className="flex h-full items-center justify-center">
-                        <p className="text-xl text-gray-500">
+                        <p className="text-xl text-black">
                           Não existem mais resoluções para corrigir neste teste.
                         </p>
                       </div>

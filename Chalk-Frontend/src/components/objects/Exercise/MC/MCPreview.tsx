@@ -11,7 +11,7 @@ export function MCPreview({ exercise, position }: MCPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement}></ExerciseHeaderComp>
-      <p>
+      <p className="text">
         <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
       </p>
       <ul>
@@ -19,7 +19,7 @@ export function MCPreview({ exercise, position }: MCPreviewProps) {
           <div key={index}>
             <label
               htmlFor={"mc" + exercise.identity?.id + index + position}
-              className="flex px-4 py-2 gap-2 items-center hover:bg-gray-300"
+              className="flex px-4 py-2 gap-2 items-center "
             >
               <input
                 id={"mc" + exercise.identity?.id + index + position}

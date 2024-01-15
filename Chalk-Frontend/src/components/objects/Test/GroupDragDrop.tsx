@@ -36,7 +36,7 @@ export function GroupDragDrop({
     <>
       <div className="flex flex-col rounded-lg px-7 py-5 bg-3-2">
         <div
-          className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 mb-4"
+          className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 dark:border-[#dddddd] dark:text-[#dddddd] mb-4"
           onClick={() =>
             setExerciseID({
               groupPosition: exerciseGroupID,
@@ -49,7 +49,7 @@ export function GroupDragDrop({
           </label>
           <div className="flex w-full justify-end items-center gap-3">
             Cotação do Grupo:
-            <div className=" flex justify-center min-w-fit w-10 rounded-lg px-3 py-1 bg-3-2">
+            <div className=" flex justify-center min-w-fit w-10 rounded-lg px-3 py-1 bg-3-2 dark:text-[#dddddd]">
               {testState.test.groups[exerciseGroupID].groupCotation}
             </div>
           </div>
@@ -100,8 +100,8 @@ export function GroupDragDrop({
                 setSelectedMenu("dd-list-exercises");
               }}
             >
-              <FaPencil className="group-gray-icon size-6" />
-              <label className="group-gray-icon font-medium text-lg">
+              <FaPencil className=" size-6" />
+              <label className=" font-medium text-lg">
                 Lista de Exercicios
               </label>
             </div>
@@ -112,10 +112,8 @@ export function GroupDragDrop({
                 setNewExercisePopUp(exerciseGroupID);
               }}
             >
-              <RiAddFill className="group-gray-icon size-8" />
-              <label className="group-gray-icon font-medium text-lg">
-                Criar Novo
-              </label>
+              <RiAddFill className=" size-8" />
+              <label className=" font-medium text-lg">Criar Novo</label>
             </div>
             <div
               className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
@@ -133,10 +131,8 @@ export function GroupDragDrop({
                 });
               }}
             >
-              <GarbageIcon style="group-gray-icon size-8" />
-              <label className="group-gray-icon font-medium text-lg">
-                Remove
-              </label>
+              <GarbageIcon style=" size-8" />
+              <label className=" font-medium text-lg">Remove</label>
             </div>
           </div>
         </div>

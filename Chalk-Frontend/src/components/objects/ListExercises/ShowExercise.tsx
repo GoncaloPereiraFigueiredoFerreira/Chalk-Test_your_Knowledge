@@ -59,7 +59,7 @@ export function ShowExercise({
     switch (exercise.type) {
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <CheckedListIcon size="size-4" />
             Escolha múltipla
           </label>
@@ -69,7 +69,7 @@ export function ShowExercise({
         break;
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <TextIcon size="size-4" />
             Resposta aberta
           </label>
@@ -78,7 +78,7 @@ export function ShowExercise({
         break;
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <CheckboxIcon size="size-4" />
             Verdadeiro ou falso
           </label>
@@ -88,7 +88,7 @@ export function ShowExercise({
 
       case ExerciseType.CHAT:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <PiChatsBold className="size-4" />
             Chat Question
           </label>
@@ -102,7 +102,7 @@ export function ShowExercise({
     switch (exercise.identity.visibility) {
       case "private":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <LockIcon size="size-4" />
             Privado
           </label>
@@ -110,7 +110,7 @@ export function ShowExercise({
         break;
       case "not-listed":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <LinkIcon size="size-4" />
             Não listado
           </label>
@@ -118,7 +118,7 @@ export function ShowExercise({
         break;
       case "course":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <GraduateIcon size="size-4" />
             Curso
           </label>
@@ -126,7 +126,7 @@ export function ShowExercise({
         break;
       case "institutional":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <SchoolIcon size="size-4" />
             Institucional
           </label>
@@ -134,7 +134,7 @@ export function ShowExercise({
         break;
       case "public":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <WorldSearchIcon size="size-4" />
             Público
           </label>
@@ -161,7 +161,7 @@ export function ShowExercise({
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl">
+            <label className="flex min-w-max font-medium text-xl dark:text-[#dddddd]">
               {exercise.base.title}
             </label>
             <div
@@ -192,7 +192,7 @@ export function ShowExercise({
           </button>
           <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
             <button
-              className="btn-options-exercise gray-icon"
+              className="btn-options-exercise ex-icon"
               onClick={() => {
                 if (!editMenuIsOpen) {
                   dispatch({
@@ -211,11 +211,11 @@ export function ShowExercise({
               <PenIcon size="size-5" />
               Editar
             </button>
-            <button className="btn-options-exercise gray-icon">
+            <button className="btn-options-exercise ex-icon">
               <EyeSlashIcon size="size-5" />
               Visibilidade
             </button>
-            <button className="btn-options-exercise gray-icon">
+            <button className="btn-options-exercise ex-icon">
               <GarbageIcon size="size-5" />
               Eliminar
             </button>
@@ -241,7 +241,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1`}
+          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 bg-in-ex`}
         >
           {preview}
         </div>

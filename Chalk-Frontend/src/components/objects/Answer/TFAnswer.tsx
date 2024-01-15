@@ -14,9 +14,9 @@ export function TFAnswer({ solution }: AnswerProps) {
     if (solution.type === ResolutionType.SOLUTION) {
       return (
         <div>
-          <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
-            <div className="flex text-xl font-bold px-4">V</div>
-            <div className="flex text-xl font-bold px-4">F</div>
+          <div className="grid-layout-exercise m-2 gap-2 min-h-max items-center text-black">
+            <div className="flex text-xl font-bold px-4 ">V</div>
+            <div className="flex text-xl font-bold px-4 ">F</div>
             <div></div>
             {Object.keys(solution.data.items).map((index, key) => {
               return (
@@ -49,7 +49,7 @@ export function TFAnswer({ solution }: AnswerProps) {
     } else {
       return (
         <div>
-          <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
+          <div className="grid-layout-exercise m-2 gap-2 min-h-max items-center text-black">
             <div className="flex text-xl font-bold px-4">V</div>
             <div className="flex text-xl font-bold px-4">F</div>
             <div></div>
