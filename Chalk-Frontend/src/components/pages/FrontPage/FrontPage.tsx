@@ -13,8 +13,7 @@ export function FrontPage() {
         <MainLogo size="big"></MainLogo>
         <div className="flex flex-row space-x-4 mt-4 ">
           <button
-            type="button"
-            className="group flex flex-col items-center justify-center w-64 h-16 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+            className="group flex flex-col items-center justify-center w-64 h-16 text-sm font-medium bg-btn-4-2 rounded-md"
             onClick={() => navigate("exercise-bank")}
           >
             Banco de exercícios
@@ -23,8 +22,7 @@ export function FrontPage() {
             </div>
           </button>
           <button
-            type="button"
-            className="flex flex-col items-center justify-center w-64 h-16 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+            className="flex flex-col items-center justify-center w-64 h-16 text-sm font-medium bg-btn-4-2 rounded-md"
             onClick={() => navigate("tests")}
           >
             Os meus Testes
@@ -34,18 +32,14 @@ export function FrontPage() {
           </button>
         </div>
         <div className="flex flex-row space-x-4 mt-4 mb-28">
-          <button
-            type="button"
-            className="flex flex-col items-center justify-center w-64 h-16 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-          >
+          <button className="flex flex-col items-center justify-center w-64 h-16 text-sm font-medium bg-btn-4-2 rounded-md">
             Criar Novo Teste
             <div className="text-xs truncate opacity-50">
               Additional Text Below
             </div>
           </button>
           <button
-            type="button"
-            className="flex flex-col items-center justify-center w-64 h-16 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+            className="flex flex-col items-center justify-center w-64 h-16 text-sm font-medium bg-btn-4-2 rounded-md"
             onClick={() => navigate("groups")}
           >
             Manage Groups

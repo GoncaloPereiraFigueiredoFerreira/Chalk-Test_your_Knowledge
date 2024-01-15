@@ -26,10 +26,9 @@ export function Profile() {
             <div className="">
               <input type="file" className="mb-4" />
               <button
-                type="button"
                 data-te-ripple-init
                 data-te-ripple-color="light"
-                className="mb-6 inline-block w-fit h-fit rounded bg-btn-4-1 bg-[#acacff] dark:text-black px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal"
+                className="mb-6 inline-block w-fit h-fit rounded bg-btn-4-1 dark:text-black px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal"
               >
                 Change Avatar
               </button>

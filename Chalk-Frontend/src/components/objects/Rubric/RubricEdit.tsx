@@ -166,8 +166,7 @@ export function RubricEdit(rubric: Rubric) {
                 })}
               </div>
               <button
-                type="button"
-                className="edit-btn mx-2 px-1 float-right bg-btn-4-2 bg-[#acacff]"
+                className="edit-btn mx-2 px-1 float-right bg-btn-4-2"
                 onClick={() => remCriteria(critIndex)}
               >
                 Remove
@@ -183,8 +182,7 @@ export function RubricEdit(rubric: Rubric) {
     <>
       <Rubric context={RubricContext.PREVIEW} rubric={state} />
       <button
-        type="button"
-        className=" w-fit self-center cursor-pointer p-1 rounded-md bg-btn-4-2 bg-[#acacff]"
+        className=" w-fit self-center cursor-pointer p-1 rounded-md bg-btn-4-2"
         onClick={() => addCriteria()}
       >
         Add a new Criteria

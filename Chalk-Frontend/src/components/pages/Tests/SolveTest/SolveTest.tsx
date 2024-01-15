@@ -125,8 +125,7 @@ function SolveTestExercise({ endTest }: any) {
             <div className="float-right right-4 bottom-4 space-x-5 dark:text-white ">
               {currentEx > 1 || currentGroup > 1 ? (
                 <button
-                  type="button"
-                  className="py-1 px-2 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold text-lg"
+                  className="py-1 px-2 rounded-lg bg-btn-4-2 font-bold text-lg"
                   onClick={() => {
                     if (currentGroup > 1 && currentEx == 1) {
                       setCurrentEx(
@@ -144,8 +143,7 @@ function SolveTestExercise({ endTest }: any) {
               {currentEx < groupData.exercises.length ||
               currentGroup < test.groups.length ? (
                 <button
-                  type="button"
-                  className="py-1 px-2 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold text-lg"
+                  className="py-1 px-2 rounded-lg bg-btn-4-2 font-bold text-lg"
                   onClick={() => {
                     if (
                       currentGroup < test.groups.length &&
@@ -186,8 +184,7 @@ function SolveTestExercise({ endTest }: any) {
       <div className="float-right right-4 bottom-4 space-x-5 dark:text-white ">
         {currentEx > 1 || currentGroup > 1 ? (
           <button
-            type="button"
-            className="p-4 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold"
+            className="p-4 rounded-lg bg-btn-4-2 font-bold"
             onClick={() => {
               if (currentGroup > 1 && currentEx == 1) {
                 setCurrentEx(test.groups[currentGroup - 2].exercises.length);
@@ -203,8 +200,7 @@ function SolveTestExercise({ endTest }: any) {
         {currentEx < groupData.exercises.length ||
         currentGroup < test.groups.length ? (
           <button
-            type="button"
-            className="p-4 rounded-lg bg-btn-4-2 bg-[#acacff] font-bold"
+            className="p-4 rounded-lg bg-btn-4-2 font-bold"
             onClick={() => {
               if (
                 currentGroup < test.groups.length &&
@@ -222,7 +218,6 @@ function SolveTestExercise({ endTest }: any) {
         )}
 
         <button
-          type="button"
           className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
           onClick={() => {
             endTest(true);

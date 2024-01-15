@@ -54,8 +54,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
                 }}
               />
               <button
-                type="button"
-                className="edit-btn bg-[#acacff] bg-btn-4-2 mx-2 px-1"
+                className="edit-btn bg-btn-4-2 mx-2 px-1"
                 onClick={() => deleteTopic(index)}
               >
                 Remove
@@ -89,8 +88,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
           Indique os tópicos que a AI deverá abordar:
         </label>
         <button
-          type="button"
-          className="edit-btn mt-2 px-2 text-lg bg-[#acacff] bg-btn-4-2 w-fit self-center cursor-pointer p-1 rounded-md"
+          className="edit-btn mt-2 px-2 text-lg bg-btn-4-2 w-fit self-center cursor-pointer p-1 rounded-md"
           onClick={() => {
             addTopic();
           }}

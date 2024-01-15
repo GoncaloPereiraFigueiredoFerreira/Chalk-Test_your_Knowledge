@@ -58,6 +58,11 @@ html {
 dark:bg-black;
   }
 
+  .bg-ex {
+    @apply bg-[#dddddd]
+dark:bg-black;
+  }
+
   /* ---------------------- */
   /*       EXERCISE BG      */
   /* ---------------------- */

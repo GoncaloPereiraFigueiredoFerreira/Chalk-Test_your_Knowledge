@@ -190,7 +190,7 @@ export function ShowExerciseDragDrop({
     <div
       className={`${
         selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2 group-hover`}
+      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-ex group-hover`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
@@ -215,7 +215,7 @@ export function ShowExerciseDragDrop({
                 : selectedExercise
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-600 dark:border-[#dddddd]`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-ex border-gray-600 dark:border-[#dddddd]`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")

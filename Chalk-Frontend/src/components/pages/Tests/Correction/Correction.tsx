@@ -591,10 +591,7 @@ function renderResolution(
           </div>
           <h1 className="text-xl">Resolução de {resolution.student?.name}</h1>
         </div>
-        <button
-          type="button"
-          className="p-4 bg-btn-4-1 bg-[#acacff] rounded-md"
-        >
+        <button className="p-4 bg-btn-4-1 rounded-md">
           <p className="text-sm">Assistência na Correção</p>
         </button>
       </div>
@@ -621,8 +618,7 @@ function renderResolution(
       </div>
 
       <button
-        type="button"
-        className=" w-fit self-end p-3 bg-btn-4-1 bg-[#acacff] text-lg rounded-md mt-auto"
+        className=" w-fit self-end p-3 bg-btn-4-1 text-lg rounded-md mt-auto"
         onClick={() => backToList()}
       >
         Submit
