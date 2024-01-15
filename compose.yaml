@@ -5,8 +5,6 @@ services:
     depends_on:
       - backend
       - auth
-    volumes:
-      - ./Chalk-Frontend:/chalk-fe
     environment:
       - VITE_BACKEND=http://localhost:7777/backend/v1/
       - VITE_AUTH=http://localhost:7777/auth/
