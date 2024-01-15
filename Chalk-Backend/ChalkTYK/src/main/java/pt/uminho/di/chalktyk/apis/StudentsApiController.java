@@ -13,7 +13,8 @@ import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.IStudentsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 @RestController
 @RequestMapping("/students")
@@ -37,7 +38,7 @@ public class StudentsApiController implements StudentsApi{
                 throw new BadInputException("Invalid student.");
             studentsService.createStudent(student);
             return ResponseEntity.ok(securityService.login(jwtToken));
-        } catch (BadInputException | UnauthorizedException | NotFoundException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<User>().createRequest(e);
         }
     }
@@ -50,9 +51,9 @@ public class StudentsApiController implements StudentsApi{
             if(studentId == null)
                 throw new BadInputException("Student id is null.");
             if(!studentId.equals(userId))
-                throw new UnauthorizedException("The user is not allowed to check another user's information.");
+                throw new ForbiddenException("The user is not allowed to check another user's information.");
             return ResponseEntity.ok(studentsService.getStudentById(studentId));
-        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<Student>().createRequest(e);
         }
     }
@@ -65,9 +66,9 @@ public class StudentsApiController implements StudentsApi{
             if(studentId == null)
                 throw new BadInputException("Student id is null.");
             if(!studentId.equals(userId))
-                throw new UnauthorizedException("The user is not allowed to check another user's information.");
+                throw new ForbiddenException("The user is not allowed to check another user's information.");
             return ResponseEntity.ok(studentsService.existsStudentById(studentId));
-        } catch (UnauthorizedException | BadInputException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<Boolean>().createRequest(e);
         }
     }

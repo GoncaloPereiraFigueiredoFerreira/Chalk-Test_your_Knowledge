@@ -23,7 +23,8 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.services.IAIService;
 import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.exceptions.ApiConnectionException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 /**
  * AIApiController
@@ -55,7 +56,7 @@ public class AIApiController implements AIApi{
             JsonObject response = aiService.bypassBackend("/get_oral",request.build().toString());
             String ret = response.getString("Question");
             return ResponseEntity.ok(ret);
-        } catch (ApiConnectionException | UnauthorizedException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
         }
     }

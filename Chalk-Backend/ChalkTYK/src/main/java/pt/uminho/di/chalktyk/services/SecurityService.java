@@ -12,10 +12,7 @@ import pt.uminho.di.chalktyk.models.login.Login;
 import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.repositories.BlackListedJWTDao;
 import pt.uminho.di.chalktyk.repositories.LoginDao;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.*;
 
 @Service("securityService")
 public class SecurityService implements ISecurityService{
@@ -74,7 +71,7 @@ public class SecurityService implements ISecurityService{
      * @return user's id
      * @throws UnauthorizedException if the user does not exist, of if the user already is logged in with a valid
      */
-    private String checkAndUpdateLogin(JWT jwt) throws UnauthorizedException{
+    private String checkAndUpdateLogin(JWT jwt) throws UnauthorizedException {
         String userId = jwt.getUserId();
         Login login = loginDao.findById(userId).orElse(null);
 
@@ -234,7 +231,7 @@ public class SecurityService implements ISecurityService{
         return ret;
     }
 
-    public Boolean specialistOwnesExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException{
+    public Boolean specialistOwnesExercise(String specialistId, String exerciseId) throws NotFoundException, ForbiddenException {
         
         if(!exercisesService.exerciseExists(exerciseId)){
             throw new NotFoundException("Exercise not found");
@@ -246,13 +243,13 @@ public class SecurityService implements ISecurityService{
         Exercise exercise = exercisesService.getExerciseById(exerciseId);
 
         if(exercise.getSpecialistId().equals(specialistId)){
-            throw new UnauthorizedException("The specilist is not the owner of the exercise");
+            throw new ForbiddenException("The specilist is not the owner of the exercise");
         }
 
         return true;
     } 
 
-    public Boolean studentCanSeeExercise(String studentId, String exerciseId) throws NotFoundException, UnauthorizedException{
+    public Boolean studentCanSeeExercise(String studentId, String exerciseId) throws NotFoundException, ForbiddenException {
         Boolean ret = false;
         String vis = exercisesService.getExerciseVisibility(exerciseId).toString();
 
@@ -265,7 +262,7 @@ public class SecurityService implements ISecurityService{
                 if(courseId != null && coursesService.checkStudentInCourse(courseId, studentId)){
                     ret = true;
                 }else{
-                    throw new UnauthorizedException("The student can not see the course's exercise");
+                    throw new ForbiddenException("The student can not see the course's exercise");
                 }
                 break;
             case "institution":
@@ -274,18 +271,18 @@ public class SecurityService implements ISecurityService{
                 if(studentInstitutionId.equals(exerciseInstitutionId)){
                     ret = true;
                 }else{
-                  throw new UnauthorizedException("The student can not see the institution's exercise");  
+                  throw new ForbiddenException("The student can not see the institution's exercise");
                 }
                 break;
             default:
-                throw new UnauthorizedException("The student can not see the exercise");
+                throw new ForbiddenException("The student can not see the exercise");
                 //break;
         }
 
         return ret;
     }  
 
-    public Boolean specialistCanSeeExercise(String specialistId, String exerciseId) throws NotFoundException, UnauthorizedException{
+    public Boolean specialistCanSeeExercise(String specialistId, String exerciseId) throws NotFoundException, ForbiddenException {
         Boolean ret = false;
         String vis = exercisesService.getExerciseVisibility(exerciseId).toString();
 
@@ -298,7 +295,7 @@ public class SecurityService implements ISecurityService{
                 if(courseId != null && coursesService.checkSpecialistInCourse(courseId, specialistId)){
                     ret = true;
                 }else{
-                    throw new UnauthorizedException("The specialist can not see the course's exercise");
+                    throw new ForbiddenException("The specialist can not see the course's exercise");
                 }
                 break;
             case "institution":
@@ -307,11 +304,11 @@ public class SecurityService implements ISecurityService{
                 if(specialistInstitutionId.equals(exerciseInstitutionId)){
                     ret = true;
                 }else{
-                  throw new UnauthorizedException("The specialist can not see the institution's exercise");  
+                  throw new ForbiddenException("The specialist can not see the institution's exercise");
                 }
                 break;
             default:
-                throw new UnauthorizedException("The specialist can not see the exercise");
+                throw new ForbiddenException("The specialist can not see the exercise");
                 //break;
         }
 

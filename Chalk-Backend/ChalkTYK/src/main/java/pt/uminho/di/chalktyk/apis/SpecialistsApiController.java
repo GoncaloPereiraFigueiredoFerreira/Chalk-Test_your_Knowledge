@@ -11,9 +11,7 @@ import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.ISpecialistsService;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.*;
 
 @RestController
 @RequestMapping("/specialists")
@@ -37,7 +35,7 @@ public class SpecialistsApiController implements SpecialistsApi{
                 throw new BadInputException("Invalid specialist.");
             specialistsService.createSpecialist(specialist);
             return ResponseEntity.ok(securityService.login(jwtToken));
-        } catch (BadInputException | UnauthorizedException | NotFoundException e) {
+        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
             return new ExceptionResponseEntity<User>().createRequest(e);
         }
     }
@@ -50,9 +48,9 @@ public class SpecialistsApiController implements SpecialistsApi{
             if(specialistId == null)
                 throw new BadInputException("Specialist id is null.");
             if(!specialistId.equals(userId))
-                throw new UnauthorizedException("The user is not allowed to check another user's information.");
+                throw new ForbiddenException("The user is not allowed to check another user's information.");
             return ResponseEntity.ok(specialistsService.getSpecialistById(specialistId));
-        } catch (UnauthorizedException | BadInputException | NotFoundException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<Specialist>().createRequest(e);
         }
     }
@@ -65,9 +63,9 @@ public class SpecialistsApiController implements SpecialistsApi{
             if(specialistId == null)
                 throw new BadInputException("Specialist id is null.");
             if(!specialistId.equals(userId))
-                throw new UnauthorizedException("The user is not allowed to check another user's information.");
+                throw new ForbiddenException("The user is not allowed to check another user's information.");
             return ResponseEntity.ok(specialistsService.existsSpecialistById(specialistId));
-        } catch (UnauthorizedException | BadInputException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<Boolean>().createRequest(e);
         }
     }

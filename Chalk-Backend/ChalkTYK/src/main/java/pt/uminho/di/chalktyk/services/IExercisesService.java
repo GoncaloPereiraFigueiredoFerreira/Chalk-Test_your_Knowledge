@@ -8,7 +8,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 import java.util.List;
 import java.util.Set;
@@ -57,7 +57,7 @@ public interface IExercisesService{
      * set to private, and is not associated with any course.
      * @param specialistId identifier of the specialist that wants to own the exercise
      * @param exerciseId exercise identifier
-     * @throws UnauthorizedException if the exercise is not owned by the specialist
+     * @throws ForbiddenException if the exercise is not owned by the specialist
      * @throws NotFoundException if the exercise was not found
      * @return new exercise identifier
      */
@@ -112,7 +112,7 @@ public interface IExercisesService{
      * Create an exercise rubric
      * @param exerciseId exercise identifier
      * @param rubric new rubric
-     * @throws UnauthorizedException if the user does not have authorization to check the rubric of the exercise.
+     * @throws ForbiddenException if the user does not have authorization to check the rubric of the exercise.
      * @throws NotFoundException if the exercise was not found
      */
     void createExerciseRubric(String exerciseId, ExerciseRubric rubric) throws NotFoundException, BadInputException;
@@ -126,9 +126,9 @@ public interface IExercisesService{
      * @param correctionType type of correction. Can be 'auto' or 'ai'.
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the exercise does not exist
-     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     * @throws ForbiddenException if the exercise does not support the requested correction type.
      */
-    void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
+    void issueExerciseResolutionsCorrection(String exerciseId, String correctionType) throws BadInputException, NotFoundException, ForbiddenException;
 
     /**
      * Requests that the correction of the exercise resolution be done autonomously.
@@ -140,9 +140,9 @@ public interface IExercisesService{
      * @return
      * @throws BadInputException     if the correction type is not valid. It should be 'auto' or 'ai'.
      * @throws NotFoundException     if the resolution, or the exercise, or the rubric of the exercise, or the solution of the exercise does not exist
-     * @throws UnauthorizedException if the exercise does not support the requested correction type.
+     * @throws ForbiddenException if the exercise does not support the requested correction type.
      */
-    float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, UnauthorizedException;
+    float issueExerciseResolutionCorrection(String resolutionId, String correctionType) throws BadInputException, NotFoundException, ForbiddenException;
 
     /**
      * @param exerciseId identifier of an exercise

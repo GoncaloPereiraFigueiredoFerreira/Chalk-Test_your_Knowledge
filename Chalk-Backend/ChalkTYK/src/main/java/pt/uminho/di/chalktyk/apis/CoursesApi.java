@@ -18,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.Student;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 import java.util.List;
 

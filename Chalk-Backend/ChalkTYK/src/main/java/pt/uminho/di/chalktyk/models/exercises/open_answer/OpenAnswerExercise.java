@@ -7,12 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.exercises.*;
-import pt.uminho.di.chalktyk.models.exercises.multiple_choice.Mctype;
-import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
-
-import java.util.Objects;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 @Entity
 @NoArgsConstructor
@@ -59,11 +55,11 @@ public class OpenAnswerExercise extends Exercise {
      * @param solution   solution of the exercise
      * @param rubric     rubric of the exercise
      * @return points to be attributed to the resolution
-     * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+     * @throws ForbiddenException if the resolution cannot be evaluated automatically.
      */
     @Override
-    public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
-        throw new UnauthorizedException("Open answer exercise cannot be evaluated automatically.");
+    public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws ForbiddenException {
+        throw new ForbiddenException("Open answer exercise cannot be evaluated automatically.");
     }
 
     @Override

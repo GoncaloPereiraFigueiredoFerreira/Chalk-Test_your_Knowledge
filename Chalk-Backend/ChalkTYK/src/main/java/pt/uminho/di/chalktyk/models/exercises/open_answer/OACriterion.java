@@ -7,7 +7,6 @@ import lombok.Setter;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

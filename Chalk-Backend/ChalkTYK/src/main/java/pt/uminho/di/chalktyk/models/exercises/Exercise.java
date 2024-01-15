@@ -22,7 +22,7 @@ import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 @Entity
 @NoArgsConstructor
@@ -179,9 +179,9 @@ public abstract class Exercise {
 	 * @param solution   solution of the exercise
 	 * @param rubric     rubric of the exercise
 	 * @return resolution with its points updated. The points can range from 0 (inclusive) to 100 (inclusive).
-	 * @throws UnauthorizedException if the resolution cannot be evaluated automatically.
+	 * @throws ForbiddenException if the resolution cannot be evaluated automatically.
 	 */
-	public abstract ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException;
+	public abstract ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws ForbiddenException;
 
 	public abstract void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException;
 
