@@ -65,8 +65,8 @@ export interface ResolutionItems {
 
 export interface ResolutionItem {
   text: string;
-  justification: string;
-  value: boolean;
+  justification?: string;
+  value?: boolean;
 }
 
 //------------------------------------//
@@ -169,26 +169,14 @@ export interface ExerciseHeader {
 export interface ExerciseBase {
   title: string;
   statement: ExerciseHeader;
+  tags: string[];
 }
 
 export interface ExerciseIdentity {
   id: string;
-  cotation?: number;
+  points?: number;
   specialistId: string;
   visibility: string;
-}
-
-//------------------------------------//
-//                                    //
-//          ExerciseGroup             //
-//                                    //
-//------------------------------------//
-
-// REDUNDANTE -> importar de Test
-export interface ExerciseGroup {
-  exercises: Exercise[];
-  groupInstructions: string;
-  groupCotation: number;
 }
 
 //------------------------------------//
@@ -297,16 +285,17 @@ export function ExerciseComponent({
 export function InitExercise(type: ExerciseType): Exercise {
   let newExercise: Exercise;
   let base = {
-    title: "",
+    title: "Novo Exercício",
     statement: {
       text: "",
     },
+    tags: [],
   };
 
   let identity: ExerciseIdentity = {
     id: "",
     specialistId: "",
-    visibility: "",
+    visibility: "public",
   };
 
   switch (type) {
@@ -431,6 +420,301 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
       };
       newRes = OARes;
       break;
+  }
+  return newRes;
+}
+
+//----------------------------------------//
+//                                        //
+//      Translate exercise functions      //
+//                                        //
+//----------------------------------------//
+
+export function TranslateExerciseOUT(exercise: Exercise): {
+  exerciseTR: any;
+  solutionTR: any;
+  //faltam as tags
+} {
+  let exerciseTR = {};
+
+  let exerciseBASE = {
+    title: exercise.base.title,
+    visibility: exercise.identity.visibility,
+    statement: exercise.base.statement,
+    specialistId: exercise.identity.specialistId,
+  };
+
+  let solutionTR: any = {};
+
+  switch (exercise.type) {
+    case ExerciseType.OPEN_ANSWER:
+      exerciseTR = {
+        ...exerciseBASE,
+        type: "OA",
+      };
+      solutionTR["type"] = "OA";
+      solutionTR["text"] = "Something ....";
+      break;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.TRUE_OR_FALSE:
+      let mcType = exercise.type === ExerciseType.MULTIPLE_CHOICE ? "1" : "2";
+      switch (exercise.props.justifyType) {
+        case ExerciseJustificationKind.NO_JUSTIFICATION:
+          mcType += "0";
+          break;
+        case ExerciseJustificationKind.JUSTIFY_ALL:
+          mcType += "1";
+          break;
+        case ExerciseJustificationKind.JUSTIFY_UNMARKED:
+        case ExerciseJustificationKind.JUSTIFY_FALSE:
+          mcType += "2";
+          break;
+        case ExerciseJustificationKind.JUSTIFY_MARKED:
+        case ExerciseJustificationKind.JUSTIFY_TRUE:
+          mcType += "3";
+          break;
+      }
+
+      let newExItems: { [id: string]: any } = {};
+      let newSolItems: { [id: string]: any } = {};
+
+      Object.keys(exercise.props.items).map((key) => {
+        newExItems[key] = {
+          type: "string",
+          text: exercise.props.items[key].text,
+        };
+        newSolItems[key] = {
+          value: exercise.props.items[key].value,
+        };
+      });
+
+      exerciseTR = {
+        ...exerciseBASE,
+        type: "MC",
+        mctype: Number.parseInt(mcType),
+        items: newExItems,
+      };
+      solutionTR = {
+        type: "MC",
+        items: newSolItems,
+      };
+      break;
+
+    case ExerciseType.CHAT:
+      exerciseTR = {
+        ...exerciseBASE,
+        type: "CE",
+        topics: exercise.props.topics,
+        maxAnswers: exercise.props.maxAnswers,
+      };
+      solutionTR["type"] = "CE";
+      break;
+  }
+
+  return { exerciseTR: exerciseTR, solutionTR: solutionTR };
+}
+
+export function TranslateExerciseIN(exercise: any): Exercise {
+  let tags: string[] = [];
+  exercise.tags.map((tag: any) => {
+    tags.push(tag.name);
+  });
+
+  let exerciseBase = {
+    base: {
+      title: exercise.title,
+      statement: exercise.statement,
+      tags: tags,
+    },
+    identity: {
+      id: exercise.id,
+      specialistId: exercise.specialistId,
+      visibility: exercise.visibility,
+    },
+  };
+  let type: ExerciseType;
+  let exerciseTR: Exercise;
+
+  switch (exercise.type) {
+    case "MC":
+      let justification: ExerciseJustificationKind;
+      type =
+        (exercise.mctype as Number).toString().charAt(0) === "1"
+          ? ExerciseType.MULTIPLE_CHOICE
+          : ExerciseType.TRUE_OR_FALSE;
+
+      switch ((exercise.mctype as Number).toString().charAt(1)) {
+        case "0":
+          justification = ExerciseJustificationKind.NO_JUSTIFICATION;
+          break;
+        case "1":
+          justification = ExerciseJustificationKind.JUSTIFY_ALL;
+          break;
+        case "2":
+          justification =
+            type === ExerciseType.MULTIPLE_CHOICE
+              ? ExerciseJustificationKind.JUSTIFY_UNMARKED
+              : ExerciseJustificationKind.JUSTIFY_FALSE;
+
+          break;
+        case "3":
+          justification =
+            type === ExerciseType.MULTIPLE_CHOICE
+              ? ExerciseJustificationKind.JUSTIFY_MARKED
+              : ExerciseJustificationKind.JUSTIFY_TRUE;
+          break;
+        default:
+          justification = ExerciseJustificationKind.NO_JUSTIFICATION;
+      }
+      let items: any = {};
+
+      Object.keys(exercise.items).map((key: string) => {
+        items[key] = { text: exercise.items[key].text };
+      });
+
+      let propsMC: MCProps = {
+        items: items,
+        justifyType: justification,
+      };
+
+      exerciseTR = { ...exerciseBase, type: type, props: propsMC };
+
+      break;
+
+    case "CE":
+      let propsCQ: CQProps = {
+        maxAnswers: exercise.maxAnswers,
+        topics: exercise.topics,
+      };
+      type = ExerciseType.CHAT;
+      exerciseTR = { ...exerciseBase, type: type, props: propsCQ };
+      break;
+    case "OA":
+      type = ExerciseType.OPEN_ANSWER;
+      exerciseTR = { ...exerciseBase, type: type, props: {} };
+      break;
+    default:
+      exerciseTR = {
+        ...exerciseBase,
+        type: ExerciseType.OPEN_ANSWER,
+        props: {},
+      };
+  }
+
+  return exerciseTR;
+}
+
+export function TranslateTestExerciseIN(exercise: any): Exercise {
+  let newEx = TranslateExerciseIN(exercise.exercise);
+  newEx.identity.points = exercise.points;
+  return newEx;
+}
+
+export function TranslateTestExerciseOut(exercise: Exercise) {
+  return {
+    type: "reference",
+    points: exercise.identity.points,
+    id: exercise.identity.id,
+  };
+}
+
+export function TranslateResolutionIN(
+  solution: any,
+  exercise: Exercise
+): ResolutionData {
+  let newRes: ResolutionData;
+  switch (exercise.type) {
+    case ExerciseType.CHAT:
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [...solution.chat], // CHECK WITH BRONZE
+      };
+      newRes = CQRes;
+      break;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+      let MCRes: MCResolutionData = {
+        type: ExerciseType.MULTIPLE_CHOICE,
+        items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
+      };
+      Object.keys(solution.items).map((key) => {
+        MCRes.items[key].value = solution.items[key].value;
+        MCRes.items[key].justification = solution.items[key].justification;
+      });
+
+      newRes = MCRes;
+      break;
+
+    case ExerciseType.TRUE_OR_FALSE:
+      let TFRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: { ...exercise.props.items },
+        justifyType: exercise.props.justifyType,
+      };
+      Object.keys(solution.items).map((key) => {
+        MCRes.items[key].value = solution.items[key].value;
+        MCRes.items[key].justification = solution.items[key].justification;
+      });
+      newRes = TFRes;
+      break;
+
+    case ExerciseType.OPEN_ANSWER:
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: solution.text,
+      };
+      newRes = OARes;
+      break;
+  }
+  return newRes;
+}
+
+export function TranslateResolutionOUT(resolution: ResolutionData) {
+  switch (resolution.type) {
+    case ExerciseType.CHAT:
+      return { type: "CE", chat: [...resolution.msgs] };
+
+    case ExerciseType.OPEN_ANSWER:
+      return { type: "OA", text: resolution.text };
+
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.TRUE_OR_FALSE:
+      return { type: "MC", items: { ...resolution.items } };
+  }
+}
+export function TranslateTestResolutionIN(resolution: any): ResolutionData {
+  let newRes: ResolutionData;
+  switch (resolution.type) {
+    case "CE":
+      let CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [...resolution.chat],
+      };
+      newRes = CQRes;
+      break;
+
+    case "MC":
+      // Got to fix this
+      let MCRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: {},
+        justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
+      };
+      newRes = MCRes;
+      break;
+
+    case "OA":
+      let OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: resolution.text,
+      };
+      newRes = OARes;
+      break;
+
+    default:
+      newRes = InitResolutionDataType(ExerciseType.MULTIPLE_CHOICE);
   }
   return newRes;
 }

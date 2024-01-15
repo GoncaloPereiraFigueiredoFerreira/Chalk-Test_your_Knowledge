@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import {
@@ -6,10 +6,15 @@ import {
   ListIcon,
   SearchIcon,
 } from "../../objects/SVGImages/SVGImages";
+import { APIContext } from "../../../APIContext";
+
+import { CreateStudentModal } from "./CreateStudent";
+import { Button, Modal, TextInput } from "flowbite-react";
 
 interface Student {
   id: string;
   name: string;
+  photoPath: string;
   email: string;
 }
 export function AlunosPage() {
@@ -17,30 +22,50 @@ export function AlunosPage() {
   const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const { id } = useParams();
   const [searchKey, setSearch] = useState("");
-  useEffect(
-    () =>
-      setStudentList([
-        { id: "1", name: "John Doe", email: "john.doe@example.com" },
-        { id: "2", name: "John Doe", email: "john.doe@example.com" },
-        { id: "3", name: "John Doe", email: "john.doe@example.com" },
-        { id: "4", name: "John Doe", email: "john.doe@example.com" },
-        { id: "5", name: "John Doe", email: "john.doe@example.com" },
-      ]),
-    [id]
-  );
+  const { contactBACK } = useContext(APIContext);
+  const [email, setEmail] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+
+  useEffect(() => {
+    contactBACK("courses/" + id + "/students", "GET", {
+      page: "0",
+      itemsPerPage: "50",
+    }).then((response) => {
+      response.json().then((students) => {
+        console.log(students);
+        setStudentList(students);
+      });
+    });
+  }, [id]);
+
   const addStudent = () => {
-    const newStudent: Student = {
-      id: "1",
-      name: "Luis",
-      email: "john.doe@example.com",
-    };
-    setStudentList([...studentList, newStudent]);
+    if (email !== "") {
+      contactBACK("courses/" + id + "/students/add", "POST", undefined, [
+        email,
+      ]).then((response) => {
+        setEmail("");
+
+        setOpenModal(false);
+      });
+    }
   };
 
-  const removeStudent = (idToRemove: string) => {
-    setStudentList((prevlist) =>
-      prevlist.filter((student) => student.id !== idToRemove)
-    );
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      // If Enter key is pressed, prevent the default behavior and call the addStudent function
+      event.preventDefault();
+      addStudent();
+    }
+  };
+
+  const removeStudent = (emailToRemove: string) => {
+    contactBACK("courses/" + id + "/students/remove", "DELETE", undefined, [
+      emailToRemove,
+    ]).then((response) => {
+      setStudentList((prevlist) =>
+        prevlist.filter((student) => student.email !== emailToRemove)
+      );
+    });
   };
 
   return (
@@ -63,12 +88,36 @@ export function AlunosPage() {
             </div>
           </div>
           <div className="flex  ">
-            <button
-              className=" items-center justify-center w-24 h-10 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              onClick={addStudent}
+            <Button onClick={() => setOpenModal(true)}>Adicionar Aluno</Button>
+            <Modal
+              dismissible
+              show={openModal}
+              onClose={() => setOpenModal(false)}
             >
-              Adicionar Estudante
-            </button>
+              <Modal.Header> Criar um Novo Grupo</Modal.Header>
+              <Modal.Body>
+                <div className="space-y-6">
+                  <div>
+                    <div className="mb-2 block">
+                      <label htmlFor="name">Email do aluno:</label>
+                    </div>
+                    <TextInput
+                      type="text"
+                      id="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      onKeyDown={handleKeyDown}
+                      required
+                    />
+                  </div>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => addStudent()}>
+                  Criar novo Estudante
+                </Button>
+              </Modal.Footer>
+            </Modal>
             <button
               className="px-2 w-12"
               onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
@@ -110,9 +159,10 @@ export function AlunosPage() {
                 {student.name}
               </h2>
 
-              <p className="text-sm text-gray-600">ID: {student.id}</p>
               <p className="text-sm text-gray-600">Email: {student.email}</p>
-              <button onClick={() => removeStudent(student.id)}>Remove</button>
+              <button onClick={() => removeStudent(student.email)}>
+                Remove
+              </button>
             </div>
           ))}
         </div>

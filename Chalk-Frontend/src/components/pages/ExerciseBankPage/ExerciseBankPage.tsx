@@ -1,17 +1,30 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import {
   ListExerciseActionKind,
   ListExerciseContext,
   ListExerciseStateReducer,
 } from "../../objects/ListExercises/ListExerciseContext";
 import { useIsVisible } from "../HomePage/HomePage";
+import { APIContext } from "../../../APIContext";
+import {
+  ExerciseType,
+  ResolutionData,
+  TranslateExerciseOUT,
+  TranslateResolutionIN,
+} from "../../objects/Exercise/Exercise";
+import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
 
 export function ExerciseBankPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
   const [exerciseID, setExerciseID] = useState("");
+  const { contactBACK } = useContext(APIContext);
+  const [rubrics, setRubrics] = useState<{ [id: string]: Rubric }>({});
+  const [solutions, setSolutions] = useState<{ [id: string]: ResolutionData }>(
+    {}
+  );
 
   const inicialState = {
     listExercises: {},
@@ -22,6 +35,61 @@ export function ExerciseBankPage() {
     ListExerciseStateReducer,
     inicialState
   );
+
+  const setRubric = (id: string, rubric?: Rubric) => {
+    if (rubric) {
+      let newRubrics = { ...rubrics };
+      newRubrics[id] = rubric;
+      setRubrics(newRubrics);
+    }
+  };
+
+  const setSolution = (id: string, solution?: ResolutionData) => {
+    if (solution) {
+      let newSol = { ...solutions };
+      newSol[id] = solution;
+      setSolutions(newSol);
+    }
+  };
+
+  useEffect(() => {
+    if (editMenuIsOpen && exerciseID !== "-1") {
+      switch (listExerciseState.listExercises[exerciseID].type) {
+        case ExerciseType.OPEN_ANSWER:
+        case ExerciseType.CHAT:
+          if (!(exerciseID in rubrics)) {
+            setRubric(exerciseID, { criteria: [] });
+            contactBACK("exercises/" + exerciseID + "/rubric", "GET").then(
+              (response) => {
+                response.json().then((json) => {
+                  setRubric(exerciseID, json);
+                });
+              }
+            );
+          }
+          break;
+        case ExerciseType.MULTIPLE_CHOICE:
+        case ExerciseType.TRUE_OR_FALSE:
+          if (!(exerciseID in solutions)) {
+            contactBACK("exercises/" + exerciseID + "/solution", "GET").then(
+              (response) => {
+                response.json().then((json) => {
+                  setSolution(
+                    exerciseID,
+                    TranslateResolutionIN(
+                      json.data,
+                      listExerciseState.listExercises[exerciseID]
+                    )
+                  );
+                });
+              }
+            );
+          }
+
+          break;
+      }
+    }
+  }, [editMenuIsOpen]);
 
   const ref1 = useRef(null);
   const isVisible1 = useIsVisible(ref1);
@@ -52,40 +120,60 @@ export function ExerciseBankPage() {
         </div>
         <div
           className={`${
-            editMenuIsOpen ? "w-full" : "w-0"
+            editMenuIsOpen ? "w-full px-8 pb-8" : "w-0"
           } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
         >
           {editMenuIsOpen ? (
             <EditExercise
               exercise={listExerciseState.listExercises[exerciseID]}
+              rubric={rubrics[exerciseID]}
+              solution={solutions[exerciseID]}
               saveEdit={(state) => {
+                const { exerciseTR, solutionTR } = TranslateExerciseOUT(
+                  state.exercise
+                );
+                const rubricTR = TranslateRubricOut(
+                  state.exercise.type,
+                  state.rubric
+                );
+                setRubric(exerciseID, state.rubric);
+                setSolution(exerciseID, state.solution);
                 if (exerciseID === "-1") {
-                  // <<< ALTERAR ESTE IF >>>
-                  // SOLUCAO TEMPORARIa ENQUANTO NAO EXISTE LIGAÇÂO AO BACKEND
-                  // PARA SE SABER O ID DO NOVO EXERCICIO
-                  dispatch({
-                    type: ListExerciseActionKind.ADD_EXERCISE,
-                    payload: {
-                      exercise: {
-                        ...state.exercise,
-                        identity: {
-                          ...state.exercise.identity,
-                          id: "novo id 1000",
-                          visibility: state.exercise.identity?.visibility ?? "",
-                          specialistId:
-                            state.exercise.identity?.specialistId ?? "",
+                  contactBACK("exercises", "POST", undefined, {
+                    exercise: exerciseTR,
+                    solution: solutionTR,
+                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                  }).then((response) => {
+                    response.text().then((jsonRes) => {
+                      dispatch({
+                        type: ListExerciseActionKind.ADD_EXERCISE,
+                        payload: {
+                          exercise: {
+                            ...state.exercise,
+                            identity: {
+                              ...state.exercise.identity,
+                              id: jsonRes,
+                              visibility:
+                                state.exercise.identity?.visibility ?? "",
+                              specialistId:
+                                state.exercise.identity?.specialistId ?? "",
+                            },
+                          },
                         },
-                      },
-                    },
+                      });
+                    });
                   });
-                  // <<< ALTERAR ESTE IF (final)>>>
                 } else {
-                  // <<< MANTER >>>
-                  dispatch({
-                    type: ListExerciseActionKind.EDIT_EXERCISE,
-                    payload: { exercise: state.exercise },
+                  contactBACK("exercises/" + exerciseID, "PUT", undefined, {
+                    exercise: exerciseTR,
+                    solution: solutionTR,
+                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                  }).then((response) => {
+                    dispatch({
+                      type: ListExerciseActionKind.EDIT_EXERCISE,
+                      payload: { exercise: state.exercise },
+                    });
                   });
-                  // <<< MANTER (final)>>>
                 }
                 setExerciseID("");
                 setEditMenuIsOpen(false);

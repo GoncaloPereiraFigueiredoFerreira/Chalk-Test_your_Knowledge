@@ -1,9 +1,4 @@
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
-import {
-  DownloadIcon,
-  FileUploadIcon,
-  ListIcon,
-} from "../../SVGImages/SVGImages";
 import { OAExercise, PreviewProps } from "../Exercise";
 import { ExerciseHeaderComp } from "../Header/ExHeader";
 

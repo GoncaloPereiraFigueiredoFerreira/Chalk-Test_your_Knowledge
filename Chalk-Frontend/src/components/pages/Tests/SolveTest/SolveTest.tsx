@@ -1,27 +1,16 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
-  ExerciseComponent,
-  ExerciseContext,
-  ExerciseGroup,
   InitResolutionDataEx,
-  Resolution,
   ResolutionData,
-  SolveProps,
+  TranslateTestExerciseIN,
 } from "../../../objects/Exercise/Exercise";
-import { exampleTest } from "../Preview/PreviewTest";
 
-export interface Test {
-  type: string;
-  conclusion: string;
-  author: string;
-  title: string;
-  creationDate: string;
-  globalCotation: number;
-  globalInstructions: string;
-  groups: ExerciseGroup[];
-}
-
-const basictest: Test = exampleTest;
+import { InitTest, Test } from "../../../objects/Test/Test";
+import { SolveTestEnd } from "./SolveTestEnd";
+import { SolveTestExercise } from "./SolveTestExercise";
+import { SolveTestLanding } from "./SolveTestStart";
+import { useParams } from "react-router-dom";
+import { APIContext } from "../../../../APIContext";
 
 function CountExercises(test: Test) {
   let result: number = 0;
@@ -31,220 +20,26 @@ function CountExercises(test: Test) {
   return result;
 }
 
-function Progress(test: Test, currentGroup: number, currentEx: number) {
-  let nExercises = CountExercises(test);
-  let pastExercises = currentEx;
-  test.groups.map((value, index) => {
-    if (index < currentGroup - 1) pastExercises += value.exercises.length;
-  });
-
-  return (pastExercises / nExercises) * 100;
-}
-
-function SolveTestLanding(props: any) {
-  const { test } = useContext(SolveTestContext);
-  let nExercises = CountExercises(test);
-  return (
-    <>
-      <div className="space-y-12 w-full  text">
-        <div className="space-y-2 ">
-          <p className="text-xl">
-            <strong>Título:</strong> {test.title}
-          </p>
-          <p className="text-xl">
-            <strong>Autor:</strong> {test.author}
-          </p>
-          <p className="text-xl">
-            <strong>Data:</strong> {test.creationDate}
-          </p>
-          <div className="text-xl flex space-x-4">
-            <strong>Tópicos:</strong>{" "}
-            <p className=" px-1 mr-1 rounded-lg bg-gray-600 text-white dark:bg-[#dddddd] dark:text-black ">
-              RPCW
-            </p>
-          </div>
-        </div>
-
-        <div className="w-full">
-          <h2 className=" font-bold text-lg">Instruções básicas do teste:</h2>
-
-          <p className="w-full text-lg p-4">{test.globalInstructions}</p>
-        </div>
-        <p className=" text-lg">
-          <strong>Número de exercicios:</strong> {nExercises}
-        </p>
-
-        <button
-          className="absolute right-4 bottom-4 p-4 rounded-lg bg-btn-4-2 font-bold hover:scale-110 transition-all duration-100"
-          onClick={() => props.startTest(true)}
-        >
-          Começar o teste {"->"}
-        </button>
-        <div className="absolute right-4 top-0 text-2xl">
-          <p>Cotação máxima: {test.globalCotation} valores</p>
-          <p>Duração da prova: {test.globalCotation} minutos</p>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function SolveTestExercise({ endTest }: any) {
-  const [currentGroup, setCurrentGroup] = useState(1);
-  const [currentEx, setCurrentEx] = useState(1);
-  const { test, resolutions, setExerciseSolution } =
-    useContext(SolveTestContext);
-
-  let groupData = test.groups[currentGroup - 1];
-  let exerciseData = groupData.exercises[currentEx - 1];
-
-  let exerciseContext: SolveProps = {
-    context: ExerciseContext.SOLVE,
-    resolutionData: resolutions[currentGroup - 1][currentEx - 1],
-    setExerciseSolution: (resolution: Resolution) => {
-      setExerciseSolution(currentGroup, currentEx, resolution);
-    },
-  };
-
-  return (
-    <>
-      <div className="mb-6 ">
-        <div className="flex justify-between mb-1"></div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-          <div
-            className="bg-[#ffd025] h-2.5 rounded-full"
-            style={{ width: Progress(test, currentGroup, currentEx) + "%" }}
-          ></div>
-        </div>
-      </div>
-
-      <div className="w-full relative border-b-2 pb-4 border-black dark:border-[#dddddd] dark:text-white">
-        <div className="space-y-4 ">
-          <h1 className="text-2xl font-bold">
-            Grupo {currentGroup}
-            <div className="float-right right-4 bottom-4 space-x-5 dark:text-white ">
-              {currentEx > 1 || currentGroup > 1 ? (
-                <button
-                  className="py-1 px-2 rounded-lg bg-btn-4-2 font-bold text-lg"
-                  onClick={() => {
-                    if (currentGroup > 1 && currentEx == 1) {
-                      setCurrentEx(
-                        test.groups[currentGroup - 2].exercises.length
-                      );
-                      setCurrentGroup(currentGroup - 1);
-                    } else setCurrentEx(currentEx - 1);
-                  }}
-                >
-                  Exercício Anterior
-                </button>
-              ) : (
-                <></>
-              )}
-              {currentEx < groupData.exercises.length ||
-              currentGroup < test.groups.length ? (
-                <button
-                  className="py-1 px-2 rounded-lg bg-btn-4-2 font-bold text-lg"
-                  onClick={() => {
-                    if (
-                      currentGroup < test.groups.length &&
-                      currentEx == groupData.exercises.length
-                    ) {
-                      setCurrentEx(1);
-                      setCurrentGroup(currentGroup + 1);
-                    } else setCurrentEx(currentEx + 1);
-                  }}
-                >
-                  Próximo Exercício
-                </button>
-              ) : (
-                <></>
-              )}
-            </div>
-          </h1>
-
-          <h2 className="ml-5 text-justify">{groupData.groupInstructions}</h2>
-        </div>
-        <p className=" mt-2  text-xl ">
-          Cotação do Grupo: {groupData.groupCotation} valores
-        </p>
-      </div>
-
-      <div className=" relative ml-8 dark:text-white">
-        <p className="absolute right-4 top-3 text-xl ">
-          Cotação do Exercício: {exerciseData.identity.cotation} valores
-        </p>
-      </div>
-      <div className="mb-10">
-        <ExerciseComponent
-          context={exerciseContext}
-          exercise={exerciseData}
-          position={currentGroup + "." + currentEx}
-        />
-      </div>
-      <div className="float-right right-4 bottom-4 space-x-5 dark:text-white ">
-        {currentEx > 1 || currentGroup > 1 ? (
-          <button
-            className="p-4 rounded-lg bg-btn-4-2 font-bold"
-            onClick={() => {
-              if (currentGroup > 1 && currentEx == 1) {
-                setCurrentEx(test.groups[currentGroup - 2].exercises.length);
-                setCurrentGroup(currentGroup - 1);
-              } else setCurrentEx(currentEx - 1);
-            }}
-          >
-            Exercício Anterior
-          </button>
-        ) : (
-          <></>
-        )}
-        {currentEx < groupData.exercises.length ||
-        currentGroup < test.groups.length ? (
-          <button
-            className="p-4 rounded-lg bg-btn-4-2 font-bold"
-            onClick={() => {
-              if (
-                currentGroup < test.groups.length &&
-                currentEx == groupData.exercises.length
-              ) {
-                setCurrentEx(1);
-                setCurrentGroup(currentGroup + 1);
-              } else setCurrentEx(currentEx + 1);
-            }}
-          >
-            Próximo Exercício
-          </button>
-        ) : (
-          <></>
-        )}
-
-        <button
-          className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
-          onClick={() => {
-            endTest(true);
-          }}
-        >
-          Finalizar Teste
-        </button>
-      </div>
-    </>
-  );
-}
-
-function SolveTestEnd() {
-  const context = useContext(SolveTestContext);
-  return (
-    <div className="dark:text-white">
-      <p className="text-2xl m-20">
-        <strong>Completaste o teu teste!</strong>
-      </p>
-      <p className="ml-20 ">
-        Verifica na página das avaliações a tua performance!
-      </p>
-
-      <p className="ml-20 ">{context.test.conclusion}</p>
-    </div>
-  );
-}
+export const SolveTestContext = createContext<{
+  test: Test;
+  nExercises: number;
+  resolutions: ResolutionData[][];
+  setExerciseSolution: Function;
+}>({
+  test: {
+    type: "",
+    conclusion: "",
+    author: "",
+    title: "",
+    creationDate: "",
+    globalPoints: 0,
+    globalInstructions: "",
+    groups: [],
+  },
+  resolutions: [],
+  setExerciseSolution: () => {},
+  nExercises: 0,
+});
 
 function initResolutions(test: Test): ResolutionData[][] {
   let initResolution: ResolutionData[][] = [];
@@ -263,13 +58,28 @@ function initResolutions(test: Test): ResolutionData[][] {
 export function SolveTest() {
   const [started, startTest] = useState(false);
   const [ended, endTest] = useState(false);
-  const [test, setTest] = useState<Test>(basictest);
+  const [test, setTest] = useState<Test>(InitTest());
+  const { testID } = useParams();
+  const { contactBACK } = useContext(APIContext);
+  const [resolutions, setResolution] = useState<ResolutionData[][]>([]);
+  const [resolutionID, setResolutionID] = useState<string>("");
 
-  // Fill in the resolution data with undefined to avoid errors
-
-  const [resolutions, setResolution] = useState<ResolutionData[][]>(
-    initResolutions(test)
-  );
+  useEffect(() => {
+    contactBACK("tests/" + testID, "GET").then((response) => {
+      response.json().then((testJson: any) => {
+        console.log(testJson);
+        testJson.groups = testJson.groups.map((group: any) => {
+          group.exercises = group.exercises.map((ex: any) => {
+            return TranslateTestExerciseIN(ex);
+          });
+          return group;
+        });
+        console.log(testJson);
+        setTest(testJson);
+        setResolution(initResolutions(testJson));
+      });
+    });
+  }, []);
 
   const setExerciseResolution = (
     groupID: number,
@@ -281,6 +91,20 @@ export function SolveTest() {
     tmpRes2[exerciseID - 1] = resolutionData;
     tmpRes[groupID - 1] = tmpRes2;
     setResolution(tmpRes);
+  };
+
+  const startTestResolution = () => {
+    contactBACK("tests/" + testID + "/resolutions/start", "POST").then(
+      (response) => {
+        response.text().then((id) => {
+          console.log("ResolutionID:", id);
+          if (id !== "") {
+            setResolutionID(id);
+            startTest(true);
+          }
+        });
+      }
+    );
   };
 
   return (
@@ -296,14 +120,20 @@ export function SolveTest() {
                 test: test,
                 resolutions: resolutions,
                 setExerciseSolution: setExerciseResolution,
+                nExercises: CountExercises(test),
               }}
             >
               {!started ? (
-                <SolveTestLanding startTest={startTest}></SolveTestLanding>
+                <SolveTestLanding
+                  startTest={startTestResolution}
+                ></SolveTestLanding>
               ) : (
                 <>
                   {!ended ? (
-                    <SolveTestExercise endTest={endTest}></SolveTestExercise>
+                    <SolveTestExercise
+                      endTest={endTest}
+                      resolutionID={resolutionID}
+                    ></SolveTestExercise>
                   ) : (
                     <SolveTestEnd></SolveTestEnd>
                   )}
@@ -316,22 +146,3 @@ export function SolveTest() {
     </>
   );
 }
-
-const SolveTestContext = createContext<{
-  test: Test;
-  resolutions: ResolutionData[][];
-  setExerciseSolution: Function;
-}>({
-  test: {
-    type: "",
-    conclusion: "",
-    author: "",
-    title: "",
-    creationDate: "",
-    globalCotation: 0,
-    globalInstructions: "",
-    groups: [],
-  },
-  resolutions: [],
-  setExerciseSolution: () => {},
-});

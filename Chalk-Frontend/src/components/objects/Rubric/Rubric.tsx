@@ -1,3 +1,4 @@
+import { ExerciseType } from "../Exercise/Exercise";
 import { RubricEdit } from "./RubricEdit";
 import { RubricPreview } from "./RubricPreview";
 
@@ -29,8 +30,17 @@ export enum RubricContext {
   PREVIEW = "PREVIEW",
 }
 
+export interface EditRubricContext {
+  context: RubricContext.EDIT;
+  setRubric: Function;
+}
+
+export interface PreviewRubricContext {
+  context: RubricContext.PREVIEW;
+}
+
 export interface RubricProps {
-  context: RubricContext;
+  context: EditRubricContext | PreviewRubricContext;
   rubric: Rubric;
 }
 
@@ -50,12 +60,25 @@ export function createNewCriteria(): Criteria {
   return { title: "", points: 0, standards: createStandards() };
 }
 
+export function TranslateRubricOut(type: ExerciseType, rubric?: Rubric) {
+  if (rubric !== undefined) {
+    switch (type) {
+      case ExerciseType.CHAT:
+        return { ...rubric, type: "CE" };
+      case ExerciseType.OPEN_ANSWER:
+        return { ...rubric, type: "OA" };
+    }
+  }
+
+  return {};
+}
+
 export function Rubric({ context, rubric }: RubricProps) {
-  switch (context) {
+  switch (context.context) {
     case RubricContext.PREVIEW:
       return RubricPreview(rubric);
 
     case RubricContext.EDIT:
-      return RubricEdit(rubric);
+      return RubricEdit(rubric, context.setRubric);
   }
 }

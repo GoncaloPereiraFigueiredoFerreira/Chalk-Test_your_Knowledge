@@ -12,11 +12,12 @@ export interface Course {
 }
 
 export interface User {
+  id: string;
   email: string;
   name: string;
-  profilePic: string;
+  photoPath: string;
   role: UserRole;
-  courses: Course[];
+  courses?: Course[];
 }
 
 interface UserState {
@@ -35,17 +36,22 @@ export function UserProvider({ children }: any) {
     authenticated: false,
   });
 
+  const AUTHSERVER = import.meta.env.VITE_AUTH;
+
   const [cookies, setCookie] = useCookies(["chalkauthtoken"]);
 
   const login = (user: User) => {
-    let newState: UserState = { authenticated: true, user: { ...user } };
+    let newState: UserState = {
+      authenticated: true,
+      user: { ...user },
+    };
     setUserState(newState);
     localStorage.setItem("user", JSON.stringify(newState));
   };
 
   const logout = () => {
     setUserState({ authenticated: false });
-    setCookie("chalkauthtoken", "");
+    setCookie("chalkauthtoken", "", { path: "/" });
     localStorage.removeItem("user");
   };
 
@@ -58,6 +64,22 @@ export function UserProvider({ children }: any) {
         login(JSON.parse(user).user);
       } else {
         // Ir buscar à autenticação e fazer login
+        fetch(AUTHSERVER + "user", {
+          mode: "cors",
+          credentials: "include",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: "Bearer " + cookies.chalkauthtoken,
+          },
+        }).then((response) => {
+          response.json().then((json) => {
+            login({
+              ...json,
+              courses: [],
+              photoPath: "",
+            });
+          });
+        });
       }
     } else {
       logout();

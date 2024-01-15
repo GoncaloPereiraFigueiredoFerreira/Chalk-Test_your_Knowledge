@@ -1,19 +1,23 @@
-allOf:
-- $ref: ../_index.yml#/ExerciseSolution
-- properties:
+properties:
+  items:
     items:
-      items:
-        properties:
-          id:
-            type: integer
-          value:
-            type: boolean
-        type: object
-      type: array
-    type:
-      enum:
+      properties:
+        id:
+          type: integer
+        value:
+          type: boolean
+        justification:
+          type: string
+        cotation:
+          type: number
+          format: float
+      type: object
+    type: array
+  type:
+    type: string
+    enum:
       - MC
-  type: object
+type: object
 description: Multiple choice resolution data.
 example:
   items:

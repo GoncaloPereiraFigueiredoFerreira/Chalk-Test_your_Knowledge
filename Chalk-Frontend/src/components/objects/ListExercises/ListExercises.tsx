@@ -1,19 +1,20 @@
 import { ShowExercise } from "./ShowExercise";
 import "./ListExercises.css";
 import { useContext, useEffect, useState } from "react";
-import { PopUp } from "../../interactiveElements/PopUp";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import { CreateNewExercisePopUp } from "./CreateNewExercisePopUp";
 import {
   Exercise,
   ExerciseJustificationKind,
   ExerciseType,
+  TranslateExerciseIN,
 } from "../Exercise/Exercise";
 import {
   ListExerciseActionKind,
   useListExerciseContext,
 } from "./ListExerciseContext";
 import { APIContext } from "../../../APIContext";
+import { ChangeVisibility } from "./ChangeVisibilityExercisePopUp";
 
 const userExercises: Exercise[] = [
   {
@@ -25,6 +26,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.RIGHT,
       },
+      tags: [],
     },
     type: ExerciseType.CHAT,
     props: { maxAnswers: 3, topics: ["Matemática"] },
@@ -43,6 +45,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.RIGHT,
       },
+      tags: [],
     },
     type: ExerciseType.TRUE_OR_FALSE,
     props: {
@@ -86,6 +89,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.BOT,
       },
+      tags: [],
     },
     type: ExerciseType.OPEN_ANSWER,
     props: {},
@@ -105,6 +109,7 @@ const userExercises: Exercise[] = [
           "https://static.vecteezy.com/ti/vetor-gratis/p3/8344304-aluno-no-quadro-negro-na-sala-de-aula-explica-a-solucao-do-problema-de-volta-a-escola-educacao-para-criancas-cartoon-ilustracao-vetor.jpg",
         imagePosition: ImgPos.RIGHT,
       },
+      tags: [],
     },
     type: ExerciseType.MULTIPLE_CHOICE,
     props: {
@@ -158,29 +163,43 @@ export function ListExercises({
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
+  const [changeVisibilityPopUp, setChangeVisibilityPopUp] = useState("");
   const { listExerciseState, dispatch } = useListExerciseContext();
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    //This dispatch will need to change in order to change a page
-    //contactBACK("exercises", "GET", { page: "1", itemsPerPage: "20" });
-
-    dispatch({
-      type: ListExerciseActionKind.ADD_LIST_EXERCISES,
-      payload: {
-        exercises: getListExercises(),
-      },
+    contactBACK("exercises", "GET", {
+      page: "0",
+      itemsPerPage: "10",
+      visibility: "public",
+    }).then((response) => {
+      response.json().then((exercises) => {
+        console.log(exercises);
+        let exerciseL: Exercise[] = [];
+        exercises.map((ex: any) => {
+          exerciseL.push(TranslateExerciseIN(ex));
+        });
+        dispatch({
+          type: ListExerciseActionKind.ADD_LIST_EXERCISES,
+          payload: {
+            exercises: exerciseL,
+          },
+        });
+      });
     });
   }, []);
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-2-1 ">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2 dark:border-[#dddddd]">
+      <div className="flex flex-col w-full gap-4 min-h-max bg-2-1 ">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
           <label className="flex text-title-1">Exercícios</label>
           <button
             className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
-            onClick={() => setNewExercisePopUp(true)}
+            onClick={() => {
+              setNewExercisePopUp(true);
+              setEditMenuIsOpen(false);
+            }}
           >
             Criar exercício
           </button>
@@ -200,6 +219,10 @@ export function ListExercises({
                   selectedExercise: value,
                 },
               })
+            }
+            changeVisibilityPopUp=""
+            setChangeVisibilityPopUp={(value) =>
+              setChangeVisibilityPopUp(value)
             }
           ></ShowExercise>
         ) : null}
@@ -221,21 +244,40 @@ export function ListExercises({
                   },
                 })
               }
+              changeVisibilityPopUp=""
+              setChangeVisibilityPopUp={(value) =>
+                setChangeVisibilityPopUp(value)
+              }
             ></ShowExercise>
           )
         )}
       </div>
-      <CreateNewExercisePopUp
-        show={newExercisePopUp != false}
-        closePopUp={() => setNewExercisePopUp(false)}
-        createNewExercise={(newExerciseType: ExerciseType) => {
+      <ChangeVisibility
+        show={changeVisibilityPopUp !== ""}
+        closePopUp={() => setChangeVisibilityPopUp("")}
+        changeVisibility={(newVisibility: string) => {
+          console.log(changeVisibilityPopUp);
           dispatch({
-            type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
+            type: ListExerciseActionKind.CHANGE_VISIBILITY_EXERCISE,
             payload: {
-              newExerciseType: newExerciseType,
+              selectedExercise: changeVisibilityPopUp,
+              visibility: newVisibility,
             },
           });
+          setChangeVisibilityPopUp("");
+        }}
+      />
+      <CreateNewExercisePopUp
+        show={newExercisePopUp}
+        closePopUp={() => setNewExercisePopUp(false)}
+        createNewExercise={(newExerciseType: ExerciseType) => {
           if (!editMenuIsOpen) {
+            dispatch({
+              type: ListExerciseActionKind.CREATE_NEW_EXERCISE,
+              payload: {
+                newExerciseType: newExerciseType,
+              },
+            });
             setEditMenuIsOpen(true);
             setExerciseID("-1");
           }

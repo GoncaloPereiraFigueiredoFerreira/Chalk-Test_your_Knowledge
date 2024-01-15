@@ -15,11 +15,11 @@ cache_timeout = 600 # 10 min
     "Topics":[str] #opcional
     "Rubric":[{description:str,cotation:float}]
     "Auxiliar":str #opcional (texto associados a pergunta) #opcional
-    "Answers":[{id_user: str,answer:str}]
+    "Answer": str
 }
 
 {
-    [{"id_user":str,"Cotation":int}]
+    {"Evaluation": float}
 }
 '''
 
@@ -38,17 +38,15 @@ def open_answer():
     if "Auxiliar" in req:
         auxiliar = req["Auxiliar"]
 
-    answers = req["Answers"]
+    answer = req["Answer"]
 
     criteria = [(i["Description"],i["Cotation"]) for i in criteria]
     criteria.sort(key = lambda i: i[1])
     criteria_aux = [i[0] for i in criteria]
 
-    answers = [(i["id_user"],i["Answer"]) for i in answers]
+    cot = api_ai.send_open_answer(answer,question,criteria_aux,topics,auxiliar)
 
-    cot = api_ai.send_open_answer(answers,question,criteria_aux,topics,auxiliar)
-
-    cot = [{"id_user":i[0],"Cotation":criteria[i[1]][1]} for i in cot]
+    cot = {"Evaluation":cot}
 
     return json.dumps(cot)
 
@@ -141,7 +139,7 @@ def create_open():
 
 @api.route('/create_true_false', methods=['GET'])
 def create_true_false():
-    req = request.json
+    req = request.get_json()
 
     h_text = hash(req["Text"])
     user_input = ""
@@ -164,41 +162,26 @@ def create_true_false():
 
     return ret
 
-'''
-{
-    "Ex_id":str
-    "Student_id":str
-    "Topics":[str]
-    "Question":str
-}
-
-{
-    ok
-}
-'''
 def hash_oral(ex_id,student_id):
     return ex_id + "-" + "student_id"
 
-@api.route('/create_oral',methods=['POST'])
-def oral():
-    req = request.json
+def parse_chat(chat,topics):
+    ret = []
 
-    h_ex = hash_oral(req["Ex_id"],req["Student_id"])
+    ret.append(api_ai.gen_sys_oral(topics))
 
-    topics = req["Topics"]
-    question = req["Question"]
-
-    val = [api_ai.gen_sys_oral(topics),api_ai.gen_ass_oral(question)]
-
-    cache.set(h_ex,json.dumps(val),cache_timeout)
-
-    return "201"#status.HTTP_201_CREATED
+    for i in range(len(chat)):
+        if i%2 == 0:
+            ret.append(api_ai.gen_ass_oral(chat[i]))
+        else:
+            ret.append(api_ai.gen_user_oral(chat[i]))
+    return ret
 
 '''
 {
-    "Ex_id":str
-    "Student_id":str
-    "Answer":str 
+    "Topics": [str] 
+    "Chat": [str] 
+    "StudentID": str
 }
 
 {
@@ -208,34 +191,34 @@ def oral():
 
 @api.route('/get_oral',methods=['GET'])
 def get_oral():
-    req = request.json
+    req = request.get_json()
 
-    h_ex = hash_oral(req["Ex_id"],req["Student_id"])
-    prev = cache.get(h_ex)
+    id = req["Topics"] + [req["StudentID"]]
+    h = str(hash(str(id)))
+    prev_chat = cache.get(h)
 
-    if prev:
-        prev = json.loads(prev)
-        answer = req["Answer"]
-        answer = api_ai.gen_user_oral(answer)
-        prev.append(answer)
+    if prev_chat: prev_chat = json.loads(prev_chat)
+    else: prev_chat = []
 
+    if (prev_chat and prev_chat[:-1] == req["Chat"]):
+        ret = {"Question": prev_chat[-1]}
+    else:
+        prev = parse_chat(req["Chat"],req["Topics"])
+        
         resp = api_ai.send_oral(prev)
         prev.append({"role":"assistant","content":resp})
+   
+        req["Chat"].append(resp)
 
-        cache.set(h_ex,json.dumps(prev),cache_timeout)
-
+        cache.set(h,json.dumps(req["Chat"], ensure_ascii=False),cache_timeout)
         ret = {"Question":resp}
-
-    else:
-        ret = "404"#status.HTTP_404_NOT_FOUND
 
     return ret
 
 '''
 {
-   "Ex_id":str
-   "Student_id":str
    "Topics":[str] 
+   "Chat":[str]
 }
 
 {
@@ -245,20 +228,14 @@ def get_oral():
 
 @api.route('/eval_oral',methods=['GET'])
 def eval_oral():
-    req = request.json
+    req = request.get_json()
 
-    h_ex = hash_oral(req["Ex_id"],req["Student_id"])
-    prev = cache.get(h_ex)
+    prev = parse_chat(req["Chat"],req["Topics"])
 
-    if prev:
-        prev = json.loads(prev)
-        topics = req["Topics"]
-        resp = api_ai.send_eval_oral(topics,prev[1:len(prev) - 1])
+    topics = req["Topics"]
+    resp = api_ai.send_eval_oral(topics,prev[1:])
 
-        ret = resp
-
-    else:
-        ret = "404"#status.HTTP_404_NOT_FOUND
+    ret = resp
 
     return ret
 

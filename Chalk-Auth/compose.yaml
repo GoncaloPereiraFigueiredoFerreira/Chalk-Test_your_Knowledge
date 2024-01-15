@@ -1,0 +1,16 @@
+services:
+  mongo-auth:
+    image: mongo
+    networks:
+      - auth
+
+  auth:
+    build: .
+    ports:
+      - 3131:3131
+    networks:
+      - auth
+
+networks:
+  auth:
+    driver: bridge

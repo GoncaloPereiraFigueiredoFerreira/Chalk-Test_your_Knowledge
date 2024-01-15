@@ -1,17 +1,30 @@
 import { useContext, useState } from "react";
-import { Modal } from "flowbite-react";
+import { Button, Modal, TextInput } from "flowbite-react";
 import { APIContext } from "../../../APIContext";
+import { UserContext } from "../../../UserContext";
 
 export function CreateGroupModal({ open, close }: any) {
   const [name, setGroupName] = useState("");
   const { contactBACK } = useContext(APIContext);
 
   function onCloseModal() {
-    // if name !== ""
-    // contactBACK("course", "POST", undefined,{course: { description: "", instituitionID: "", name: name }});
-    setGroupName("");
-    close();
+    if (name !== "")
+      contactBACK("courses", "POST", undefined, {
+        description: "",
+        name: name,
+      }).then(() => {
+        setGroupName("");
+        close();
+      });
   }
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      // If Enter key is pressed, prevent the default behavior and call the addStudent function
+      event.preventDefault();
+      onCloseModal();
+    }
+  };
 
   return (
     <Modal
@@ -32,12 +45,13 @@ export function CreateGroupModal({ open, close }: any) {
             <div className="mb-2 block w-full dark:text-white">
               <label htmlFor="name">Nome do Grupo</label>
             </div>
-            <input
-              className="w-full rounded-md"
+            <TextInput
               type="text"
               id="name"
+              className="w-full rounded-md"
               value={name}
               onChange={(event) => setGroupName(event.target.value)}
+              onKeyDown={handleKeyDown}
               required
             />
             <button
@@ -49,6 +63,9 @@ export function CreateGroupModal({ open, close }: any) {
           </div>
         </div>
       </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={() => onCloseModal()}>Submeter Novo Grupo</Button>
+      </Modal.Footer>
     </Modal>
   );
 }

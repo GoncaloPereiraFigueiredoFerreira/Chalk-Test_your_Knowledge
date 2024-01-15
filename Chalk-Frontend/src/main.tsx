@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { UserProvider } from "./UserContext.tsx";
@@ -7,13 +6,11 @@ import { APIProvider } from "./APIContext.tsx";
 const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  <UserProvider>
     <APIProvider>
-      <UserProvider>
-        <GoogleOAuthProvider clientId={GCLIENTID}>
-          <App />
-        </GoogleOAuthProvider>
-      </UserProvider>
+      <GoogleOAuthProvider clientId={GCLIENTID}>
+        <App />
+      </GoogleOAuthProvider>
     </APIProvider>
-  </React.StrictMode>
+  </UserProvider>
 );

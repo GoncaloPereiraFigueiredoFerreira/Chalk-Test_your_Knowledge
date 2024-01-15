@@ -9,8 +9,8 @@ export function WebApp() {
     <div className="flex flex-row h-full">
       <Sidebar isOpen={isOpen} toggle={toggle}></Sidebar>
       <div
-        className={`w-full z-10 h-full transition-all ${
-          isOpen ? "ml-64" : "ml-16"
+        className={`z-10 h-full transition-all ${
+          isOpen ? "w-[calc(100vw-256px)] ml-64" : "w-[calc(100vw-64px)] ml-16"
         }`}
       >
         <Outlet />

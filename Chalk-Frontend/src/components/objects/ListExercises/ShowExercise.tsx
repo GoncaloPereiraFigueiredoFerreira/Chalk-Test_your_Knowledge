@@ -1,19 +1,5 @@
-import {
-  CheckboxIcon,
-  CheckedListIcon,
-  EyeSlashIcon,
-  GarbageIcon,
-  GraduateIcon,
-  LinkIcon,
-  LockIcon,
-  PenIcon,
-  SchoolIcon,
-  TextIcon,
-  WorldSearchIcon,
-} from "../SVGImages/SVGImages";
-import { PiChatsBold } from "react-icons/pi";
-import { useEffect, useState } from "react";
 import "./ShowExercise.css";
+import { useEffect, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -25,6 +11,18 @@ import {
   ListExerciseActionKind,
   useListExerciseContext,
 } from "./ListExerciseContext";
+import { FaPencil } from "react-icons/fa6";
+import { HiOutlineTrash } from "react-icons/hi";
+import { CiCircleList } from "react-icons/ci";
+import { PiTextTBold } from "react-icons/pi";
+import { TbCheckbox } from "react-icons/tb";
+import { PiChatsBold } from "react-icons/pi";
+import { BiSolidLock } from "react-icons/bi";
+import { TbLink } from "react-icons/tb";
+import { FaUserGraduate } from "react-icons/fa";
+import { LuSchool } from "react-icons/lu";
+import { MdPublic } from "react-icons/md";
+import { HiOutlineEyeOff } from "react-icons/hi";
 
 interface ExerciseProps {
   position: string;
@@ -34,6 +32,8 @@ interface ExerciseProps {
   setEditMenuIsOpen: (value: boolean) => void;
   selectedExercise: boolean;
   setSelectedExercise: (value: string) => void;
+  changeVisibilityPopUp: string;
+  setChangeVisibilityPopUp: (value: string) => void;
 }
 
 export function ShowExercise({
@@ -44,6 +44,8 @@ export function ShowExercise({
   setEditMenuIsOpen,
   selectedExercise,
   setSelectedExercise,
+  changeVisibilityPopUp,
+  setChangeVisibilityPopUp,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [visibility, setVisibility] = useState(<></>);
@@ -60,7 +62,7 @@ export function ShowExercise({
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <CheckedListIcon size="size-4" />
+            <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
         );
@@ -70,7 +72,7 @@ export function ShowExercise({
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <TextIcon size="size-4" />
+            <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
         );
@@ -79,7 +81,7 @@ export function ShowExercise({
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <CheckboxIcon size="size-4" />
+            <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
         );
@@ -89,7 +91,7 @@ export function ShowExercise({
       case ExerciseType.CHAT:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <PiChatsBold className="size-4" />
+            <PiChatsBold className="size-5" />
             Chat Question
           </label>
         );
@@ -103,7 +105,7 @@ export function ShowExercise({
       case "private":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <LockIcon size="size-4" />
+            <BiSolidLock className="size-5" />
             Privado
           </label>
         );
@@ -111,7 +113,7 @@ export function ShowExercise({
       case "not-listed":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <LinkIcon size="size-4" />
+            <TbLink className="size-5" />
             Não listado
           </label>
         );
@@ -119,7 +121,7 @@ export function ShowExercise({
       case "course":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <GraduateIcon size="size-4" />
+            <FaUserGraduate className="size-5" />
             Curso
           </label>
         );
@@ -127,7 +129,7 @@ export function ShowExercise({
       case "institutional":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <SchoolIcon size="size-4" />
+            <LuSchool className="size-5" />
             Institucional
           </label>
         );
@@ -135,7 +137,7 @@ export function ShowExercise({
       case "public":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <WorldSearchIcon size="size-4" />
+            <MdPublic className="size-5" />
             Público
           </label>
         );
@@ -149,7 +151,7 @@ export function ShowExercise({
     <div
       className={`${
         selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-ex`}
+      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-ex`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
@@ -167,10 +169,9 @@ export function ShowExercise({
             <div
               className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
             >
-              <div className="bg-yellow-600 tag-exercise">Matemática</div>
-              <div className="bg-blue-600 tag-exercise">4º ano</div>
-              <div className="bg-green-600 tag-exercise">escolinha</div>
-              <div className="bg-gray-500 tag-exercise">+8</div>
+              {exercise.base.tags.map((tag) => {
+                return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
+              })}
             </div>
           </button>
           <button
@@ -208,15 +209,21 @@ export function ShowExercise({
                 setSelectedExercise(exercise.identity.id);
               }}
             >
-              <PenIcon size="size-5" />
+              <FaPencil className="size-5" />
               Editar
             </button>
-            <button className="btn-options-exercise ex-icon">
-              <EyeSlashIcon size="size-5" />
+            <button
+              className="btn-options-exercise ex-icon"
+              onClick={() => {
+                if (changeVisibilityPopUp === "")
+                  setChangeVisibilityPopUp(exercise.identity.id);
+              }}
+            >
+              <HiOutlineEyeOff className="size-6" />
               Visibilidade
             </button>
             <button className="btn-options-exercise ex-icon">
-              <GarbageIcon size="size-5" />
+              <HiOutlineTrash className="size-6" />
               Eliminar
             </button>
           </div>
@@ -226,17 +233,9 @@ export function ShowExercise({
             !selectedExercise ? "hidden" : "flex"
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
         >
-          <div className="bg-yellow-600 tag-exercise">Matemática</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
+          {exercise.base.tags.map((tag) => {
+            return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
+          })}
         </div>
         <div
           className={`${

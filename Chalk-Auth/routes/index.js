@@ -45,6 +45,7 @@ router.post("/register", (req, res, next) => {
         res
           .status(200)
           .setHeader("Content-Type", "application/json")
+          .setHeader("Authorization", "Bearer " + token)
           .cookie("chalkauthtoken", token)
           .jsonp({
             sucess: true,
@@ -79,6 +80,7 @@ router.post(
         res
           .status(200)
           .setHeader("Content-Type", "application/json")
+          .setHeader("Authorization", "Bearer " + token)
           .cookie("chalkauthtoken", token)
           .jsonp({
             success: true,
@@ -108,7 +110,9 @@ router.post("/google", (req, res, next) => {
     })
     .then((gres2) => {
       User.findOne({ username: gres2.data.email }).then((result) => {
+        let role = "";
         if (result == null) {
+          role = req.body.role;
           User.create(
             new User({
               username: gres2.data.email,
@@ -120,12 +124,13 @@ router.post("/google", (req, res, next) => {
             })
           );
         } else {
+          role = result.role;
           User.updateOne({ username: gres2.data.email }, { last_access: data });
         }
 
         var token = authenticate.getToken({
           username: gres2.data.email,
-          role: req.body.role,
+          role: role,
           name: gres2.data.name,
         });
         res
@@ -136,13 +141,24 @@ router.post("/google", (req, res, next) => {
             sucess: true,
             user: {
               username: gres2.data.email,
-              role: req.body.role,
+              role: role,
               name: gres2.data.name,
             },
           })
           .end();
       });
     });
+});
+
+router.get("/user", authenticate.verifyUser, (req, res, next) => {
+  res
+    .status(200)
+    .jsonp({
+      email: req.user.username,
+      role: req.user.role,
+      name: req.user.name,
+    })
+    .end();
 });
 
 module.exports = router;

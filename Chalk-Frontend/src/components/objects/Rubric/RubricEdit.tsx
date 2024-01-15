@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Criteria,
   Rubric,
@@ -8,36 +7,34 @@ import {
 } from "./Rubric";
 import "../Exercise/Exercise.css";
 
-export function RubricEdit(rubric: Rubric) {
-  const [state, setState] = useState<Rubric>(rubric);
-
+export function RubricEdit(rubric: Rubric, setState: Function) {
   const addCriteria = () => {
-    let newCriteriaL: Criteria[] = [...state.criteria];
+    let newCriteriaL: Criteria[] = [...rubric.criteria];
     let newCriteria: Criteria = createNewCriteria();
     newCriteriaL.push(newCriteria);
     setState({ criteria: newCriteriaL });
   };
 
   const remCriteria = (index: number) => {
-    let newCriteriaL: Criteria[] = [...state.criteria].filter((_, ind) => {
+    let newCriteriaL: Criteria[] = [...rubric.criteria].filter((_, ind) => {
       return ind !== index;
     });
     setState({ criteria: newCriteriaL });
   };
 
   const changeCriteriaTitle = (index: number, title: string) => {
-    let newCriteria: Criteria = { ...state.criteria[index] };
+    let newCriteria: Criteria = { ...rubric.criteria[index] };
     newCriteria.title = title;
-    let newCriteriaL: Criteria[] = [...state.criteria];
+    let newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[index] = newCriteria;
 
     setState({ criteria: newCriteriaL });
   };
 
   const changeCriteriaPoints = (index: number, points: string) => {
-    let newCriteria: Criteria = { ...state.criteria[index] };
+    let newCriteria: Criteria = { ...rubric.criteria[index] };
     newCriteria.points = Number.parseInt(points);
-    let newCriteriaL: Criteria[] = [...state.criteria];
+    let newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[index] = newCriteria;
 
     setState({ criteria: newCriteriaL });
@@ -49,17 +46,17 @@ export function RubricEdit(rubric: Rubric) {
     description: string
   ) => {
     let newStandard: Standard = {
-      ...state.criteria[critIndex].standards[standIndex],
+      ...rubric.criteria[critIndex].standards[standIndex],
     };
     newStandard.description = description;
 
-    let newStandards: Standard[] = [...state.criteria[critIndex].standards];
+    let newStandards: Standard[] = [...rubric.criteria[critIndex].standards];
     newStandards[standIndex] = newStandard;
 
-    let newCriteria: Criteria = { ...state.criteria[critIndex] };
+    let newCriteria: Criteria = { ...rubric.criteria[critIndex] };
     newCriteria.standards = newStandards;
 
-    let newCriteriaL: Criteria[] = [...state.criteria];
+    let newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[critIndex] = newCriteria;
 
     setState({ criteria: newCriteriaL });
@@ -71,17 +68,17 @@ export function RubricEdit(rubric: Rubric) {
     percentage: string
   ) => {
     let newStandard: Standard = {
-      ...state.criteria[critIndex].standards[standIndex],
+      ...rubric.criteria[critIndex].standards[standIndex],
     };
     newStandard.percentage = Number.parseInt(percentage);
 
-    let newStandards: Standard[] = [...state.criteria[critIndex].standards];
+    let newStandards: Standard[] = [...rubric.criteria[critIndex].standards];
     newStandards[standIndex] = newStandard;
 
-    let newCriteria: Criteria = { ...state.criteria[critIndex] };
+    let newCriteria: Criteria = { ...rubric.criteria[critIndex] };
     newCriteria.standards = newStandards;
 
-    let newCriteriaL: Criteria[] = [...state.criteria];
+    let newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[critIndex] = newCriteria;
 
     setState({ criteria: newCriteriaL });
@@ -90,7 +87,7 @@ export function RubricEdit(rubric: Rubric) {
   function renderCriteria() {
     return (
       <div className="flex-col space-y-16 mb-3">
-        {state.criteria.map((crt, critIndex) => {
+        {rubric.criteria.map((crt, critIndex) => {
           return (
             <div className="flex-col space-y-4 border-t-2 pt-3 border-t-black dark:border-[#dddddd]">
               <div className="flex flex-row space-x-4">
@@ -180,7 +177,7 @@ export function RubricEdit(rubric: Rubric) {
 
   return (
     <>
-      <Rubric context={RubricContext.PREVIEW} rubric={state} />
+      <Rubric context={{ context: RubricContext.PREVIEW }} rubric={rubric} />
       <button
         className=" w-fit self-center cursor-pointer p-1 rounded-md bg-btn-4-2"
         onClick={() => addCriteria()}

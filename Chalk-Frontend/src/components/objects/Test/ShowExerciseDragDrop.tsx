@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import {
   Exercise,
   ExerciseComponent,
@@ -7,65 +10,85 @@ import {
   ExerciseType,
 } from "../Exercise/Exercise";
 import { FaArrowRightToBracket } from "react-icons/fa6";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
+import { CiCircleList } from "react-icons/ci";
+import { PiTextTBold } from "react-icons/pi";
+import { TbCheckbox } from "react-icons/tb";
 import { PiChatsBold } from "react-icons/pi";
-import {
-  CreateTestActionKind,
-  useCreateTestContext,
-} from "./CreateTestContext";
-import {
-  CheckboxIcon,
-  CheckedListIcon,
-  GraduateIcon,
-  LinkIcon,
-  LockIcon,
-  SchoolIcon,
-  TextIcon,
-  WorldSearchIcon,
-} from "../SVGImages/SVGImages";
+import { BiSolidLock } from "react-icons/bi";
+import { TbLink } from "react-icons/tb";
+import { FaUserGraduate } from "react-icons/fa";
+import { LuSchool } from "react-icons/lu";
+import { MdPublic } from "react-icons/md";
+import { APIContext } from "../../../APIContext";
 
 interface ShowExerciseDragDropProps {
-  listExerciseButtons: boolean;
   groupPosition: number;
   exercisePosition: number;
   exercise: Exercise;
+  selectedMenu: string;
+  setSelectedMenu: (value: string) => void;
+  listExerciseButtons: boolean;
+  // este exercicio está selecionado
+  exerciseIsSelected: boolean;
+  // definir exercicio aberto
+  setSelectedExercise: (value: string) => void;
+  // definir exercicio selecionado no GroupDragDrop
   setExerciseID: (value: {
     groupPosition: number;
     exercisePosition: number;
   }) => void;
-  selectedExercise: boolean;
-  setSelectedExercise: (value: string) => void;
-  selectedMenu: string;
-  setSelectedMenu: (value: string) => void;
+  draggingExercises: boolean;
 }
 
 export function ShowExerciseDragDrop({
-  listExerciseButtons,
   groupPosition,
   exercisePosition,
   exercise,
-  setExerciseID,
-  selectedExercise,
-  setSelectedExercise,
   selectedMenu,
   setSelectedMenu,
+  listExerciseButtons,
+  exerciseIsSelected,
+  setSelectedExercise,
+  setExerciseID,
+  draggingExercises,
 }: ShowExerciseDragDropProps) {
-  const [typeLabel, setTypeLabel] = useState(<></>);
-  const [visibility, setVisibility] = useState(<></>);
-  const [preview, setPreview] = useState(<></>);
-  const { testState, dispatch } = useCreateTestContext();
-
   const exerciseComponent: ExerciseComponentProps = {
     exercise: exercise,
     position: (exercisePosition + 1).toString(),
     context: { context: ExerciseContext.PREVIEW },
   };
-
+  const [typeLabel, setTypeLabel] = useState(<></>);
+  const [visibility, setVisibility] = useState(<></>);
+  const [preview, setPreview] = useState(<></>);
+  const { testState, dispatch } = useEditTestContext();
+  const { contactBACK } = useContext(APIContext);
   const [value, setValue] = useState(
-    (exercise.identity.cotation ?? 0).toString()
+    (exercise.identity.points ?? 0).toString()
   );
   const [changeCotationIsActive, setChangeCotationIsActive] = useState(false);
+
+  const {
+    attributes,
+    setNodeRef,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: exercise.identity.id,
+    data: {
+      type: listExerciseButtons ? "add" : "exercise", // exercise from ExerciseBankDragDrop/EditTestDragDrop
+      exercise: exercise,
+      groupPosition: listExerciseButtons ? -1 : groupPosition, // exercise on ExerciseBankDragDrop / exercise group position
+      exercisePosition: exercisePosition, // exercise position on listExercise / selected exercise position
+    },
+  });
+
+  useEffect(() => {
+    setValue((exercise.identity.points ?? 0).toString());
+  }, [exercise]);
 
   function handleChange(value: string) {
     const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
@@ -79,7 +102,7 @@ export function ShowExerciseDragDrop({
   function handleBlur() {
     setChangeCotationIsActive(false);
     dispatch({
-      type: CreateTestActionKind.CHANGE_EXERCISE_COTATION,
+      type: EditTestActionKind.CHANGE_EXERCISE_COTATION,
       exercise: {
         groupPosition: groupPosition,
         exercisePosition: exercisePosition,
@@ -99,7 +122,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <CheckedListIcon size="size-4" />
+            <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
         );
@@ -109,7 +132,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <TextIcon size="size-4" />
+            <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
         );
@@ -118,7 +141,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <CheckboxIcon size="size-4" />
+            <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
         );
@@ -128,9 +151,7 @@ export function ShowExerciseDragDrop({
       case ExerciseType.CHAT:
         setTypeLabel(
           <label className="caracteristics-exercise ex-icon">
-            <div className="h-full scale-125">
-              <PiChatsBold />
-            </div>
+            <PiChatsBold className="size-5" />
             Chat Question
           </label>
         );
@@ -144,7 +165,7 @@ export function ShowExerciseDragDrop({
       case "private":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <LockIcon size="size-4" />
+            <BiSolidLock className="size-5" />
             Privado
           </label>
         );
@@ -152,7 +173,7 @@ export function ShowExerciseDragDrop({
       case "not-listed":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <LinkIcon size="size-4" />
+            <TbLink className="size-5" />
             Não listado
           </label>
         );
@@ -160,7 +181,7 @@ export function ShowExerciseDragDrop({
       case "course":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <GraduateIcon size="size-4" />
+            <FaUserGraduate className="size-5" />
             Curso
           </label>
         );
@@ -168,7 +189,7 @@ export function ShowExerciseDragDrop({
       case "institutional":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <SchoolIcon size="size-4" />
+            <LuSchool className="size-5" />
             Institucional
           </label>
         );
@@ -176,7 +197,7 @@ export function ShowExerciseDragDrop({
       case "public":
         setVisibility(
           <label className="caracteristics-exercise ex-icon">
-            <WorldSearchIcon size="size-4" />
+            <MdPublic className="size-5" />
             Público
           </label>
         );
@@ -186,18 +207,106 @@ export function ShowExerciseDragDrop({
     }
   }, [exercise]);
 
+  if (isDragging)
+    return (
+      <div
+        {...attributes}
+        ref={setNodeRef}
+        style={
+          listExerciseButtons
+            ? {}
+            : {
+                transition,
+                transform: CSS.Translate.toString(transform),
+              }
+        }
+        {...listeners}
+        className="flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-3-2"
+      />
+    );
+
+  if (draggingExercises)
+    return (
+      <div
+        {...attributes}
+        ref={setNodeRef}
+        style={
+          listExerciseButtons
+            ? {}
+            : {
+                transition,
+                transform: CSS.Translate.toString(transform),
+              }
+        }
+        className="h-[78px] overflow-hidden cursor-default rounded-lg bg-3-2 group"
+        {...listeners}
+      >
+        <div className="flex flex-col h-full px-5 py-2.5">
+          <div className="flex items-center text-sm font-normal transition-all mb-4 group">
+            <button className="flex flex-col gap-1.5 h-14 justify-center">
+              <label className="flex min-w-max font-medium text-xl">
+                {exercise.base.title}
+              </label>
+            </button>
+            <button
+              className={` ${
+                listExerciseButtons
+                  ? "group-hover:mr-[75px]"
+                  : "group-hover:mr-[118px]"
+              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-3-2 border-gray-1`}
+            >
+              <div className="flex flex-col justify-around items-end">
+                {visibility}
+                {typeLabel}
+              </div>
+            </button>
+            <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
+              {listExerciseButtons ? (
+                <button className="btn-options-exercise gray-icon">
+                  <FaArrowRightToBracket />
+                  Adicionar
+                </button>
+              ) : (
+                <>
+                  <button className="btn-options-exercise gray-icon">
+                    <HiOutlineTrash className="size-5" />
+                    Eliminar
+                  </button>
+                  <button className="btn-options-exercise gray-icon">
+                    <FaPencil className="size-5" />
+                    Editar
+                  </button>
+                </>
+              )}
+            </div>
+
+            {!listExerciseButtons && (
+              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-3-1 bg-input-1">
+                <p className="flex justify-center text-base min-w-[56px] px-2 py-1">
+                  {value} pts
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div
+      {...attributes}
+      ref={setNodeRef}
       className={`${
-        selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-300 rounded-lg bg-ex group-hover`}
+        exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
+      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-ex group`} /* group-hover */
+      {...listeners}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
           <button
-            className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
+            className="flex flex-col gap-1.5 h-14 justify-center"
             onClick={() =>
-              selectedExercise
+              exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
@@ -207,22 +316,22 @@ export function ShowExerciseDragDrop({
             </label>
           </button>
           <button
-            className={`${
+            className={` ${
               listExerciseButtons
-                ? selectedExercise
+                ? exerciseIsSelected
                   ? "mr-[75px] pr-4 border-r-2"
                   : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
-                : selectedExercise
+                : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-ex border-gray-600 dark:border-[#dddddd]`}
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default bg-ex border-gray-600 dark:border-[#dddddd]`}
             onClick={() =>
-              selectedExercise
+              exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-around items-end">
               {visibility}
               {typeLabel}
             </div>
@@ -232,20 +341,39 @@ export function ShowExerciseDragDrop({
               <button
                 className="btn-options-exercise ex-icon"
                 onClick={() => {
-                  setExerciseID({
-                    groupPosition: groupPosition,
-                    exercisePosition:
-                      testState.test.groups[groupPosition].exercises.length,
-                  });
-                  setSelectedExercise(exercise.identity.id);
-                  dispatch({
-                    type: CreateTestActionKind.ADD_EXERCISE,
-                    exercise: {
-                      groupPosition: groupPosition,
-                      exercisePosition:
+                  contactBACK(
+                    "tests/" + testState.test.id + "/createExercise",
+                    "PUT",
+                    undefined,
+                    {
+                      exercise: {
+                        points: 1,
+                        id: exercise.identity.id,
+                        type: "reference",
+                      },
+                      groupIndex: groupPosition,
+                      exeIndex:
                         testState.test.groups[groupPosition].exercises.length,
-                      exercise: exercise,
-                    },
+                    }
+                  ).then((response) => {
+                    response.text().then((id) => {
+                      setExerciseID({
+                        groupPosition: groupPosition,
+                        exercisePosition:
+                          testState.test.groups[groupPosition].exercises.length,
+                      });
+                      dispatch({
+                        type: EditTestActionKind.ADD_NEW_EXERCISE,
+                        exercise: {
+                          groupPosition: groupPosition,
+                          newID: id,
+                          exercisePosition:
+                            testState.test.groups[groupPosition].exercises
+                              .length,
+                          exercise: exercise,
+                        },
+                      });
+                    });
                   });
                 }}
               >
@@ -257,17 +385,19 @@ export function ShowExerciseDragDrop({
                 <button
                   className="btn-options-exercise ex-icon"
                   onClick={() => {
-                    setExerciseID({
-                      groupPosition: groupPosition,
-                      exercisePosition: -1,
-                    });
-                    dispatch({
-                      type: CreateTestActionKind.REMOVE_EXERCISE,
-                      exercise: {
+                    if (selectedMenu !== "edit-exercise") {
+                      setExerciseID({
                         groupPosition: groupPosition,
-                        exercisePosition: exercisePosition,
-                      },
-                    });
+                        exercisePosition: -1,
+                      });
+                      dispatch({
+                        type: EditTestActionKind.REMOVE_EXERCISE,
+                        exercise: {
+                          groupPosition: groupPosition,
+                          exercisePosition: exercisePosition,
+                        },
+                      });
+                    }
                   }}
                 >
                   <HiOutlineTrash className="size-5" />
@@ -283,7 +413,7 @@ export function ShowExerciseDragDrop({
                         exercisePosition: exercisePosition,
                       });
                       dispatch({
-                        type: CreateTestActionKind.SELECT_EXERCISE_POSITION,
+                        type: EditTestActionKind.SELECT_EXERCISE_POSITION,
                         exercise: {
                           groupPosition: groupPosition,
                           exercisePosition: exercisePosition,
@@ -292,40 +422,39 @@ export function ShowExerciseDragDrop({
                     }
                   }}
                 >
-                  <FaPencilAlt className="size-5" />
+                  <FaPencil className="size-5" />
                   Editar
                 </button>
               </>
             )}
           </div>
 
-          {!listExerciseButtons ? (
-            changeCotationIsActive ? (
+          {!listExerciseButtons &&
+            (changeCotationIsActive ? (
               <input
                 id="cotation"
                 className="flex ml-4 w-14 px-2 py-1 rounded-lg bg-input-2 dark:text-[#dddddd]"
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter") return;
+                  handleBlur();
+                }}
                 onBlur={() => handleBlur()}
                 autoFocus
               />
             ) : (
               <div
-                className="flex ml-4 min-w-fit rounded-lg appearance-none dark:text-[#dddddd] bg-3-1 bg-input-1 "
+                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer dark:text-[#dddddd] bg-3-1 bg-input-1"
                 onClick={() => handleClick()}
               >
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1 dark:text-[#dddddd] ">
                   {value} pts
                 </p>
               </div>
-            )
-          ) : null}
+            ))}
         </div>
-        <div
-          className={`${
-            !selectedExercise ? "hidden" : "flex"
-          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
-        >
+        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1">
           <div className="bg-yellow-600 tag-exercise">Matemática</div>
           <div className="bg-blue-600 tag-exercise">4º ano</div>
           <div className="bg-green-600 tag-exercise">escolinha</div>
@@ -340,7 +469,7 @@ export function ShowExerciseDragDrop({
         </div>
         <div
           className={`${
-            !selectedExercise ? "scale-y-0" : ""
+            !exerciseIsSelected ? "scale-y-0" : ""
           } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 bg-in-ex`}
         >
           {preview}

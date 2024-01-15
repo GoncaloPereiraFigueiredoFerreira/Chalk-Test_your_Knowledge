@@ -3,10 +3,9 @@ import {
   Exercise,
   ExerciseComponent,
   ExerciseContext,
-  ExerciseGroup,
   ExerciseTypeToString,
 } from "../../objects/Exercise/Exercise";
-import { Test } from "./SolveTest/SolveTest";
+import { Test, ExerciseGroup } from "../../objects/Test/Test";
 
 function renderExercise(
   exercise: Exercise,
@@ -30,7 +29,7 @@ function renderExercise(
         <label className="text-md font-medium">
           Exercício {index + 1} - {ExerciseTypeToString(exercise.type)}
         </label>
-        <p>Cotação do Exercício: {exercise.identity.cotation}</p>
+        <p>Cotação do Exercício: {exercise.identity.points}</p>
       </div>
       {index == exerciseSelected ? (
         <ExerciseComponent
@@ -66,7 +65,7 @@ function renderGroup(
     >
       <div className="flex justify-between z-10">
         <label className="text-xl font-medium">Grupo {index + 1}</label>
-        <p>Cotação do Grupo: {group.groupCotation}</p>
+        <p>Cotação do Grupo: {group.groupPoints}</p>
       </div>
       {selectedGroup == index ? (
         <div>
@@ -142,7 +141,7 @@ export function TestPreview({ test, showExId, setShowExID }: TestPreviewProps) {
               </h3>
               <h3>
                 <strong>Cotação máxima do teste:</strong>
-                {test.globalCotation}
+                {test.globalPoints}
               </h3>
             </div>
           </div>

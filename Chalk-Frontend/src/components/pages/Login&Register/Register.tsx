@@ -92,19 +92,37 @@ export function Register() {
           let userInfo: User = {
             email: result.user.username,
             name: result.user.name,
-            profilePic:
-              "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg", //vai se buscar ao BE
+            photoPath: "",
             role: result.user.role,
-            courses: [
-              //vai se buscar ao BE
-              { id: "1", name: "Professores da escola AFS Gualtar" },
-              { id: "2", name: "Turma A" },
-              { id: "3", name: "Turma b" },
-            ],
+            courses: [],
+            id: "",
           };
-          //contactBACK("register","POST",undefined,userInfo).then((response)=>{login(response.body);navigate("/webapp")})
-          login(userInfo);
-          navigate("/webapp");
+          switch (result.user.role) {
+            case "STUDENT":
+              contactBACK("students", "POST", undefined, userInfo).then(
+                (response) => {
+                  response.json().then((user) => {
+                    userInfo["id"] = user.id;
+                    userInfo["photoPath"] = user.photoPath;
+                    login(userInfo);
+                    navigate("/webapp");
+                  });
+                }
+              );
+              break;
+            case "SPECIALIST":
+              contactBACK("specialists", "POST", undefined, userInfo).then(
+                (response) => {
+                  response.json().then((user) => {
+                    userInfo["id"] = user.id;
+                    userInfo["photoPath"] = user.photoPath;
+                    login(userInfo);
+                    navigate("/webapp");
+                  });
+                }
+              );
+              break;
+          }
         });
         break;
       case 400:

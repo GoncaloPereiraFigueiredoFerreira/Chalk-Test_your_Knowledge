@@ -1,13 +1,26 @@
+import { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
+import { APIContext } from "../../../APIContext";
+import { Course } from "../../../UserContext";
 
 export function GroupNavBar() {
   const { id } = useParams();
+  const { contactBACK } = useContext(APIContext);
+  const [course, setCourse] = useState<Course>({ id: "-1", name: "" });
+
+  useEffect(() => {
+    contactBACK("courses/" + id, "GET").then((response) => {
+      response.json().then((json) => {
+        setCourse({ id: json.id, name: json.name });
+      });
+    });
+  }, [id]);
 
   return (
     <div className="">
       <div className="mb-6">
         <div className="flex justify-center bg-yellow-300 py-7 text-3xl">
-          {id}
+          {course.name}
         </div>
         <nav className="bg-white fixed w-screen flex items-center justify-between drop-shadow overflow-visible">
           <div className="flex  items-center">

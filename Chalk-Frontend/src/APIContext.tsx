@@ -1,8 +1,11 @@
-import { createContext } from "react";
+import { createContext, useContext, useEffect } from "react";
+import { useCookies } from "react-cookie";
+import { UserContext } from "./UserContext";
 
 function ContactAPI(
   address: string,
-  method: "POST" | "PUT" | "GET",
+  method: "POST" | "PUT" | "GET" | "DELETE",
+  token: string,
   params?: { [key: string]: string },
   body?: object
 ) {
@@ -18,65 +21,96 @@ function ContactAPI(
     credentials: "include",
     headers: {
       "Content-type": "application/json",
+      chalkauthtoken: token,
     },
 
     body: JSON.stringify(body),
   });
 }
 
+export type contact = (
+  adress: string,
+  method: "POST" | "PUT" | "GET" | "DELETE",
+  params?: { [key: string]: string },
+  body?: object
+) => Promise<Response>;
+
 export const APIContext = createContext<{
+  contactBACK: contact;
+  contactAUTH: contact;
+  contactCHALKY: contact;
+}>({
   contactBACK: (
     adress: string,
-    method: "POST" | "PUT" | "GET",
+    method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
     body?: object
-  ) => Promise<Response>;
+  ) => ContactAPI(adress, method, "", params, body),
   contactAUTH: (
     adress: string,
-    method: "POST" | "PUT" | "GET",
+    method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
     body?: object
-  ) => Promise<Response>;
+  ) => ContactAPI(adress, method, "", params, body),
   contactCHALKY: (
     adress: string,
-    method: "POST" | "PUT" | "GET",
+    method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
     body?: object
-  ) => Promise<Response>;
-}>({
-  contactBACK: ContactAPI,
-  contactAUTH: ContactAPI,
-  contactCHALKY: ContactAPI,
+  ) => ContactAPI(adress, method, "", params, body),
 });
 
 export function APIProvider({ children }: any) {
   const AUTHSERVER = import.meta.env.VITE_AUTH;
   const BACKSERVER = import.meta.env.VITE_BACKEND;
   const CHALKYSERVER = import.meta.env.VITE_AI_API;
+  const [cookies, setCookie] = useCookies(["chalkauthtoken"]);
+  const { logout } = useContext(UserContext);
 
-  const ContactAUTH = (
+  const ContactAUTH: contact = (
     endpoint: string,
-    method: "POST" | "PUT" | "GET",
+    method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
     body?: object
   ) => {
-    return ContactAPI(AUTHSERVER + endpoint, method, params, body);
+    return ContactAPI(
+      AUTHSERVER + endpoint,
+      method,
+      cookies.chalkauthtoken,
+      params,
+      body
+    );
   };
-  const ContactBACK = (
+  const ContactBACK: contact = (
     endpoint: string,
-    method: "POST" | "PUT" | "GET",
+    method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
     body?: object
   ) => {
-    return ContactAPI(BACKSERVER + endpoint, method, params, body);
+    return ContactAPI(
+      BACKSERVER + endpoint,
+      method,
+      cookies.chalkauthtoken,
+      params,
+      body
+    ).then((response) => {
+      if (response.status == 401) logout();
+      return response;
+    });
   };
-  const ContactCHALKY = (
+  const ContactCHALKY: contact = (
     endpoint: string,
-    method: "POST" | "PUT" | "GET",
+    method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
     body?: object
   ) => {
-    return ContactAPI(CHALKYSERVER + endpoint, method, params, body);
+    return ContactAPI(
+      CHALKYSERVER + endpoint,
+      method,
+      cookies.chalkauthtoken,
+      params,
+      body
+    );
   };
 
   return (

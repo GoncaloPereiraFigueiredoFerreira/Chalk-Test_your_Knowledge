@@ -1,0 +1,102 @@
+version: "3.8"
+services:
+  frontend:
+    build: ./Chalk-Frontend
+    volumes:
+      - ./Chalk-Frontend/src:/chalk-fe/src
+    depends_on:
+      - backend
+      - auth
+    environment:
+      - VITE_BACKEND=http://localhost:7777/backend/v1/
+      - VITE_AUTH=http://localhost:7777/auth/
+      - VITE_AI_API=http://localhost:7777/api/
+      - VITE_G_CLIENTID=${G_CLIENTID}
+    ports:
+      - 5173:5173
+    networks:
+      - chalknetwork
+
+  auth:
+    build: ./Chalk-Auth
+    depends_on:
+      - chalkAuth-db
+    ports:
+      - 3131:3131
+    networks:
+      - chalknetwork
+    environment:
+      - PORT=3131
+      - MONGODB=mongodb://chalkAuth-db/Chalk-Test-Auth
+      - PRIVATE_JWT_KEY=${JWT_SECRET}
+      - G_CLIENT_ID=${G_CLIENTID}
+      - G_CLIENT_SECRET=${G_CLIENT_SECRET}
+      - FRONTEND=http://frontend:5173
+
+  backend:
+    build: ./Chalk-Backend/ChalkTYK
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    networks:
+      - chalknetwork
+    environment:
+      - PRIVATE_JWT_KEY=${JWT_SECRET}
+
+  api:
+    build: ./Chalk-Api/Server
+    depends_on:
+      - api-redis
+    ports:
+      - 5000:5000
+    environment:
+      - API_KEY=${API_KEY}
+      - REDIS=redis
+      - N_REQ=3
+    networks:
+      - chalknetwork
+
+  api-redis:
+    image: redis:7.2.3
+    networks:
+      - chalknetwork
+
+  chalkAuth-db:
+    image: mongo
+    volumes:
+      - auth_db_data:/data/db
+    networks:
+      - chalknetwork
+
+  postgres:
+    image: "postgres:16.1"
+    environment:
+      - "POSTGRES_DB=chalktyk"
+      - "POSTGRES_PASSWORD=password"
+      - "POSTGRES_USER=postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_db:/data/db
+    networks:
+      - chalknetwork
+
+  nginx:
+    build: ./Proxy
+    ports:
+      - "7777:80"
+    depends_on:
+      - frontend
+      - auth
+      - backend
+      - api
+    networks:
+      - chalknetwork
+
+volumes:
+  auth_db_data:
+  postgres_db:
+
+networks:
+  chalknetwork:

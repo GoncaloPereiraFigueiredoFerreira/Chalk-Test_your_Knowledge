@@ -106,7 +106,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
                       dataImgPos: position,
                     })
                   }
-                  style="rounded-lg h-11"
+                  style="flex min-h-max rounded-lg"
                   placement="bottom"
                 ></DropdownBlock>
               </div>

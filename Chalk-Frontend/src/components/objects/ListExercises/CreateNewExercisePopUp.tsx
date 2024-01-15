@@ -1,13 +1,11 @@
 import "./ListExercises.css";
-import {
-  CheckboxIcon,
-  CheckedListIcon,
-  TextIcon,
-} from "../SVGImages/SVGImages";
-import { PiChatsBold } from "react-icons/pi";
 import { useState } from "react";
 import { ExerciseType } from "../Exercise/Exercise";
 import { PopUp } from "../../interactiveElements/PopUp";
+import { CiCircleList } from "react-icons/ci";
+import { PiTextTBold } from "react-icons/pi";
+import { TbCheckbox } from "react-icons/tb";
+import { PiChatsBold } from "react-icons/pi";
 
 interface CreateNewExercisePopUpProps {
   show: boolean;
@@ -36,9 +34,9 @@ export function CreateNewExercisePopUp({
               ExerciseType.MULTIPLE_CHOICE != newExercisetype
                 ? "bg-btn-4-1"
                 : "btn-selected"
-            } btn-ListExercises group`}
+            } w-60 btn-ListExercises group`}
           >
-            <CheckedListIcon size="size-12" />
+            <CiCircleList className="size-10 stroke-1" />
             Escolha múltipla
           </button>
           <button
@@ -49,7 +47,7 @@ export function CreateNewExercisePopUp({
                 : "btn-selected"
             } btn-ListExercises group`}
           >
-            <TextIcon size="size-12" />
+            <PiTextTBold className="size-10" />
             Resposta aberta
           </button>
           <button
@@ -58,9 +56,9 @@ export function CreateNewExercisePopUp({
               ExerciseType.TRUE_OR_FALSE != newExercisetype
                 ? "bg-btn-4-1"
                 : "btn-selected"
-            } btn-ListExercises group`}
+            } w-60 btn-ListExercises group`}
           >
-            <CheckboxIcon size="size-12" />
+            <TbCheckbox className="size-10 stroke-[2.3]" />
             Verdadeiro ou falso
           </button>
           <button
@@ -69,16 +67,16 @@ export function CreateNewExercisePopUp({
               ExerciseType.CHAT != newExercisetype
                 ? "bg-btn-4-1"
                 : "btn-selected"
-            } btn-ListExercises group`}
+            } w-60 btn-ListExercises group`}
           >
-            <PiChatsBold className="size-12" />
+            <PiChatsBold className="size-10" />
             Chat
           </button>
         </div>
         <div className="flex justify-end">
           <button
             onClick={() => createNewExercise(newExercisetype)}
-            className="bg-btn-4-1 btn-ListExercises group"
+            className="bg-btn-4-1 btn-ListExercises w-fit group"
           >
             Seguinte
           </button>

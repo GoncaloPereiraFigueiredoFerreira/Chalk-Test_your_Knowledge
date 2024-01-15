@@ -15,6 +15,7 @@ export enum ListExerciseActionKind {
   ADD_EXERCISE = "ADD_EXERCISE",
   REMOVE_EXERCISE = "REMOVE_EXERCISE",
   SET_SELECTED_EXERCISE = "SET_SELECTED_EXERCISE",
+  CHANGE_VISIBILITY_EXERCISE = "CHANGE_VISIBILITY_EXERCISE",
 }
 
 // ListExerciseAction Definition
@@ -25,6 +26,7 @@ export interface ListExerciseAction {
     exercise?: Exercise;
     selectedExercise?: string;
     newExerciseType?: ExerciseType;
+    visibility?: string;
   };
 }
 
@@ -136,6 +138,29 @@ export function ListExerciseStateReducer(
             "No data provided in action.payload.selectedExercise"
           );
       else throw new Error("No data provided in action.payload");
+
+    case ListExerciseActionKind.CHANGE_VISIBILITY_EXERCISE:
+      if (
+        action.payload &&
+        action.payload.visibility &&
+        action.payload.selectedExercise
+      ) {
+        const exercise =
+          listExerciseState.listExercises[action.payload.selectedExercise];
+        return {
+          ...listExerciseState,
+          listExercises: {
+            ...listExerciseState.listExercises,
+            [action.payload.selectedExercise]: {
+              ...exercise,
+              identity: {
+                ...exercise.identity,
+                visibility: action.payload.visibility,
+              },
+            } as Exercise,
+          },
+        } as ListExerciseState;
+      } else throw new Error("No data provided in action.payload");
 
     default:
       alert("Unknown action");

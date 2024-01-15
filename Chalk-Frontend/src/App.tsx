@@ -10,7 +10,6 @@ import { WebApp } from "./WebApp";
 import { TestPage } from "./components/pages/Tests/TestList/TestPage";
 import { Settings } from "./components/pages/Settings/Settings";
 import { Subscription } from "./components/pages/HomePage/Subscription/Subscription";
-import { CreateTest } from "./components/pages/CreateTestPage/CreateTestPage";
 import { SearchList } from "./components/pages/SearchList/SearchList";
 import { SolveTest } from "./components/pages/Tests/SolveTest/SolveTest";
 import { GroupsPage } from "./components/pages/Groups/GroupsPage";
@@ -23,6 +22,8 @@ import { Correction } from "./components/pages/Tests/Correction/Correction";
 import { PreviewTest } from "./components/pages/Tests/Preview/PreviewTest";
 import "./App.css";
 import "./components/interactiveElements/Icon.css";
+import { EditTest } from "./components/pages/Tests/EditTest/EditTest";
+import { CreateTestPage } from "./components/pages/Tests/EditTest/CreateTest";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -43,13 +44,15 @@ function App() {
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />
           <Route path="exercise-bank" element={<ExerciseBankPage />} />
-          <Route path="create-test" element={<CreateTest />} />
+          <Route path="create-test" element={<CreateTestPage />} />
           <Route path="tests">
-            <Route index path="" element={<TestPage />} />
-            <Route path="preview" element={<PreviewTest />} />
-            <Route path="solve" element={<SolveTest />} />
-            <Route path="correction" element={<Correction />} />
-            <Route path="group/:id" />
+            <Route path="" element={<TestPage />} />
+            <Route path=":testID">
+              <Route path="edit" element={<EditTest />} />
+              <Route path="preview" element={<PreviewTest />} />
+              <Route path="solve" element={<SolveTest />} />
+              <Route path="correction" element={<Correction />} />
+            </Route>
           </Route>
           <Route path="profile" element={<Settings />} />
           <Route path="groups" element={<GroupsPage />} />
@@ -61,18 +64,6 @@ function App() {
               <Route path=":results_id" element={<EvaluationPage />} />
             </Route>
           </Route>
-
-          {/*<Route path="correction" element={<Correction />} />*/}
-
-          {/* <Route path="edit" element={<EditExercisePage />} /> */}
-          {/*<Route path="catalog" element={<Catalog />} />*/}
-          {/*<Route path="test"  element={<TestCreator />} />*/}
-          {/*<Route path="group" element={<Group />} />*/}
-          {/*<Route path="search" element={<Group />} />*/}
-
-          {/*<Route path="upgrade" element={<Group />} />*/}
-          {/*<Route path="history" element={<Group />} />*/}
-          {/*<Route path="exercise-list" element={<Group />} />*/}
         </Route>
       </Routes>
     </Router>

@@ -1,12 +1,14 @@
 import { Exercise } from "../Exercise/Exercise";
 
 export interface Test {
+  id: string;
   type: string;
   conclusion: string;
   author: string;
   title: string;
+  visibility: string;
   creationDate: string;
-  globalCotation: number;
+  globalPoints: number;
   globalInstructions: string;
   groups: ExerciseGroup[];
 }
@@ -18,9 +20,10 @@ export interface Test {
 //------------------------------------//
 
 export interface ExerciseGroup {
+  id: string;
   exercises: Exercise[];
   groupInstructions: string;
-  groupCotation: number;
+  groupPoints: number;
 }
 
 //------------------------------------//
@@ -31,21 +34,30 @@ export interface ExerciseGroup {
 
 export function InitTest() {
   return {
+    id: "",
     type: "",
     conclusion: "",
     author: "",
-    title: "",
+    visibility: "private",
+    title: "Novo Teste",
     creationDate: new Date().toISOString(),
-    globalCotation: 0,
+    globalPoints: 0,
     globalInstructions: "",
-    groups: [InitGroup()],
+    groups: [],
   } as Test;
+}
+
+export function CreateTest(author: string) {
+  let test: Test = InitTest();
+  test.author = author;
+  return test;
 }
 
 export function InitGroup() {
   return {
+    id: "test-group-" + 0,
     exercises: [],
     groupInstructions: "",
-    groupCotation: 0,
+    groupPoints: 0,
   } as ExerciseGroup;
 }

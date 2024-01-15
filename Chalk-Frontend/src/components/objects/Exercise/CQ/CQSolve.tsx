@@ -7,6 +7,7 @@ import {
 } from "../Exercise";
 import "./CQ.css";
 import { UserContext } from "../../../../UserContext";
+import { APIContext } from "../../../../APIContext";
 
 export interface CQSolveProps {
   exercise: CQExercise;
@@ -18,6 +19,7 @@ export function CQSolve(props: CQSolveProps) {
   let initState: CQResolutionData = props.context
     .resolutionData as CQResolutionData;
 
+  const { contactBACK } = useContext(APIContext);
   const { user } = useContext(UserContext);
   const [state, setState] = useState<CQResolutionData>({
     type: ExerciseType.CHAT,
@@ -28,14 +30,24 @@ export function CQSolve(props: CQSolveProps) {
 
   const addMsg = (text: string) => {
     let tmpMsgs = [...state.msgs];
-
     tmpMsgs.unshift(text);
     setState({ ...state, msgs: tmpMsgs });
   };
-  const fetchAnswer = () => {};
+
+  const fetchAnswer = () => {
+    contactBACK("ai/chat/new", "POST", undefined, {
+      topics: props.exercise.props.topics,
+      chat: [...state.msgs].reverse(),
+    }).then((response) => {
+      response.text().then((msg) => {
+        addMsg(msg);
+      });
+    });
+  };
 
   useEffect(() => {
     props.context.setExerciseSolution(state);
+    if (state.msgs.length % 2 == 0 && state.msgs.length > 0) fetchAnswer();
   }, [state]);
 
   useEffect(() => {
@@ -89,7 +101,7 @@ export function CQSolve(props: CQSolveProps) {
                     </div>
                   </div>
                   <div className="flex-shrink-0 h-10 w-10 rounded-full">
-                    <img src={user.user?.profilePic}></img>
+                    <img src={user.user?.photoPath}></img>
                   </div>
                 </div>
               ) : (
