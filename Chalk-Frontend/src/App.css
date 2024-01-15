@@ -220,6 +220,19 @@ dark:bg-black;
     dark:text-white;
   }
 
+  .bot-msg {
+    @apply bg-[#dddddd]
+    text-black
+    dark:bg-gray-600
+    dark:text-white;
+  }
+
+  .person-msg {
+    @apply bg-[#acacff]
+    dark:bg-[#ffd025]
+    text-black;
+  }
+
   /* ---------------------- */
   /*         BORDER         */
   /* ---------------------- */
