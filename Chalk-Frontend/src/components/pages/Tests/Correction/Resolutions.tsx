@@ -70,7 +70,7 @@ export function ResolutionsComp({
   return selResolution !== undefined && exID !== ""
     ? SingleResolution(
         selResolution,
-        resolutions[exID].cotation,
+        resolutions[exID].maxCotation,
         corrections,
         backToList,
         addPoints,

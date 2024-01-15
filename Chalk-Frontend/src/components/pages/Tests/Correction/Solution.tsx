@@ -1,9 +1,8 @@
 import { Rubric, RubricContext } from "../../../objects/Rubric/Rubric";
 import { LuGhost } from "react-icons/lu";
-import { Resolutions, Rubrics } from "./Correction";
+import { Rubrics } from "./Correction";
 
 interface SolutionProps {
-  resolutions: Resolutions;
   exid: string;
   rubrics: Rubrics;
 }

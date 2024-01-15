@@ -18,7 +18,7 @@ export interface Resolutions {
   [exerciseID: string]: {
     solution?: Resolution;
     position?: string;
-    cotation: number;
+    maxCotation: number;
     studentRes: { [resolutionID: string]: Resolution };
   };
 }
@@ -44,7 +44,7 @@ export function Correction() {
   const addResolution = (exId: string, resId: string, res: Resolution) => {
     let resCpy = { ...resolutions };
     if (!(exId in resCpy)) {
-      resCpy[exId] = { studentRes: {}, cotation: 0 };
+      resCpy[exId] = { studentRes: {}, maxCotation: 0 };
     }
 
     let cpyStudentRes = { ...resCpy[exId].studentRes };
