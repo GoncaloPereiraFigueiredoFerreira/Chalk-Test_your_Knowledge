@@ -1,4 +1,4 @@
-import { MCExercise, PreviewProps } from "../Exercise";
+import { MCExercise, MCResolutionData, PreviewProps } from "../Exercise";
 import { ExerciseHeaderComp } from "../Header/ExHeader";
 
 export interface MCPreviewProps {
@@ -7,7 +7,7 @@ export interface MCPreviewProps {
   context: PreviewProps;
 }
 
-export function MCPreview({ exercise, position }: MCPreviewProps) {
+export function MCPreview({ exercise, position, context }: MCPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement}></ExerciseHeaderComp>
@@ -26,6 +26,12 @@ export function MCPreview({ exercise, position }: MCPreviewProps) {
                 name={"mc" + exercise.identity?.id + position}
                 type="radio"
                 className="radio-blue mr-3"
+                checked={
+                  context.resolution
+                    ? (context.resolution as MCResolutionData).items[index]
+                        .value
+                    : false
+                }
                 disabled
               ></input>
               {value.text}

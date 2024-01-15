@@ -208,6 +208,7 @@ export type ContextBasedProps =
 
 export interface PreviewProps {
   context: ExerciseContext.PREVIEW;
+  resolution?: ResolutionData;
 }
 
 export interface SolveProps {
@@ -699,7 +700,7 @@ export function TranslateTestResolutionIN(resolution: any): ResolutionData {
       // Got to fix this
       let MCRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
-        items: {},
+        items: resolution.items,
         justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
       };
       newRes = MCRes;

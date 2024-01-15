@@ -1,14 +1,38 @@
 import { useContext, useEffect, useState } from "react";
 
 import { TestPreview } from "../TestPreview";
-import { TranslateTestExerciseIN } from "../../../objects/Exercise/Exercise";
+import {
+  ResolutionData,
+  TranslateTestExerciseIN,
+  TranslateTestResolutionIN,
+} from "../../../objects/Exercise/Exercise";
 import { Link, useParams } from "react-router-dom";
 import { InitTest, Test } from "../../../objects/Test/Test";
 import { APIContext } from "../../../../APIContext";
+import { UserContext, UserRole } from "../../../../UserContext";
+
+export interface TestResolution {
+  totalPoints: number;
+  status: string;
+  resolutions: {
+    [id: string]: {
+      resId: string;
+      data: ResolutionData | undefined;
+      points: number;
+    };
+  };
+}
 
 export function PreviewTest() {
   const [test, setTest] = useState<Test>(InitTest());
+  const [selEx, setSelectedEx] = useState<string>("");
+  const [testResolution, setTestRes] = useState<TestResolution>({
+    totalPoints: 0,
+    status: "",
+    resolutions: {},
+  });
   const { contactBACK } = useContext(APIContext);
+  const { user } = useContext(UserContext);
   const { testID } = useParams();
 
   useEffect(() => {
@@ -23,7 +47,55 @@ export function PreviewTest() {
         setTest(testJson);
       });
     });
+    if (user.user?.role === UserRole.STUDENT) {
+      contactBACK(
+        "tests/" + testID + "/resolutions/" + user.user?.id + "/last",
+        "GET"
+      ).then((response) => {
+        response.json().then((res: any) => {
+          let temp: {
+            [id: string]: {
+              resId: string;
+              data: ResolutionData | undefined;
+              points: number;
+            };
+          } = {};
+
+          res.groups.map((groupRes: any) => {
+            Object.keys(groupRes.resolutions).map((exRes: string) => {
+              temp[exRes] = {
+                resId: groupRes.resolutions[exRes].resolutionId,
+                data: undefined,
+                points: 0,
+              };
+            });
+          });
+          setTestRes({
+            resolutions: temp,
+            totalPoints: res.totalPoints,
+            status: res.status,
+          });
+        });
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    if (user.user?.role === UserRole.STUDENT && selEx !== "") {
+      contactBACK(
+        "exercises/resolutions/" + testResolution.resolutions[selEx].resId,
+        "GET"
+      ).then((response) => {
+        response.json().then((exRes) => {
+          let newResData = TranslateTestResolutionIN(exRes.data);
+          let tmp = { ...testResolution };
+          tmp.resolutions[selEx].data = newResData;
+          tmp.resolutions[selEx].points = exRes.points;
+          setTestRes(tmp);
+        });
+      });
+    }
+  }, [selEx]);
 
   return (
     <>
@@ -36,24 +108,36 @@ export function PreviewTest() {
               </label>
             </div>
             <div className="flex space-x-4">
-              <Link
-                to="../edit"
-                className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
-              >
-                Editar teste
-              </Link>
-              <Link
-                to="../solve"
-                className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
-              >
-                Resolver teste
-              </Link>
+              {user.user?.role === UserRole.SPECIALIST ? (
+                <>
+                  <Link
+                    to="../edit"
+                    className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
+                  >
+                    Editar teste
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="../solve"
+                    className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
+                  >
+                    Resolver teste
+                  </Link>
+                  <div className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800">
+                    Nota: {testResolution ? testResolution.totalPoints : "-"} /{" "}
+                    {test.globalPoints}
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <TestPreview
             test={test}
-            setShowExID={() => {}}
-            showExId={""}
+            setShowExID={setSelectedEx}
+            showExId={selEx}
+            testResolution={testResolution}
           ></TestPreview>
         </div>
       </div>
