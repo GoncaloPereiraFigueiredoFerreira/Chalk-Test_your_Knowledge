@@ -2,6 +2,8 @@ version: "3.8"
 services:
   frontend:
     build: ./Chalk-Frontend
+    volumes:
+      - ./Chalk-Frontend/src:/chalk-fe/src
     depends_on:
       - backend
       - auth
