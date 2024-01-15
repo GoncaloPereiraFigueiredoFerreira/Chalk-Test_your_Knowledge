@@ -15,7 +15,7 @@ export function CQAnswer({ solution }: AnswerProps) {
                   className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end"
                 >
                   <div>
-                    <div className="person-msg text-black p-3 rounded-l-lg rounded-br-lg">
+                    <div className="person-msg p-3 rounded-l-lg rounded-br-lg">
                       <p className="text-sm">{msg}</p>
                     </div>
                   </div>
