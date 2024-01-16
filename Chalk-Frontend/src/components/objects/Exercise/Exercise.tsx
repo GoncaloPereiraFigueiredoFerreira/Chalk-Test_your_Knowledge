@@ -655,8 +655,8 @@ export function TranslateResolutionIN(
         justifyType: exercise.props.justifyType,
       };
       Object.keys(solution.items).map((key) => {
-        MCRes.items[key].value = solution.items[key].value;
-        MCRes.items[key].justification = solution.items[key].justification;
+        TFRes.items[key].value = solution.items[key].value;
+        TFRes.items[key].justification = solution.items[key].justification;
       });
       newRes = TFRes;
       break;

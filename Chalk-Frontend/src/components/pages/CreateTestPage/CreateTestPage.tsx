@@ -88,12 +88,15 @@ export function CreateTest({ test }: CreateTestProps) {
   });
   const { testID } = useParams();
   const { contactBACK } = useContext(APIContext);
+
   const inicialState: EditTestState = {
     test: test !== undefined ? test : InitTest(),
     exercisePosition: 0,
     groupPosition: 0,
     contactBACK: contactBACK,
   };
+  console.log(inicialState);
+
   const [listExercises, setListExercises] = useState<Exercise[]>([]);
   const [testState, dispatch] = useReducer(EditTestStateReducer, inicialState);
   const [selectedMenu, setSelectedMenu] = useState("");
@@ -544,16 +547,17 @@ export function CreateTest({ test }: CreateTestProps) {
         case ExerciseType.MULTIPLE_CHOICE:
         case ExerciseType.TRUE_OR_FALSE:
           if (!(exercise.identity.id in rubrics)) {
-            contactBACK("exercises/" + exerciseID + "/solution", "GET").then(
-              (response) => {
-                response.json().then((json) => {
-                  setSolution(
-                    exercise.identity.id,
-                    TranslateResolutionIN(json.data, exercise)
-                  );
-                });
-              }
-            );
+            contactBACK(
+              "exercises/" + exercise.identity.id + "/solution",
+              "GET"
+            ).then((response) => {
+              response.json().then((json) => {
+                setSolution(
+                  exercise.identity.id,
+                  TranslateResolutionIN(json.data, exercise)
+                );
+              });
+            });
           }
 
           break;

@@ -8,7 +8,9 @@ export interface CQPreviewProps {
 }
 
 export function CQPreview({ exercise, context }: CQPreviewProps) {
-  const msgs = (context.resolution as CQResolutionData).msgs;
+  const msgs = context.resolution
+    ? (context.resolution as CQResolutionData).msgs
+    : [];
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />

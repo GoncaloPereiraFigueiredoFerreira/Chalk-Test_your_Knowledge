@@ -52,13 +52,15 @@ services:
       - 5000:5000
     environment:
       - API_KEY=${API_KEY}
-      - REDIS=redis
+      - REDIS=api-redis
       - N_REQ=3
     networks:
       - chalknetwork
 
   api-redis:
     image: redis:7.2.3
+    ports:
+      - 6379:6379
     networks:
       - chalknetwork
 
