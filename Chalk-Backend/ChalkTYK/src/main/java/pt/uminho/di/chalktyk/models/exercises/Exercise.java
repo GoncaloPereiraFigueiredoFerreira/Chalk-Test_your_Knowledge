@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
@@ -98,7 +99,6 @@ public abstract class Exercise {
 	@JoinTable(name="Exercise_Tag", joinColumns={ @JoinColumn(name="ExerciseID") }, inverseJoinColumns={ @JoinColumn(name="TagID") })
 	private Set<Tag> tags;
 
-	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseSolution.class, orphanRemoval = true)
 	@JoinColumn(name = "SolutionID", referencedColumnName = "ID")
 	private ExerciseSolution solution;
@@ -107,7 +107,6 @@ public abstract class Exercise {
 	@Setter(AccessLevel.NONE)
 	private String solutionId;
 
-	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ExerciseRubric.class, orphanRemoval = true)
 	@JoinColumn(name = "RubricID", referencedColumnName = "ID")
 	private ExerciseRubric rubric;
@@ -137,6 +136,16 @@ public abstract class Exercise {
 			statement.verifyProperties();
 	}
 
+	@JsonIgnore
+	public ExerciseSolution getSolution() {
+		return solution;
+	}
+
+	@JsonIgnore
+	public ExerciseRubric getRubric() {
+		return rubric;
+	}
+
 	public void setCourse(Course course) {
 		this.course = course;
 		this.courseId = course != null ? course.getId() : null;
@@ -152,11 +161,13 @@ public abstract class Exercise {
 		this.institutionId = institution != null ? institution.getName() : null;
 	}
 
+	@JsonProperty(value = "solution")
 	public void setSolution(ExerciseSolution solution) {
 		this.solution = solution;
 		this.solutionId = solution != null ? solution.getId() : null;
 	}
 
+	@JsonProperty(value = "rubric")
 	public void setRubric(ExerciseRubric rubric) {
 		this.rubric = rubric;
 		this.rubricId = rubric != null ? rubric.getId() : null;

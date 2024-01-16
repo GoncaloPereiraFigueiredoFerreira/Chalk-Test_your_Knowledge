@@ -47,7 +47,11 @@ public interface TagsApi {
         @ApiResponse(responseCode = "404", description = "Tag or Path not found")
     })
     @RequestMapping(value = "/name", produces = { "application/json" }, method = RequestMethod.GET)
-    ResponseEntity<Boolean> existsTagByNameAndPath(@Parameter(in = ParameterIn.QUERY, description = "Tag name", schema = @Schema(defaultValue = "")) @RequestParam(value = "name", required = true) String tagName, @Parameter(in = ParameterIn.QUERY, description = "Tag Path", schema = @Schema(defaultValue = "")) @Valid @RequestParam(value = "path", required = true) String tagPath);
+    ResponseEntity<Boolean> existsTagByNameAndPath(
+            @Parameter(in = ParameterIn.QUERY, description = "Tag name", schema = @Schema(defaultValue = ""))
+            @RequestParam(value = "name", required = true) String tagName,
+            @Parameter(in = ParameterIn.QUERY, description = "Tag Path", schema = @Schema(defaultValue = "")) @Valid
+            @RequestParam(value = "path", required = true) String tagPath);
 
     @Operation(summary = "Get list of tags starting at the given path", description = "", tags = { "" })
     @ApiResponses(value = {
@@ -60,7 +64,11 @@ public interface TagsApi {
         @ApiResponse(responseCode = "404", description = "Path not found")
     })
     @RequestMapping(value = "/path", produces = { "application/json" },method = RequestMethod.GET)
-    ResponseEntity<List<Tag>> listTagsPath(@Parameter(in = ParameterIn.PATH, description = "Level of search depth(-1 for all levels)", schema = @Schema(defaultValue = "0")) @RequestParam(value = "level", required = true) Integer levels,  @Parameter(in = ParameterIn.QUERY, description = "Tag Path", schema = @Schema(defaultValue = "")) @Valid @RequestParam(value = "path", required = true) String tagPath);
+    ResponseEntity<List<Tag>> listTagsPath(
+            @Parameter(in = ParameterIn.QUERY, description = "Level of search depth(-1 for all levels)", schema = @Schema(defaultValue = "0"))
+            @RequestParam(value = "level", required = true) Integer levels,
+            @Parameter(in = ParameterIn.QUERY, description = "Tag Path", schema = @Schema(defaultValue = "")) @Valid
+            @RequestParam(value = "path", required = true) String tagPath);
 
     @Operation(summary = "Get list of tags starting at the given path", description = "", tags = { "" })
     @ApiResponses(value = {
@@ -73,6 +81,9 @@ public interface TagsApi {
         @ApiResponse(responseCode = "404", description = "Path not found")
     })
     @RequestMapping(value = "/paths", produces = { "application/json" },method = RequestMethod.GET)
-    ResponseEntity<List<Tag>> listTagsPaths(@Parameter(in = ParameterIn.PATH, description = "Level of search depth(-1 for all levels)", schema = @Schema(defaultValue = "0")) @RequestParam(value = "level", required = true) Integer levels,  @Parameter(in = ParameterIn.QUERY, description = "Tag Path", schema = @Schema(defaultValue = "[]")) @Valid @RequestParam(value = "path", required = true) List<String> tagPaths);
-
+    ResponseEntity<List<Tag>> listTagsPaths(
+            @Parameter(in = ParameterIn.QUERY, description = "Level of search depth(-1 for all levels)", schema = @Schema(defaultValue = "0"))
+            @RequestParam(value = "level", required = true) Integer levels,
+            @Parameter(in = ParameterIn.QUERY, description = "Tag Path", schema = @Schema(defaultValue = "[]")) @Valid
+            @RequestParam(value = "path", required = true) List<String> tagPaths);
 }
