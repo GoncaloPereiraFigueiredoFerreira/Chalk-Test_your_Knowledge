@@ -1480,7 +1480,7 @@ public class SeedService implements ISeedService{
         tagsAI.add("D.Afonso Henriques");
 
         ChatExercise exercise = new ChatExercise(tagsAI);
-        exercise.setStatement(new ExerciseStatement("Responda ao chat com o AI","",""));
+        exercise.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
         exercise.setTitle("Pergunta 2 do Teste de História");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
@@ -1489,7 +1489,7 @@ public class SeedService implements ISeedService{
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
         ChatExercise exercise2 = new ChatExercise(tagsAI);
-        exercise2.setStatement(new ExerciseStatement("Responda ao chat com o AI","",""));
+        exercise2.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
         exercise2.setTitle("Pergunta 2");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
