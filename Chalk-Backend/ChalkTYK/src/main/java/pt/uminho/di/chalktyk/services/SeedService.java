@@ -1474,7 +1474,16 @@ public class SeedService implements ISeedService{
 
     private Exercise createChatExercise_History_1_2(String specialistId, String courseId, List<Tag> tags) throws BadInputException {
         //Rubric
-        ExerciseRubric exerciseRubric = new ChatExerciseRubric();
+        OAStandard oaStandard100 = new OAStandard("5","Acertou em todas as perguntas.",100.0F);
+        OAStandard oaStandard80 = new OAStandard("4","Acertou em quatro perguntas.",80.0F);
+        OAStandard oaStandard60 = new OAStandard("3","Acertou em três perguntas.",60.0F);
+        OAStandard oaStandard40 = new OAStandard("2","Acertou em duas perguntas.",40.0F);
+        OAStandard oaStandard20 = new OAStandard("1","Acertou em uma pergunta.",20.0F);
+        OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+        OpenAnswerRubric openAnswerRubric = new OpenAnswerRubric(List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
+
+        ExerciseRubric exerciseRubric = new ChatExerciseRubric(null,openAnswerRubric);
         List<String> tagsAI = new ArrayList<>(tags.stream().map(Tag::getName).toList());
         tagsAI.add("Dinastia Portuguesa");
         tagsAI.add("D.Afonso Henriques");
