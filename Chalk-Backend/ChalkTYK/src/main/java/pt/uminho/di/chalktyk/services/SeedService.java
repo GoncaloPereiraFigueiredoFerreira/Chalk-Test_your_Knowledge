@@ -1481,9 +1481,8 @@ public class SeedService implements ISeedService{
         OAStandard oaStandard20 = new OAStandard("1","Acertou em uma pergunta.",20.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
         List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
-        OpenAnswerRubric openAnswerRubric = new OpenAnswerRubric(List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
 
-        ExerciseRubric exerciseRubric = new ChatExerciseRubric(null,openAnswerRubric);
+        ExerciseRubric exerciseRubric = new ChatExerciseRubric(null,List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
         List<String> tagsAI = new ArrayList<>(tags.stream().map(Tag::getName).toList());
         tagsAI.add("Dinastia Portuguesa");
         tagsAI.add("D.Afonso Henriques");
