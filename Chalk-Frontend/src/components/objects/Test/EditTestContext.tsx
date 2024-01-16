@@ -96,10 +96,10 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.CREATE_NEW_EXERCISE:
       if (action.group && action.group.exerciseType && action.exercise) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
-        let newEx = InitExercise(action.group.exerciseType);
+        const newEx = InitExercise(action.group.exerciseType);
         newEx.identity.specialistId = action.exercise!.specialist!;
         newGroups[action.group.groupPosition].exercises.push(newEx);
         return {
@@ -116,7 +116,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.ADD_NEW_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
 
@@ -152,10 +152,10 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.SAVE_DD_NEW_EXERCISE:
       if (action.exercise && action.exercise.newPosition) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
-        let origGroup = newGroups[action.exercise.groupPosition];
+        const origGroup = newGroups[action.exercise.groupPosition];
 
         origGroup.exercises[action.exercise.exercisePosition].identity.id =
           action.exercise.newID!;
@@ -178,7 +178,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.REMOVE_EXERCISE:
       if (action.exercise) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
         if (
@@ -230,7 +230,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.EDIT_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        let newGroups: ExerciseGroup[] = [...state.test.groups];
+        const newGroups: ExerciseGroup[] = [...state.test.groups];
         newGroups[action.exercise.groupPosition].exercises[
           action.exercise.exercisePosition
         ] = action.exercise.exercise;
@@ -245,7 +245,7 @@ export function EditTestStateReducer(
       throw new Error("Invalid Action");
 
     case EditTestActionKind.ADD_GROUP:
-      let newGroup = {
+      const newGroup = {
         id: "test-group-" + state.test.groups.length,
         groupInstructions: "",
         exercises: [],
@@ -279,7 +279,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.REMOVE_GROUP:
       if (action.group) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
         // remove group
@@ -317,7 +317,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.EDIT_GROUP:
       if (action.group && action.group.groupInstructions !== undefined) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
         newGroups[action.group.groupPosition].groupInstructions =
@@ -349,7 +349,7 @@ export function EditTestStateReducer(
     case EditTestActionKind.CHANGE_EXERCISE_COTATION:
       if (action.exercise && action.exercise.newCotation !== undefined) {
         if (action.exercise.newCotation >= 0) {
-          let newGroups: ExerciseGroup[] = JSON.parse(
+          const newGroups: ExerciseGroup[] = JSON.parse(
             JSON.stringify(state.test.groups)
           );
           newGroups[action.exercise.groupPosition].exercises[
@@ -407,7 +407,7 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.MOVE_EXERCISE:
       if (action.exercise && action.exercise.newPosition) {
-        let newGroups: ExerciseGroup[] = JSON.parse(
+        const newGroups: ExerciseGroup[] = JSON.parse(
           JSON.stringify(state.test.groups)
         );
         if (

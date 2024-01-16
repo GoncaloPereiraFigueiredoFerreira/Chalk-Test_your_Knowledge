@@ -118,9 +118,9 @@ interface MCStatementEditProps {
   id: string;
 }
 function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
-  let name = "mc";
+  const name = "mc";
   if (solution.type === ExerciseType.MULTIPLE_CHOICE) {
-    let solutionItem = solution.items[id];
+    const solutionItem = solution.items[id];
     return (
       <>
         <li className="flex items-center">

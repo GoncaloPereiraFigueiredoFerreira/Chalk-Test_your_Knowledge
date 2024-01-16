@@ -19,7 +19,7 @@ export function ExerciseHeaderComp({ header }: HeaderProps) {
       </div>
     );
 
-    var style;
+    let style;
 
     switch (header.imagePosition) {
       case ImgPos.BOT:

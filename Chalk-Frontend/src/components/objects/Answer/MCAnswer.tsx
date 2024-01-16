@@ -15,7 +15,7 @@ export function MCAnswer({ solution }: AnswerProps) {
         <>
           <ul>
             {Object.entries(solution.data.items).map(([index, value]) => {
-              let justify =
+              const justify =
                 resDate.justifyType === ExerciseJustificationKind.JUSTIFY_ALL ||
                 (resDate.justifyType ===
                   ExerciseJustificationKind.JUSTIFY_UNMARKED &&

@@ -37,7 +37,7 @@ function ExerciseTFReducer(tfState: TFResolutionData, tfAction: TFAction) {
       if (typeof tfAction.payload === "string")
         throw new Error("payload type error");
 
-      let newItemsCHOOSE = { ...tfState.items };
+      const newItemsCHOOSE = { ...tfState.items };
       newItemsCHOOSE[tfAction.index].value = tfAction.payload;
       return { ...tfState, items: newItemsCHOOSE };
 
@@ -45,7 +45,7 @@ function ExerciseTFReducer(tfState: TFResolutionData, tfAction: TFAction) {
       if (typeof tfAction.payload === "boolean")
         throw new Error("payload type error");
 
-      let newItemsJUST = { ...tfState.items };
+      const newItemsJUST = { ...tfState.items };
       newItemsJUST[tfAction.index].justification = tfAction.payload;
       return { ...tfState, items: newItemsJUST };
 
@@ -63,7 +63,8 @@ export interface TFSolveProps {
 }
 
 export function TFSolve({ exercise, position, context }: TFSolveProps) {
-  let initState: TFResolutionData = context.resolutionData as TFResolutionData;
+  const initState: TFResolutionData =
+    context.resolutionData as TFResolutionData;
 
   const [state, dispatch] = useReducer(ExerciseTFReducer, initState);
 
@@ -156,7 +157,7 @@ function TFShowStatement(props: any) {
 }
 
 function TFJustify(props: any) {
-  let justify: boolean =
+  const justify: boolean =
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL &&
       "value" in props.state.items[props.index]) ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&

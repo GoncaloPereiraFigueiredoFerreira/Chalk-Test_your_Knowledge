@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Course, UserContext } from "../../../UserContext.tsx";
+import { Course } from "../../../UserContext.tsx";
 import { APIContext } from "../../../APIContext.tsx";
 
 export function GroupsPage() {
@@ -18,7 +18,7 @@ export function GroupsPage() {
       undefined
     ).then((response) => {
       response.json().then((groups) => {
-        let tmpL: Course[] = [];
+        const tmpL: Course[] = [];
         groups.map((group: any) => {
           tmpL.push({ id: group.id, name: group.name } as Course);
         });

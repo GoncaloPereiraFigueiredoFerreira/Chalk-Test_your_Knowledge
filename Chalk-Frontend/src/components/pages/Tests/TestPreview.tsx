@@ -33,7 +33,8 @@ function renderExercise(
         </label>
         <div>
           <p>Cotação do Exercício: {exercise.identity.points}</p>
-          {testResolutions ? (
+          {testResolutions &&
+          testResolutions.resolutions[exercise.identity.id] ? (
             <p>
               Cotação Obtida:
               {(exercise.identity.points! *
@@ -50,9 +51,11 @@ function renderExercise(
           exercise={exercise}
           context={{
             context: ExerciseContext.PREVIEW,
-            resolution: testResolutions
-              ? testResolutions.resolutions[exercise.identity.id].data
-              : undefined,
+            resolution:
+              testResolutions &&
+              testResolutions.resolutions[exercise.identity.id]
+                ? testResolutions.resolutions[exercise.identity.id].data
+                : undefined,
           }}
           position={groupIndex + 1 + "." + (index + 1)}
         ></ExerciseComponent>
@@ -139,7 +142,7 @@ export function TestPreview({
 
   useEffect(() => {
     if (showExId !== "") {
-      let { group, ex } = findId(showExId, test);
+      const { group, ex } = findId(showExId, test);
       if (group != selectedGroup) {
         setSelectedGroup(group);
       }

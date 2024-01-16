@@ -8,7 +8,6 @@ import { FaPencil } from "react-icons/fa6";
 import "./EditTestDragDrop.css";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useParams } from "react-router-dom";
 import { UserContext } from "../../../UserContext";
 
 interface EditTestProps {

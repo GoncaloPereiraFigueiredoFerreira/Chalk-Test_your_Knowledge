@@ -175,7 +175,7 @@ export function ListExercises({
     }).then((response) => {
       response.json().then((exercises) => {
         console.log(exercises);
-        let exerciseL: Exercise[] = [];
+        const exerciseL: Exercise[] = [];
         exercises.map((ex: any) => {
           exerciseL.push(TranslateExerciseIN(ex));
         });

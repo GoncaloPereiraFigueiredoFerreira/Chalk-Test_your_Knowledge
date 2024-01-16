@@ -1,11 +1,7 @@
-import { useState } from "react";
-
 import { MainLogo } from "../../MainLogo";
-import { MessageBoxIcon } from "../../objects/SVGImages/SVGImages";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function FrontPage() {
-  const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
   const navigate = useNavigate();
   return (
     <div className="flex flex-row divide-x-2 border-gray-2-2">

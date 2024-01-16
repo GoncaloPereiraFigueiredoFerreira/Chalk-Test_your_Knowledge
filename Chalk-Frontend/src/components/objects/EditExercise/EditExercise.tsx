@@ -61,8 +61,8 @@ export interface EditAction {
 }
 
 function EditReducer(state: EditState, action: EditAction) {
-  let exercise = state.exercise;
-  let solution = state.solution;
+  const exercise = state.exercise;
+  const solution = state.solution;
 
   const changeStatement = (statement: ExerciseHeader): EditState => {
     return {
@@ -90,14 +90,14 @@ function EditReducer(state: EditState, action: EditAction) {
       throw new Error("Invalid action");
 
     case EditActionKind.CHANGE_STATEMENT:
-      let newStatement1: ExerciseHeader = {
+      const newStatement1: ExerciseHeader = {
         ...exercise.base.statement,
         text: action.dataString ?? "",
       };
       return changeStatement(newStatement1);
 
     case EditActionKind.ADD_IMG:
-      let newStatement2: ExerciseHeader = {
+      const newStatement2: ExerciseHeader = {
         ...exercise.base.statement,
         imagePath: "",
         imagePosition: ImgPos.BOT,
@@ -105,20 +105,20 @@ function EditReducer(state: EditState, action: EditAction) {
       return changeStatement(newStatement2);
 
     case EditActionKind.REMOVE_IMG:
-      let newStatement3: ExerciseHeader = {
+      const newStatement3: ExerciseHeader = {
         text: exercise.base.statement.text,
       };
       return changeStatement(newStatement3);
 
     case EditActionKind.CHANGE_IMG_URL:
-      let newStatement4: ExerciseHeader = {
+      const newStatement4: ExerciseHeader = {
         ...exercise.base.statement,
         imagePath: action.dataString ?? "",
       };
       return changeStatement(newStatement4);
 
     case EditActionKind.CHANGE_IMG_POS:
-      let newStatement5: ExerciseHeader = {
+      const newStatement5: ExerciseHeader = {
         ...exercise.base.statement,
         imagePosition: action.dataImgPos ?? ImgPos.BOT,
       };
@@ -129,12 +129,12 @@ function EditReducer(state: EditState, action: EditAction) {
         exercise.type === ExerciseType.MULTIPLE_CHOICE ||
         exercise.type === ExerciseType.TRUE_OR_FALSE
       ) {
-        let newSolution: TFResolutionData | MCResolutionData = {
+        const newSolution: TFResolutionData | MCResolutionData = {
           ...solution,
         } as MCResolutionData;
         if (exercise.props.items && newSolution.items) {
-          let newSolItems = { ...newSolution.items };
-          let newItems = { ...exercise.props.items };
+          const newSolItems = { ...newSolution.items };
+          const newItems = { ...exercise.props.items };
           newItems[action.dataString!] = {
             text: "",
             justification: "",
@@ -161,11 +161,11 @@ function EditReducer(state: EditState, action: EditAction) {
         exercise.type === ExerciseType.MULTIPLE_CHOICE ||
         exercise.type === ExerciseType.TRUE_OR_FALSE
       ) {
-        let newSolution: TFResolutionData | MCResolutionData = {
+        const newSolution: TFResolutionData | MCResolutionData = {
           ...solution,
         } as MCResolutionData;
-        let newItems = { ...exercise.props.items };
-        let newSolutionItems = { ...newSolution.items };
+        const newItems = { ...exercise.props.items };
+        const newSolutionItems = { ...newSolution.items };
 
         newItems[action.dataString!].text = action.dataItem!.text!;
         newSolutionItems[action.dataString!].text = action.dataItem!.text!;
@@ -180,10 +180,10 @@ function EditReducer(state: EditState, action: EditAction) {
 
     case EditActionKind.CHANGE_ITEM_TF:
       if (exercise.type === ExerciseType.TRUE_OR_FALSE) {
-        let newSolution: TFResolutionData | MCResolutionData = {
+        const newSolution: TFResolutionData | MCResolutionData = {
           ...solution,
         } as MCResolutionData;
-        let newItems = { ...newSolution.items };
+        const newItems = { ...newSolution.items };
         newItems[action.dataString!].value = action.dataItem!.value!;
         return {
           ...state,
@@ -196,11 +196,11 @@ function EditReducer(state: EditState, action: EditAction) {
 
     case EditActionKind.CHANGE_ITEM_MC:
       if (exercise.type === ExerciseType.MULTIPLE_CHOICE) {
-        let newSolution: TFResolutionData | MCResolutionData = {
+        const newSolution: TFResolutionData | MCResolutionData = {
           ...solution,
         } as MCResolutionData;
-        let newItems = { ...newSolution.items };
-        let selectedID = action.dataString!;
+        const newItems = { ...newSolution.items };
+        const selectedID = action.dataString!;
         Object.keys(newItems).map((key) => {
           newItems[key].value = key === selectedID;
         });
@@ -218,13 +218,13 @@ function EditReducer(state: EditState, action: EditAction) {
         exercise.type === ExerciseType.MULTIPLE_CHOICE ||
         exercise.type === ExerciseType.TRUE_OR_FALSE
       ) {
-        let newSolution: TFResolutionData | MCResolutionData = {
+        const newSolution: TFResolutionData | MCResolutionData = {
           ...solution,
         } as MCResolutionData;
-        let newItems = { ...exercise.props.items };
+        const newItems = { ...exercise.props.items };
         delete newItems[action.dataString!];
 
-        let newSolutionItems = { ...newSolution.items };
+        const newSolutionItems = { ...newSolution.items };
         delete newSolutionItems[action.dataString!];
         return {
           exercise: {
@@ -241,7 +241,9 @@ function EditReducer(state: EditState, action: EditAction) {
 
     case EditActionKind.CHANGE_SOLUTION_TEXT:
       if (exercise.type === ExerciseType.OPEN_ANSWER) {
-        let newSolution: OAResolutionData = { ...solution } as OAResolutionData;
+        const newSolution: OAResolutionData = {
+          ...solution,
+        } as OAResolutionData;
 
         newSolution.text = action.dataString!;
         return { ...state, solution: newSolution };
@@ -285,7 +287,7 @@ function EditReducer(state: EditState, action: EditAction) {
 
     case EditActionKind.SET_TOPIC:
       if (exercise.type === ExerciseType.CHAT) {
-        let newTopics = [...action.dataLString!];
+        const newTopics = [...action.dataLString!];
         return {
           ...state,
           exercise: {

@@ -11,13 +11,13 @@ export function CQEdit({ context, exercise }: CQEditProps) {
   const [topics, setTopics] = useState<string[]>([]);
 
   const addTopic = () => {
-    let newTopic = [...topics];
+    const newTopic = [...topics];
     newTopic.push("");
     setTopics(newTopic);
   };
 
   const changeTopic = (index: number, topic: string) => {
-    let newTopic = [...topics];
+    const newTopic = [...topics];
     newTopic[index] = topic;
     setTopics(newTopic);
     context.dispatch({
@@ -27,8 +27,8 @@ export function CQEdit({ context, exercise }: CQEditProps) {
   };
 
   const deleteTopic = (index: number) => {
-    let newTopic = [...topics];
-    let newTopic2 = newTopic.filter((_, ind) => {
+    const newTopic = [...topics];
+    const newTopic2 = newTopic.filter((_, ind) => {
       return ind !== index;
     });
     setTopics(newTopic2);

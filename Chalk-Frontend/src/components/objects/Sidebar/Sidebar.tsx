@@ -249,7 +249,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 showGroup && isOpen ? "" : "hidden"
               } sidebar-dropdown`}
             >
-              {user.user?.courses.map((item, index) => (
+              {user.user?.courses?.map((item, index) => (
                 <li key={index}>
                   <button
                     onClick={() => {

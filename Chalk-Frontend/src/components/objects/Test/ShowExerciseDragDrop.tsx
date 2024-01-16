@@ -93,7 +93,7 @@ export function ShowExerciseDragDrop({
   function handleChange(value: string) {
     const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
     if (result) {
-      let resultStr = result[2].toString();
+      const resultStr = result[2].toString();
       if (resultStr !== "") setValue(resultStr);
       else setValue("0");
     }

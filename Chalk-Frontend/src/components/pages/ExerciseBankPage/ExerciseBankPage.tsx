@@ -37,7 +37,7 @@ export function ExerciseBankPage() {
 
   const setRubric = (id: string, rubric?: Rubric) => {
     if (rubric) {
-      let newRubrics = { ...rubrics };
+      const newRubrics = { ...rubrics };
       newRubrics[id] = rubric;
       setRubrics(newRubrics);
     }
@@ -45,7 +45,7 @@ export function ExerciseBankPage() {
 
   const setSolution = (id: string, solution?: ResolutionData) => {
     if (solution) {
-      let newSol = { ...solutions };
+      const newSol = { ...solutions };
       newSol[id] = solution;
       setSolutions(newSol);
     }
@@ -151,7 +151,7 @@ export function ExerciseBankPage() {
                     exercise: exerciseTR,
                     solution: solutionTR,
                     rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                  }).then((response) => {
+                  }).then(() => {
                     dispatch({
                       type: ListExerciseActionKind.EDIT_EXERCISE,
                       payload: { exercise: state.exercise },

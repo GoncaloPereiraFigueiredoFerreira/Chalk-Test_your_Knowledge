@@ -8,7 +8,6 @@ import {
 } from "../../objects/SVGImages/SVGImages";
 import { APIContext } from "../../../APIContext";
 
-import { CreateStudentModal } from "./CreateStudent";
 import { Button, Modal, TextInput } from "flowbite-react";
 
 interface Student {
@@ -42,7 +41,7 @@ export function AlunosPage() {
     if (email !== "") {
       contactBACK("courses/" + id + "/students/add", "POST", undefined, [
         email,
-      ]).then((response) => {
+      ]).then(() => {
         setEmail("");
 
         setOpenModal(false);
@@ -61,7 +60,7 @@ export function AlunosPage() {
   const removeStudent = (emailToRemove: string) => {
     contactBACK("courses/" + id + "/students/remove", "DELETE", undefined, [
       emailToRemove,
-    ]).then((response) => {
+    ]).then(() => {
       setStudentList((prevlist) =>
         prevlist.filter((student) => student.email !== emailToRemove)
       );

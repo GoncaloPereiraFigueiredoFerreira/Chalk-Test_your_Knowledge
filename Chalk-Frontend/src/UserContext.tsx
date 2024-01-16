@@ -41,7 +41,7 @@ export function UserProvider({ children }: any) {
   const [cookies, setCookie] = useCookies(["chalkauthtoken"]);
 
   const login = (user: User) => {
-    let newState: UserState = {
+    const newState: UserState = {
       authenticated: true,
       user: { ...user },
     };
@@ -58,7 +58,7 @@ export function UserProvider({ children }: any) {
   useEffect(() => {
     // Se existe a cookie
     if ("chalkauthtoken" in cookies && cookies.chalkauthtoken !== "") {
-      let user = localStorage.getItem("user");
+      const user = localStorage.getItem("user");
       // Se estiver no local storage
       if (user != null) {
         login(JSON.parse(user).user);

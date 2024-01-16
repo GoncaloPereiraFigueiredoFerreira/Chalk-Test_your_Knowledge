@@ -285,7 +285,7 @@ export function ExerciseComponent({
 
 export function InitExercise(type: ExerciseType): Exercise {
   let newExercise: Exercise;
-  let base = {
+  const base = {
     title: "Novo Exercício",
     statement: {
       text: "",
@@ -293,7 +293,7 @@ export function InitExercise(type: ExerciseType): Exercise {
     tags: [],
   };
 
-  let identity: ExerciseIdentity = {
+  const identity: ExerciseIdentity = {
     id: "",
     specialistId: "",
     visibility: "public",
@@ -301,7 +301,7 @@ export function InitExercise(type: ExerciseType): Exercise {
 
   switch (type) {
     case ExerciseType.TRUE_OR_FALSE:
-      let TFExercise: TFExercise = {
+      const TFExercise: TFExercise = {
         base: base,
         type: ExerciseType.TRUE_OR_FALSE,
         props: {
@@ -313,7 +313,7 @@ export function InitExercise(type: ExerciseType): Exercise {
       newExercise = TFExercise;
       break;
     case ExerciseType.MULTIPLE_CHOICE:
-      let MCExercise: MCExercise = {
+      const MCExercise: MCExercise = {
         base: base,
         type: ExerciseType.MULTIPLE_CHOICE,
         props: {
@@ -325,7 +325,7 @@ export function InitExercise(type: ExerciseType): Exercise {
       newExercise = MCExercise;
       break;
     case ExerciseType.OPEN_ANSWER:
-      let OAExercise: OAExercise = {
+      const OAExercise: OAExercise = {
         base: base,
         type: ExerciseType.OPEN_ANSWER,
         props: {},
@@ -335,7 +335,7 @@ export function InitExercise(type: ExerciseType): Exercise {
       break;
 
     case ExerciseType.CHAT:
-      let CQExercise: CQExercise = {
+      const CQExercise: CQExercise = {
         base: base,
         type: ExerciseType.CHAT,
         props: {
@@ -353,14 +353,14 @@ export function InitResolutionDataEx(exercise: Exercise): ResolutionData {
   let newRes: ResolutionData;
   switch (exercise.type) {
     case ExerciseType.CHAT:
-      let CQRes: CQResolutionData = {
+      const CQRes: CQResolutionData = {
         type: ExerciseType.CHAT,
         msgs: [exercise.base.statement.text],
       };
       newRes = CQRes;
       break;
     case ExerciseType.MULTIPLE_CHOICE:
-      let MCRes: MCResolutionData = {
+      const MCRes: MCResolutionData = {
         type: ExerciseType.MULTIPLE_CHOICE,
         items: { ...exercise.props.items },
         justifyType: exercise.props.justifyType,
@@ -368,7 +368,7 @@ export function InitResolutionDataEx(exercise: Exercise): ResolutionData {
       newRes = MCRes;
       break;
     case ExerciseType.TRUE_OR_FALSE:
-      let TFRes: TFResolutionData = {
+      const TFRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
         items: { ...exercise.props.items },
         justifyType: exercise.props.justifyType,
@@ -377,7 +377,7 @@ export function InitResolutionDataEx(exercise: Exercise): ResolutionData {
       break;
 
     case ExerciseType.OPEN_ANSWER:
-      let OARes: OAResolutionData = {
+      const OARes: OAResolutionData = {
         type: ExerciseType.OPEN_ANSWER,
         text: "",
       };
@@ -391,14 +391,14 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
   let newRes: ResolutionData;
   switch (type) {
     case ExerciseType.CHAT:
-      let CQRes: CQResolutionData = {
+      const CQRes: CQResolutionData = {
         type: ExerciseType.CHAT,
         msgs: [],
       };
       newRes = CQRes;
       break;
     case ExerciseType.MULTIPLE_CHOICE:
-      let MCRes: MCResolutionData = {
+      const MCRes: MCResolutionData = {
         type: ExerciseType.MULTIPLE_CHOICE,
         justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
@@ -406,7 +406,7 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
       newRes = MCRes;
       break;
     case ExerciseType.TRUE_OR_FALSE:
-      let TFRes: TFResolutionData = {
+      const TFRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
         justifyType: ExerciseJustificationKind.NO_JUSTIFICATION,
         items: {},
@@ -415,7 +415,7 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
       break;
 
     case ExerciseType.OPEN_ANSWER:
-      let OARes: OAResolutionData = {
+      const OARes: OAResolutionData = {
         type: ExerciseType.OPEN_ANSWER,
         text: "",
       };
@@ -438,7 +438,7 @@ export function TranslateExerciseOUT(exercise: Exercise): {
 } {
   let exerciseTR = {};
 
-  let exerciseBASE = {
+  const exerciseBASE = {
     title: exercise.base.title,
     visibility: exercise.identity.visibility,
     statement: exercise.base.statement,
@@ -477,8 +477,8 @@ export function TranslateExerciseOUT(exercise: Exercise): {
           break;
       }
 
-      let newExItems: { [id: string]: any } = {};
-      let newSolItems: { [id: string]: any } = {};
+      const newExItems: { [id: string]: any } = {};
+      const newSolItems: { [id: string]: any } = {};
 
       Object.keys(exercise.props.items).map((key) => {
         newExItems[key] = {
@@ -517,12 +517,12 @@ export function TranslateExerciseOUT(exercise: Exercise): {
 }
 
 export function TranslateExerciseIN(exercise: any): Exercise {
-  let tags: string[] = [];
+  const tags: string[] = [];
   exercise.tags.map((tag: any) => {
     tags.push(tag.name);
   });
 
-  let exerciseBase = {
+  const exerciseBase = {
     base: {
       title: exercise.title,
       statement: exercise.statement,
@@ -541,11 +541,11 @@ export function TranslateExerciseIN(exercise: any): Exercise {
     case "MC":
       let justification: ExerciseJustificationKind;
       type =
-        (exercise.mctype as Number).toString().charAt(0) === "1"
+        (exercise.mctype as number).toString().charAt(0) === "1"
           ? ExerciseType.MULTIPLE_CHOICE
           : ExerciseType.TRUE_OR_FALSE;
 
-      switch ((exercise.mctype as Number).toString().charAt(1)) {
+      switch ((exercise.mctype as number).toString().charAt(1)) {
         case "0":
           justification = ExerciseJustificationKind.NO_JUSTIFICATION;
           break;
@@ -568,13 +568,13 @@ export function TranslateExerciseIN(exercise: any): Exercise {
         default:
           justification = ExerciseJustificationKind.NO_JUSTIFICATION;
       }
-      let items: any = {};
+      const items: any = {};
 
       Object.keys(exercise.items).map((key: string) => {
         items[key] = { text: exercise.items[key].text };
       });
 
-      let propsMC: MCProps = {
+      const propsMC: MCProps = {
         items: items,
         justifyType: justification,
       };
@@ -584,7 +584,7 @@ export function TranslateExerciseIN(exercise: any): Exercise {
       break;
 
     case "CE":
-      let propsCQ: CQProps = {
+      const propsCQ: CQProps = {
         maxAnswers: exercise.maxAnswers,
         topics: exercise.topics,
       };
@@ -607,7 +607,7 @@ export function TranslateExerciseIN(exercise: any): Exercise {
 }
 
 export function TranslateTestExerciseIN(exercise: any): Exercise {
-  let newEx = TranslateExerciseIN(exercise.exercise);
+  const newEx = TranslateExerciseIN(exercise.exercise);
   newEx.identity.points = exercise.points;
   return newEx;
 }
@@ -627,7 +627,7 @@ export function TranslateResolutionIN(
   let newRes: ResolutionData;
   switch (exercise.type) {
     case ExerciseType.CHAT:
-      let CQRes: CQResolutionData = {
+      const CQRes: CQResolutionData = {
         type: ExerciseType.CHAT,
         msgs: [...solution.chat], // CHECK WITH BRONZE
       };
@@ -635,7 +635,7 @@ export function TranslateResolutionIN(
       break;
 
     case ExerciseType.MULTIPLE_CHOICE:
-      let MCRes: MCResolutionData = {
+      const MCRes: MCResolutionData = {
         type: ExerciseType.MULTIPLE_CHOICE,
         items: { ...exercise.props.items },
         justifyType: exercise.props.justifyType,
@@ -649,7 +649,7 @@ export function TranslateResolutionIN(
       break;
 
     case ExerciseType.TRUE_OR_FALSE:
-      let TFRes: TFResolutionData = {
+      const TFRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
         items: { ...exercise.props.items },
         justifyType: exercise.props.justifyType,
@@ -662,7 +662,7 @@ export function TranslateResolutionIN(
       break;
 
     case ExerciseType.OPEN_ANSWER:
-      let OARes: OAResolutionData = {
+      const OARes: OAResolutionData = {
         type: ExerciseType.OPEN_ANSWER,
         text: solution.text,
       };
@@ -689,7 +689,7 @@ export function TranslateTestResolutionIN(resolution: any): ResolutionData {
   let newRes: ResolutionData;
   switch (resolution.type) {
     case "CE":
-      let CQRes: CQResolutionData = {
+      const CQRes: CQResolutionData = {
         type: ExerciseType.CHAT,
         msgs: [...resolution.chat],
       };
@@ -698,7 +698,7 @@ export function TranslateTestResolutionIN(resolution: any): ResolutionData {
 
     case "MC":
       // Got to fix this
-      let MCRes: TFResolutionData = {
+      const MCRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
         items: resolution.items,
         justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
@@ -707,7 +707,7 @@ export function TranslateTestResolutionIN(resolution: any): ResolutionData {
       break;
 
     case "OA":
-      let OARes: OAResolutionData = {
+      const OARes: OAResolutionData = {
         type: ExerciseType.OPEN_ANSWER,
         text: resolution.text,
       };

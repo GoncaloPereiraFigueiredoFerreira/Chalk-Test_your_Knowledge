@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { APIContext } from "../../../APIContext";
-import { UserContext } from "../../../UserContext";
 
 export function CreateGroupModal({ open, close }: any) {
   const [name, setGroupName] = useState("");

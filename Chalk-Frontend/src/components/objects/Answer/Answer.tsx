@@ -1,9 +1,4 @@
-import {
-  Exercise,
-  ExerciseJustificationKind,
-  ExerciseType,
-  Resolution,
-} from "../Exercise/Exercise";
+import { ExerciseType, Resolution } from "../Exercise/Exercise";
 import { useState, useEffect } from "react";
 import { TFAnswer } from "./TFAnswer";
 import { OAAnswer } from "./OAAnswer";

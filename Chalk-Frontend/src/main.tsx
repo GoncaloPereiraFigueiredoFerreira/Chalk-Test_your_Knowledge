@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import { UserProvider } from "./UserContext.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { APIProvider } from "./APIContext.tsx";
+// eslint-disable-next-line react-refresh/only-export-components
 const GCLIENTID = import.meta.env.VITE_G_CLIENTID;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

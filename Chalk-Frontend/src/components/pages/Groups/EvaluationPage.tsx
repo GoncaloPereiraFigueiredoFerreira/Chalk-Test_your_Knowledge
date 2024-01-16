@@ -1,5 +1,5 @@
-import { Link, Outlet, useParams } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
   CircularProgressbar,
   CircularProgressbarWithChildren,
@@ -188,7 +188,7 @@ function ShowExcelLike(resultsList: TestList) {
 }
 
 function histogramData(resultsList: TestList) {
-  let grade_distribution = [0, 0, 0, 0, 0];
+  const grade_distribution = [0, 0, 0, 0, 0];
   resultsList.map((result) => {
     if (result.grade < 40) {
       grade_distribution[0] += 1;

@@ -8,32 +8,32 @@ import {
 
 export function RubricEdit(rubric: Rubric, setState: Function) {
   const addCriteria = () => {
-    let newCriteriaL: Criteria[] = [...rubric.criteria];
-    let newCriteria: Criteria = createNewCriteria();
+    const newCriteriaL: Criteria[] = [...rubric.criteria];
+    const newCriteria: Criteria = createNewCriteria();
     newCriteriaL.push(newCriteria);
     setState({ criteria: newCriteriaL });
   };
 
   const remCriteria = (index: number) => {
-    let newCriteriaL: Criteria[] = [...rubric.criteria].filter((_, ind) => {
+    const newCriteriaL: Criteria[] = [...rubric.criteria].filter((_, ind) => {
       return ind !== index;
     });
     setState({ criteria: newCriteriaL });
   };
 
   const changeCriteriaTitle = (index: number, title: string) => {
-    let newCriteria: Criteria = { ...rubric.criteria[index] };
+    const newCriteria: Criteria = { ...rubric.criteria[index] };
     newCriteria.title = title;
-    let newCriteriaL: Criteria[] = [...rubric.criteria];
+    const newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[index] = newCriteria;
 
     setState({ criteria: newCriteriaL });
   };
 
   const changeCriteriaPoints = (index: number, points: string) => {
-    let newCriteria: Criteria = { ...rubric.criteria[index] };
+    const newCriteria: Criteria = { ...rubric.criteria[index] };
     newCriteria.points = Number.parseInt(points);
-    let newCriteriaL: Criteria[] = [...rubric.criteria];
+    const newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[index] = newCriteria;
 
     setState({ criteria: newCriteriaL });
@@ -44,18 +44,18 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
     standIndex: number,
     description: string
   ) => {
-    let newStandard: Standard = {
+    const newStandard: Standard = {
       ...rubric.criteria[critIndex].standards[standIndex],
     };
     newStandard.description = description;
 
-    let newStandards: Standard[] = [...rubric.criteria[critIndex].standards];
+    const newStandards: Standard[] = [...rubric.criteria[critIndex].standards];
     newStandards[standIndex] = newStandard;
 
-    let newCriteria: Criteria = { ...rubric.criteria[critIndex] };
+    const newCriteria: Criteria = { ...rubric.criteria[critIndex] };
     newCriteria.standards = newStandards;
 
-    let newCriteriaL: Criteria[] = [...rubric.criteria];
+    const newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[critIndex] = newCriteria;
 
     setState({ criteria: newCriteriaL });
@@ -66,18 +66,18 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
     standIndex: number,
     percentage: string
   ) => {
-    let newStandard: Standard = {
+    const newStandard: Standard = {
       ...rubric.criteria[critIndex].standards[standIndex],
     };
     newStandard.percentage = Number.parseInt(percentage);
 
-    let newStandards: Standard[] = [...rubric.criteria[critIndex].standards];
+    const newStandards: Standard[] = [...rubric.criteria[critIndex].standards];
     newStandards[standIndex] = newStandard;
 
-    let newCriteria: Criteria = { ...rubric.criteria[critIndex] };
+    const newCriteria: Criteria = { ...rubric.criteria[critIndex] };
     newCriteria.standards = newStandards;
 
-    let newCriteriaL: Criteria[] = [...rubric.criteria];
+    const newCriteriaL: Criteria[] = [...rubric.criteria];
     newCriteriaL[critIndex] = newCriteria;
 
     setState({ criteria: newCriteriaL });

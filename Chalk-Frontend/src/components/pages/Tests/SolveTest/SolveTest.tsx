@@ -5,7 +5,7 @@ import {
   TranslateTestExerciseIN,
 } from "../../../objects/Exercise/Exercise";
 
-import { InitTest, Test } from "../../../objects/Test/Test";
+import { ExerciseGroup, InitTest, Test } from "../../../objects/Test/Test";
 import { SolveTestEnd } from "./SolveTestEnd";
 import { SolveTestExercise } from "./SolveTestExercise";
 import { SolveTestLanding } from "./SolveTestStart";
@@ -14,7 +14,7 @@ import { APIContext } from "../../../../APIContext";
 
 function CountExercises(test: Test) {
   let result: number = 0;
-  test.groups.map((group: any) => {
+  test.groups.map((group: ExerciseGroup) => {
     result += group.exercises.length;
   });
   return result;
@@ -35,6 +35,8 @@ export const SolveTestContext = createContext<{
     globalPoints: 0,
     globalInstructions: "",
     groups: [],
+    id: "",
+    visibility: "",
   },
   resolutions: [],
   setExerciseSolution: () => {},
@@ -42,10 +44,10 @@ export const SolveTestContext = createContext<{
 });
 
 function initResolutions(test: Test): ResolutionData[][] {
-  let initResolution: ResolutionData[][] = [];
+  const initResolution: ResolutionData[][] = [];
 
   test.groups.map((group, groupID) => {
-    let groupRes: ResolutionData[] = [];
+    const groupRes: ResolutionData[] = [];
     initResolution.push(groupRes);
 
     group.exercises.map((exercise) => {
@@ -86,8 +88,8 @@ export function SolveTest() {
     exerciseID: number,
     resolutionData: ResolutionData
   ) => {
-    let tmpRes = [...resolutions];
-    let tmpRes2 = [...tmpRes[groupID - 1]];
+    const tmpRes = [...resolutions];
+    const tmpRes2 = [...tmpRes[groupID - 1]];
     tmpRes2[exerciseID - 1] = resolutionData;
     tmpRes[groupID - 1] = tmpRes2;
     setResolution(tmpRes);

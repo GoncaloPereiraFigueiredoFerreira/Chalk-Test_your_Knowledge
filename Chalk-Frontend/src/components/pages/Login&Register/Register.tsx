@@ -89,7 +89,7 @@ export function Register() {
     switch (response.status) {
       case 200:
         response.json().then((result: any) => {
-          let userInfo: User = {
+          const userInfo: User = {
             email: result.user.username,
             name: result.user.name,
             photoPath: "",

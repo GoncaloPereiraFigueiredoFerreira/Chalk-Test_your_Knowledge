@@ -53,7 +53,7 @@ export function PreviewTest() {
         "GET"
       ).then((response) => {
         response.json().then((res: any) => {
-          let temp: {
+          const temp: {
             [id: string]: {
               resId: string;
               data: ResolutionData | undefined;
@@ -87,8 +87,8 @@ export function PreviewTest() {
         "GET"
       ).then((response) => {
         response.json().then((exRes) => {
-          let newResData = TranslateTestResolutionIN(exRes.data);
-          let tmp = { ...testResolution };
+          const newResData = TranslateTestResolutionIN(exRes.data);
+          const tmp = { ...testResolution };
           tmp.resolutions[selEx].data = newResData;
           tmp.resolutions[selEx].points = exRes.points;
           setTestRes(tmp);
