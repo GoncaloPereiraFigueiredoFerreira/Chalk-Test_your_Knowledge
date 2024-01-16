@@ -15,10 +15,6 @@ import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceRubr
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * ChatExerciseRubric
  */
@@ -31,18 +27,18 @@ import java.util.Objects;
 public class ChatExerciseRubric extends ExerciseRubric {
 
     @Type(JsonBinaryType.class)
-    @Column(name = "openAnswerRubric", columnDefinition = "jsonb")
-    private OpenAnswerRubric openAnswerRubric;
+    @Column(name = "rubric", columnDefinition = "jsonb")
+    private OpenAnswerRubric rubric;
 
     public ChatExerciseRubric(String id,  OpenAnswerRubric openAnswerRubric) {
         super(id);
-        this.openAnswerRubric = openAnswerRubric;
+        this.rubric = openAnswerRubric;
     }
 
     @Override
     public void verifyProperties() throws BadInputException {
-        if(openAnswerRubric!=null){
-            openAnswerRubric.verifyProperties();
+        if(rubric !=null){
+            rubric.verifyProperties();
         } else throw new BadInputException("Open Answer Rubric inside Chat Exercise Rubric cannot be null");
     }
 
@@ -50,15 +46,13 @@ public class ChatExerciseRubric extends ExerciseRubric {
     public boolean equals(ExerciseRubric exerciseRubric) {
         if(!(exerciseRubric instanceof MultipleChoiceRubric multipleChoiceRubric))
             return false;
-        if(!openAnswerRubric.equals(multipleChoiceRubric))
+        if(!rubric.equals(multipleChoiceRubric))
             return false;
         return true;
     }
 
     @Override
     public ExerciseRubric clone() {
-        return new ChatExerciseRubric(getId(), openAnswerRubric.clone());
+        return new ChatExerciseRubric(getId(), rubric.clone());
     }
-
-    
 }
