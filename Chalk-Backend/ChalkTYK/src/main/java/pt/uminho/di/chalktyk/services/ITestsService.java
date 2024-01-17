@@ -422,7 +422,7 @@ public interface ITestsService {
     TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException;
 
     /**
-     * Get latest test resolution made by the student
+     * Manually correct an exercise from a test
      *
      * @param exeResId  exercise resolution identifier
      * @param testResId test resolution identifier

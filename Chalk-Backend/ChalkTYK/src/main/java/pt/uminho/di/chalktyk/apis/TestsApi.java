@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2001;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
@@ -608,6 +609,21 @@ public interface TestsApi {
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String correctionType);
+
+    @Operation(summary = "Manually correct an exercise from a test", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/resolutions/{testResId}/{exeResId}/manual-correction",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> manualCorrectionForExercise(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testResId") String testResId,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exeResId") String exeResId,
+            @Parameter(in = ParameterIn.DEFAULT, description = "", required=true) @RequestBody ManualExerciseCorrectionDTO mecDTO);
 
     @Operation(summary = "Submits a test resolution and revises it (with 'auto' correction type)", description = "", tags={ "tests" })
     @ApiResponses(value = {
