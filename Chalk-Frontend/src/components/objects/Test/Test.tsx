@@ -48,7 +48,7 @@ export function InitTest() {
 }
 
 export function CreateTest(author: string) {
-  let test: Test = InitTest();
+  const test: Test = InitTest();
   test.author = author;
   return test;
 }

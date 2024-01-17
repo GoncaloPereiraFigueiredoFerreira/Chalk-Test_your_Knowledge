@@ -15,7 +15,7 @@ export interface OASolveProps {
 }
 
 export function OASolve(props: OASolveProps) {
-  let initState: OAResolutionData = props.context
+  const initState: OAResolutionData = props.context
     .resolutionData as OAResolutionData;
 
   const [state, setState] = useState<OAResolutionData>(initState);

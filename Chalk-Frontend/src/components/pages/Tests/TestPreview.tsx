@@ -6,6 +6,7 @@ import {
   ExerciseTypeToString,
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
+import { TestResolution } from "./Preview/PreviewTest";
 
 function renderExercise(
   exercise: Exercise,
@@ -13,7 +14,8 @@ function renderExercise(
   groupIndex: number,
   exerciseSelected: number,
   setSelectedExercise: Function,
-  setShowExID: Function
+  setShowExID: Function,
+  testResolutions?: TestResolution
 ) {
   return (
     <div
@@ -29,12 +31,32 @@ function renderExercise(
         <label className="text-md font-medium">
           Exercício {index + 1} - {ExerciseTypeToString(exercise.type)}
         </label>
-        <p>Cotação do Exercício: {exercise.identity.points}</p>
+        <div>
+          <p>Cotação do Exercício: {exercise.identity.points}</p>
+          {testResolutions &&
+          testResolutions.resolutions[exercise.identity.id] ? (
+            <p>
+              Cotação Obtida:
+              {(exercise.identity.points! *
+                testResolutions.resolutions[exercise.identity.id].points) /
+                100}
+            </p>
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
       {index == exerciseSelected ? (
         <ExerciseComponent
           exercise={exercise}
-          context={{ context: ExerciseContext.PREVIEW }}
+          context={{
+            context: ExerciseContext.PREVIEW,
+            resolution:
+              testResolutions &&
+              testResolutions.resolutions[exercise.identity.id]
+                ? testResolutions.resolutions[exercise.identity.id].data
+                : undefined,
+          }}
           position={groupIndex + 1 + "." + (index + 1)}
         ></ExerciseComponent>
       ) : (
@@ -51,7 +73,8 @@ function renderGroup(
   setSelectedEx: Function,
   selectedGroup: number,
   setSelectedGroup: Function,
-  setShowExID: Function
+  setShowExID: Function,
+  testResolutions?: TestResolution
 ) {
   return (
     <div
@@ -78,7 +101,8 @@ function renderGroup(
                 index,
                 selectedEx,
                 setSelectedEx,
-                setShowExID
+                setShowExID,
+                testResolutions
               );
             })}
           </div>
@@ -94,6 +118,7 @@ export interface TestPreviewProps {
   test: Test;
   showExId: string;
   setShowExID: Function;
+  testResolution?: TestResolution;
 }
 
 function findId(id: string, test: Test) {
@@ -106,14 +131,18 @@ function findId(id: string, test: Test) {
   return { group: -1, ex: -1 };
 }
 
-export function TestPreview({ test, showExId, setShowExID }: TestPreviewProps) {
+export function TestPreview({
+  test,
+  showExId,
+  setShowExID,
+  testResolution,
+}: TestPreviewProps) {
   const [selectedGroup, setSelectedGroup] = useState(-1);
   const [selectedEx, setSelectedEx] = useState(-1);
 
   useEffect(() => {
-    //Queria mostrar este exercicio
     if (showExId !== "") {
-      let { group, ex } = findId(showExId, test);
+      const { group, ex } = findId(showExId, test);
       if (group != selectedGroup) {
         setSelectedGroup(group);
       }
@@ -158,7 +187,8 @@ export function TestPreview({ test, showExId, setShowExID }: TestPreviewProps) {
               setSelectedEx,
               selectedGroup,
               setSelectedGroup,
-              setShowExID
+              setShowExID,
+              testResolution
             );
           })}
         </div>

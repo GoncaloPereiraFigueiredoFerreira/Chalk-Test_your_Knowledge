@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import pt.uminho.di.chalktyk.Seed;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
@@ -15,7 +14,6 @@ import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
-import pt.uminho.di.chalktyk.models.exercises.items.ItemsList;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.exercises.multiple_choice.*;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.*;
@@ -31,7 +29,7 @@ import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -629,7 +627,7 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createResolutionAndAutoCorrectAndDelete() throws BadInputException, NotFoundException, UnauthorizedException {
+    public void createResolutionAndAutoCorrectAndDelete() throws BadInputException, NotFoundException, ForbiddenException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
@@ -665,7 +663,7 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createResolutionsAndAutoCorrect() throws BadInputException, NotFoundException, UnauthorizedException {
+    public void createResolutionsAndAutoCorrect() throws BadInputException, NotFoundException, ForbiddenException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);
@@ -724,7 +722,7 @@ public class ExercisesServiceTest {
     }
 
     @Test
-    public void createResolutionAndManuallyCorrect() throws BadInputException, NotFoundException, UnauthorizedException {
+    public void createResolutionAndManuallyCorrect() throws BadInputException, NotFoundException, ForbiddenException {
         ExerciseSolution exerciseSolution = createMCSolution();
         ExerciseRubric exerciseRubric = createMCRubric();
         Exercise exercise = createMCExercise(specialistId,courseId);

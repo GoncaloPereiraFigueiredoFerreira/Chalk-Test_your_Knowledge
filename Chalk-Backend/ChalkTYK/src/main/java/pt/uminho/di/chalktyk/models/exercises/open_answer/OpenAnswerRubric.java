@@ -32,6 +32,10 @@ public class OpenAnswerRubric extends ExerciseRubric {
 		this.criteria = criteria;
 	}
 
+	public List<OACriterion> getCriteria(){
+        return criteria != null ? criteria.stream().map(OACriterion::clone).toList() : null;
+	}
+
 	@Override
 	public void verifyProperties() throws BadInputException {
 		if(criteria == null || criteria.isEmpty())
@@ -61,7 +65,6 @@ public class OpenAnswerRubric extends ExerciseRubric {
 	}
 
 	public OpenAnswerRubric clone(){
-		var clonedCriteria = criteria != null ? criteria.stream().map(OACriterion::clone).toList() : null;
-		return new OpenAnswerRubric(getId(), clonedCriteria);
+		return new OpenAnswerRubric(getId(), getCriteria());
     }
 }

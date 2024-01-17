@@ -120,15 +120,10 @@ interface MCStatementEditProps {
   id: string;
   position: number;
 }
-function MCStatementEdit({
-  dispatch,
-  id,
-  solution,
-  position,
-}: MCStatementEditProps) {
-  let name = "mc" + position;
+function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
+  const name = "mc";
   if (solution.type === ExerciseType.MULTIPLE_CHOICE) {
-    let solutionItem = solution.items[id];
+    const solutionItem = solution.items[id];
     return (
       <>
         <li className="flex items-center space-y-1">

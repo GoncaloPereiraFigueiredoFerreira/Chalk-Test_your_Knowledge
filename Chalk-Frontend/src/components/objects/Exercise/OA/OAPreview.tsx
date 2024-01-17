@@ -1,5 +1,5 @@
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
-import { OAExercise, PreviewProps } from "../Exercise";
+import { OAExercise, OAResolutionData, PreviewProps } from "../Exercise";
 import { ExerciseHeaderComp } from "../Header/ExHeader";
 
 export interface OAPreviewProps {
@@ -22,6 +22,11 @@ export function OAPreview(props: OAPreviewProps) {
               toolbar
               className="w-full focus:ring-0  pb-2"
               disabled={true}
+              value={
+                props.context.resolution
+                  ? (props.context.resolution as OAResolutionData).text
+                  : ""
+              }
             ></TextareaBlock>
           </div>
         </div>

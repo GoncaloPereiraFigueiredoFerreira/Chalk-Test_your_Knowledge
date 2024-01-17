@@ -29,7 +29,7 @@ export function EditTestInfo({
   saveEdit,
   cancelEdit,
 }: EditTestInfopProps) {
-  const [type, setType] = useState(testInfo.type);
+  const [type] = useState(testInfo.type);
   const [conclusion, setConclusion] = useState(testInfo.conclusion);
   const [title, setTitle] = useState(testInfo.title);
   const [globalInstructions, setGlobalInstructions] = useState(

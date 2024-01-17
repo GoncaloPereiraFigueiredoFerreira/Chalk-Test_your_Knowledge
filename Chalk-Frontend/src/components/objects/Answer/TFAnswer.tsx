@@ -10,7 +10,7 @@ import { AnswerProps } from "./Answer";
 
 export function TFAnswer({ solution }: AnswerProps) {
   if (solution.data.type == ExerciseType.TRUE_OR_FALSE) {
-    let solDate = solution.data as TFResolutionData;
+    const solDate = solution.data as TFResolutionData;
     if (solution.type === ResolutionType.SOLUTION) {
       return (
         <div>
@@ -18,7 +18,7 @@ export function TFAnswer({ solution }: AnswerProps) {
             <div className="flex text-xl font-bold px-4 ">V</div>
             <div className="flex text-xl font-bold px-4 ">F</div>
             <div></div>
-            {Object.keys(solution.data.items).map((index, key) => {
+            {Object.keys(solution.data.items).map((index) => {
               return (
                 <>
                   <div className="flex items-start justify-center">
@@ -53,8 +53,8 @@ export function TFAnswer({ solution }: AnswerProps) {
             <div className="flex text-xl font-bold px-4">V</div>
             <div className="flex text-xl font-bold px-4">F</div>
             <div></div>
-            {Object.keys(solution.data.items).map((index, key) => {
-              let justify: boolean =
+            {Object.keys(solution.data.items).map((index) => {
+              const justify: boolean =
                 (solDate.justifyType ===
                   ExerciseJustificationKind.JUSTIFY_ALL &&
                   "value" in solDate.items[index]) ||

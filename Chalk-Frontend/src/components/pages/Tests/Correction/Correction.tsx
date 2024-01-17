@@ -36,18 +36,18 @@ export function Correction() {
   const { testID } = useParams();
 
   const setRubric = (id: string, rubric: Rubric) => {
-    let newRubrics: Rubrics = { ...rubrics };
+    const newRubrics: Rubrics = { ...rubrics };
     newRubrics[id] = rubric;
     setRubrics(newRubrics);
   };
 
   const addResolution = (exId: string, resId: string, res: Resolution) => {
-    let resCpy = { ...resolutions };
+    const resCpy = { ...resolutions };
     if (!(exId in resCpy)) {
       resCpy[exId] = { studentRes: {}, maxCotation: 0 };
     }
 
-    let cpyStudentRes = { ...resCpy[exId].studentRes };
+    const cpyStudentRes = { ...resCpy[exId].studentRes };
     cpyStudentRes[resId] = { ...res };
     resCpy[exId].studentRes = cpyStudentRes;
 
@@ -61,9 +61,9 @@ export function Correction() {
       undefined,
       { points: points, comment: comment }
     ).then(() => {
-      let resCpy = { ...resolutions[exID].studentRes };
+      const resCpy = { ...resolutions[exID].studentRes };
       delete resCpy[resId];
-      let newResolutions = { ...resolutions };
+      const newResolutions = { ...resolutions };
       newResolutions[exID] = { ...newResolutions[exID], studentRes: resCpy };
       setResolutions(newResolutions);
     });
@@ -101,7 +101,7 @@ export function Correction() {
                     .then((resJson) => {
                       setRubric(exID, json);
                       resJson.map((res: any) => {
-                        let newRes: Resolution = {
+                        const newRes: Resolution = {
                           id: res.resolution.id,
                           exerciseID: exID,
                           student: {

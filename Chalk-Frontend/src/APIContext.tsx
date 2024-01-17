@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext } from "react";
 import { useCookies } from "react-cookie";
 import { UserContext } from "./UserContext";
 
@@ -9,9 +9,9 @@ function ContactAPI(
   params?: { [key: string]: string },
   body?: object
 ) {
-  let query: URLSearchParams = new URLSearchParams();
+  const query: URLSearchParams = new URLSearchParams();
 
-  for (let key in params) {
+  for (const key in params) {
     query.append(key, params[key]);
   }
 
@@ -64,7 +64,7 @@ export function APIProvider({ children }: any) {
   const AUTHSERVER = import.meta.env.VITE_AUTH;
   const BACKSERVER = import.meta.env.VITE_BACKEND;
   const CHALKYSERVER = import.meta.env.VITE_AI_API;
-  const [cookies, setCookie] = useCookies(["chalkauthtoken"]);
+  const [cookies] = useCookies(["chalkauthtoken"]);
   const { logout } = useContext(UserContext);
 
   const ContactAUTH: contact = (

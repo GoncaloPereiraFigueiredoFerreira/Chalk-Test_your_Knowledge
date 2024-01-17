@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { APIContext } from "../../../../APIContext";
-import { redirect, useNavigate } from "react-router-dom";
-import { CreateTest, InitTest } from "../../../objects/Test/Test";
+import { useNavigate } from "react-router-dom";
+import { CreateTest } from "../../../objects/Test/Test";
 import { UserContext } from "../../../../UserContext";
 
 export function CreateTestPage() {

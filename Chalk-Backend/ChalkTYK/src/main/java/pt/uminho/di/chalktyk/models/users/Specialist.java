@@ -1,6 +1,5 @@
 package pt.uminho.di.chalktyk.models.users;
 
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -74,7 +74,7 @@ export function Login() {
     switch (response.status) {
       case 200:
         response.json().then((result: any) => {
-          let userInfo: User = {
+          const userInfo: User = {
             id: "",
             email: result.user.username,
             name: result.user.name,

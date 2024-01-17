@@ -16,7 +16,7 @@ export interface CQSolveProps {
 }
 
 export function CQSolve(props: CQSolveProps) {
-  let initState: CQResolutionData = props.context
+  const initState: CQResolutionData = props.context
     .resolutionData as CQResolutionData;
 
   const { contactBACK } = useContext(APIContext);
@@ -29,7 +29,7 @@ export function CQSolve(props: CQSolveProps) {
   const [currentMsg, setMsg] = useState("");
 
   const addMsg = (text: string) => {
-    let tmpMsgs = [...state.msgs];
+    const tmpMsgs = [...state.msgs];
     tmpMsgs.unshift(text);
     setState({ ...state, msgs: tmpMsgs });
   };
@@ -51,7 +51,7 @@ export function CQSolve(props: CQSolveProps) {
   }, [state]);
 
   useEffect(() => {
-    let tmpMsgs: string[] = [];
+    const tmpMsgs: string[] = [];
     initState.msgs.map((msg: string) => {
       tmpMsgs.push(msg);
     });

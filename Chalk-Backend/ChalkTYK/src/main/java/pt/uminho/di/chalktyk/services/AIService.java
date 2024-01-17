@@ -12,14 +12,10 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
@@ -28,8 +24,6 @@ import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseStatement;
 import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
 import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseData;
-import pt.uminho.di.chalktyk.models.exercises.items.Item;
-import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OACriterion;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OAStandard;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerData;
@@ -47,7 +41,7 @@ public class AIService implements IAIService {
 
     private final IExercisesService exercisesService;
     
-    private final String apiUrl = "http://localhost:5000";
+    private final String apiUrl = "http://api:5000";
 
     public AIService(IExercisesService exercisesService) {
         this.exercisesService = exercisesService;

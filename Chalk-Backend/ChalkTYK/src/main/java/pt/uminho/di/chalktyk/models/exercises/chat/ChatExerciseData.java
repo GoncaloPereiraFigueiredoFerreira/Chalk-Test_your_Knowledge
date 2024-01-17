@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.models.exercises.chat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 

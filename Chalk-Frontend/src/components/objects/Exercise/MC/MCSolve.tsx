@@ -5,7 +5,7 @@ import {
   SolveProps,
 } from "../Exercise";
 import { useEffect, useReducer } from "react";
-import { ExerciseHeaderComp, ImgPos } from "../Header/ExHeader";
+import { ExerciseHeaderComp } from "../Header/ExHeader";
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 
 export interface MCSolveProps {
@@ -32,7 +32,7 @@ export enum MCActionKind {
 function ExerciseMCReducer(mcState: MCResolutionData, mcAction: MCAction) {
   switch (mcAction.type) {
     case MCActionKind.CHOOSE:
-      let newItems = { ...mcState.items };
+      const newItems = { ...mcState.items };
 
       Object.keys(newItems).map(
         (index) => (newItems[index].value = index === mcAction.index)
@@ -40,7 +40,7 @@ function ExerciseMCReducer(mcState: MCResolutionData, mcAction: MCAction) {
       return { ...mcState, items: newItems };
 
     case MCActionKind.JUSTIFY:
-      let newItemsJUST = { ...mcState.items };
+      const newItemsJUST = { ...mcState.items };
       newItemsJUST[mcAction.index].justification = mcAction.payload ?? "";
       return { ...mcState, items: newItemsJUST };
 
@@ -53,7 +53,7 @@ function ExerciseMCReducer(mcState: MCResolutionData, mcAction: MCAction) {
 }
 
 export function MCSolve(props: MCSolveProps) {
-  let initState: MCResolutionData = props.context
+  const initState: MCResolutionData = props.context
     .resolutionData as MCResolutionData;
 
   const [state, dispatch] = useReducer(ExerciseMCReducer, initState);
@@ -113,7 +113,7 @@ export function MCSolve(props: MCSolveProps) {
 }
 
 function MCJustify(props: any) {
-  let justify: boolean =
+  const justify: boolean =
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_ALL &&
       "value" in props.state.items[props.index]) ||
     (props.justifyKind === ExerciseJustificationKind.JUSTIFY_FALSE &&

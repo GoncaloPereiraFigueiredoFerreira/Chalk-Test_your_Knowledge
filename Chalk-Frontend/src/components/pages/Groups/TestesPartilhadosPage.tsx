@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-import { Link, useNavigate } from "react-router-dom";
 import { ListTests, ViewType } from "../../objects/ListTests/ListTest";
 import {
   GridIcon,
@@ -11,7 +9,6 @@ import {
 export function TestesPartilhadosPage() {
   const [searchKey, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<ViewType>(ViewType.LIST);
-  const navigate = useNavigate();
   return (
     <div className="w-full h-screen py-24 overflow-auto bg-2-1">
       <div className=" w-full gap-4 min-h-max px-16 pb-8">

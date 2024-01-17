@@ -1,7 +1,6 @@
 package pt.uminho.di.chalktyk.models.exercises.chat;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -16,14 +15,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.hibernate.annotations.Type;
-import org.jetbrains.annotations.NotNull;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolutionData;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 /**
  * ChatExercise
@@ -46,8 +44,8 @@ public class ChatExercise extends Exercise {
     }
 
     @Override
-    public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws UnauthorizedException {
-        throw new UnauthorizedException("Chat exercise cannot be evaluated automatically.");
+    public ExerciseResolution automaticEvaluation(ExerciseResolution resolution, ExerciseSolution solution, ExerciseRubric rubric) throws ForbiddenException {
+        throw new ForbiddenException("Chat exercise cannot be evaluated automatically.");
     }
 
     @Override

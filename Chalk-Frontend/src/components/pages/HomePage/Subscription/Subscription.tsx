@@ -15,7 +15,7 @@ export interface SubTableProps {
 }
 
 export function Subscription() {
-  let features: string[] = [
+  const features: string[] = [
     "Knowledge Evalutation wiht our public tests and exercises",
     "Class/Group Management",
     "Reports",

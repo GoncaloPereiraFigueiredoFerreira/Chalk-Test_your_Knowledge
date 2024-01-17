@@ -45,7 +45,7 @@ export interface RubricProps {
 }
 
 function createStandards(): Standard[] {
-  let standards: Standard[] = [];
+  const standards: Standard[] = [];
   Object.keys(StardardLevels).map((title) => {
     standards.push({
       title: title as StardardLevels,

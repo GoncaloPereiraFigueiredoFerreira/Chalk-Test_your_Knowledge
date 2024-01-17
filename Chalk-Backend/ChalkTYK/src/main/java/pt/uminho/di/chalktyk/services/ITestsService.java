@@ -13,7 +13,7 @@ import pt.uminho.di.chalktyk.models.tests.TestTag;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 public interface ITestsService {
     /**
@@ -292,7 +292,7 @@ public interface ITestsService {
      * @param testResId
      * @throws BadInputException     if any property of the test resolution is not valid.
      * @throws NotFoundException     if no test was found with the given id
-     * @throws UnauthorizedException if the test does not support the requested correction type.
+     * @throws ForbiddenException if the test does not support the requested correction type.
      **/
     void submitTestResolution(String testResId) throws NotFoundException;
 

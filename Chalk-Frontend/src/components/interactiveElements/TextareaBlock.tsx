@@ -23,7 +23,7 @@ export function TextareaBlock({
   value,
   onChange,
 }: TextareaBlockProps) {
-  let hasToolbar = toolbar ? toolbar : false;
+  const hasToolbar = toolbar ? toolbar : false;
   const [text, setText] = useState(value ? value : "");
   const [isFocused, setIsFocused] = useState(false);
   const pRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ export function TextareaBlock({
   const handleInput = () => {
     if (pRef.current) {
       // 1: get htmlContent
-      var htmlContent = pRef.current.innerHTML.toString();
+      let htmlContent = pRef.current.innerHTML.toString();
 
       const indexOfFirstP = htmlContent.indexOf("<p>");
       const indexOfFirstDiv = htmlContent.indexOf("<div>");
@@ -74,7 +74,7 @@ export function TextareaBlock({
 
       // 3: parse htmlContent -> parseContent
       const regex_3 = /<(\/?)(\w+)(?: \w+="[^"]*")*>|([^<>]+)/g;
-      let parseContent = htmlContent.matchAll(regex_3);
+      const parseContent = htmlContent.matchAll(regex_3);
 
       // 4: concat parseContent -> modifiedContent
       let modifiedContent = "";
@@ -192,7 +192,7 @@ export function textToHTML(stringHTML: string) {
   let restElement = <></>;
 
   if (match) {
-    let rest = stringHTML.slice(match[0].length);
+    const rest = stringHTML.slice(match[0].length);
 
     if (match[1] != undefined)
       switch (match[1]) {

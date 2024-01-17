@@ -12,6 +12,7 @@ import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.IUsersService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
 
 @RestController
@@ -47,10 +48,10 @@ public class UsersApiController implements UsersApi {
             if(userId == null)
                 throw new BadInputException("There is no user with a 'null' identifier.");
             if(!userId.equals(jwt.getUserId()))
-                throw new UnauthorizedException("The user is not allowed to check another user's information.");
+                throw new ForbiddenException("The user is not allowed to check another user's information.");
             userId = jwt.getUserId();
             return ResponseEntity.ok(usersService.getUserById(userId));
-        } catch (UnauthorizedException | NotFoundException | BadInputException e) {
+        } catch (UnauthorizedException | ForbiddenException | NotFoundException | BadInputException e) {
             return new ExceptionResponseEntity<User>().createRequest(e);
         }
     }

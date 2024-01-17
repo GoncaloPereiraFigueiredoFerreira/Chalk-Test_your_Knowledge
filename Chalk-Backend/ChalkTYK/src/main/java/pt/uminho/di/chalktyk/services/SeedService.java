@@ -8,6 +8,8 @@ import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseSolution;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseStatement;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExercise;
+import pt.uminho.di.chalktyk.models.exercises.chat.ChatExerciseRubric;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksData;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksExercise;
 import pt.uminho.di.chalktyk.models.exercises.fill_the_blanks.FillTheBlanksRubric;
@@ -68,7 +70,8 @@ public class SeedService implements ISeedService{
         Tag tagPoesia = tagsService.createTag("Poesia","/Português/");
         //tags de filosofia
         Tag tagGeologia= tagsService.createTag("Geologia","/");
-
+        Tag tagHistoria = tagsService.createTag("História","/");
+        Tag tagHistoriaPortugalReis = tagsService.createTag("Reis de Portugal","/História/");
 
         Institution inst = new Institution("Greendale", null, null);
         InstitutionManager instMan = new InstitutionManager(null, "Dean Pelton", null, "dpelton@gmail.com", "i'm a peanut bar", inst);
@@ -107,6 +110,7 @@ public class SeedService implements ISeedService{
 
         //Create tests
         createPortugueseExam(ganso,c1, Arrays.asList(tagPortugues,tagPoesia));
+        createHistoria(ganso,c1,Arrays.asList(tagHistoria,tagHistoriaPortugalReis));
         //Filosofia
 
         // test resolutions
@@ -1412,6 +1416,118 @@ public class SeedService implements ISeedService{
 
         pt.uminho.di.chalktyk.models.tests.Test t1 = new pt.uminho.di.chalktyk.models.tests.Test(null, title, instrucoes,
                 200.0F, "FIM", LocalDateTime.now(), LocalDateTime.now().plusSeconds(1), specialist, Visibility.PUBLIC, course, null, List.of(tg1,tg2,tg3,tg4,tg5));
+        return testsService.createTest(t1);
+    }
+
+
+    private Exercise createVFJustifyExercise_History_1_1(String specialistId, String courseId, List<Tag> tags) throws BadInputException {
+        //Solution
+        MultipleChoiceResolutionItem option1 = new MultipleChoiceResolutionItem(0.0F,null,true);
+        MultipleChoiceResolutionItem option2 = new MultipleChoiceResolutionItem(0.0F,"Tratado de Zamora",false);
+        MultipleChoiceResolutionItem option3 = new MultipleChoiceResolutionItem(0.0F,"Quatro dinastias",false);
+        MultipleChoiceResolutionItem option4 = new MultipleChoiceResolutionItem(0.0F,null,true);
+
+        HashMap<String,MultipleChoiceResolutionItem> itemResolutionsSol = new HashMap<>();
+        itemResolutionsSol.put("A",option1);
+        itemResolutionsSol.put("B",option2);
+        itemResolutionsSol.put("C",option3);
+        itemResolutionsSol.put("D",option4);
+        MultipleChoiceData multipleChoiceData = new MultipleChoiceData(itemResolutionsSol);
+
+        //Rubric
+        HashMap<String,OpenAnswerRubric> mcRubricMap = new HashMap<>();
+        mcRubricMap.put("A",createOARubric());
+        mcRubricMap.put("B",createOARubric());
+        mcRubricMap.put("C",createOARubric());
+        mcRubricMap.put("D",createOARubric());
+        ExerciseRubric exerciseRubric = new MultipleChoiceRubric(25.0F,mcRubricMap);
+
+        //Exercise
+        HashMap<String, Item> itemResolutions = new HashMap<>();
+        itemResolutions.put("A",new StringItem("Em 1143, Portugal tornou-se um país independente, o seu 1.º Rei foi D. Afonso Henriques."));
+        itemResolutions.put("B",new StringItem("O Rei de Leão reconheceu a independência do Condado, com a assinatura do Tratado de Ceuta."));
+        itemResolutions.put("C",new StringItem("Em Portugal, durante a monarquia, houve cinco dinastias."));
+        itemResolutions.put("D",new StringItem("A 1.ª Dinastia de Portugal terminou com a morte de D.Fernando."));
+
+
+        MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.TRUE_FALSE__JUSTIFY_FALSE_UNMARKED,itemResolutions);
+        exercise.setStatement(new ExerciseStatement("Responda ás seguintes questões de verdadeiro ou falso, justificando as falsas","",""));
+        exercise.setTitle("Pergunta 1 do Teste de História");
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
+
+        exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
+
+        MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.TRUE_FALSE__JUSTIFY_FALSE_UNMARKED,itemResolutions);
+        exercise2.setStatement(new ExerciseStatement("Responda ás seguintes questões de verdadeiro ou falso, justificando as falsas","",""));
+        exercise2.setTitle("Pergunta 1");
+        exercise2.setSpecialist(new Specialist(specialistId));
+        exercise2.setCourse(new Course(courseId));
+        exercise2.setVisibility(Visibility.PUBLIC);
+
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setSolution(new ExerciseSolution(null, multipleChoiceData.clone()));
+        exercise2.setTags(new HashSet<>(tags));
+        return exercise2;
+    }
+
+    private Exercise createChatExercise_History_1_2(String specialistId, String courseId, List<Tag> tags) throws BadInputException {
+        //Rubric
+        OAStandard oaStandard100 = new OAStandard("5","Acertou em todas as perguntas.",100.0F);
+        OAStandard oaStandard80 = new OAStandard("4","Acertou em quatro perguntas.",80.0F);
+        OAStandard oaStandard60 = new OAStandard("3","Acertou em três perguntas.",60.0F);
+        OAStandard oaStandard40 = new OAStandard("2","Acertou em duas perguntas.",40.0F);
+        OAStandard oaStandard20 = new OAStandard("1","Acertou em uma pergunta.",20.0F);
+        OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+
+        ExerciseRubric exerciseRubric = new ChatExerciseRubric(null,List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
+        List<String> tagsAI = new ArrayList<>(tags.stream().map(Tag::getName).toList());
+        tagsAI.add("Dinastia Portuguesa");
+        tagsAI.add("D.Afonso Henriques");
+
+        ChatExercise exercise = new ChatExercise(tagsAI);
+        exercise.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
+        exercise.setTitle("Pergunta 2 do Teste de História");
+        exercise.setSpecialist(new Specialist(specialistId));
+        exercise.setCourse(new Course(courseId));
+        exercise.setVisibility(Visibility.PUBLIC);
+
+        exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
+
+        ChatExercise exercise2 = new ChatExercise(tagsAI);
+        exercise2.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
+        exercise2.setTitle("Pergunta 2");
+        exercise2.setSpecialist(new Specialist(specialistId));
+        exercise2.setCourse(new Course(courseId));
+        exercise2.setVisibility(Visibility.PUBLIC);
+        exercise2.setRubric(exerciseRubric.clone());
+        exercise2.setTags(new HashSet<>(tags));
+        return exercise2;
+    }
+
+    private String createHistoria(Specialist specialist, Course course, List<Tag> tags) throws BadInputException, NotFoundException {
+        //Exercises
+        //String exercise1 = createMCExercise0(specialist.getId(),course.getId(),Arrays.asList(tags.get(0)));
+        String texto1 = "Responda ás seguintes perguntas sobre História";
+
+        // Exame Portugues_nºgrupo_parte_nºquestao
+        Exercise exercise1 = createVFJustifyExercise_History_1_1(specialist.getId(),course.getId(),Arrays.asList(tags.get(1)));
+        Exercise exercise2 = createChatExercise_History_1_2(specialist.getId(),course.getId(),tags);
+
+        TestExercise tex1 = new ConcreteExercise(100.0F,exercise1);
+        TestExercise tex2 = new ConcreteExercise(100.0F,exercise2);
+
+
+        TestGroup tg1 = new TestGroup(texto1, 200F, List.of(tex1,tex2));
+
+        String title = "Teste Exemplo de História";
+        String instrucoes = "A prova inclui 2 itens, devidamente identificados no enunciado, cujas respostas contribuem\r\n" + //
+                "obrigatoriamente para a classificação final.\r";
+
+        pt.uminho.di.chalktyk.models.tests.Test t1 = new pt.uminho.di.chalktyk.models.tests.Test(null, title, instrucoes,
+                200.0F, "FIM", LocalDateTime.now(), LocalDateTime.now().plusSeconds(1), specialist, Visibility.PUBLIC, course, null, List.of(tg1));
         return testsService.createTest(t1);
     }
 }

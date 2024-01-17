@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import pt.uminho.di.chalktyk.models.users.Student;
-import pt.uminho.di.chalktyk.models.users.User;
 import pt.uminho.di.chalktyk.repositories.StudentDAO;
 import pt.uminho.di.chalktyk.repositories.UserDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;

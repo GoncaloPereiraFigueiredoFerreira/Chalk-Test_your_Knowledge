@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,7 @@ import pt.uminho.di.chalktyk.repositories.TestTagsDAO;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 @Service("testsService")
 public class TestsService implements ITestsService {
@@ -792,7 +791,7 @@ public class TestsService implements ITestsService {
                     groupPoints.add(exe.getPoints());
                     exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
                 }
-                catch (BadInputException | UnauthorizedException ignored){
+                catch (BadInputException | ForbiddenException ignored){
                     // If an exercise can't be corrected, using the chosen correctionType,
                     // it just is not corrected.
                 }
@@ -866,7 +865,7 @@ public class TestsService implements ITestsService {
                     try {
                         exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
                     }
-                    catch (BadInputException | UnauthorizedException ignored){
+                    catch (BadInputException | ForbiddenException ignored){
                         // If an exercise can't be corrected, using the chosen correctionType,
                         // it just is not corrected.
                     }

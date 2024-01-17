@@ -2,7 +2,6 @@ package pt.uminho.di.chalktyk.models.exercises.items;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
 import java.io.Serializable;

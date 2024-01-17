@@ -45,7 +45,7 @@ export function ListExerciseStateReducer(
     case ListExerciseActionKind.ADD_LIST_EXERCISES:
       if (action.payload)
         if (action.payload.exercises) {
-          let newListExercises = { ...listExerciseState.listExercises };
+          const newListExercises = { ...listExerciseState.listExercises };
           action.payload.exercises.forEach((element) => {
             newListExercises[element.identity!.id] = element;
           });
@@ -56,10 +56,10 @@ export function ListExerciseStateReducer(
     case ListExerciseActionKind.CREATE_NEW_EXERCISE:
       if (action.payload)
         if (action.payload.newExerciseType) {
-          let newExercise: Exercise = InitExercise(
+          const newExercise: Exercise = InitExercise(
             action.payload.newExerciseType
           );
-          let newListExercises = {
+          const newListExercises = {
             ...listExerciseState.listExercises,
             ["-1" as string]: newExercise,
           };
@@ -77,9 +77,9 @@ export function ListExerciseStateReducer(
     case ListExerciseActionKind.ADD_EXERCISE:
       if (action.payload)
         if (action.payload.exercise) {
-          let { ["-1"]: removedItem, ...cleanListExercises } =
+          const { ["-1"]: removedItem, ...cleanListExercises } =
             listExerciseState.listExercises;
-          let newListExercises = {
+          const newListExercises = {
             ...cleanListExercises,
             [action.payload.exercise.identity!.id]: action.payload.exercise,
           };
@@ -94,7 +94,7 @@ export function ListExerciseStateReducer(
     case ListExerciseActionKind.EDIT_EXERCISE:
       if (action.payload)
         if (action.payload.exercise) {
-          let newListExercises = {
+          const newListExercises = {
             ...listExerciseState.listExercises,
             [action.payload.exercise.identity!.id]: action.payload.exercise,
           };
@@ -109,7 +109,7 @@ export function ListExerciseStateReducer(
     case ListExerciseActionKind.REMOVE_EXERCISE:
       if (action.payload)
         if (action.payload.selectedExercise) {
-          let exerciseID = action.payload.selectedExercise;
+          const exerciseID = action.payload.selectedExercise;
           if (exerciseID in listExerciseState.listExercises) {
             const { [exerciseID]: removedItem, ...newListExercises } =
               listExerciseState.listExercises;
@@ -127,7 +127,7 @@ export function ListExerciseStateReducer(
     case ListExerciseActionKind.SET_SELECTED_EXERCISE:
       if (action.payload)
         if (action.payload.selectedExercise) {
-          let exerciseID = action.payload.selectedExercise;
+          const exerciseID = action.payload.selectedExercise;
           if (listExerciseState.listExercises[exerciseID])
             return { ...listExerciseState, selectedExercise: exerciseID };
           else throw new Error("Exercise does not exist");
