@@ -2,26 +2,60 @@ import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
 import { useState } from "react";
 import { FiSave } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
+import { DropdownBlock } from "../../interactiveElements/DropdownBlock";
 
 interface EditTestInfopProps {
   testInfo: {
     type: string;
     conclusion: string;
+    visibility: string;
     title: string;
     globalInstructions: string;
   };
   saveEdit: (state: {
     type: string;
     conclusion: string;
+    visibility: string;
     title: string;
     globalInstructions: string;
   }) => void;
   cancelEdit: (state: {
     type: string;
+    visibility: string;
     conclusion: string;
     title: string;
     globalInstructions: string;
   }) => void;
+}
+
+export function translateVisibilityToString(visibility: string) {
+  switch (visibility) {
+    case "institutional":
+      return "Institucional";
+    case "course":
+      return "Curso";
+    case "not-listed":
+      return "Não listado";
+    case "private":
+      return "Privado";
+    default:
+      return "Público";
+  }
+}
+
+export function translateStringToVisibility(visibility: string) {
+  switch (visibility) {
+    case "Institucional":
+      return "institutional";
+    case "Curso":
+      return "course";
+    case "Não listado":
+      return "not-listed";
+    case "Privado":
+      return "private";
+    default:
+      return "public";
+  }
 }
 
 export function EditTestInfo({
@@ -31,6 +65,11 @@ export function EditTestInfo({
 }: EditTestInfopProps) {
   const [type] = useState(testInfo.type);
   const [conclusion, setConclusion] = useState(testInfo.conclusion);
+  const [visibility, setVisibility] = useState(
+    testInfo.visibility
+      ? translateVisibilityToString(testInfo.visibility)
+      : "Público"
+  );
   const [title, setTitle] = useState(testInfo.title);
   const [globalInstructions, setGlobalInstructions] = useState(
     testInfo.globalInstructions
@@ -46,6 +85,7 @@ export function EditTestInfo({
             onClick={() =>
               saveEdit({
                 type: type,
+                visibility: translateStringToVisibility(visibility),
                 conclusion: conclusion,
                 title: title,
                 globalInstructions: globalInstructions,
@@ -57,14 +97,31 @@ export function EditTestInfo({
           </button>
         </div>
         <div className="flex flex-col px-4 gap-4">
-          <strong>Título:</strong>
-          <div className="px-4">
+          <div className="flex gap-4 items-center">
+            <strong>Título:</strong>
             <input
               className="rounded-lg bg-input-2"
               placeholder="Novo Teste"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
+          </div>
+          <div className="flex gap-4 items-center">
+            <strong>Visibilidade:</strong>
+            <DropdownBlock
+              style="rounded-lg h-[42.19px]"
+              options={[
+                "Público",
+                "Institucional",
+                "Curso",
+                "Não listado",
+                "Privado",
+              ]}
+              chosenOption={visibility}
+              setChosenOption={setVisibility}
+              text="Visibilidade"
+              placement="bottom"
+            ></DropdownBlock>
           </div>
           <strong>Instruções globais:</strong>
           <div className="px-4">
@@ -93,6 +150,7 @@ export function EditTestInfo({
             onClick={() =>
               saveEdit({
                 type: type,
+                visibility: translateStringToVisibility(visibility),
                 conclusion: conclusion,
                 title: title,
                 globalInstructions: globalInstructions,
@@ -107,6 +165,7 @@ export function EditTestInfo({
             onClick={() =>
               cancelEdit({
                 type: type,
+                visibility: translateStringToVisibility(visibility),
                 conclusion: conclusion,
                 title: title,
                 globalInstructions: globalInstructions,

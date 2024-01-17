@@ -9,6 +9,7 @@ import "./EditTestDragDrop.css";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
 import { SortableContext } from "@dnd-kit/sortable";
 import { UserContext } from "../../../UserContext";
+import { translateVisibilityToString } from "./EditTestInfo";
 
 interface EditTestProps {
   exerciseID: {
@@ -44,33 +45,36 @@ export function EditTestDragDrop({
             ? testState.test.title
             : "Novo Teste - " + draggingExercises}
         </div>
-        {/* <div className="flex gap-4"></div> */}
       </div>
-      <div className="flex flex-col pb-4 mb-8 gap-4 border-b-2 border-gray-2-2">
-        <div className="mx-4 mt-4">
-          <div className="flex items-center justify-between">
-            <strong className="text-xl">Informações Gerais do Teste:</strong>
-            <button
-              className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
-              onClick={() => {
-                setSelectedMenu("edit-test-info");
-              }}
-            >
-              <FaPencil className="size-5" />
-              Editar
-            </button>
-          </div>
-          <div className="gridTestInfo text-md m-4 gap-4">
-            <strong>Autor: </strong>
-            <p>{testState.test.author}</p>
-            <strong>Cotação máxima do teste: </strong>
-            <p>{testState.test.globalPoints} pts</p>
-            <strong>Instruções do Teste: </strong>
-            <p>{textToHTML(testState.test.globalInstructions)}</p>
-          </div>
+      <div className="flex flex-col px-4 pt-4 gap-4">
+        <div className="flex items-center justify-between">
+          <strong className="text-xl">Informações Gerais do Teste:</strong>
+          <button
+            className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+            onClick={() => {
+              setSelectedMenu("edit-test-info");
+            }}
+          >
+            <FaPencil className="size-5" />
+            Editar
+          </button>
+        </div>
+        <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
+          <strong>Autor: </strong>
+          <p>{testState.test.author}</p>
+          <strong>Visibilidade do Teste: </strong>
+          <p>{translateVisibilityToString(testState.test.visibility)}</p>
+          <strong>Cotação máxima do teste: </strong>
+          <p>{testState.test.globalPoints} pts</p>
+        </div>
+        <div className="flex flex-col py-4 gap-4">
+          <strong className="text-xl">Instruções do Teste</strong>
+          <p className="text-md mx-4">
+            {textToHTML(testState.test.globalInstructions)}
+          </p>
         </div>
       </div>
-      <div className="flex flex-col px-4 gap-4">
+      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-gray-2-2">
         <SortableContext items={testState.test.groups.map((group) => group.id)}>
           {testState.test.groups.map((group, index) => (
             <GroupDragDrop
@@ -104,10 +108,10 @@ export function EditTestDragDrop({
           </label>
         </div>
       </div>
-      <div className="flex flex-col pt-4 mt-8 gap-4 border-t-2 border-gray-2-2">
+      <div className="flex flex-col pt-4 gap-4 border-t-2 border-gray-2-2">
         <div className="mx-4 mt-4">
           <div className="flex items-center justify-between">
-            <strong className="text-md">Conclusão</strong>
+            <strong className="text-xl">Conclusão</strong>
             <button
               className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
               onClick={() => {
@@ -118,7 +122,9 @@ export function EditTestDragDrop({
               Editar
             </button>
           </div>
-          <p className="text-md m-4">{textToHTML(testState.test.conclusion)}</p>
+          <p className="text-md mx-4">
+            {textToHTML(testState.test.conclusion)}
+          </p>
         </div>
       </div>
       <CreateNewExercisePopUp

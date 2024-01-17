@@ -93,7 +93,7 @@ export function ShowExerciseDragDrop({
   function handleChange(value: string) {
     const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
     if (result) {
-      const resultStr = result[2].toString();
+      const resultStr = result[2].toString().replace(",", ".");
       if (resultStr !== "") {
         let newCotation = parseFloat(resultStr);
         if (newCotation >= 0) setValue(resultStr);

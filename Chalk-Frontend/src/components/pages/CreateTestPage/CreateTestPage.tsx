@@ -757,6 +757,7 @@ export function CreateTest({ test }: CreateTestProps) {
                 testInfo={{
                   type: testState.test.type,
                   conclusion: testState.test.conclusion,
+                  visibility: testState.test.visibility,
                   title: testState.test.title,
                   globalInstructions: testState.test.globalInstructions,
                 }}
