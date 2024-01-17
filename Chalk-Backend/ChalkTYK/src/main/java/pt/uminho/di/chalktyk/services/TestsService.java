@@ -1220,6 +1220,28 @@ public class TestsService implements ITestsService {
         return resolutions;
     }
 
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public List<TestResolution> getStudentLastResolutionsWithEmails(String testId) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get last resolutions for test " + testId + ": couldn't find test with given id.");
+        List<String> studentIds = resolutionDAO.getDistinctStudentsForTest(testId);
+
+        List<TestResolution> resolutions = new ArrayList<>();
+        for (String studentId: studentIds){
+            TestResolution tr = _getStudentLastResolution(testId, studentId);
+            Student s = studentsService.getStudentById(studentId);
+            Student sWithEmail = new Student(); sWithEmail.setId(s.getEmail());
+            
+            TestResolution trWithEmail = new TestResolution(tr.getId(), tr.getStartDate(), tr.getSubmissionDate(), tr.getSubmissionNr(), tr.getTotalPoints(),
+                                                            sWithEmail, tr.getTest(), tr.getStatus(), tr.getGroups());
+            
+            resolutions.add(trWithEmail);
+        }
+
+        return resolutions;
+    }
+
     private TestResolution _getStudentLastResolution(String testId, String studentId) throws NotFoundException {
         List<String> ids = getStudentTestResolutionsIds(testId, studentId);
         TestResolution res = null;
@@ -1268,7 +1290,7 @@ public class TestsService implements ITestsService {
             else {
                 for (int i = k; i < ids.size(); i++){
                     TestResolution tmp = resolutionDAO.findById(ids.get(i)).orElse(null);
-                    if (tmp != null && res.getSubmissionNr() < tmp.getSubmissionNr())
+                    if (tmp != null && res.getSubmissionDate().isBefore(tmp.getSubmissionDate()))
                         res = tmp;
                 }
             }
