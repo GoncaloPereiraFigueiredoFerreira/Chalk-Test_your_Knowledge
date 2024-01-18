@@ -27,6 +27,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
           </label>
           <TextareaBlock
             toolbar={true}
+            rows={6}
             placeholder="Escreva aqui o enunciado..."
             value={state.base.statement.text}
             onChange={(value) =>
