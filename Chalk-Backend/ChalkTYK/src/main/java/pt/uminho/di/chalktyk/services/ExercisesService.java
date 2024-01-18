@@ -845,6 +845,25 @@ public class ExercisesService implements IExercisesService{
         return exerciseResolutionDAO.save(resolution);
     }
 
+    @Override
+    public ExerciseResolution updateExerciseResolution(String exeResId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
+        ExerciseResolution res = exerciseResolutionDAO.findById(exeResId).orElse(null);
+        if(res == null)
+            throw new NotFoundException("Could not update exercise resolution: Exercise resolution does not exist.");
+
+        // checks if resolution data is valid
+        if(resolutionData == null)
+            throw new BadInputException("Could not update exercise resolution: resolution data is null.");
+        // checks the resolution data against the exercise data
+        checkResolutionData(res.getExerciseId(), resolutionData);
+
+        // sets the new data
+        res.setData(resolutionData);
+
+        // updates resolution
+        return exerciseResolutionDAO.save(res);
+    }
+
     /**
      * @param exerciseId identifier of the exercise
      * @param studentId  identifier of the student
@@ -1088,6 +1107,22 @@ public class ExercisesService implements IExercisesService{
 
         // checks the resolution data against the exercise data.
         exercise.verifyResolutionProperties(exerciseResolution.getData());
+    }
+
+    /**
+     * Checks the resolution data against the exercise data.
+     * @param exerciseResolutionData resolution data
+     * @throws NotFoundException if the exercise does not exist
+     * @throws BadInputException if the resolution data is malformed
+     */
+    private void checkResolutionData(String exerciseId, ExerciseResolutionData exerciseResolutionData) throws NotFoundException, BadInputException {
+        assert exerciseResolutionData != null;
+
+        // gets concrete exercise
+        Exercise exercise = _getExerciseById(exerciseId);
+
+        // checks the resolution data against the exercise data.
+        exercise.verifyResolutionProperties(exerciseResolutionData);
     }
 
     /**
