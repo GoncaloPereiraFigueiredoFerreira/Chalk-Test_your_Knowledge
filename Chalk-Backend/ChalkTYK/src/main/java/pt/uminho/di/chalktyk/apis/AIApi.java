@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import pt.uminho.di.chalktyk.dtos.ChatExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.GenerateQuestionAIDTO;
 import pt.uminho.di.chalktyk.dtos.MultipleChoiceAIDTO;
 import pt.uminho.di.chalktyk.dtos.TrueOrFalseAIDTO;
 import pt.uminho.di.chalktyk.dtos.OpenAnswerAIDTO;
@@ -58,8 +59,8 @@ public interface AIApi {
         @ApiResponse(responseCode = "400", description = "Invalid camp text or input"),
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })    
-    @RequestMapping(value = "/new/multipleChoice", produces = {"application/json"}, method = RequestMethod.GET)
-    ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(@Parameter(in = ParameterIn.QUERY, description = "The text used as inspiration to the new question",schema = @Schema()) @RequestParam(value = "text", required = true) String text,@Parameter(in = ParameterIn.QUERY, description = "User input to guide the new question generation", schema = @Schema(defaultValue = "")) @RequestParam(value = "input") String input, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    @RequestMapping(value = "/new/multipleChoice", produces = {"application/json"}, method = RequestMethod.POST)
+    ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(@Parameter(in = ParameterIn.DEFAULT, required = true) GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return a new open answer question based on the text provided and input from the user")
     @ApiResponses(value = {
@@ -67,8 +68,8 @@ public interface AIApi {
         @ApiResponse(responseCode = "400", description = "Invalid camp text or input"),
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })    
-    @RequestMapping(value = "/new/openAnswer", produces = {"application/json"}, method = RequestMethod.GET)
-    ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(@Parameter(in = ParameterIn.QUERY, description = "The text used as inspiration to the new question",schema = @Schema()) @RequestParam(value = "text", required = true) String text,@Parameter(in = ParameterIn.QUERY, description = "User input to guide the new question generation", schema = @Schema(defaultValue = "")) @RequestParam(value = "input") String input, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    @RequestMapping(value = "/new/openAnswer", produces = {"application/json"}, method = RequestMethod.POST)
+    ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(@Parameter(in = ParameterIn.DEFAULT, required = true) GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return a new true or false question based on the text provided and input from the user")
     @ApiResponses(value = {
@@ -76,6 +77,6 @@ public interface AIApi {
         @ApiResponse(responseCode = "400", description = "Invalid camp text or input"),
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })    
-    @RequestMapping(value = "/new/trueOrFalse", produces = {"application/json"}, method = RequestMethod.GET)
-    ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(@Parameter(in = ParameterIn.QUERY, description = "The text used as inspiration to the new question",schema = @Schema()) @RequestParam(value = "text", required = true) String text,@Parameter(in = ParameterIn.QUERY, description = "User input to guide the new question generation", schema = @Schema(defaultValue = "")) @RequestParam(value = "input") String input, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    @RequestMapping(value = "/new/trueOrFalse", produces = {"application/json"}, method = RequestMethod.POST)
+    ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(@Parameter(in = ParameterIn.DEFAULT, required = true) GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.ChatExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.GenerateQuestionAIDTO;
 import pt.uminho.di.chalktyk.dtos.MultipleChoiceAIDTO;
 import pt.uminho.di.chalktyk.dtos.OpenAnswerAIDTO;
 import pt.uminho.di.chalktyk.dtos.TrueOrFalseAIDTO;
@@ -210,8 +211,11 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(String text, String input, String jwt) {
+    public ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(GenerateQuestionAIDTO inputQuestion, String jwt) {
         try{
+            String text = inputQuestion.getText();
+            String input = inputQuestion.getInput();
+
             JsonObjectBuilder request = Json.createObjectBuilder();
             request.add("Text",text);
             request.add("Input",input);
@@ -235,8 +239,11 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(String text, String input, String jwt) {
+    public ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(GenerateQuestionAIDTO inputQuestion, String jwt) {
         try{
+            String text = inputQuestion.getText();
+            String input = inputQuestion.getInput();
+
             JsonObjectBuilder request = Json.createObjectBuilder();
             request.add("Text",text);
             request.add("Input",input);
@@ -259,8 +266,11 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(String text, String input, String jwt) {
+    public ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(GenerateQuestionAIDTO inputQuestion, String jwt) {
         try{
+            String text = inputQuestion.getText();
+            String input = inputQuestion.getInput();
+
             JsonObjectBuilder request = Json.createObjectBuilder();
             request.add("Text",text);
             request.add("Input",input);
