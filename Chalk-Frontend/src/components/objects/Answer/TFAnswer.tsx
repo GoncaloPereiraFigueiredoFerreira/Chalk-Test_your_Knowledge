@@ -107,7 +107,7 @@ export function TFAnswer({ solution }: AnswerProps) {
                                 justify ? "" : "hidden"
                               } basic-input-text`}
                               value={solDate.items[index].justification}
-                              disabled={false}
+                              disabled={true}
                             ></TextareaBlock>
                           </div>
                         </div>

@@ -189,7 +189,7 @@ public class Test implements Serializable {
 					String exerciseId = entry.getId();
 					assert exerciseId != null; // exercise id cannot be null
 
-					TestExerciseResolutionBasic pair = new TestExerciseResolutionBasic("", 0.0F);
+					TestExerciseResolutionBasic pair = null;
 					resolutionGroupAnswers.put(exerciseId, pair);
 				}
 

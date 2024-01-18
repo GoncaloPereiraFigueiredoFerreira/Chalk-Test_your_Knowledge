@@ -2,6 +2,7 @@ import "./Correction.css";
 import { useContext, useEffect, useState } from "react";
 import { TestPreview } from "../TestPreview";
 import {
+  ExerciseType,
   Resolution,
   ResolutionType,
   TranslateTestExerciseIN,
@@ -16,6 +17,7 @@ import { Solution } from "./Solution";
 
 export interface Resolutions {
   [exerciseID: string]: {
+    type: ExerciseType;
     solution?: Resolution;
     position?: string;
     maxCotation: number;
@@ -43,10 +45,6 @@ export function Correction() {
 
   const addResolution = (exId: string, resId: string, res: Resolution) => {
     const resCpy = { ...resolutions };
-    if (!(exId in resCpy)) {
-      resCpy[exId] = { studentRes: {}, maxCotation: 0 };
-    }
-
     const cpyStudentRes = { ...resCpy[exId].studentRes };
     cpyStudentRes[resId] = { ...res };
     resCpy[exId].studentRes = cpyStudentRes;
@@ -72,53 +70,61 @@ export function Correction() {
   useEffect(() => {
     contactBACK("tests/" + testID, "GET").then((response) => {
       response.json().then((testJson: any) => {
-        testJson.groups = testJson.groups.map((group: any) => {
-          group.exercises = group.exercises.map((ex: any) => {
-            return TranslateTestExerciseIN(ex);
+        let collectMaxCot: Resolutions = {};
+        testJson.groups = testJson.groups.map((group: any, Gindex: number) => {
+          group.exercises = group.exercises.map((ex: any, Eindex: number) => {
+            let newEx = TranslateTestExerciseIN(ex);
+            collectMaxCot[newEx.identity.id] = {
+              type: newEx.type,
+              maxCotation: newEx.identity.points ?? 0,
+              studentRes: {},
+              position: Gindex + 1 + "." + (Eindex + 1),
+            };
+            return newEx;
           });
           return group;
         });
+        setResolutions(collectMaxCot);
         setTest(testJson);
       });
     });
   }, []);
 
   useEffect(() => {
-    if (exID !== "" && !(exID in resolutions)) {
+    if (exID !== "") {
       contactBACK("exercises/" + exID + "/rubric", "GET")
         .then((response) => {
           response
             .json()
             .then((json) => {
-              if (json.type === "OA" || json.type === "CE") {
-                contactBACK("exercises/" + exID + "/resolutions", "GET", {
-                  page: "0",
-                  itemsPerPage: "50",
-                  onlyNotRevised: "true",
-                }).then((response2) => {
-                  response2
-                    .json()
-                    .then((resJson) => {
+              contactBACK("exercises/" + exID + "/resolutions", "GET", {
+                page: "0",
+                itemsPerPage: "50",
+                onlyNotRevised: "true",
+              }).then((response2) => {
+                response2
+                  .json()
+                  .then((resJson) => {
+                    if (json.type === "CE" || json.type === "OA")
                       setRubric(exID, json);
-                      resJson.map((res: any) => {
-                        const newRes: Resolution = {
-                          id: res.resolution.id,
-                          exerciseID: exID,
-                          student: {
-                            id: res.student.id,
-                            name: res.student.name,
-                            email: res.student.email,
-                          },
-                          cotation: 0,
-                          type: ResolutionType.PENDING,
-                          data: TranslateTestResolutionIN(res.resolution.data),
-                        };
-                        addResolution(exID, newRes.id, newRes);
-                      });
-                    })
-                    .catch(() => {});
-                });
-              }
+                    resJson.map((res: any) => {
+                      const newRes: Resolution = {
+                        id: res.resolution.id,
+                        exerciseID: exID,
+                        student: {
+                          id: res.student.id,
+                          name: res.student.name,
+                          email: res.student.email,
+                        },
+                        cotation: 0,
+                        type: ResolutionType.PENDING,
+                        data: TranslateTestResolutionIN(res.resolution.data),
+                      };
+                      addResolution(exID, newRes.id, newRes);
+                    });
+                  })
+                  .catch(() => {});
+              });
             })
             .catch(() => {});
         })
