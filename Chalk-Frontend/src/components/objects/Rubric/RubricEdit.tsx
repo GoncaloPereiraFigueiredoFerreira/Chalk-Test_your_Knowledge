@@ -5,6 +5,7 @@ import {
   Standard,
   createNewCriteria,
 } from "./Rubric";
+import "../Exercise/Exercise.css";
 
 export function RubricEdit(rubric: Rubric, setState: Function) {
   const addCriteria = () => {
@@ -85,28 +86,36 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
 
   function renderCriteria() {
     return (
-      <div className="flex-col space-y-8">
+      <div className="flex-col space-y-16 mb-3">
         {rubric.criteria.map((crt, critIndex) => {
           return (
-            <div className="flex-col space-y-4 border-t-2 pt-3 border-t-black">
+            <div className="flex-col space-y-4 border-t-2 pt-3 border-t-black dark:border-[#dddddd]">
               <div className="flex flex-row space-x-4">
-                <label htmlFor="title-inpt" className="font-medium">
+                <label
+                  htmlFor="title-inpt"
+                  className="font-medium rounded-md dark:text-white"
+                >
                   Title for the Criteria
                 </label>
                 <input
                   id="title-inpt"
                   type="text"
+                  className="rounded-md w-full"
                   value={crt.title}
                   onChange={(e) =>
                     changeCriteriaTitle(critIndex, e.target.value)
                   }
                 ></input>
-                <label htmlFor="points-inpt " className="font-medium">
+                <label
+                  htmlFor="points-inpt "
+                  className="font-medium rounded-md dark:text-white"
+                >
                   Percentage of Cotation
                 </label>
                 <input
                   id="points-inpt"
                   type="number"
+                  className="rounded-md "
                   value={crt.points}
                   min={0}
                   max={100}
@@ -114,18 +123,17 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                     changeCriteriaPoints(critIndex, e.target.value)
                   }
                 ></input>
-
-                <button type="button" onClick={() => remCriteria(critIndex)}>
-                  X
-                </button>
               </div>
               <div className="mr-2 grid grid-cols-3 gap-4">
                 {crt.standards.map((standard, standIndex) => {
                   return (
                     <>
-                      <p className="font-medium">{standard.title}</p>
+                      <p className="font-medium dark:text-white">
+                        {standard.title}
+                      </p>
                       <input
                         type="number"
+                        className="rounded-md "
                         value={standard.percentage}
                         min={0}
                         max={100}
@@ -139,6 +147,7 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                       ></input>
                       <input
                         type="text"
+                        className="rounded-md"
                         value={standard.description}
                         onChange={(e) =>
                           changeStandardDescription(
@@ -147,11 +156,18 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                             e.target.value
                           )
                         }
+                        placeholder="Descrição"
                       ></input>
                     </>
                   );
                 })}
               </div>
+              <button
+                className="edit-btn mx-2 px-1 float-right bg-btn-4-2"
+                onClick={() => remCriteria(critIndex)}
+              >
+                Remove
+              </button>
             </div>
           );
         })}
@@ -162,7 +178,10 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
   return (
     <>
       <Rubric context={{ context: RubricContext.PREVIEW }} rubric={rubric} />
-      <button type="button" onClick={() => addCriteria()}>
+      <button
+        className=" w-fit self-center cursor-pointer p-1 rounded-md bg-btn-4-2"
+        onClick={() => addCriteria()}
+      >
         Add a new Criteria
       </button>
       {renderCriteria()}

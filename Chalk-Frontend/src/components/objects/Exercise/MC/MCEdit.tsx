@@ -8,6 +8,7 @@ import {
 } from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
+import "../Exercise.css";
 
 interface MCEditProps {
   context: CreateEditProps;
@@ -21,14 +22,34 @@ export function MCEdit({ context, exercise }: MCEditProps) {
 
   return (
     <>
-      <p className="block mb-2 text-sm text-gray-900 dark:text-white">
+      <p className="block mb-2 text-md text-gray-900 dark:text-white">
         Adicione as afirmações e escolha a opção correta.
+        <input
+          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg bg-btn-4-2 ml-2"
+          value="Add"
+          onClick={() => {
+            for (
+              let newID = 0;
+              newID < Object.keys(exercise.props.items!).length + 1;
+              newID++
+            ) {
+              if (exercise.props.items![newID.toString()] === undefined) {
+                context.dispatch({
+                  type: EditActionKind.ADD_ITEM,
+                  dataString: newID.toString(),
+                });
+                break;
+              }
+            }
+          }}
+        ></input>
       </p>
       <ul>
         {Object.keys(exercise.props.items!).map((value, index) => {
           return (
             <MCStatementEdit
               key={index}
+              position={index}
               id={value}
               solution={context.solutionData}
               dispatch={context.dispatch}
@@ -36,26 +57,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           );
         })}
       </ul>
-      <input
-        type="button"
-        className="edit-btn"
-        value="Add"
-        onClick={() => {
-          for (
-            let newID = 0;
-            newID < Object.keys(exercise.props.items!).length + 1;
-            newID++
-          ) {
-            if (exercise.props.items![newID.toString()] === undefined) {
-              context.dispatch({
-                type: EditActionKind.ADD_ITEM,
-                dataString: newID.toString(),
-              });
-              break;
-            }
-          }
-        }}
-      ></input>
+
       <div className="flex flex-col">
         <div className="mt-5 flex items-center">
           <input
@@ -116,6 +118,7 @@ interface MCStatementEditProps {
   dispatch: React.Dispatch<EditAction>;
   solution: ResolutionData;
   id: string;
+  position: number;
 }
 function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
   const name = "mc";
@@ -123,7 +126,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
     const solutionItem = solution.items[id];
     return (
       <>
-        <li className="flex items-center">
+        <li className="flex items-center space-y-1">
           <input
             className="radio-blue mr-3"
             type="radio"
@@ -138,7 +141,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
           ></input>
           <input
             type="text"
-            className="basic-input-text"
+            className="basic-input-text rounded-md"
             onChange={(e) =>
               dispatch({
                 type: EditActionKind.CHANGE_ITEM_TEXT,
@@ -151,8 +154,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
             value={solutionItem.text}
           ></input>
           <input
-            className="edit-btn"
-            type="button"
+            className="edit-btn mx-2 px-1 bg-btn-4-2 ml-2"
             onClick={() =>
               dispatch({
                 type: EditActionKind.REMOVE_ITEM,

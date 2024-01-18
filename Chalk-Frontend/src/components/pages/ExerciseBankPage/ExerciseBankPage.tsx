@@ -1,12 +1,13 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import {
   ListExerciseActionKind,
   ListExerciseContext,
   ListExerciseStateReducer,
 } from "../../objects/ListExercises/ListExerciseContext";
+import { useIsVisible } from "../HomePage/HomePage";
 import { APIContext } from "../../../APIContext";
 import {
   ExerciseType,
@@ -90,10 +91,26 @@ export function ExerciseBankPage() {
     }
   }, [editMenuIsOpen]);
 
+  const ref1 = useRef(null);
+  const isVisible1 = useIsVisible(ref1);
+  const [triggered1, setTriggered1] = useState(false);
+
+  useEffect(() => {
+    if (isVisible1) setTriggered1(true);
+  }, [ref1, isVisible1]);
+
   return (
     <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
-      <div className="flex flex-row divide-x-2 border-gray-2-2 w-full">
-        <div className="flex flex-col w-full h-screen overflow-auto px-8 pb-8 bg-2-1">
+      <div
+        ref={ref1}
+        className={`flex flex-row divide-x-2 border-gray-2-2 transition-all duration-100
+                ${
+                  isVisible1 || triggered1
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-40"
+                }`}
+      >
+        <div className="flex flex-col w-full h-screen overflow-auto bg-2-1">
           <Searchbar></Searchbar>
           <ListExercises
             setExerciseID={(value) => setExerciseID(value)}

@@ -63,7 +63,7 @@ export function CQSolve(props: CQSolveProps) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-full space-y-4 ">
-      <div>
+      <div className="text">
         <p>
           Neste exercício terás de conversar com o nosso assistente e responder
           às suas perguntas! Lembra-te, todas as mensagens que enviares serão

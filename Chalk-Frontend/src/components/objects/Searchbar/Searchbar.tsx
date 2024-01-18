@@ -23,10 +23,10 @@ export function Searchbar() {
           ></DropdownBlock>
           <form className="relative w-full justify-center">
             <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1 pointer-events-none">
-              <SearchIcon style="text-gray-400" size="size-4"></SearchIcon>
+              <SearchIcon style="text-black" size="size-4"></SearchIcon>
               <button
                 type="submit"
-                className="font-medium rounded-lg text-sm px-4 py-2 pointer-events-auto btn-selected"
+                className="font-medium rounded-lg text-sm px-4 py-2 pointer-events-auto bg-[#acacff] bg-btn-4-2"
               >
                 Search
               </button>

@@ -56,7 +56,7 @@ export function CQExerciseComp({
           {position + ") " + exercise.base.title}
         </div>
       ) : null}
-      <div className="m-5 text-lg">{exerciseDisplay}</div>
+      <div className="m-5 text-lg ">{exerciseDisplay}</div>
     </>
   );
 }

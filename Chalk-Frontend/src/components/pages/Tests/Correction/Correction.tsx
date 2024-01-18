@@ -157,7 +157,7 @@ export function Correction() {
               >
                 <div className="p-4 flex flex-col w-full h-screen space-y-4">
                   {/* Solução se houver */}
-                  <div className="bg-3-1 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto">
+                  <div className="bg-3-1 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto border-2 border-[#dddddd] dark:border-gray-600">
                     <h3 className="text-xl font-medium">
                       Critérios de Correção
                     </h3>

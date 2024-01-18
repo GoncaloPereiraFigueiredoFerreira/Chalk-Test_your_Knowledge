@@ -28,18 +28,17 @@ export function GroupsPage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-2-1">
-      <button
-        className="bg-white w-64 self-end"
-        onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
-      >
-        Switch to {viewMode === "grid" ? "Row" : "Grid"} View
-      </button>
-
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
+    <div className="flex flex-col w-full h-screen py-16 overflow-auto bg-2-1">
+      <div className="flex flex-row w-11/12 self-center gap-4 min-h-max px-16 pb-4 border-b-2 border-gray-2-2 justify-between">
+        <div className="flex w-fit float-left justify-between p-4 pt-0 ">
           <label className="flex text-title-1">Todos os grupos</label>
         </div>
+        <button
+          className=" px-2 w-fit float-right bg-btn-4-2 bg-[#acacff] rounded-md p-1"
+          onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
+        >
+          Switch to {viewMode === "grid" ? "Row" : "Grid"} View
+        </button>
       </div>
 
       <div

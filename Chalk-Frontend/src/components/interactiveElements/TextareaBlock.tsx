@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Root } from "react-dom/client";
 import { MdOutlineAttachFile } from "react-icons/md";
 import { FaBold } from "react-icons/fa";
 import { FaItalic } from "react-icons/fa";

@@ -11,7 +11,7 @@ export function OAAnswer({ solution }: AnswerProps) {
           <div className="px-4 rounded-b-lg">
             <TextareaBlock
               value={solution.data.text}
-              className=""
+              className=" border-0 border-white pt-2"
               disabled={true}
             ></TextareaBlock>
           </div>

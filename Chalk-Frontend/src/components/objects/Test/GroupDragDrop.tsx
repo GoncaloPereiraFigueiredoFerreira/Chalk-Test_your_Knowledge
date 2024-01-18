@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
+import { GarbageIcon } from "../SVGImages/SVGImages";
 
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
@@ -74,7 +75,7 @@ export function GroupDragDrop({
             isDragging && "opacity-40"
           } flex flex-col gap-4 rounded-lg px-7 py-5 bg-3-1 h-56 overflow-hidden`}
         >
-          <div className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2">
+          <div className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 dark:border-[#dddddd] dark:text-[#dddddd] ">
             <label className="w-full text-xl font-medium">
               Grupo {exerciseGroupPosition + 1}
             </label>
@@ -142,7 +143,7 @@ export function GroupDragDrop({
           </label>
           <div className="flex w-full justify-end items-center gap-4">
             Cotação do Grupo:
-            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
+            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2 dark:text-[#dddddd]">
               {testState.test.groups[exerciseGroupPosition].groupPoints} pts
             </div>
             <div className="flex border-l-2 pl-4 border-gray-1">
@@ -246,7 +247,7 @@ export function GroupDragDrop({
           </SortableContext>
           <div className="flex gap-7 w-full">
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
               onClick={() => {
                 setExerciseID({
                   groupPosition: exerciseGroupPosition,
@@ -255,23 +256,40 @@ export function GroupDragDrop({
                 setSelectedMenu("dd-list-exercises");
               }}
             >
-              <FaPencil className="group-gray-icon size-6" />
-              <label className="group-gray-icon font-medium text-lg">
+              <FaPencil className=" size-6" />
+              <label className=" font-medium text-lg">
                 Lista de Exercicios
               </label>
             </button>
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
               onClick={() => {
                 setSelectedMenu("");
                 setNewExercisePopUp(exerciseGroupPosition);
               }}
             >
-              <RiAddFill className="group-gray-icon size-8" />
-              <label className="group-gray-icon font-medium text-lg">
-                Criar Novo
-              </label>
+              <RiAddFill className=" size-8" />
+              <label className=" font-medium text-lg">Criar Novo</label>
             </button>
+            <div
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
+              onClick={() => {
+                setExerciseID({
+                  groupPosition: -1,
+                  exercisePosition: -1,
+                });
+                dispatch({
+                  type: EditTestActionKind.REMOVE_GROUP,
+                  exercise: {
+                    groupPosition: exerciseID.groupPosition,
+                    exercisePosition: exerciseID.exercisePosition,
+                  },
+                });
+              }}
+            >
+              <GarbageIcon style=" size-8" />
+              <label className=" font-medium text-lg">Remove</label>
+            </div>
           </div>
         </div>
       </div>

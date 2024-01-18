@@ -61,7 +61,7 @@ export function ShowExercise({
     switch (exercise.type) {
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
@@ -71,7 +71,7 @@ export function ShowExercise({
         break;
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
@@ -80,7 +80,7 @@ export function ShowExercise({
         break;
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
@@ -90,7 +90,7 @@ export function ShowExercise({
 
       case ExerciseType.CHAT:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <PiChatsBold className="size-5" />
             Chat Question
           </label>
@@ -104,7 +104,7 @@ export function ShowExercise({
     switch (exercise.identity.visibility) {
       case "private":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <BiSolidLock className="size-5" />
             Privado
           </label>
@@ -112,7 +112,7 @@ export function ShowExercise({
         break;
       case "not-listed":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <TbLink className="size-5" />
             Não listado
           </label>
@@ -120,7 +120,7 @@ export function ShowExercise({
         break;
       case "course":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <FaUserGraduate className="size-5" />
             Curso
           </label>
@@ -128,7 +128,7 @@ export function ShowExercise({
         break;
       case "institutional":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <LuSchool className="size-5" />
             Institucional
           </label>
@@ -136,7 +136,7 @@ export function ShowExercise({
         break;
       case "public":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <MdPublic className="size-5" />
             Público
           </label>
@@ -151,7 +151,7 @@ export function ShowExercise({
     <div
       className={`${
         selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-3-2`}
+      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-ex`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
@@ -163,7 +163,7 @@ export function ShowExercise({
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl">
+            <label className="flex min-w-max font-medium text-xl dark:text-[#dddddd]">
               {exercise.base.title}
             </label>
             <div
@@ -179,7 +179,7 @@ export function ShowExercise({
               selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-3-2 border-gray-1`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-ex border-gray-1`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")
@@ -193,7 +193,7 @@ export function ShowExercise({
           </button>
           <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
             <button
-              className="btn-options-exercise gray-icon"
+              className="btn-options-exercise ex-icon"
               onClick={() => {
                 if (!editMenuIsOpen) {
                   dispatch({
@@ -213,7 +213,7 @@ export function ShowExercise({
               Editar
             </button>
             <button
-              className="btn-options-exercise gray-icon"
+              className="btn-options-exercise ex-icon"
               onClick={() => {
                 if (changeVisibilityPopUp === "")
                   setChangeVisibilityPopUp(exercise.identity.id);
@@ -222,7 +222,7 @@ export function ShowExercise({
               <HiOutlineEyeOff className="size-6" />
               Visibilidade
             </button>
-            <button className="btn-options-exercise gray-icon">
+            <button className="btn-options-exercise ex-icon">
               <HiOutlineTrash className="size-6" />
               Eliminar
             </button>
@@ -240,7 +240,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1`}
+          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 bg-in-ex`}
         >
           {preview}
         </div>

@@ -38,8 +38,9 @@ export function EditTestDragDrop({
   const { user } = useContext(UserContext);
 
   return (
-    <div className="flex flex-col w-full bg-2-1 min-h-max">
-      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
+    /* <div className="flex flex-col w-full bg-2-1 min-h-max"> */
+    <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8 dark:text-white">
+      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2 dark:border-[#dddddd]">
         <div className="text-title-1">
           {testState.test.title
             ? testState.test.title
@@ -95,17 +96,15 @@ export function EditTestDragDrop({
           ))}
         </SortableContext>
         <div
-          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group cursor-pointer"
           onClick={() => {
             if (selectedMenu !== "edit-group") {
               dispatch({ type: EditTestActionKind.ADD_GROUP });
             }
           }}
         >
-          <RiAddFill className="group-gray-icon size-8" />
-          <label className="group-gray-icon font-medium text-lg">
-            Novo Grupo
-          </label>
+          <RiAddFill className=" size-8" />
+          <label className=" font-medium text-lg">Novo Grupo</label>
         </div>
       </div>
       <div className="flex flex-col pt-4 gap-4 border-t-2 border-gray-2-2">

@@ -15,12 +15,12 @@ export function OAPreview(props: OAPreviewProps) {
         header={props.exercise.base.statement}
       ></ExerciseHeaderComp>
 
-      <form>
+      <form className="w-full mb-4 ">
         <div className="w-full mb-4">
           <div className="px-4 py-2 rounded-b-lg">
             <TextareaBlock
               toolbar
-              className="w-full focus:ring-0 bg-white pb-2"
+              className="w-full focus:ring-0  pb-2"
               disabled={true}
               value={
                 props.context.resolution
