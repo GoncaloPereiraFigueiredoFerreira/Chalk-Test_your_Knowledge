@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, Outlet, useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import {
   CircularProgressbar,
   CircularProgressbarWithChildren,
@@ -15,77 +15,142 @@ import "react-circular-progressbar/dist/styles.css";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { AiTwotoneFileUnknown } from "react-icons/ai";
 import Histogram from "../../objects/Charts/Histogram";
+import { APIContext } from "../../../APIContext";
 
 const exampleData = [
   {
-    id: "1",
-    student: "JCR",
-    grade: 10,
-    exercises_grade: [2, 2, 2, 2, 2],
+    resolution: {
+      id: "string",
+      startDate: "2024-01-06T20:30:54.146Z",
+      submissionDate: "2024-01-06T20:30:54.146Z",
+      submissionNr: 0,
+      totalPoints: 80,
+      studentId: "string",
+      status: "ongoing",
+      groups: [
+        {
+          groupPoints: 30,
+          resolutions: {
+            additionalProp1: {
+              resolutionId: "string",
+              points: 10,
+            },
+            additionalProp2: {
+              resolutionId: "string",
+              points: 10,
+            },
+            additionalProp3: {
+              resolutionId: "string",
+              points: 10,
+            },
+          },
+        },
+        {
+          groupPoints: 50,
+          resolutions: {
+            additionalProp1: {
+              resolutionId: "string",
+              points: 27,
+            },
+            additionalProp2: {
+              resolutionId: "string",
+              points: 23,
+            },
+          },
+        },
+      ],
+      testId: "string",
+    },
+    student: {
+      email: "hugoferreiranogueira@gmail.com",
+      id: "string",
+      name: "Hugo Nogueira",
+    },
   },
   {
-    id: "2",
-    student: "JCR",
-    grade: 25,
-    exercises_grade: [5, 5, 5, 5, 5],
-  },
-  {
-    id: "3",
-    student: "JMF",
-    grade: 50,
-    exercises_grade: [10, 10, 10, 10, 10],
-  },
-  {
-    id: "4",
-    student: "JBB",
-    grade: 75,
-    exercises_grade: [15, 15, 15, 15, 15],
-  },
-  {
-    id: "5",
-    student: "JNO",
-    grade: 100,
-    exercises_grade: [20, 20, 20, 20, 20],
-  },
-  {
-    id: "6",
-    student: "JNO",
-    grade: 50,
-    exercises_grade: [10, 10, 10, 10, 10],
-  },
-  {
-    id: "7",
-    student: "JNO",
-    grade: 44,
-    exercises_grade: [9, 10, 10, 10, 15],
-  },
-  {
-    id: "8",
-    student: "JNO",
-    grade: 65,
-    exercises_grade: [15, 15, 15, 10, 10],
-  },
-  {
-    id: "9",
-    student: "JNO",
-    grade: 0,
-    exercises_grade: [0, 0, 0, 0, 0],
+    resolution: {
+      id: "string",
+      startDate: "2024-01-06T20:30:54.146Z",
+      submissionDate: "2024-01-06T20:30:54.146Z",
+      submissionNr: 0,
+      totalPoints: 30,
+      studentId: "string",
+      status: "ongoing",
+      groups: [
+        {
+          groupPoints: 25,
+          resolutions: {
+            additionalProp1: {
+              resolutionId: "string",
+              points: 10,
+            },
+            additionalProp2: {
+              resolutionId: "string",
+              points: 10,
+            },
+            additionalProp3: {
+              resolutionId: "string",
+              points: 5,
+            },
+          },
+        },
+        {
+          groupPoints: 5,
+          resolutions: {
+            additionalProp1: {
+              resolutionId: "string",
+              points: 5,
+            },
+            additionalProp2: {
+              resolutionId: "string",
+              points: 0,
+            },
+          },
+        },
+      ],
+      testId: "string",
+    },
+    student: {
+      email: "email@gmail.com",
+      id: "string",
+      name: "Nome diferente",
+    },
   },
 ];
-interface Test {
-  id: string;
-  student: string;
-  grade: number;
-  exercises_grade: number[];
+
+function lista_exercicios(groups: any): number[] {
+  let exercicios = [];
+  let count = 0;
+  for (let group of groups) {
+    count += 1;
+    let nr = Object.keys(group.resolutions).length;
+    for (let i = 1; i < nr + 1; i++) {
+      exercicios.push(count + i / 10);
+    }
+  }
+  return exercicios;
 }
 
-type TestList = Test[];
+function lista_nota_exercicios(result: any): number[] {
+  console.log("debug aqui");
+  console.log(result);
+  console.log("aqui tambem");
+  let groups = result.groups;
+  let nota_exercicios = [];
+  for (let group of groups) {
+    let ex: any;
+    for (ex of Object.values(group.resolutions)) {
+      nota_exercicios.push(ex.points);
+    }
+  }
+  return nota_exercicios;
+}
 
-function ShowTestGrid(test: Test, index: number) {
+function ShowTestGrid(test: Result) {
   return (
     <div className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
       <div className="py-4 px-12 ">
-        {test.grade === undefined ? (
+        {!test.status.toLowerCase().includes("revised") ? (
           <CircularProgressbarWithChildren value={0}>
             <AiTwotoneFileUnknown size="100" />
             <div style={{ fontSize: 12, marginTop: -5 }}>
@@ -94,14 +159,14 @@ function ShowTestGrid(test: Test, index: number) {
           </CircularProgressbarWithChildren>
         ) : (
           <CircularProgressbar
-            value={test.grade}
-            text={`${test.grade}%`}
+            value={test.totalPoints}
+            text={`${test.totalPoints}%`}
             styles={buildStyles({
-              textColor: `rgba(${480 - test.grade * 4.8}, ${
-                4.8 * test.grade
+              textColor: `rgba(${480 - test.totalPoints * 4.8}, ${
+                4.8 * test.totalPoints
               }, ${0})`,
-              pathColor: `rgba(${480 - test.grade * 4.8}, ${
-                4.8 * test.grade
+              pathColor: `rgba(${480 - test.totalPoints * 4.8}, ${
+                4.8 * test.totalPoints
               }, ${0})`,
             })}
           />
@@ -110,13 +175,15 @@ function ShowTestGrid(test: Test, index: number) {
 
       <div className="p-5 bg-slate-300">
         <p className="mb-2  px-2 font-normal text-gray-700 dark:text-gray-400">
-          <strong>Student:</strong> {test.student}
+          <strong>Student:</strong> {test.studentId}
         </p>
 
         <div className="flex w-full px-2 justify-between">
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
             <strong>Grade:</strong>
-            {test.grade === undefined ? "TBD" : ` ${test.grade}%`}
+            {!test.status.toLowerCase().includes("revised")
+              ? "TBD"
+              : ` ${test.totalPoints}%`}
           </div>
         </div>
       </div>
@@ -124,20 +191,22 @@ function ShowTestGrid(test: Test, index: number) {
   );
 }
 
-function ShowTestList(test: Test, index: number) {
+function ShowTestList(test: Result) {
   return (
     <div className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden">
       <div className="p-4 flex justify-between w-full">
         <div className="flex-col w-60">
           <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
-            <strong>Student:</strong> {test.student}
+            <strong>Student:</strong> {test.studentId}
           </p>
         </div>
 
         <div className="flex justify-end space-x-2 w-60">
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-36">
             <strong>Grade:</strong>
-            {test.grade === undefined ? "TBD" : ` ${test.grade}%`}
+            {!test.status.toLowerCase().includes("revised")
+              ? "TBD"
+              : ` ${test.totalPoints}%`}
           </div>
         </div>
       </div>
@@ -145,14 +214,14 @@ function ShowTestList(test: Test, index: number) {
   );
 }
 
-function ShowExcelLike(resultsList: TestList) {
+function ShowExcelLike(resultsList: ResultList) {
   return (
     <div className="container mx-auto my-8">
       <table className="table-auto border-collapse w-full">
         <thead>
           <tr>
             <th className="border bg-slate-400 px-4 py-2">Student</th>
-            {[1.1, 1.2, 1.3, 2.1, 2.2].map((exercise) => {
+            {lista_exercicios(resultsList[0].groups).map((exercise) => {
               return (
                 <th className="border  bg-slate-400 px-4 py-2">{exercise}</th>
               );
@@ -164,8 +233,10 @@ function ShowExcelLike(resultsList: TestList) {
           {resultsList.map((result) => {
             return (
               <tr>
-                <td className="border bg-white px-4 py-2">{result.student}</td>
-                {result.exercises_grade!.map((exercise_result) => {
+                <td className="border bg-white px-4 py-2">
+                  {result.studentId}
+                </td>
+                {lista_nota_exercicios(result).map((exercise_result) => {
                   return (
                     <td className="border bg-white px-4 py-2">
                       {exercise_result}
@@ -173,7 +244,7 @@ function ShowExcelLike(resultsList: TestList) {
                   );
                 })}
                 <td className="border bg-white px-4 py-2">
-                  {result.exercises_grade.reduce(
+                  {lista_nota_exercicios(result).reduce(
                     (accumulator, currentValue) => accumulator + currentValue,
                     0
                   )}
@@ -187,18 +258,19 @@ function ShowExcelLike(resultsList: TestList) {
   );
 }
 
-function histogramData(resultsList: TestList) {
-  const grade_distribution = [0, 0, 0, 0, 0];
+function histogramData(resultsList: ResultList) {
+  let grade_distribution = [0, 0, 0, 0, 0];
   resultsList.map((result) => {
-    if (result.grade < 40) {
+    let totalPoints = result.totalPoints;
+    if (totalPoints < 40) {
       grade_distribution[0] += 1;
-    } else if (result.grade >= 40 && result.grade < 45) {
+    } else if (totalPoints >= 40 && totalPoints < 45) {
       grade_distribution[1] += 1;
-    } else if (result.grade >= 45 && result.grade < 55) {
+    } else if (totalPoints >= 45 && totalPoints < 55) {
       grade_distribution[2] += 1;
-    } else if (result.grade >= 55 && result.grade < 70) {
+    } else if (totalPoints >= 55 && totalPoints < 70) {
       grade_distribution[3] += 1;
-    } else if (result.grade >= 70 && result.grade <= 100) {
+    } else if (totalPoints >= 70 && totalPoints <= 100) {
       grade_distribution[4] += 1;
     }
   });
@@ -206,25 +278,32 @@ function histogramData(resultsList: TestList) {
   return grade_distribution;
 }
 
+interface Result {
+  id: string;
+  totalPoints: number;
+  studentId: string;
+  status: string;
+  groups: any;
+}
+
+type ResultList = Result[];
+
 export function EvaluationPage() {
   const [viewMode, setViewMode] = useState<"grid" | "row" | "Excel">("grid");
   const [searchKey, setSearch] = useState("");
-  const [resultsList, setResultsList] = useState<TestList>([]);
+  const [resultsList, setResultsList] = useState<ResultList>([]);
   const { results_id } = useParams();
+  const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    setResultsList(exampleData);
+    contactBACK("tests/" + results_id + "/resolutions/last", "GET", {}).then(
+      (response) => {
+        response.json().then((tests) => {
+          setResultsList(tests);
+        });
+      }
+    );
   }, [results_id]);
-
-  const addEvaluation = () => {
-    const newTest: Test = {
-      id: "1",
-      student: "Luis",
-      grade: 10,
-      exercises_grade: [2, 2, 2, 2, 2],
-    };
-    setResultsList([...resultsList, newTest]);
-  };
 
   return (
     <>
@@ -247,12 +326,6 @@ export function EvaluationPage() {
               </div>
             </div>
             <div className="flex  ">
-              <button
-                className=" items-center justify-center w-24 h-10 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                onClick={addEvaluation}
-              >
-                Adicionar Avaliacao
-              </button>
               <button
                 className="px-2 w-12"
                 onClick={() =>
@@ -280,14 +353,14 @@ export function EvaluationPage() {
           <div className="flex flex-col w-full gap-4 min-h-max pb-8">
             {viewMode == "grid" ? (
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-6 md:grid-cols-3 md:gaps-4">
-                {resultsList.map((test, index) => {
-                  return ShowTestGrid(test, index);
+                {resultsList.map((test) => {
+                  return ShowTestGrid(test);
                 })}
               </div>
             ) : viewMode == "row" ? (
               <div className="grid grid-cols-1 gap-2">
-                {resultsList.map((test, index) => {
-                  return ShowTestList(test, index);
+                {resultsList.map((test) => {
+                  return ShowTestList(test);
                 })}
               </div>
             ) : (

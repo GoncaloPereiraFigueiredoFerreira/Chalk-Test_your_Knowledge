@@ -1,14 +1,20 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { ListTests, ViewType } from "../../objects/ListTests/ListTest";
 import {
   GridIcon,
   ListIcon,
   SearchIcon,
 } from "../../objects/SVGImages/SVGImages";
+import { TagsList, TagsFilterModal } from "./TagsFilterModal";
 
 export function TestesPartilhadosPage() {
   const [searchKey, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<ViewType>(ViewType.LIST);
+
+  const { id } = useParams();
+  const [tagsList, setTagsList] = useState<TagsList>([]);
+
   return (
     <div className="w-full h-screen py-24 overflow-auto bg-2-1">
       <div className=" w-full gap-4 min-h-max px-16 pb-8">
@@ -28,12 +34,22 @@ export function TestesPartilhadosPage() {
               />
             </div>
           </div>
+          <div>
+            {tagsList.map((tag, index) => (
+              <button key={index} className="bg-blue-300">
+                {tag.name}
+              </button>
+            ))}
+          </div>
+          <div>
+            <TagsFilterModal setTagsList={setTagsList}></TagsFilterModal>
+          </div>
           <div className="flex  items-center">
             <button
               className="  w-24 h-10 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               onClick={() => {}}
             >
-              Adicionar Teste
+              Adicionar teste
             </button>
             <button
               className="px-2 w-12"
@@ -51,7 +67,13 @@ export function TestesPartilhadosPage() {
             </button>
           </div>
         </div>
-        <ListTests view={viewMode}></ListTests>
+        <ListTests
+          view={viewMode}
+          courseId={id}
+          visibilityType={"COURSE"}
+          searchKey={searchKey}
+          tagsList={tagsList}
+        ></ListTests>
       </div>
     </div>
   );
