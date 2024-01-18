@@ -5,11 +5,7 @@ import java.util.List;
 
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
-import pt.uminho.di.chalktyk.models.tests.Test;
-import pt.uminho.di.chalktyk.models.tests.TestGroup;
-import pt.uminho.di.chalktyk.models.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
-import pt.uminho.di.chalktyk.models.tests.TestTag;
+import pt.uminho.di.chalktyk.models.tests.*;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -488,4 +484,6 @@ public interface ITestsService {
      * @throws NotFoundException if the test resolution or any exercise resolution were not found
      */
     List<ExerciseResolution> getExerciseResolutionsForTestResolution(String testResId) throws NotFoundException;
+
+    Test createAutoEvaluationTest(String studentId, List<String> tagsIds, int nrExercises) throws NotFoundException, BadInputException;
 }

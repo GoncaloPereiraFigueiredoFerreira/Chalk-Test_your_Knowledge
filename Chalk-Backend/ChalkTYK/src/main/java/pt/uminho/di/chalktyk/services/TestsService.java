@@ -88,7 +88,7 @@ public class TestsService implements ITestsService {
             if(!specialistsService.existsSpecialistById(specialistId))
                 throw new NotFoundException("There is no specialist with the given id");
         }
-        Page<Test> tests = testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags.size(), matchAllTags, visibility, institutionId, courseId, specialistId, title);
+        Page<Test> tests = testDAO.getTests(PageRequest.of(page, itemsPerPage), tags, tags != null ? tags.size() : 0, matchAllTags, visibility, institutionId, courseId, specialistId, title);
 
         // turning groups to null
         List<Test> tmpTests = new ArrayList<>();
@@ -1667,5 +1667,42 @@ public class TestsService implements ITestsService {
     @Override
     public List<TestTag> getTestTags(String testId) throws NotFoundException {
         return testTagsDAO.getTestTags(testId);
+    }
+
+    @Override
+    public Test createAutoEvaluationTest(String studentId, List<String> tagsIds, int nrExercises) throws NotFoundException, BadInputException {
+        Student student = studentsService.getStudentById(studentId);
+
+        if(nrExercises <= 0 || nrExercises > 10)
+            throw new BadInputException("Cannot create auto evaluation test: The number of exercises must be between 0 and 10.");
+
+        if(tagsIds == null)
+            throw new BadInputException("Cannot create auto evaluation test: list of tag identifiers was not provided.");
+
+        //List<Tag> tags = new ArrayList<>();
+        //for (String tagId : tagsIds) {
+        //    Tag tag = tagsService.getTagById(tagId);
+        //    if(tag != null) tags.add(tag);
+        //}
+        List<Exercise> exercises = testDAO.getExercisesForAutoEvalTest(tagsIds,PageRequest.of(0, nrExercises)).toList();
+        List<TestExercise> testExercises = new ArrayList<>();
+        float exercisesPoints = 10f;
+
+        for(Exercise exercise: exercises){
+            String dupId = exercisesService.duplicateExerciseByIdNoSpecialist(exercise.getId());
+            testExercises.add(new ReferenceExercise(dupId, exercisesPoints));
+            System.out.println(exercise.getId());
+        }
+
+        TestGroup testGroup = new TestGroup("", exercises.size() * exercisesPoints, testExercises);
+        LocalDateTime dateTime = LocalDateTime.now();
+        AutoEvaluationTest test = new AutoEvaluationTest(
+                null, "Teste de autoavaliação", "",
+                exercises.size() * exercisesPoints, "",
+                dateTime, dateTime, student,
+                Visibility.PUBLIC, List.of(testGroup)
+        );
+
+        return testDAO.save(test);
     }
 }

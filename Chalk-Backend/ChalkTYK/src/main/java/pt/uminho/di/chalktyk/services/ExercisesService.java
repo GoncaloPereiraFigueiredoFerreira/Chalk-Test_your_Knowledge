@@ -228,6 +228,12 @@ public class ExercisesService implements IExercisesService{
             exerciseRubricDAO.deleteById(exercise.getRubricId());
     }
 
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public String duplicateExerciseByIdNoSpecialist(String exerciseId) throws NotFoundException {
+        return _duplicateExerciseById(null, exerciseId, null, null);
+    }
+
     /**
      * Duplicates the exercise that contains the given identifier.
      * The id of the specialist, and if existent, the institution identifier
@@ -250,11 +256,13 @@ public class ExercisesService implements IExercisesService{
     public String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException {
         // checks if the specialist exists
         Specialist specialist = specialistsService.getSpecialistById(specialistId);
+        return _duplicateExerciseById(specialist, exerciseId, courseId, visibility);
+    }
 
+    private String _duplicateExerciseById(Specialist specialist, String exerciseId, String courseId, Visibility visibility) throws NotFoundException {
         // gets specialists institution
         String institutionId = null;
-        Institution institution =
-                institutionsService.getSpecialistInstitution(specialistId);
+        Institution institution = specialist != null ? institutionsService.getSpecialistInstitution(specialist.getId()) : null;
 
         Exercise source = _getExerciseById(exerciseId);
 
