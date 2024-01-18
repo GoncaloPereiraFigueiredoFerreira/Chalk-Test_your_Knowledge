@@ -299,25 +299,29 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   } group`}
                 >
                   <GroupIcon style={"group-gray-icon"} />
-                  <span className={isOpen ? "" : "hidden"}>Outros Grupos</span>
+                  <span className={isOpen ? "" : "hidden"}>
+                    Todos os Grupos
+                  </span>
                 </button>
               </li>
             </ul>
             {showGrupOptions()}
           </li>
-          <li>
-            <button
-              className="sidebar-item bg-btn-1 group"
-              onClick={() => setGroupModal(true)}
-            >
-              <WorldIcon style={"group-gray-icon"} />
-              <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
-            </button>
-            <CreateGroupModal
-              open={openGroupModal}
-              close={() => setGroupModal(false)}
-            />
-          </li>
+          {user.user?.role === UserRole.SPECIALIST && (
+            <li>
+              <button
+                className="sidebar-item bg-btn-1 group"
+                onClick={() => setGroupModal(true)}
+              >
+                <WorldIcon style={"group-gray-icon"} />
+                <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
+              </button>
+              <CreateGroupModal
+                open={openGroupModal}
+                close={() => setGroupModal(false)}
+              />
+            </li>
+          )}
         </ul>
 
         <div className="sidebar-divisions border-gray-3 mt-auto">

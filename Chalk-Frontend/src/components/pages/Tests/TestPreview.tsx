@@ -7,6 +7,7 @@ import {
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
+import { textToHTML } from "../../interactiveElements/TextareaBlock";
 
 function renderExercise(
   exercise: Exercise,
@@ -64,7 +65,9 @@ function renderExercise(
           testResolutions.resolutions[exercise.identity.id] ? (
             <p className="">
               <strong>Comentário do Especialista: </strong>
-              {testResolutions.resolutions[exercise.identity.id].comment}
+              {textToHTML(
+                testResolutions.resolutions[exercise.identity.id].comment
+              )}
             </p>
           ) : (
             <></>

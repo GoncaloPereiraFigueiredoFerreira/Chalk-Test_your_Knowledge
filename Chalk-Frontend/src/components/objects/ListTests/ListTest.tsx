@@ -275,8 +275,9 @@ export function ListTests({
         page: (currentPage - 1).toString(),
         itemsPerPage: "20",
         specialistId: user.user.id,
-
+        courseId: courseId,
         visibilityType: visibilityType,
+        tags: requestTags,
       }).then((response) => {
         response.json().then((tests) => {
           tests.map((test: any) => {
