@@ -92,8 +92,8 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
         <>
           <ul
             className={`${
-              !showGroup && selectedGroup.id !== "all" ? "" : "hidden"
-            } sidebar-dropdown transition-all`}
+              selectedGroup.id !== "all" ? "" : "hidden"
+            } gap-2 transition-all sidebar-divisions border-gray-3`}
           >
             <li>
               <Link to={`groups/${selectedGroup.id}/alunos`}>
@@ -269,7 +269,6 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 <li key={index}>
                   <button
                     onClick={() => {
-                      setShowGroup(false);
                       setSelectedGroup(item);
                       navigate(`groups/${item.id}/alunos`);
                     }}
@@ -285,7 +284,6 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               <li>
                 <button
                   onClick={() => {
-                    setShowGroup(false);
                     setSelectedGroup({
                       id: "all",
                       name: "Grupos",
@@ -305,7 +303,6 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 </button>
               </li>
             </ul>
-            {showGrupOptions()}
           </li>
           {user.user?.role === UserRole.SPECIALIST && (
             <li>
@@ -323,6 +320,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </li>
           )}
         </ul>
+        {showGrupOptions()}
 
         <div className="sidebar-divisions border-gray-3 mt-auto">
           <ul>
