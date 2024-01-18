@@ -1,22 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   GridIcon,
   ListIcon,
   SearchIcon,
 } from "../../objects/SVGImages/SVGImages";
+import { APIContext } from "../../../APIContext.tsx";
+
+const exampleData = [
+  { id: "111111", title: "1 Historia 2023" },
+  { id: "22222", title: "2 Historia 2023" },
+];
+
+interface Test {
+  id: string;
+  title: string;
+}
+
+type TestList = Test[];
+
 export function AvaliacoesPage() {
   const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const [searchKey, setSearch] = useState("");
-  const [examList, setExamList] = useState([
-    "1 História 2023",
-    "2 História 2023",
-  ]);
+  const { contactBACK } = useContext(APIContext);
+  const [examList, setExamList] = useState<TestList>([]);
+  const { id } = useParams();
+
+  useEffect(() => {
+    // load different test
+    contactBACK("tests", "GET", {
+      page: "0",
+      itemsPerPage: "20",
+      courseId: id!,
+      visibilityType: "COURSE",
+    }).then((response) => {
+      response.json().then((tests) => {
+        console.log(tests);
+
+        setExamList([...tests, ...exampleData]);
+      });
+    });
+  }, []);
+
+  const filteredItems: TestList = examList.filter((item) =>
+    item.title.toLowerCase().includes(searchKey.toLowerCase())
+  );
+
   const addEvaluation = () => {
-    setExamList([...examList, `${examList.length + 1} História 2023`]);
+    //falta fazer
   };
   const navigate = useNavigate();
+
   return (
     <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-2-1">
       <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
@@ -55,18 +90,19 @@ export function AvaliacoesPage() {
             </button>
           </div>
         </div>
-        {examList.map((item, index) => (
+
+        {filteredItems.map((item, index) => (
           <div
             key={index}
             className="flex justify-between bg-white p-6 rounded-lg shadow-md"
           >
             <div className=" text-xl font-semibold text-gray-800 m-2 p-4">
-              {item}
+              {item.title}
             </div>
             <div>
               <button
                 className=" self-end w-32 lg:w-64 h-20 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                onClick={() => navigate(`${item}`)}
+                onClick={() => navigate(`${item.id}`)}
               >
                 Notas
               </button>
