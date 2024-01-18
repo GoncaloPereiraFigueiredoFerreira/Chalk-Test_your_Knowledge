@@ -36,6 +36,7 @@ export interface EditTestAction {
   testInfo?: {
     type: string;
     conclusion: string;
+    visibility: string;
     title: string;
     globalInstructions: string;
   };
@@ -83,7 +84,7 @@ export function EditTestStateReducer(
             title: action.testInfo.title,
             globalInstructions: action.testInfo.globalInstructions,
             conclusion: action.testInfo.conclusion,
-            visibility: state.test.visibility,
+            visibility: action.testInfo.visibility,
           }
         );
         return {

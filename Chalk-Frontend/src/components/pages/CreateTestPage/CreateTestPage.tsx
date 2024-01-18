@@ -173,6 +173,7 @@ export function CreateTest({ test }: CreateTestProps) {
       active.data.current === undefined
     )
       return;
+
     const activeID = active.id;
     const activeInfo = active.data.current as EventInfo;
     const overID = over.id;
@@ -190,7 +191,10 @@ export function CreateTest({ test }: CreateTestProps) {
       // Add an Exercise to the Test
       if (activeDnD.type === "add") {
         // Add the new Exercise to the Test => over is an Group
-        if (overInfo.type === "group") {
+        if (
+          overInfo.type === "group" &&
+          activeInfo.groupPosition !== overInfo.groupPosition
+        ) {
           if (activeDnD.added) {
             // Move the new Exercise to another Group
             let insertPosition = 0;
@@ -241,7 +245,10 @@ export function CreateTest({ test }: CreateTestProps) {
           }
         }
         // Add the new Exercise to the Test => over is an Exercise
-        else if (overInfo.type === "exercise") {
+        else if (
+          overInfo.type === "exercise" &&
+          activeInfo.groupPosition !== overInfo.groupPosition
+        ) {
           if (activeDnD.added) {
             // Move the new Exercise to another Group
             let insertPosition = 0;
@@ -271,32 +278,28 @@ export function CreateTest({ test }: CreateTestProps) {
             const newListExercises: Exercise[] = JSON.parse(
               JSON.stringify(listExercises)
             );
-
-            if (overInfo.type == "exercise" && activeInfo.type === "exercise") {
-              newListExercises.splice(activeDnD.exercisePosition, 1);
-              setListExercises(newListExercises);
-              dispatch({
-                type: EditTestActionKind.ADD_NEW_EXERCISE,
-                exercise: {
-                  groupPosition: overInfo.groupPosition,
-                  exercisePosition: overInfo.exercisePosition,
-                  exercise: activeInfo.exercise,
-                  tmp: true,
-                },
-              });
-              setActiveDnD({
-                ...activeDnD,
-                added: {
-                  exercisePosition: overInfo.exercisePosition,
-                  groupPosition: overInfo.groupPosition,
-                },
-              });
-            }
+            newListExercises.splice(activeDnD.exercisePosition, 1);
+            setListExercises(newListExercises);
+            dispatch({
+              type: EditTestActionKind.ADD_NEW_EXERCISE,
+              exercise: {
+                groupPosition: overInfo.groupPosition,
+                exercisePosition: overInfo.exercisePosition,
+                exercise: activeInfo.exercise,
+                tmp: true,
+              },
+            });
+            setActiveDnD({
+              ...activeDnD,
+              added: {
+                exercisePosition: overInfo.exercisePosition,
+                groupPosition: overInfo.groupPosition,
+              },
+            });
           }
         }
-        // Add the new Exercise to the Test => over is an Exercise
+        // Cancel add operation => Remove new Exercise from test
         else if (overInfo.type === "add" && activeDnD.added) {
-          // Add the new Exercise to the Test => over is an Exercise
           const newListExercises: Exercise[] = JSON.parse(
             JSON.stringify(listExercises)
           );
@@ -727,7 +730,6 @@ export function CreateTest({ test }: CreateTestProps) {
                 }}
               ></EditExercise>
             )}
-
             {selectedMenu === "edit-group" && (
               <EditGroup
                 exerciseInstructions={
@@ -754,6 +756,7 @@ export function CreateTest({ test }: CreateTestProps) {
                 testInfo={{
                   type: testState.test.type,
                   conclusion: testState.test.conclusion,
+                  visibility: testState.test.visibility,
                   title: testState.test.title,
                   globalInstructions: testState.test.globalInstructions,
                 }}

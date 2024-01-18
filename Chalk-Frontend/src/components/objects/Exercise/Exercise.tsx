@@ -347,6 +347,7 @@ export function InitExercise(type: ExerciseType): Exercise {
       };
       newExercise = CQExercise;
   }
+  newExercise.identity.points = 1;
   return newExercise;
 }
 
