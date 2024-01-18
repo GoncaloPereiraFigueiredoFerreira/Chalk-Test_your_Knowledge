@@ -6,11 +6,13 @@ import {
   ListIcon,
   SearchIcon,
 } from "../../objects/SVGImages/SVGImages";
-import { TagsList, TagsFilterModal } from "./TagsFilterModal";
+import { TagsList, TagsFilterModal } from "../../objects/Tags/TagsFilterModal";
+import { Button } from "flowbite-react";
 
 export function TestesPartilhadosPage() {
   const [searchKey, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<ViewType>(ViewType.LIST);
+  const [openModal, setOpenModal] = useState(false);
 
   const { id } = useParams();
   const [tagsList, setTagsList] = useState<TagsList>([]);
@@ -42,7 +44,13 @@ export function TestesPartilhadosPage() {
             ))}
           </div>
           <div>
-            <TagsFilterModal setTagsList={setTagsList}></TagsFilterModal>
+            <Button onClick={() => setOpenModal(true)}>Filter by tags</Button>
+            <TagsFilterModal
+              setTagsList={setTagsList}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              header={"Selecione as tags que pretende ver"}
+            ></TagsFilterModal>
           </div>
           <div className="flex  items-center">
             <button

@@ -20,6 +20,7 @@ export enum ResolutionType {
 export interface Resolution {
   id: string;
   exerciseID: string;
+  testResolutionId?: string;
   cotation: number;
   comment?: string;
   student?: {

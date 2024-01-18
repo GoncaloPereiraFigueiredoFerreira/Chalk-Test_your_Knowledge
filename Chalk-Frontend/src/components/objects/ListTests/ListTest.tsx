@@ -270,15 +270,13 @@ export function ListTests({
 
   useEffect(() => {
     let requestTags: any = tagsList.map((tag: any) => tag.id);
-    console.log("Tags --->", requestTags);
     if (user.user?.role == UserRole.SPECIALIST) {
       contactBACK("tests", "GET", {
-        page: "0",
+        page: (currentPage - 1).toString(),
         itemsPerPage: "20",
         specialistId: user.user.id,
-        courseId: courseId,
+
         visibilityType: visibilityType,
-        tags: requestTags,
       }).then((response) => {
         response.json().then((tests) => {
           tests.map((test: any) => {
@@ -291,7 +289,7 @@ export function ListTests({
       });
     } else {
       contactBACK("tests", "GET", {
-        page: "0",
+        page: (currentPage - 1).toString(),
         itemsPerPage: "20",
         courseId: courseId,
         visibilityType: visibilityType,
