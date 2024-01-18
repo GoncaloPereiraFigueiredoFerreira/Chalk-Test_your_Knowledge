@@ -257,7 +257,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestExercisePoints( String testId, int groupIndex, String exerciseId, float points, String jwt){
+    public ResponseEntity<Void> updateTestExercisePoints(String testId, int groupIndex, String exerciseId, float points, String jwt){
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);

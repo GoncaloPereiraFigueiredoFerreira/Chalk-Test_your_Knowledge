@@ -21,7 +21,9 @@ export interface Resolutions {
     solution?: Resolution;
     position?: string;
     maxCotation: number;
-    studentRes: { [resolutionID: string]: Resolution };
+    studentRes: {
+      [resolutionID: string]: Resolution;
+    };
   };
 }
 
@@ -48,19 +50,23 @@ export function Correction() {
     const cpyStudentRes = { ...resCpy[exId].studentRes };
     cpyStudentRes[resId] = { ...res };
     resCpy[exId].studentRes = cpyStudentRes;
-
     setResolutions(resCpy);
   };
 
-  const gradeResolution = (resId: string, points: number, comment: string) => {
+  const gradeResolution = (
+    testResId: string,
+    exResId: string,
+    points: number,
+    comment: string
+  ) => {
     contactBACK(
-      "/exercises/resolutions/" + resId + "/manual-correction",
-      "POST",
+      "/tests/resolutions/" + testResId + "/" + exResId + "/manual-correction",
+      "PUT",
       undefined,
       { points: points, comment: comment }
     ).then(() => {
       const resCpy = { ...resolutions[exID].studentRes };
-      delete resCpy[resId];
+      delete resCpy[exResId];
       const newResolutions = { ...resolutions };
       newResolutions[exID] = { ...newResolutions[exID], studentRes: resCpy };
       setResolutions(newResolutions);
@@ -111,6 +117,7 @@ export function Correction() {
                       const newRes: Resolution = {
                         id: res.resolution.id,
                         exerciseID: exID,
+                        testResolutionId: res.resolution.testResolutionId,
                         student: {
                           id: res.student.id,
                           name: res.student.name,

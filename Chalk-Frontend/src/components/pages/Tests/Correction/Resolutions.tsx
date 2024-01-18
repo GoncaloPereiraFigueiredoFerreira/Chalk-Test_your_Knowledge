@@ -83,9 +83,14 @@ export function ResolutionsComp({
     setCorrections(cpy);
   };
 
-  const submitCorrection = (resId: string) => {
-    if (resId in corrections) {
-      gradeEx(resId, corrections[resId].points, corrections[resId].comment);
+  const submitCorrection = (exResId: string, testResId: string) => {
+    if (exResId in corrections) {
+      gradeEx(
+        testResId,
+        exResId,
+        corrections[exResId].points,
+        corrections[exResId].comment
+      );
       backToList();
     }
   };
@@ -220,7 +225,7 @@ function SingleResolution(
         type="button"
         className="p-3 bg-yellow-300 rounded-md mt-auto"
         onClick={() => {
-          submitCorrection(resolution.id);
+          submitCorrection(resolution.id, resolution.testResolutionId);
         }}
       >
         Submit

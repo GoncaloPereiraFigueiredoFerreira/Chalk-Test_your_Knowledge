@@ -15,6 +15,7 @@ import {
 } from "./ListExerciseContext";
 import { APIContext } from "../../../APIContext";
 import { ChangeVisibility } from "./ChangeVisibilityExercisePopUp";
+import { Pagination } from "flowbite-react";
 
 const userExercises: Exercise[] = [
   {
@@ -169,25 +170,24 @@ export function ListExercises({
 
   useEffect(() => {
     contactBACK("exercises", "GET", {
-      page: "0",
+      page: (currentPage - 1).toString(),
       itemsPerPage: "10",
       visibility: "public",
     }).then((response) => {
       response.json().then((exercises) => {
-        console.log(exercises);
         const exerciseL: Exercise[] = [];
         exercises.map((ex: any) => {
           exerciseL.push(TranslateExerciseIN(ex));
         });
         dispatch({
-          type: ListExerciseActionKind.ADD_LIST_EXERCISES,
+          type: ListExerciseActionKind.SET_LIST_EXERCISES,
           payload: {
             exercises: exerciseL,
           },
         });
       });
     });
-  }, []);
+  }, [currentPage]);
 
   return (
     <>
@@ -251,6 +251,14 @@ export function ListExercises({
             ></ShowExercise>
           )
         )}
+        <div className="w-full flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={30}
+            onPageChange={onPageChange}
+            showIcons
+          />
+        </div>
       </div>
       <ChangeVisibility
         show={changeVisibilityPopUp !== ""}

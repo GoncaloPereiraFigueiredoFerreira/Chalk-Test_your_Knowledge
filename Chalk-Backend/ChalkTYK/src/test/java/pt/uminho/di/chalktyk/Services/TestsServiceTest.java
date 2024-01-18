@@ -460,12 +460,12 @@ public class TestsServiceTest {
         testsService.manualCorrectionForExercise(res1, tr_id, 3.0F, "bruh1");
         testsService.manualCorrectionForExercise(res2, tr_id, 3.0F, "bruh2");
         try {
+            // Maximum points for the exercise is 2.0f, so it should result in an exception
             testsService.manualCorrectionForExercise(res3, tr_id, 3.0F, "bruh3");
             assert false;
         }
         catch (BadInputException e){
             testsService.manualCorrectionForExercise(res3, tr_id, 2.0F, "bruh3");
-
             TestResolution tr = testsService.getTestResolutionById(tr_id);
             assert tr.getTotalPoints() == 8.0F;
         }
@@ -500,7 +500,7 @@ public class TestsServiceTest {
 
     @Test
     public void deleteTestExercise() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,75);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,150);
 
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);
@@ -545,7 +545,7 @@ public class TestsServiceTest {
 
     @Test
     public void removeTestExercise() throws NotFoundException, BadInputException {
-        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,75);
+        pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(true,150);
 
         String testId = testsService.createTest(t1);
         pt.uminho.di.chalktyk.models.tests.Test test = testsService.getTestById(testId);

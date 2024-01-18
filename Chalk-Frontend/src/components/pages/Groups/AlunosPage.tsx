@@ -67,6 +67,10 @@ export function AlunosPage() {
     });
   };
 
+  const filteredItems: Student[] = studentList.filter((item) =>
+    item.name.toLowerCase().includes(searchKey.toLowerCase())
+  );
+
   return (
     <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-2-1">
       <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
@@ -137,7 +141,7 @@ export function AlunosPage() {
               : "flex flex-col gap-4 px-10"
           }
         >
-          {studentList.map((student, index) => (
+          {filteredItems.map((student, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-md">
               <img
                 className={

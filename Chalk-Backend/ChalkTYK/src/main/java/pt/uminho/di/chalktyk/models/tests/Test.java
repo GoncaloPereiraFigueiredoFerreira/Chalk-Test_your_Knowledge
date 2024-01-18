@@ -57,7 +57,7 @@ public class Test implements Serializable {
 
 	@JsonIgnore
 	@ManyToOne(targetEntity= Specialist.class, fetch=FetchType.LAZY)
-	@JoinColumns(value={ @JoinColumn(name="SpecialistID", referencedColumnName="ID", nullable=false) })
+	@JoinColumns(value={ @JoinColumn(name="SpecialistID", referencedColumnName="ID") })
 	private Specialist specialist;
 
 	@Column(name = "SpecialistID", insertable = false, updatable = false)
@@ -189,7 +189,7 @@ public class Test implements Serializable {
 					String exerciseId = entry.getId();
 					assert exerciseId != null; // exercise id cannot be null
 
-					TestExerciseResolutionBasic pair = new TestExerciseResolutionBasic("", 0.0F);
+					TestExerciseResolutionBasic pair = null;
 					resolutionGroupAnswers.put(exerciseId, pair);
 				}
 

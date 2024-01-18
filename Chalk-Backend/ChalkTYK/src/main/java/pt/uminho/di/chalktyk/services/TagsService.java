@@ -130,7 +130,7 @@ public class TagsService implements ITagsService {
      */
     @Override
     public Tag getTagById(String id) {
-        return tagDAO.findById(id).orElse(null);
+        return id != null ? tagDAO.findById(id).orElse(null) : null;
     }
 
     /**
