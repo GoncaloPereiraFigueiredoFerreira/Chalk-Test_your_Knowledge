@@ -60,7 +60,7 @@ public interface AIApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })    
     @RequestMapping(value = "/new/multipleChoice", produces = {"application/json"}, method = RequestMethod.POST)
-    ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(@Parameter(in = ParameterIn.DEFAULT, required = true) GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return a new open answer question based on the text provided and input from the user")
     @ApiResponses(value = {
@@ -69,7 +69,7 @@ public interface AIApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })    
     @RequestMapping(value = "/new/openAnswer", produces = {"application/json"}, method = RequestMethod.POST)
-    ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(@Parameter(in = ParameterIn.DEFAULT, required = true) GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return a new true or false question based on the text provided and input from the user")
     @ApiResponses(value = {
@@ -78,5 +78,5 @@ public interface AIApi {
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })    
     @RequestMapping(value = "/new/trueOrFalse", produces = {"application/json"}, method = RequestMethod.POST)
-    ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(@Parameter(in = ParameterIn.DEFAULT, required = true) GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(@Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody GenerateQuestionAIDTO inputQuestion, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 }
