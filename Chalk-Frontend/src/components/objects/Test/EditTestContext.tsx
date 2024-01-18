@@ -103,6 +103,7 @@ export function EditTestStateReducer(
         newEx.identity.specialistId = action.exercise!.specialist!;
         newGroups[action.group.groupPosition].exercises.push(newEx);
         return {
+          ...state,
           exercisePosition:
             newGroups[action.group.groupPosition].exercises.length - 1,
           groupPosition: action.group.groupPosition,
@@ -194,7 +195,7 @@ export function EditTestStateReducer(
               newGroups[action.exercise.groupPosition].exercises[
                 action.exercise.exercisePosition
               ].identity.id,
-            "PUT"
+            "DELETE"
           );
 
           // remove exercise

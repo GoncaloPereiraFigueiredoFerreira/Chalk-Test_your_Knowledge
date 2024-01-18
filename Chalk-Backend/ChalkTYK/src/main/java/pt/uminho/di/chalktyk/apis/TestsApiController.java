@@ -6,6 +6,7 @@ import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
@@ -256,7 +257,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestExercisePoints( String testId, int groupIndex, String exerciseId, float points, String jwt){
+    public ResponseEntity<Void> updateTestExercisePoints(String testId, int groupIndex, String exerciseId, float points, String jwt){
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);
@@ -448,6 +449,26 @@ public class TestsApiController implements TestsApi {
 
             if((role.equals("SPECIALIST") || role.equals("STUDENT")) && canGetTest(userId, role, testId)!=null){
                 return ResponseEntity.ok(testsService.getStudentLastResolutions(testId));
+            }
+            else {
+                return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "User does not have permission to get student last submission for the test.");
+            }
+        } catch (ServiceException e) {
+            return new ExceptionResponseEntity<List<TestResolution>>().createRequest(e);
+        }
+    }
+
+    public ResponseEntity<List<TestResolution>> getStudentLastResolutionsWithEmails(String testId, String jwt) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            if((role.equals("SPECIALIST") || role.equals("STUDENT")) && canGetTest(userId, role, testId)!=null){
+                return ResponseEntity.ok(testsService.getStudentLastResolutionsWithEmails(testId));
             }
             else {
                 return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
@@ -940,6 +961,36 @@ public class TestsApiController implements TestsApi {
             // if he has permission, execute the request
             if(perm) {
                 testsService.submitTestResolution(resolutionId);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "User does not have permission to issue the correction of the test resolution.");
+        } catch (ServiceException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> manualCorrectionForExercise(String jwtToken, String testResId, String exeResId,
+            ManualExerciseCorrectionDTO mecDTO) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            // checks if the user has permission
+            boolean perm = false;
+            if(role.equals("STUDENT"))
+                perm = exercisesTestsAuthorization.canStudentAccessTestResolution(userId, testResId);
+            else if(role.equals("SPECIALIST"))
+                perm = exercisesTestsAuthorization.canSpecialistAccessTestResolution(userId, testResId);
+
+            // if he has permission, execute the request
+            if(perm) {
+                testsService.manualCorrectionForExercise(exeResId, testResId, mecDTO.getPoints(), mecDTO.getComment());
                 return new ResponseEntity<>(HttpStatus.OK);
             }
 

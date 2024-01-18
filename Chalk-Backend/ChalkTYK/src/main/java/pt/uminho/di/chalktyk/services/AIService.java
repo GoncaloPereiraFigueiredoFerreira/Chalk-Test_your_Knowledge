@@ -41,7 +41,7 @@ public class AIService implements IAIService {
 
     private final IExercisesService exercisesService;
     
-    private final String apiUrl = "http://localhost:5000";
+    private final String apiUrl = "http://api:5000";
 
     public AIService(IExercisesService exercisesService) {
         this.exercisesService = exercisesService;

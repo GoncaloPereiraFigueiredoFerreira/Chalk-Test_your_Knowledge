@@ -29,7 +29,8 @@ function PreviousExerciseButton(
   currentGroup: number,
   nlstGroupExercises: number,
   setCurrentEx: (ex: number) => void,
-  setCurrentGroup: (gr: number) => void
+  setCurrentGroup: (gr: number) => void,
+  sendResolution: () => Promise<any>
 ) {
   if (currentEx > 1 || currentGroup > 1) {
     return (
@@ -37,10 +38,12 @@ function PreviousExerciseButton(
         type="button"
         className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
         onClick={() => {
-          if (currentGroup > 1 && currentEx == 1) {
-            setCurrentEx(nlstGroupExercises);
-            setCurrentGroup(currentGroup - 1);
-          } else setCurrentEx(currentEx - 1);
+          sendResolution().then(() => {
+            if (currentGroup > 1 && currentEx == 1) {
+              setCurrentEx(nlstGroupExercises);
+              setCurrentGroup(currentGroup - 1);
+            } else setCurrentEx(currentEx - 1);
+          });
         }}
       >
         Exercício Anterior
@@ -161,7 +164,8 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
             ? test.groups[currentGroup - 2].exercises.length
             : 0,
           setCurrentEx,
-          setCurrentGroup
+          setCurrentGroup,
+          sendResolution
         )}
 
         {NextExerciseButton(
@@ -178,8 +182,10 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
           type="button"
           className="p-4 rounded-lg bg-red-300  dark:bg-red-800"
           onClick={() => {
-            endTestResolution().then(() => {
-              endTest(true);
+            sendResolution().then(() => {
+              endTestResolution().then(() => {
+                endTest(true);
+              });
             });
           }}
         >
