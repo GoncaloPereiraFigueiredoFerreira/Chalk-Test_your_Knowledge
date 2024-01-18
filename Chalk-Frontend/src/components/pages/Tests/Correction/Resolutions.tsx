@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { Resolution } from "../../../objects/Exercise/Exercise";
+import { ExerciseType, Resolution } from "../../../objects/Exercise/Exercise";
 import { Resolutions } from "./Correction";
 import { FaArrowLeft } from "react-icons/fa";
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 import { Answer } from "../../../objects/Answer/Answer";
+import { APIContext } from "../../../../APIContext";
 
 interface ResolutionsProps {
   resolutions: Resolutions;
@@ -25,6 +26,32 @@ export function ResolutionsComp({
   const [selResolution, selectRes] = useState<Resolution | undefined>();
   const [auxEx, setAux] = useState<string>(exID);
   const [corrections, setCorrections] = useState<Corrections>({});
+  const { contactBACK } = useContext(APIContext);
+
+  const askAI = (resId: string, exId: string, type: ExerciseType) => {
+    if (type === ExerciseType.CHAT || type === ExerciseType.OPEN_ANSWER) {
+      let endpoint = type === ExerciseType.OPEN_ANSWER ? "open" : "chat";
+      contactBACK("/ai/" + endpoint + "/evaluation", "GET", {
+        resolutionId: resId,
+        exerciseId: exId,
+      }).then((response) =>
+        response.text().then((cotation) => {
+          console.log(cotation);
+          let newCorr = { ...corrections };
+          if (!(resId in newCorr))
+            newCorr[resId] = {
+              points: Number.parseFloat(cotation),
+              comment: "",
+            };
+          else {
+            newCorr[resId].points = Number.parseFloat(cotation);
+          }
+
+          setCorrections(newCorr);
+        })
+      );
+    }
+  };
 
   const selectResolution = (exID: string, resID: string) => {
     selectRes(resolutions[exID].studentRes[resID]);
@@ -70,12 +97,15 @@ export function ResolutionsComp({
   return selResolution !== undefined && exID !== ""
     ? SingleResolution(
         selResolution,
-        resolutions[exID].maxCotation,
+        resolutions[exID] ? resolutions[exID].maxCotation : 0,
         corrections,
         backToList,
         addPoints,
         addComment,
-        submitCorrection
+        submitCorrection,
+        () => {
+          askAI(selResolution.id, exID, resolutions[exID].type);
+        }
       )
     : ResolutionList(resolutions, selectResolution);
 }
@@ -100,7 +130,7 @@ function ResolutionList(resolutions: Resolutions, setExId: Function) {
                         className="p-8 rounded-lg bg-3-2 flex cursor-pointer"
                         onClick={() => setExId(key1, key2)}
                       >
-                        Resolução
+                        Resolução{" "}
                         {resolutions[key1].studentRes[key2].student?.name}
                       </div>
                     );
@@ -121,7 +151,8 @@ function SingleResolution(
   backToList: Function,
   addPoints: Function,
   addComment: Function,
-  submitCorrection: Function
+  submitCorrection: Function,
+  askAI: Function
 ) {
   return (
     <div className="flex flex-col w-full space-y-4 h-full">
@@ -135,7 +166,13 @@ function SingleResolution(
           </div>
           <h1 className="text-xl">Resolução de {resolution.student?.name}</h1>
         </div>
-        <button type="button" className="p-4 bg-yellow-200">
+        <button
+          type="button"
+          className="p-4 bg-yellow-200"
+          onClick={() => {
+            askAI();
+          }}
+        >
           <p className="text-sm">Assistência na Correção</p>
         </button>
       </div>

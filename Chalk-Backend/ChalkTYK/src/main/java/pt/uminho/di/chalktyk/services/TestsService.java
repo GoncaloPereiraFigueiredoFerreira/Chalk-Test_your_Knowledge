@@ -1220,6 +1220,28 @@ public class TestsService implements ITestsService {
         return resolutions;
     }
 
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public List<TestResolution> getStudentLastResolutionsWithEmails(String testId) throws NotFoundException {
+        if (!testDAO.existsById(testId))
+            throw new NotFoundException("Cannot get last resolutions for test " + testId + ": couldn't find test with given id.");
+        List<String> studentIds = resolutionDAO.getDistinctStudentsForTest(testId);
+
+        List<TestResolution> resolutions = new ArrayList<>();
+        for (String studentId: studentIds){
+            TestResolution tr = _getStudentLastResolution(testId, studentId);
+            Student s = studentsService.getStudentById(studentId);
+            Student sWithEmail = new Student(); sWithEmail.setId(s.getEmail());
+            
+            TestResolution trWithEmail = new TestResolution(tr.getId(), tr.getStartDate(), tr.getSubmissionDate(), tr.getSubmissionNr(), tr.getTotalPoints(),
+                                                            sWithEmail, tr.getTest(), tr.getStatus(), tr.getGroups());
+            
+            resolutions.add(trWithEmail);
+        }
+
+        return resolutions;
+    }
+
     private TestResolution _getStudentLastResolution(String testId, String studentId) throws NotFoundException {
         List<String> ids = getStudentTestResolutionsIds(testId, studentId);
         TestResolution res = null;
@@ -1268,7 +1290,7 @@ public class TestsService implements ITestsService {
             else {
                 for (int i = k; i < ids.size(); i++){
                     TestResolution tmp = resolutionDAO.findById(ids.get(i)).orElse(null);
-                    if (tmp != null && res.getSubmissionNr() < tmp.getSubmissionNr())
+                    if (tmp != null && res.getSubmissionDate().isBefore(tmp.getSubmissionDate()))
                         res = tmp;
                 }
             }
@@ -1307,26 +1329,31 @@ public class TestsService implements ITestsService {
         List<TestResolutionGroup> updatedGroups = updatedTR.getGroups();
         boolean found = false;
 
-        for(TestResolutionGroup testResolutionGroup: updatedGroups){
+        System.out.println("HERE");
+        for (int i = 0; i < updatedGroups.size(); i++){
+            TestResolutionGroup testResolutionGroup = updatedGroups.get(i);
             Map<String, TestExerciseResolutionBasic> resMap = testResolutionGroup.getResolutions();
 
+            System.out.println("HERE2");
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
+                System.out.println("HERE3");
                 TestExerciseResolutionBasic exeResPair = entry.getValue();
-                if(exeResPair.getResolutionId().equals(exeResId)){
+                if (exeResPair.getResolutionId().equals(exeResId)){
+                    if (testResolutionGroup.getGroupPoints() != null){
+                        testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
+                    }
+                    else{
+                        testResolutionGroup.setGroupPoints(points);
+                    }
+
                     exeResPair.setPoints(points);
                     resMap.put(entry.getKey(), exeResPair);
                     testResolutionGroup.setResolutions(resMap);
-
-                    // work the difference in points
-                    if (testResolutionGroup.getGroupPoints() != null)
-                        testResolutionGroup.setGroupPoints(testResolutionGroup.getGroupPoints() + points - oldPoints);
-                    else
-                        testResolutionGroup.setGroupPoints(points);
-
                     found = true;
                     break;
                 }
             }
+            updatedGroups.set(i, testResolutionGroup);
         }
 
         if (!found)
@@ -1334,6 +1361,7 @@ public class TestsService implements ITestsService {
 
         updatedTR.setGroups(updatedGroups);
         updatedTR.updateSum();
+        updatedTR.setTotalPoints(94.0F);
         if (isTestResolutionRevised(testResId))
             updatedTR.setStatus(TestResolutionStatus.REVISED);
         resolutionDAO.save(updatedTR);

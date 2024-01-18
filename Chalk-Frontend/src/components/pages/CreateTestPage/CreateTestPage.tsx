@@ -95,7 +95,6 @@ export function CreateTest({ test }: CreateTestProps) {
     groupPosition: 0,
     contactBACK: contactBACK,
   };
-
   const [listExercises, setListExercises] = useState<Exercise[]>([]);
   const [testState, dispatch] = useReducer(EditTestStateReducer, inicialState);
   const [selectedMenu, setSelectedMenu] = useState("");
