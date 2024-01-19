@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.ChatExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.GenerateQuestionAIDTO;
 import pt.uminho.di.chalktyk.dtos.MultipleChoiceAIDTO;
 import pt.uminho.di.chalktyk.dtos.OpenAnswerAIDTO;
 import pt.uminho.di.chalktyk.dtos.TrueOrFalseAIDTO;
@@ -37,11 +38,7 @@ import pt.uminho.di.chalktyk.services.IAIService;
 import pt.uminho.di.chalktyk.services.IExercisesService;
 import pt.uminho.di.chalktyk.services.IExercisesTestsAuthorization;
 import pt.uminho.di.chalktyk.services.ISecurityService;
-import pt.uminho.di.chalktyk.services.exceptions.ApiConnectionException;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
-import pt.uminho.di.chalktyk.services.exceptions.UnauthorizedException;
+import pt.uminho.di.chalktyk.services.exceptions.*;
 
 /**
  * AIApiController
@@ -113,7 +110,7 @@ public class AIApiController implements AIApi{
             // checks if the user has permission
             Boolean flag = canGetExercise(userId, role, exerciseId, resolutionId);
             if (!flag){
-                throw new UnauthorizedException("User can not see either exercise or resolution");
+                throw new ForbiddenException("User can not see either exercise or resolution");
             }
 
             Exercise exercise = exercisesService.getExerciseById(exerciseId);
@@ -134,7 +131,7 @@ public class AIApiController implements AIApi{
             JsonObject response = aiService.bypassBackend("/eval_oral",request.build().toString());
             Float ret = Float.parseFloat(response.get("Cotation").toString());
             return ResponseEntity.ok(ret);
-        } catch (ApiConnectionException | BadInputException | UnauthorizedException | NotFoundException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<Float>().createRequest(e);
         }
     }
@@ -153,7 +150,7 @@ public class AIApiController implements AIApi{
             // checks if the user has permission
             Boolean flag = canGetExercise(userId, role, exerciseId, resolutionId);
             if (!flag){
-                throw new UnauthorizedException("User can not see either exercise or resolution");
+                throw new ForbiddenException("User can not see either exercise or resolution");
             }
 
             Exercise exercise = exercisesService.getExerciseById(exerciseId);
@@ -202,7 +199,7 @@ public class AIApiController implements AIApi{
             }
 
             return ResponseEntity.ok(total);
-        } catch (ApiConnectionException | NotFoundException | UnauthorizedException | BadInputException e) {
+        } catch (ServiceException e) {
             return new ExceptionResponseEntity<Float>().createRequest(e);
         }
 
@@ -210,8 +207,11 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(String text, String input, String jwt) {
+    public ResponseEntity<MultipleChoiceAIDTO> getNewMultiple(GenerateQuestionAIDTO inputQuestion, String jwt) {
         try{
+            String text = inputQuestion.getText();
+            String input = inputQuestion.getInput();
+
             JsonObjectBuilder request = Json.createObjectBuilder();
             request.add("Text",text);
             request.add("Input",input);
@@ -235,8 +235,11 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(String text, String input, String jwt) {
+    public ResponseEntity<OpenAnswerAIDTO> getNewOpenAnswer(GenerateQuestionAIDTO inputQuestion, String jwt) {
         try{
+            String text = inputQuestion.getText();
+            String input = inputQuestion.getInput();
+
             JsonObjectBuilder request = Json.createObjectBuilder();
             request.add("Text",text);
             request.add("Input",input);
@@ -259,8 +262,11 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(String text, String input, String jwt) {
+    public ResponseEntity<TrueOrFalseAIDTO> getNewTrueOrFalse(GenerateQuestionAIDTO inputQuestion, String jwt) {
         try{
+            String text = inputQuestion.getText();
+            String input = inputQuestion.getInput();
+
             JsonObjectBuilder request = Json.createObjectBuilder();
             request.add("Text",text);
             request.add("Input",input);

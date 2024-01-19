@@ -228,6 +228,12 @@ public class ExercisesService implements IExercisesService{
             exerciseRubricDAO.deleteById(exercise.getRubricId());
     }
 
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public String duplicateExerciseByIdNoSpecialist(String exerciseId, Visibility visibility) throws NotFoundException {
+        return _duplicateExerciseById(null, exerciseId, null, visibility);
+    }
+
     /**
      * Duplicates the exercise that contains the given identifier.
      * The id of the specialist, and if existent, the institution identifier
@@ -250,11 +256,13 @@ public class ExercisesService implements IExercisesService{
     public String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException {
         // checks if the specialist exists
         Specialist specialist = specialistsService.getSpecialistById(specialistId);
+        return _duplicateExerciseById(specialist, exerciseId, courseId, visibility);
+    }
 
+    private String _duplicateExerciseById(Specialist specialist, String exerciseId, String courseId, Visibility visibility) throws NotFoundException {
         // gets specialists institution
         String institutionId = null;
-        Institution institution =
-                institutionsService.getSpecialistInstitution(specialistId);
+        Institution institution = specialist != null ? institutionsService.getSpecialistInstitution(specialist.getId()) : null;
 
         Exercise source = _getExerciseById(exerciseId);
 
@@ -845,6 +853,25 @@ public class ExercisesService implements IExercisesService{
         return exerciseResolutionDAO.save(resolution);
     }
 
+    @Override
+    public ExerciseResolution updateExerciseResolution(String exeResId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
+        ExerciseResolution res = exerciseResolutionDAO.findById(exeResId).orElse(null);
+        if(res == null)
+            throw new NotFoundException("Could not update exercise resolution: Exercise resolution does not exist.");
+
+        // checks if resolution data is valid
+        if(resolutionData == null)
+            throw new BadInputException("Could not update exercise resolution: resolution data is null.");
+        // checks the resolution data against the exercise data
+        checkResolutionData(res.getExerciseId(), resolutionData);
+
+        // sets the new data
+        res.setData(resolutionData);
+
+        // updates resolution
+        return exerciseResolutionDAO.save(res);
+    }
+
     /**
      * @param exerciseId identifier of the exercise
      * @param studentId  identifier of the student
@@ -1088,6 +1115,22 @@ public class ExercisesService implements IExercisesService{
 
         // checks the resolution data against the exercise data.
         exercise.verifyResolutionProperties(exerciseResolution.getData());
+    }
+
+    /**
+     * Checks the resolution data against the exercise data.
+     * @param exerciseResolutionData resolution data
+     * @throws NotFoundException if the exercise does not exist
+     * @throws BadInputException if the resolution data is malformed
+     */
+    private void checkResolutionData(String exerciseId, ExerciseResolutionData exerciseResolutionData) throws NotFoundException, BadInputException {
+        assert exerciseResolutionData != null;
+
+        // gets concrete exercise
+        Exercise exercise = _getExerciseById(exerciseId);
+
+        // checks the resolution data against the exercise data.
+        exercise.verifyResolutionProperties(exerciseResolutionData);
     }
 
     /**

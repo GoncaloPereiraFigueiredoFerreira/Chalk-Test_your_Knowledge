@@ -5,6 +5,7 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
+import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 
@@ -53,6 +54,14 @@ public class ExerciseResolution {
 	@Setter(AccessLevel.NONE)
 	private String studentId;
 
+	@ManyToOne(targetEntity=TestResolution.class, fetch=FetchType.LAZY)
+	@JoinColumns(value={ @JoinColumn(name="TestResolutionID", referencedColumnName="ID") })
+	@JsonIgnore
+	private TestResolution testResolution;
+
+	@Column(name = "TestResolutionID", insertable = false, updatable = false)
+	@Setter(AccessLevel.NONE)
+	private String testResolutionId;
 
 	public ExerciseResolution(String id, Float points, Integer submissionNr, ExerciseResolutionData data, ExerciseResolutionStatus status, Comment comment, Exercise exercise, Student student) {
 		this.id = id;
@@ -65,6 +74,19 @@ public class ExerciseResolution {
 		setStudent(student);
 	}
 
+	public ExerciseResolution(String id, Float points, Integer submissionNr, ExerciseResolutionData data, ExerciseResolutionStatus status, Comment comment, Exercise exercise, Student student, TestResolution testResolution) {
+		this.id = id;
+		this.points = points;
+		this.submissionNr = submissionNr;
+		this.data = data;
+		this.status = status;
+		this.comment = comment;
+		setExercise(exercise);
+		setStudent(student);
+		setTestResolution(testResolution);
+	}
+
+
 	public void setExercise(Exercise exercise) {
 		this.exercise = exercise;
 		this.exerciseId = exercise != null ? exercise.getId() : null;
@@ -73,6 +95,11 @@ public class ExerciseResolution {
 	public void setStudent(Student student) {
 		this.student = student;
 		this.studentId = student != null ? student.getId() : null;
+	}
+
+	public void setTestResolution(TestResolution testResolution){
+		this.testResolution = testResolution;
+		this.testResolutionId = testResolution != null ? testResolution.getId() : null;
 	}
 
 	/**

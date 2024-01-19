@@ -28,7 +28,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
               </h5>
 
               <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
-                <strong>Author:</strong> {test.author}
+                <strong>Author:</strong> {test.specialistId}
               </p>
             </div>
             <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-80">
@@ -44,7 +44,9 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
             <div className="flex justify-end space-x-2 w-60">
               <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-36">
                 <strong>Last Grade:</strong>
-                {test.grade === undefined ? "TBD" : ` ${test.grade}%`}
+                {test.totalPoints === undefined
+                  ? "TBD"
+                  : ` ${test.totalPoints}%`}
               </div>
 
               <Link
@@ -69,7 +71,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
               </h5>
 
               <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
-                <strong>Author:</strong> {test.author}
+                <strong>Author:</strong> {test.specialistId}
               </p>
             </div>
             <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-80">
@@ -121,7 +123,7 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
           className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
           <div className="py-10 px-20 ">
-            {test.grade === undefined ? (
+            {test.totalPoints === undefined ? (
               <CircularProgressbarWithChildren value={0}>
                 <AiTwotoneFileUnknown size="100" />
                 <div style={{ fontSize: 12, marginTop: -5 }}>
@@ -130,14 +132,14 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
               </CircularProgressbarWithChildren>
             ) : (
               <CircularProgressbar
-                value={test.grade}
-                text={`${test.grade}%`}
+                value={test.totalPoints}
+                text={`${test.totalPoints}%`}
                 styles={buildStyles({
-                  textColor: `rgba(${480 - test.grade * 4.8}, ${
-                    4.8 * test.grade
+                  textColor: `rgba(${480 - test.totalPoints * 4.8}, ${
+                    4.8 * test.totalPoints
                   }, ${0})`,
-                  pathColor: `rgba(${480 - test.grade * 4.8}, ${
-                    4.8 * test.grade
+                  pathColor: `rgba(${480 - test.totalPoints * 4.8}, ${
+                    4.8 * test.totalPoints
                   }, ${0})`,
                 })}
               />
@@ -150,7 +152,7 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
             </h5>
 
             <p className="mb-2  px-2 font-normal text-gray-700 dark:text-gray-400">
-              <strong>Author:</strong> {test.author}
+              <strong>Author:</strong> {test.specialistId}
             </p>
             <div className="flex gap-3 px-2 items-center mb-4 text-gray-700 dark:text-gray-400">
               <strong>Tags:</strong>
@@ -165,7 +167,9 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
             <div className="flex w-full px-2 justify-between">
               <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
                 <strong>Last Grade:</strong>
-                {test.grade === undefined ? "TBD" : ` ${test.grade}%`}
+                {test.totalPoints === undefined
+                  ? "TBD"
+                  : ` ${test.totalPoints}%`}
               </div>
 
               <Link
@@ -193,7 +197,7 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
             </h5>
 
             <p className="mb-2 px-2 font-normal text-gray-700 dark:text-gray-400">
-              <strong>Author:</strong> {test.author}
+              <strong>Author:</strong> {test.specialistId}
             </p>
             <div className="flex gap-3 px-2 items-center mb-4 text-gray-700 dark:text-gray-400">
               <strong>Tags:</strong>
@@ -236,11 +240,12 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
 
 interface TestPreview {
   id: string;
-  author: string;
+  specialistId: string;
   title: string;
+  status: string;
   tags: string[];
   publishDate?: Date;
-  grade?: number;
+  totalPoints?: any;
 }
 
 type TestList = TestPreview[];
@@ -250,7 +255,13 @@ export enum ViewType {
   GRID = "GRID",
 }
 
-export function ListTests({ view }: any) {
+export function ListTests({
+  view,
+  courseId,
+  visibilityType,
+  searchKey,
+  tagsList,
+}: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
   const [testList, setTestList] = useState<TestList>([]);
@@ -258,24 +269,15 @@ export function ListTests({ view }: any) {
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
+    let requestTags: any = tagsList.map((tag: any) => tag.id);
     if (user.user?.role == UserRole.SPECIALIST) {
       contactBACK("tests", "GET", {
-        page: "0",
+        page: (currentPage - 1).toString(),
         itemsPerPage: "20",
         specialistId: user.user.id,
-      }).then((response) => {
-        response.json().then((tests) => {
-          tests.map((test: any) => {
-            return (test["tags"] = []);
-          });
-          setTestList(tests);
-        });
-      });
-    } else {
-      contactBACK("tests", "GET", {
-        page: "0",
-        itemsPerPage: "20",
-        visibilityType: "public",
+        courseId: courseId,
+        visibilityType: visibilityType,
+        tags: requestTags,
       }).then((response) => {
         response.json().then((tests) => {
           tests.map((test: any) => {
@@ -286,21 +288,65 @@ export function ListTests({ view }: any) {
           setTestList(tests);
         });
       });
+    } else {
+      contactBACK("tests", "GET", {
+        page: (currentPage - 1).toString(),
+        itemsPerPage: "20",
+        courseId: courseId,
+        visibilityType: visibilityType,
+        tags: requestTags,
+      }).then((response) => {
+        response.json().then((tests) => {
+          let promises: Promise<any>[] = [];
+          tests.map((test: any) => {
+            promises.push(
+              contactBACK(
+                "tests/" + test.id + "/resolutions/" + user.user!.id + "/last",
+                "GET"
+              )
+                .then((response) => {
+                  return response.json().then((exam) => {
+                    return exam.status.toLowerCase().includes("revised")
+                      ? exam.totalPoints
+                      : undefined;
+                  });
+                })
+                .catch(() => {
+                  return undefined;
+                })
+            );
+          });
+          Promise.all(promises).then((results) => {
+            tests.map((teste: any, index: number) => {
+              teste.totalPoints = results[index];
+              let tags = teste.tags.map((tag: any) => {
+                return tag.name;
+              });
+              teste.tags = tags;
+            });
+            setTestList(tests);
+          });
+        });
+      });
     }
-  }, [currentPage]);
+  }, [currentPage, tagsList]);
+
+  const filteredItems: TestList = testList.filter((item) =>
+    item.title.toLowerCase().includes(searchKey.toLowerCase())
+  );
 
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max pb-8">
         {view == ViewType.GRID ? (
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:grid-cols-3 md:gaps-4">
-            {testList.map((test, index) => {
+            {filteredItems.map((test, index) => {
               return ShowTestGrid(test, index, user.user!.role);
             })}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-2">
-            {testList.map((test, index) => {
+            {filteredItems.map((test, index) => {
               return ShowTestList(test, index, user.user!.role);
             })}
           </div>

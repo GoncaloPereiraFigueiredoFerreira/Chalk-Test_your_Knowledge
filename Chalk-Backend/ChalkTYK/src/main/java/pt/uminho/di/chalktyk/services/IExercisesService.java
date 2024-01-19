@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -9,6 +10,7 @@ import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.List;
 import java.util.Set;
@@ -62,6 +64,8 @@ public interface IExercisesService{
      * @return new exercise identifier
      */
     String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
+
+    String duplicateExerciseByIdNoSpecialist(String exerciseId, Visibility visibility) throws NotFoundException;
 
     String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException;
 
@@ -176,6 +180,18 @@ public interface IExercisesService{
      *                           like the type of resolution does not match the type of the exercise
      */
     ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
+
+    /**
+     * Create a resolution for a specific exercise.
+     *
+     * @param exeResId       identifier of the exercise resolution
+     * @param resolutionData new resolution
+     * @return
+     * @throws NotFoundException if the exercise was not found
+     * @throws BadInputException if there is some problem regarding the resolution of the exercise,
+     *                           like the type of resolution does not match the type of the exercise
+     */
+    ExerciseResolution updateExerciseResolution(String exeResId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
 
     /**
      *

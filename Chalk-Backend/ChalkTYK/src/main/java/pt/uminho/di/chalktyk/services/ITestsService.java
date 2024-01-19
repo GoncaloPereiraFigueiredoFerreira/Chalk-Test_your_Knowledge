@@ -5,11 +5,7 @@ import java.util.List;
 
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
-import pt.uminho.di.chalktyk.models.tests.Test;
-import pt.uminho.di.chalktyk.models.tests.TestGroup;
-import pt.uminho.di.chalktyk.models.tests.TestResolution;
-import pt.uminho.di.chalktyk.models.tests.TestResolutionStatus;
-import pt.uminho.di.chalktyk.models.tests.TestTag;
+import pt.uminho.di.chalktyk.models.tests.*;
 import pt.uminho.di.chalktyk.models.tests.TestExercise.TestExercise;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
@@ -403,6 +399,15 @@ public interface ITestsService {
     List<TestResolution> getStudentLastResolutions(String testId) throws NotFoundException;
 
     /**
+     * Get latests test resolution made by every student who did the test but with emails in place of ids
+     *
+     * @param testId
+     * @return list of submissions
+     * @throws NotFoundException if no test or student was found with the given ids
+     **/
+    List<TestResolution> getStudentLastResolutionsWithEmails(String testId) throws NotFoundException;
+
+    /**
      * Get latest test resolution made by the student
      *
      * @param testId
@@ -413,7 +418,7 @@ public interface ITestsService {
     TestResolution getStudentLastResolution(String testId, String studentId) throws NotFoundException;
 
     /**
-     * Get latest test resolution made by the student
+     * Manually correct an exercise from a test
      *
      * @param exeResId  exercise resolution identifier
      * @param testResId test resolution identifier
@@ -479,4 +484,6 @@ public interface ITestsService {
      * @throws NotFoundException if the test resolution or any exercise resolution were not found
      */
     List<ExerciseResolution> getExerciseResolutionsForTestResolution(String testResId) throws NotFoundException;
+
+    Test createAutoEvaluationTest(String studentId, List<String> tagsIds, int nrExercises) throws NotFoundException, BadInputException;
 }

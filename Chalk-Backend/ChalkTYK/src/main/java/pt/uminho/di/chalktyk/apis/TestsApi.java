@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2001;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
@@ -43,7 +44,7 @@ public interface TestsApi {
     ResponseEntity<List<Test>> getTests(@NotNull @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema()) @Valid @RequestParam(value = "page", required = true) Integer page,
                                         @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema(allowableValues = {"1", "50"}, minimum = "1", maximum = "50"
                                         )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage,
-                                        @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the tests.", schema = @Schema(defaultValue = "[]")) @Valid @RequestParam(value = "tags", required = false, defaultValue = "[]") List<String> tags,
+                                        @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the tests.", schema = @Schema(defaultValue = "[]")) @Valid @RequestParam(value = "tags", required = false) List<String> tags,
                                         @Parameter(in = ParameterIn.QUERY, description = "Value that defines if the exercise must have all the given tags to be retrieved.", schema = @Schema(defaultValue = "false")) @Valid @RequestParam(value = "matchAllTags", required = false, defaultValue = "false") Boolean matchAllTags,
                                         @Parameter(in = ParameterIn.QUERY, description = "Describes the type of visibility that the tests must have.  This parameter must be paired with the parameter 'visibilityTarget'  when the value is either 'institution' or 'course'. ", schema = @Schema(allowableValues = {"PUBLIC", "INSTITUTION", "COURSE","NOT_LISTED","PRIVATE"})) @Valid @RequestParam(value = "visibilityType", required = false) String visibilityType,
                                         @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "title", required = false) String title,
@@ -55,7 +56,8 @@ public interface TestsApi {
     @Operation(summary = "Retrieves tags present in a test", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -125,7 +127,8 @@ public interface TestsApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TestResolution.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test resolution not found.")
     })
     @RequestMapping(value = "/resolutions/{resolutionId}",
@@ -138,7 +141,8 @@ public interface TestsApi {
     @Operation(summary = "Delete test by its id.", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test deleted successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
     @RequestMapping(value = "/{testId}",
@@ -149,7 +153,8 @@ public interface TestsApi {
     @Operation(summary = "Get test by its id.", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test deleted successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
     @RequestMapping(value = "/{testId}",
@@ -162,7 +167,8 @@ public interface TestsApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful duplication.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test with the given id does not exist.")
     })
     @RequestMapping(value = "/{testId}/duplicate",
@@ -178,7 +184,8 @@ public interface TestsApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Test updated successfully."),
             @ApiResponse(responseCode = "400", description = "Bad input."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
     @RequestMapping(value = "/{testId}/basicProperties",
@@ -192,7 +199,8 @@ public interface TestsApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Test updated successfully."),
             @ApiResponse(responseCode = "400", description = "Bad input."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
     @RequestMapping(value = "/{testId}/exercise/points",
@@ -207,7 +215,8 @@ public interface TestsApi {
     @Operation(summary = "Issue the automatic correction of the test resolutions.", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
     @RequestMapping(value = "/{testId}/resolutions/correction",
@@ -236,7 +245,8 @@ public interface TestsApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval.",
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = InlineResponse2001.class)))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
     })
     @RequestMapping(value = "/{testId}/resolutions",
@@ -252,7 +262,8 @@ public interface TestsApi {
     @Operation(summary = "Create a test resolution", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test resolution created successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Could not find any test with the given id.")
     })
     @RequestMapping(value = "/{testId}/resolutions",
@@ -309,7 +320,8 @@ public interface TestsApi {
     @Operation(summary = "Get latest test resolutions made by every student who did the test.", description = "", tags={ "tests" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TestResolution.class))),
-        @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+        @ApiResponse(responseCode = "403", description = "Forbidden operation."),
         @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(value = "/{testId}/resolutions/last",
         produces = { "application/json" }, 
@@ -317,11 +329,24 @@ public interface TestsApi {
     ResponseEntity<List<TestResolution>> getStudentLastResolutions(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") String testId,
                                                             @CookieValue("chalkauthtoken") String jwt);
 
+    @Operation(summary = "Get latest test resolutions made by every student who did the test but with emails in place of ids.", description = "", tags={ "tests" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TestResolution.class))),
+        @ApiResponse(responseCode = "401", description = "Unauthorized operation."), 
+        @ApiResponse(responseCode = "403", description = "Forbidden operation."),
+        @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(value = "/{testId}/resolutions/last/email",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<List<TestResolution>> getStudentLastResolutionsWithEmails(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("testId") String testId,
+                                                            @CookieValue("chalkauthtoken") String jwt);
+
 
     @Operation(summary = "Get latest test resolution made by the student.", description = "", tags={ "tests" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TestResolution.class))),
-        @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
         @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(value = "/{testId}/resolutions/{studentId}/last",
         produces = { "application/json" }, 
@@ -333,7 +358,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's title.", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -347,7 +373,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's global instructions.", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -361,7 +388,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's conclusion.", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -375,7 +403,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's publish date", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -389,7 +418,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's visibility", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -403,7 +433,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's course", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -417,7 +448,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's groups", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -431,7 +463,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a specific group in a test", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -447,7 +480,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's deliver date", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -461,7 +495,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's start date", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -475,7 +510,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's duration", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -489,7 +525,8 @@ public interface TestsApi {
     @Operation(summary = "Updates a test's start tolerance", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test updated Successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -503,7 +540,8 @@ public interface TestsApi {
     @Operation(summary = "Uploads a resolution for a specific exercise on a given test", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -518,7 +556,8 @@ public interface TestsApi {
     @Operation(summary = "Add an exercise to a given test", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -533,7 +572,8 @@ public interface TestsApi {
     @Operation(summary = "If an exercise belongs to a test removes it from the test, and deletes it.", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -547,7 +587,8 @@ public interface TestsApi {
     @Operation(summary = "If an exercise belongs to a test removes it from the test.", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -561,7 +602,8 @@ public interface TestsApi {
     @Operation(summary = "Create an initial test resolution, indicating that a test is starting", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Test started successfully."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             value = "/{testId}/resolutions/start",
@@ -573,7 +615,8 @@ public interface TestsApi {
     @Operation(summary = "Delete test resolution by its id", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -587,7 +630,8 @@ public interface TestsApi {
     @Operation(summary = "Issue the automatic correction of a single test resolution", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -598,10 +642,27 @@ public interface TestsApi {
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId,
             @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody String correctionType);
 
+    @Operation(summary = "Manually correct an exercise from a test", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            consumes = { "application/json" },
+            value = "/resolutions/{testResId}/{exeResId}/manual-correction",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> manualCorrectionForExercise(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testResId") String testResId,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exeResId") String exeResId,
+            @Parameter(in = ParameterIn.DEFAULT, description = "", required=true) @RequestBody ManualExerciseCorrectionDTO mecDTO);
+
     @Operation(summary = "Submits a test resolution and revises it (with 'auto' correction type)", description = "", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Not found.") })
     @RequestMapping(
             consumes = { "application/json" },
@@ -610,5 +671,20 @@ public interface TestsApi {
     ResponseEntity<Void> submitTestResolution(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId);
+
+    @Operation(summary = "Creates an auto evaluation test.", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
+            @ApiResponse(responseCode = "403", description = "Forbidden operation."),
+            @ApiResponse(responseCode = "404", description = "Not found.") })
+    @RequestMapping(
+            produces = { "application/json" },
+            value = "/autoEvaluation",
+            method = RequestMethod.POST)
+    ResponseEntity<Test> createAutoEvaluationTest(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("tags") List<String> tags,
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("nrExercises") int nrExercises);
 }
 

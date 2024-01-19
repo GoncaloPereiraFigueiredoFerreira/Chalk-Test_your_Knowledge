@@ -19,6 +19,7 @@ export interface TestResolution {
       resId: string;
       data: ResolutionData | undefined;
       points: number;
+      comment: string;
     };
   };
 }
@@ -58,6 +59,7 @@ export function PreviewTest() {
               resId: string;
               data: ResolutionData | undefined;
               points: number;
+              comment: string;
             };
           } = {};
 
@@ -66,7 +68,8 @@ export function PreviewTest() {
               temp[exRes] = {
                 resId: groupRes.resolutions[exRes].resolutionId,
                 data: undefined,
-                points: 0,
+                points: groupRes.resolutions[exRes].points,
+                comment: "",
               };
             });
           });
@@ -91,6 +94,7 @@ export function PreviewTest() {
           const tmp = { ...testResolution };
           tmp.resolutions[selEx].data = newResData;
           tmp.resolutions[selEx].points = exRes.points;
+          tmp.resolutions[selEx].comment = exRes.comment.items[0].text;
           setTestRes(tmp);
         });
       });

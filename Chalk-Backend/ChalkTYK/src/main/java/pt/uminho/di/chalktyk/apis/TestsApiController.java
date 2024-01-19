@@ -6,6 +6,7 @@ import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.tests.Test;
@@ -18,7 +19,6 @@ import pt.uminho.di.chalktyk.services.ISecurityService;
 import pt.uminho.di.chalktyk.services.ITestsService;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -90,7 +90,7 @@ public class TestsApiController implements TestsApi {
                                 title, false).stream().toList());
             else
                 return new ExceptionResponseEntity<List<Test>>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to list the tests with the given filters.");
         } catch (ServiceException e){
             return new ExceptionResponseEntity<List<Test>>().createRequest(e);
@@ -109,7 +109,7 @@ public class TestsApiController implements TestsApi {
                 return ResponseEntity.ok(testId);
             }
             else return new ExceptionResponseEntity<String>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to create tests.");
         }
         catch (ServiceException e) {
@@ -136,7 +136,7 @@ public class TestsApiController implements TestsApi {
                 return ResponseEntity.ok(testsService.getTestResolutionById(resolutionId));
 
             return new ExceptionResponseEntity<TestResolution>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to get the test resolution.");
         }
          catch (ServiceException e) {
@@ -159,7 +159,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -180,7 +180,7 @@ public class TestsApiController implements TestsApi {
                 return ResponseEntity.ok(test);
             else
                 return new ExceptionResponseEntity<Test>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Test>().createRequest(e);
@@ -220,7 +220,7 @@ public class TestsApiController implements TestsApi {
                 return ResponseEntity.ok(testsService.duplicateTestById(userId, testId, Visibility.valueOf(duplicateTestDTO.getVisibility()), duplicateTestDTO.getCourseId()));
             else
                 return new ExceptionResponseEntity<String>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to duplicate the test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -248,7 +248,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -256,7 +256,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestExercisePoints( String testId, int groupIndex, String exerciseId, float points, String jwt){
+    public ResponseEntity<Void> updateTestExercisePoints(String testId, int groupIndex, String exerciseId, float points, String jwt){
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);
@@ -271,7 +271,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -299,7 +299,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to issue the correction of the test resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -324,7 +324,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Integer>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to count the test resolutions");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Integer>().createRequest(e);
@@ -349,7 +349,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to get the test resolutions.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<List<TestResolution>>().createRequest(e);
@@ -370,7 +370,7 @@ public class TestsApiController implements TestsApi {
             }
             else {
                 return new ExceptionResponseEntity<Void>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to create a resolution for the test.");
             }
         } catch (NotFoundException | UnauthorizedException | BadInputException e) {
@@ -391,7 +391,7 @@ public class TestsApiController implements TestsApi {
             }
             else {
                 return new ExceptionResponseEntity<Boolean>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to verify if student can submit resolution.");
             }
         } catch (NotFoundException | UnauthorizedException e) {
@@ -411,7 +411,7 @@ public class TestsApiController implements TestsApi {
             }
             else {
                 return new ExceptionResponseEntity<Integer>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to count student submissions for the test.");
             }
         } catch (ServiceException e) {
@@ -431,7 +431,7 @@ public class TestsApiController implements TestsApi {
             }
             else {
                 return new ExceptionResponseEntity<List<String>>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to get student submissions for the test.");
             }
         } catch (ServiceException e) {
@@ -451,7 +451,27 @@ public class TestsApiController implements TestsApi {
             }
             else {
                 return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
+                        "User does not have permission to get student last submission for the test.");
+            }
+        } catch (ServiceException e) {
+            return new ExceptionResponseEntity<List<TestResolution>>().createRequest(e);
+        }
+    }
+
+    public ResponseEntity<List<TestResolution>> getStudentLastResolutionsWithEmails(String testId, String jwt) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwt);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            if((role.equals("SPECIALIST") || role.equals("STUDENT")) && canGetTest(userId, role, testId)!=null){
+                return ResponseEntity.ok(testsService.getStudentLastResolutionsWithEmails(testId));
+            }
+            else {
+                return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to get student last submission for the test.");
             }
         } catch (ServiceException e) {
@@ -471,7 +491,7 @@ public class TestsApiController implements TestsApi {
             }
             else {
                 return new ExceptionResponseEntity<TestResolution>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to get student last submission for the test.");
             }
         } catch (ServiceException e) {
@@ -495,7 +515,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test title.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -518,7 +538,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test global instructions.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -541,7 +561,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test conclusion.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -564,7 +584,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test publish date.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -587,7 +607,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test visibility.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -610,7 +630,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test course.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -633,7 +653,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test groups.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -656,7 +676,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test groups.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -679,7 +699,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test deliver Date.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -702,7 +722,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test start date.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -725,7 +745,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test duration.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -748,7 +768,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the test start tolerence.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -771,7 +791,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to upload a exercise resolution for this test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -797,7 +817,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<String>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to create a exercise for this test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -820,7 +840,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete a exercise for this test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -843,7 +863,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete a remove for this test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -865,7 +885,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<String>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission start this test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -888,7 +908,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission start this test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -917,7 +937,7 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to issue the correction of the test resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -944,7 +964,58 @@ public class TestsApiController implements TestsApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
+                    "User does not have permission to issue the correction of the test resolution.");
+        } catch (ServiceException e) {
+            return new ExceptionResponseEntity<Void>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Test> createAutoEvaluationTest(String jwtToken, List<String> tagsIds, int nrExercises) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            // if he has permission, execute the request
+            if(role.equals("STUDENT")) {
+                return ResponseEntity.ok(testsService.createAutoEvaluationTest(userId, tagsIds, nrExercises));
+            }
+
+            return new ExceptionResponseEntity<Test>().createRequest(
+                    HttpStatus.FORBIDDEN.value(),
+                    "User does not have permission to issue the correction of the test resolution.");
+        } catch (ServiceException e) {
+            return new ExceptionResponseEntity<Test>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> manualCorrectionForExercise(String jwtToken, String testResId, String exeResId,
+            ManualExerciseCorrectionDTO mecDTO) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            // checks if the user has permission
+            boolean perm = false;
+            if(role.equals("STUDENT"))
+                perm = exercisesTestsAuthorization.canStudentAccessTestResolution(userId, testResId);
+            else if(role.equals("SPECIALIST"))
+                perm = exercisesTestsAuthorization.canSpecialistAccessTestResolution(userId, testResId);
+
+            // if he has permission, execute the request
+            if(perm) {
+                testsService.manualCorrectionForExercise(exeResId, testResId, mecDTO.getPoints(), mecDTO.getComment());
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+
+            return new ExceptionResponseEntity<Void>().createRequest(
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to issue the correction of the test resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);

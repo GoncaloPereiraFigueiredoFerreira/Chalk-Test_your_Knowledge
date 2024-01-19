@@ -40,10 +40,11 @@ export function ExerciseBankDragDrop({
       visibility: "public",
     }).then((response) => {
       response.json().then((exercises) => {
-        console.log(exercises);
         const exerciseL: Exercise[] = [];
         exercises.map((ex: any) => {
-          exerciseL.push(TranslateExerciseIN(ex));
+          let exercise: Exercise = TranslateExerciseIN(ex);
+          exercise.identity.points = 1;
+          exerciseL.push(exercise);
         });
         setListExercises(exerciseL);
       });

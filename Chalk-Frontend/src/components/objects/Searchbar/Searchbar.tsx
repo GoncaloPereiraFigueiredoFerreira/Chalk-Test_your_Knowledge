@@ -5,9 +5,15 @@ import { SearchIcon } from "../SVGImages/SVGImages";
 
 const options = ["Exercicios", "Testes"];
 
-export function Searchbar() {
+export function Searchbar({ setSearch }: any) {
   const [chosenOption, setChosenOption] = useState(null);
   const [searchText, setSearchText] = useState("");
+
+  const setSearchs = (value: any) => {
+    setSearchText(value);
+    setSearch(value);
+  };
+
   return (
     <>
       <div className="flex w-full justify-center py-8">
@@ -36,7 +42,7 @@ export function Searchbar() {
               className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border border-l-0 bg-input-1"
               placeholder="Search..."
               value={searchText}
-              onChange={(text) => setSearchText(text.target.value)}
+              onChange={(text) => setSearchs(text.target.value)}
               required
             />
           </form>

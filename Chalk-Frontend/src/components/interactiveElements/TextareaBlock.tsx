@@ -26,12 +26,11 @@ export function TextareaBlock({
   const hasToolbar = toolbar ? toolbar : false;
   const [text, setText] = useState(value ? value : "");
   const [isFocused, setIsFocused] = useState(false);
-  const pRef = useRef<HTMLDivElement>(null);
-  const rootRef = useRef<Root | null>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (pRef.current) {
-      pRef.current.innerHTML = value ?? "";
+    if (divRef.current) {
+      divRef.current.innerHTML = value ?? "";
 
       setText(value ? value : "");
     }
@@ -47,9 +46,10 @@ export function TextareaBlock({
   };
 
   const handleInput = () => {
-    if (pRef.current) {
+    if (divRef.current) {
       // 1: get htmlContent
-      let htmlContent = pRef.current.innerHTML.toString();
+      let htmlContent = divRef.current.innerHTML.toString();
+      console.log(htmlContent);
 
       const indexOfFirstP = htmlContent.indexOf("<p>");
       const indexOfFirstDiv = htmlContent.indexOf("<div>");
@@ -73,7 +73,7 @@ export function TextareaBlock({
       htmlContent = htmlContent.replace(regex_2, "");
 
       // 3: parse htmlContent -> parseContent
-      const regex_3 = /<(\/?)(\w+)(?: \w+="[^"]*")*>|([^<>]+)/g;
+      const regex_3 = /<(\/?)(\w+)(?: (?:\w|-)+(?:="[^"]*")?)*>|([^<>]+)/g;
       const parseContent = htmlContent.matchAll(regex_3);
 
       // 4: concat parseContent -> modifiedContent
@@ -94,25 +94,25 @@ export function TextareaBlock({
 
   function toggleBold() {
     document.execCommand("bold");
-    pRef.current?.focus();
+    divRef.current?.focus();
   }
 
   function toggleItalic() {
     document.execCommand("italic");
-    pRef.current?.focus();
+    divRef.current?.focus();
   }
 
   function toggleUnderline() {
     document.execCommand("underline");
-    pRef.current?.focus();
+    divRef.current?.focus();
   }
 
   return (
     <>
       <div
         className={
-          "w-full rounded-lg ex-1 pb-2 border-2" +
-          (className !== undefined ? className : "")
+          "w-full mb-4 border-2 rounded-lg " +
+          (className !== undefined ? className : "ex-1")
         }
       >
         <div
@@ -157,11 +157,11 @@ export function TextareaBlock({
         <div
           className="flex flex-row w-full px-4 py-2"
           style={{ minHeight: 24 * rows + "px" }}
-          onClick={() => pRef.current?.focus()}
+          onClick={() => divRef.current?.focus()}
         >
           <div
-            ref={pRef}
-            className="block w-max focus:outline-none"
+            ref={divRef}
+            className="focus:outline-none"
             onFocus={handleFocus}
             onBlur={handleBlur}
             onInput={handleInput}
@@ -179,59 +179,19 @@ export function TextareaBlock({
   );
 }
 
-function decodeHtmlEntities(encodedString: string): string {
-  const textarea = document.createElement("textarea");
-  textarea.innerHTML = encodedString;
-  return textarea.value;
-}
-
 export function textToHTML(stringHTML: string) {
-  const pattern = /^(?:(?:<(\w+)>((?:.|\n)+?)<\/\1>)|([^<]+)|(<br>))/;
-  const match = stringHTML.match(pattern);
-  let element = <></>;
-  let restElement = <></>;
+  let newStringHTML: string;
+  const divRef = useRef<HTMLDivElement>(null);
 
-  if (match) {
-    const rest = stringHTML.slice(match[0].length);
+  newStringHTML = stringHTML
+    .replace("<i>", "<em>")
+    .replace("</i>", "</em>")
+    .replace("<b>", "<strong>")
+    .replace("</b>", "</strong>");
 
-    if (match[1] != undefined)
-      switch (match[1]) {
-        case "div":
-        case "p":
-        case "span":
-          element = <p>{textToHTML(match[2])}</p>;
-          break;
-        case "b":
-        case "strong":
-          element = <strong>{textToHTML(match[2])}</strong>;
-          break;
-        case "i":
-        case "em":
-          element = <em>{textToHTML(match[2])}</em>;
-          break;
-        case "u":
-          element = <u>{textToHTML(match[2])}</u>;
-          break;
-        case "code":
-          element = <code>{textToHTML(match[2])}</code>;
-          break;
-        case "pre":
-          element = <pre>{textToHTML(match[2])}</pre>;
-          break;
-        default:
-          element = <div>{textToHTML(match[2])}</div>;
-          break;
-      }
-    else if (match[3] != undefined)
-      element = <>{decodeHtmlEntities(match[3])}</>;
-    else element = <br></br>;
-
-    if (rest != "") restElement = textToHTML(rest);
+  if (divRef.current) {
+    divRef.current.innerHTML = newStringHTML ?? "";
   }
-  return (
-    <>
-      {element}
-      {restElement}
-    </>
-  );
+
+  return <div className="block" ref={divRef}></div>;
 }

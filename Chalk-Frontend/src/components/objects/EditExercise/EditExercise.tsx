@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { ImgPos } from "../Exercise/Header/ExHeader";
 import "./EditExercise.css";
 import { EditHeader } from "../Exercise/Header/EditHeader";
@@ -18,6 +18,9 @@ import {
 import { Rubric, RubricContext } from "../Rubric/Rubric";
 import { FiSave } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
+import { APIContext } from "../../../APIContext";
+import { Modal } from "flowbite-react";
+import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
 
 //------------------------------------//
 //                                    //
@@ -362,6 +365,18 @@ export function EditExercise({
     rubric: rubric,
   };
   const [state, editDispatch] = useReducer(EditReducer, initState);
+  const [openModal, setOpenModal] = useState(false);
+  const [input, setInput] = useState("");
+  const [text, setText] = useState("");
+  const { contactBACK } = useContext(APIContext);
+
+  function onCloseModal() {
+    if (text !== "" && input !== "")
+      getAIQuestion(state.exercise.type, text, input);
+    setOpenModal(false);
+    setInput("");
+    setText("");
+  }
 
   useEffect(() => {
     if (
@@ -385,6 +400,31 @@ export function EditExercise({
       });
   }, [solution]);
 
+  const getAIQuestion = (type: ExerciseType, text: string, input: string) => {
+    let endpoint = "";
+    switch (type) {
+      case ExerciseType.TRUE_OR_FALSE:
+        endpoint = "trueOrFalse";
+        break;
+      case ExerciseType.OPEN_ANSWER:
+        endpoint = "openAnswer";
+        break;
+      case ExerciseType.MULTIPLE_CHOICE:
+        endpoint = "multipleChoice";
+        break;
+      case ExerciseType.CHAT:
+        return;
+    }
+    contactBACK("ai/new/" + endpoint, "POST", undefined, {
+      text: text,
+      input: input,
+    }).then((response) => {
+      response.json().then((json) => {
+        console.log(json);
+      });
+    });
+  };
+
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
@@ -407,21 +447,75 @@ export function EditExercise({
             }}
           ></ExerciseComponent>
         </div>
-        <div className="flex gap-4 px-4 rounded-lg bg-3-2">
-          <strong>Título:</strong>
-          <div className="px-4">
-            <input
-              className="rounded-lg bg-input-2"
-              placeholder="Novo Teste"
-              value={state.exercise.base.title}
-              onChange={(e) =>
-                editDispatch({
-                  type: EditActionKind.CHANGE_TITLE,
-                  dataString: e.target.value,
-                } as EditAction)
-              }
-            />
+        <div className="flex gap-4 px-4 rounded-lg bg-3-2 justify-between">
+          <div className="flex items-center">
+            <p className="text-xl font-medium">Título:</p>
+            <div className="px-4">
+              <input
+                className="rounded-lg bg-input-2"
+                placeholder="Novo Teste"
+                value={state.exercise.base.title}
+                onChange={(e) =>
+                  editDispatch({
+                    type: EditActionKind.CHANGE_TITLE,
+                    dataString: e.target.value,
+                  } as EditAction)
+                }
+              />
+            </div>
           </div>
+          {state.exercise.type !== ExerciseType.CHAT && (
+            <>
+              <button
+                type="button"
+                className="p-4 bg-yellow-300"
+                onClick={() => setOpenModal(true)}
+              >
+                Sugestão para a criação do exercício
+              </button>
+              <Modal show={openModal} size="4xl" onClose={onCloseModal} popup>
+                <Modal.Header />
+                <Modal.Body>
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                      Defina o texto de base para a criação da pergunta e as
+                      diretrizes a seguir
+                    </h3>
+                    <div>
+                      <label className="text-xl">Texto de base:</label>
+                      <TextareaBlock
+                        toolbar={false}
+                        value={text}
+                        rows={3}
+                        onChange={(e) => {
+                          setText(e);
+                        }}
+                      ></TextareaBlock>
+                    </div>
+                    <div>
+                      <label className="text-xl">Diretrizes:</label>
+                      <TextareaBlock
+                        toolbar={false}
+                        value={input}
+                        rows={3}
+                        onChange={(e) => {
+                          setInput(e);
+                        }}
+                      ></TextareaBlock>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onCloseModal();
+                      }}
+                    >
+                      Submeter
+                    </button>
+                  </div>
+                </Modal.Body>
+              </Modal>
+            </>
+          )}
         </div>
         <div className="px-5 py-2 rounded-lg bg-3-2">
           <EditHeader dispatch={editDispatch} state={state.exercise} />

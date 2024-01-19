@@ -65,7 +65,7 @@ export function ShowExerciseDragDrop({
   const { testState, dispatch } = useEditTestContext();
   const { contactBACK } = useContext(APIContext);
   const [value, setValue] = useState(
-    (exercise.identity.points ?? 0).toString()
+    (exercise.identity.points ?? 1).toString()
   );
   const [changeCotationIsActive, setChangeCotationIsActive] = useState(false);
 
@@ -93,9 +93,12 @@ export function ShowExerciseDragDrop({
   function handleChange(value: string) {
     const result = value.match(/^(0*)(\d*[\.,]?\d{0,2})$/);
     if (result) {
-      const resultStr = result[2].toString();
-      if (resultStr !== "") setValue(resultStr);
-      else setValue("0");
+      const resultStr = result[2].toString().replace(",", ".");
+      if (resultStr !== "") {
+        let newCotation = parseFloat(resultStr);
+        if (newCotation >= 0) setValue(resultStr);
+        else setValue("1");
+      } else setValue("0");
     }
   }
 
@@ -106,7 +109,7 @@ export function ShowExerciseDragDrop({
       exercise: {
         groupPosition: groupPosition,
         exercisePosition: exercisePosition,
-        newCotation: parseFloat(value),
+        newCotation: parseFloat(value) ? parseFloat(value) : 1,
       },
     });
   }
