@@ -25,7 +25,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
       <p className="block mb-2 text-md text-gray-900 dark:text-white">
         Adicione as afirmações e escolha a opção correta.
         <input
-          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg bg-btn-4-2 ml-2"
+          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2"
           value="Add"
           onClick={() => {
             for (
@@ -63,7 +63,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           <input
             id="bordered-checkbox"
             type="checkbox"
-            className="p-2 rounded outline-0 bg-input-2"
+            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
             onChange={() => {
               if (openJustificationkind)
                 context.dispatch({
@@ -154,7 +154,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
             value={solutionItem.text}
           ></input>
           <input
-            className="edit-btn mx-2 px-1 bg-btn-4-2 ml-2"
+            className="edit-btn mx-2 px-1 bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2"
             onClick={() =>
               dispatch({
                 type: EditActionKind.REMOVE_ITEM,

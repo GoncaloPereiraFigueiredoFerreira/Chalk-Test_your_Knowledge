@@ -19,11 +19,13 @@ export function EditGroup({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-white dark:bg-black">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-          <label className="flex text-title-1">Editar</label>
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+          <label className="flex text-4xl text-gray-600 dark:text-white">
+            Editar
+          </label>
           <div className="flex gap-4">
             <button
-              className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+              className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
               onClick={() => cancelEdit(state)}
             >
               <IoClose className="size-5" />
@@ -41,14 +43,14 @@ export function EditGroup({
         />
         <div className="flex gap-2">
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() => saveEdit(state)}
           >
             <FiSave className="size-5" />
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />

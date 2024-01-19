@@ -31,7 +31,7 @@ export function DropdownBlock({
         <button
           className={`${
             style ? style : ""
-          } dropdown text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600 border-gray-2-1 group`}
+          } dropdown text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600 border-[#dddddd] dark:border-gray-600 group`}
         >
           <label> {chosenOption === null ? text : chosenOption} </label>
           {placement === "bottom" ? <IoChevronDown className="size-5" /> : null}

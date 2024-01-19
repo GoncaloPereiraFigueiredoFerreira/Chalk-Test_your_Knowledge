@@ -42,6 +42,8 @@ export function ExerciseHeaderComp({ header }: HeaderProps) {
       </div>
     );
   } else {
-    return <div className="mx-12 mb-6 text">{header.text}</div>;
+    return (
+      <div className="mx-12 mb-6 text-black dark:text-white">{header.text}</div>
+    );
   }
 }

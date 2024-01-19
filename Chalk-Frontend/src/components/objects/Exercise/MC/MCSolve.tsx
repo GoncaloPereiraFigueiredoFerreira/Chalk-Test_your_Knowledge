@@ -82,7 +82,7 @@ export function MCSolve(props: MCSolveProps) {
               htmlFor={
                 "mc" + props.exercise.identity?.id + index + props.position
               }
-              className="flex px-4 py-1 gap-2 items-center hover:bg-gray-300 text"
+              className="flex px-4 py-1 gap-2 items-center hover:bg-gray-300 text-black dark:text-white"
             >
               <input
                 id={"mc" + props.exercise.identity?.id + index + props.position}

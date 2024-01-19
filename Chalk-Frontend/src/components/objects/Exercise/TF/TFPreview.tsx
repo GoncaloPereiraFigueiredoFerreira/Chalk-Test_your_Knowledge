@@ -11,12 +11,16 @@ export function TFPreview({ exercise, position, context }: TFPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />
-      <p className="text">
+      <p className="text-black dark:text-white">
         <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
       </p>
       <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
-        <div className="flex text-xl font-bold px-4 text">V</div>
-        <div className="flex text-xl font-bold px-4 text">F</div>
+        <div className="flex text-xl font-bold px-4 text-black dark:text-white">
+          V
+        </div>
+        <div className="flex text-xl font-bold px-4 text-black dark:text-white">
+          F
+        </div>
         <div></div>
         {Object.entries(exercise.props.items).map(([index, value]) => (
           <TFShowStatement

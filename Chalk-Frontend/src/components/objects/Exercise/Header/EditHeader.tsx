@@ -42,7 +42,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
           <input
             id="putImg"
             type="checkbox"
-            className="p-2 rounded outline-0 bg-input-2"
+            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
             onChange={() => {
               if (addImg)
                 dispatch({
@@ -79,7 +79,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
                   id="image"
                   placeholder="Imagem"
                   type="url"
-                  className="flex rounded-lg bg-input-1"
+                  className="flex rounded-lg text-black bg-white border-[#dddddd] dark:text-black dark:bg-gray-600 dark:border-gray-600 focus:ring-0 focus:border-[#dddddd] focus:dark:border-gray-600"
                   value={state.base.statement.imagePath}
                   onChange={(e) =>
                     dispatch({

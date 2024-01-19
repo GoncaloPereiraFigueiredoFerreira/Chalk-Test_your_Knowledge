@@ -93,7 +93,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           <ul
             className={`${
               selectedGroup.id !== "all" ? "" : "hidden"
-            } gap-2 transition-all sidebar-divisions border-gray-3`}
+            } gap-2 transition-all sidebar-divisions border-[#dddddd]`}
           >
             <li>
               <Link to={`groups/${selectedGroup.id}/alunos`}>
@@ -249,7 +249,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
         </ul>
 
-        <ul className="sidebar-divisions border-gray-3">
+        <ul className="sidebar-divisions border-[#dddddd]">
           <li>
             <button
               type="button"
@@ -326,7 +326,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
         </ul>
         {showGrupOptions()}
 
-        <div className="sidebar-divisions border-gray-3 mt-auto">
+        <div className="sidebar-divisions border-[#dddddd] mt-auto">
           <ul>
             <li onClick={() => toggle(true)}>
               <Dropdown

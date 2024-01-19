@@ -36,7 +36,9 @@ function PreviousExerciseButton(
     return (
       <button
         type="button"
-        className={"p-4 rounded-lg bg-btn-4-2 font-bold text-lg "}
+        className={
+          "p-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black font-bold text-lg "
+        }
         onClick={() => {
           sendResolution().then(() => {
             if (currentGroup > 1 && currentEx == 1) {
@@ -65,7 +67,9 @@ function NextExerciseButton(
     return (
       <button
         type="button"
-        className={"p-4 rounded-lg bg-btn-4-2 font-bold text-lg "}
+        className={
+          "p-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black font-bold text-lg "
+        }
         onClick={() => {
           sendResolution().then(() => {
             if (currentGroup < nGroups && currentEx == nGroupExercises) {

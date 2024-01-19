@@ -54,7 +54,7 @@ export function CreateGroupModal({ open, close }: any) {
               required
             />
             <button
-              className="p-2 mt-4 w-full transition-all duration-200 ease-in-out rounded-lg bg-btn-4-2  hover:scale-105"
+              className="p-2 mt-4 w-full transition-all duration-200 ease-in-out rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black  hover:scale-105"
               onClick={() => onCloseModal()}
             >
               Submeter Novo Grupo

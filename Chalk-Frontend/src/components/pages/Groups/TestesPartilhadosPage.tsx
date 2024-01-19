@@ -20,7 +20,7 @@ export function TestesPartilhadosPage() {
   return (
     <div className="w-full h-screen py-24 overflow-auto bg-white dark:bg-black">
       <div className=" w-full gap-4 min-h-max px-16 pb-8">
-        <div className="flex w-full justify-between px-4 pb-6 mb-16 border-b-2 border-gray-2-2">
+        <div className="flex w-full justify-between px-4 pb-6 mb-16 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
           <div className="">
             <div className="relative w-full justify-center">
               <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1 pointer-events-none">
@@ -28,7 +28,7 @@ export function TestesPartilhadosPage() {
               </div>
               <input
                 type="text"
-                className="py-2.5 pl-10 pr-24 rounded-lg w-full z-20 border bg-input-1"
+                className="py-2.5 pl-10 pr-24 rounded-lg w-full z-20 border text-black bg-white border-[#dddddd] dark:text-black dark:bg-gray-600 dark:border-gray-600 focus:ring-0 focus:border-[#dddddd] focus:dark:border-gray-600"
                 placeholder="Search..."
                 value={searchKey}
                 onChange={(text) => setSearch(text.target.value)}

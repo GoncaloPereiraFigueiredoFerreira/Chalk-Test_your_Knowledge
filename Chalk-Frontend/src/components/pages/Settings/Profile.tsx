@@ -28,7 +28,7 @@ export function Profile() {
               <button
                 data-te-ripple-init
                 data-te-ripple-color="light"
-                className="mb-6 inline-block w-fit h-fit rounded bg-btn-4-1 dark:text-black px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal"
+                className="mb-6 inline-block w-fit h-fit rounded bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] dark:text-black px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal"
               >
                 Change Avatar
               </button>
@@ -55,7 +55,7 @@ export function Profile() {
           </div>
           <div className="px-0 sm:px-4 pb-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
             <button
-              className="mt-6 inline-block w-fit h-fit rounded bg-btn-4-1 px-6 pt-2.5 pb-2 text-xs font-medium uppercase p-4"
+              className="mt-6 inline-block w-fit h-fit rounded bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] px-6 pt-2.5 pb-2 text-xs font-medium uppercase p-4"
               onClick={() => setOpenModal(true)}
             >
               Edit Profile
@@ -108,7 +108,9 @@ export function Profile() {
                   </div>
 
                   <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">
-                    <button className="bg-btn-4-1 rounded-md p-3">Edit</button>
+                    <button className="bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] rounded-md p-3">
+                      Edit
+                    </button>
                   </div>
                 </div>
               </Modal.Body>

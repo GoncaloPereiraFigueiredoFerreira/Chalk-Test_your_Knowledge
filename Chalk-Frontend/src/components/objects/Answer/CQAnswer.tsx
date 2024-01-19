@@ -15,7 +15,7 @@ export function CQAnswer({ solution }: AnswerProps) {
                   className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end"
                 >
                   <div>
-                    <div className="person-msg p-3 rounded-l-lg rounded-br-lg">
+                    <div className="bg-[#acacff] dark:bg-[#ffd025] text-black p-3 rounded-l-lg rounded-br-lg">
                       <p className="text-sm">{msg}</p>
                     </div>
                   </div>
@@ -30,7 +30,7 @@ export function CQAnswer({ solution }: AnswerProps) {
                     <img src="/chalk-simple.svg"></img>
                   </div>
                   <div>
-                    <div className="bot-msg p-3 rounded-r-lg rounded-bl-lg">
+                    <div className="bg-[#dddddd] text-black dark:bg-gray-600 dark:text-white p-3 rounded-r-lg rounded-bl-lg">
                       <p className="text-sm">{msg}</p>
                     </div>
                   </div>

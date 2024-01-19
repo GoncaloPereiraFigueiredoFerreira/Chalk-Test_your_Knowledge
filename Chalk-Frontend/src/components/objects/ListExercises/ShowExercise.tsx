@@ -179,7 +179,7 @@ export function ShowExercise({
               selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-black border-gray-1`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-black border-[#dddddd]`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")
@@ -231,7 +231,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "hidden" : "flex"
-          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1`}
+          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#dddddd]`}
         >
           {exercise.base.tags.map((tag) => {
             return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
@@ -240,7 +240,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg text-black bg-white border-[#dddddd] border-gray-1 dark:bg-black dark:text-white`}
+          } flex flex-col mx-4 mb-4 border rounded-lg text-black bg-white border-[#dddddd] border-[#dddddd] dark:bg-black dark:text-white`}
         >
           {preview}
         </div>

@@ -5,7 +5,7 @@ export function SolveTestLanding(props: any) {
   const { test, nExercises } = useContext(SolveTestContext);
   return (
     <>
-      <div className="space-y-12 w-full  text">
+      <div className="space-y-12 w-full text-black dark:text-white">
         <div className="space-y-2 ">
           <p className="text-xl">
             <strong>Título:</strong> {test.title}
@@ -34,7 +34,7 @@ export function SolveTestLanding(props: any) {
         </p>
 
         <button
-          className="absolute right-4 bottom-4 p-4 rounded-lg bg-btn-4-2 font-bold hover:scale-110 transition-all duration-100"
+          className="absolute right-4 bottom-4 p-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black font-bold hover:scale-110 transition-all duration-100"
           onClick={() => props.startTest(true)}
         >
           Começar o teste {"->"}

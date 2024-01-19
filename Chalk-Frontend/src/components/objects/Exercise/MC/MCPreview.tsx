@@ -11,7 +11,7 @@ export function MCPreview({ exercise, position, context }: MCPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement}></ExerciseHeaderComp>
-      <p className="text">
+      <p className="text-black dark:text-white">
         <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
       </p>
       <ul>

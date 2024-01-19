@@ -28,7 +28,7 @@ function renderExercise(
         e.stopPropagation();
       }}
     >
-      <div className="flex justify-between text">
+      <div className="flex justify-between text-black dark:text-white">
         <label className="text-md font-medium">
           Exercício {index + 1} - {ExerciseTypeToString(exercise.type)}
         </label>

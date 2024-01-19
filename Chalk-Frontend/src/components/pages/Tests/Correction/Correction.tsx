@@ -143,11 +143,11 @@ export function Correction() {
     <>
       <div className="h-screen overflow-auto">
         <div className="flex flex-col w-full gap-4 min-h-max bg-white dark:bg-black ">
-          <div className="flex w-full justify-between border-gray-2-2 dark:text-white">
+          <div className="flex w-full justify-between border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] dark:text-white">
             {/*
                 Test Preview
             */}
-            <div className="w-full flex flex-row divide-x-2 border-gray-2-2">
+            <div className="w-full flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
               <div className="flex flex-col w-3/4 h-screen overflow-auto bg-white dark:bg-black px-4 pt-6">
                 <h1 className="text-3xl font-medium">
                   Correção do teste: {test.title}

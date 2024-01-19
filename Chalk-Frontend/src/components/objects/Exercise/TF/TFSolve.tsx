@@ -85,7 +85,7 @@ export function TFSolve({ exercise, position, context }: TFSolveProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />
-      <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center text">
+      <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center text-black dark:text-white">
         <div className="flex text-xl font-bold px-4">V</div>
         <div className="flex text-xl font-bold px-4">F</div>
         <div></div>

@@ -57,10 +57,12 @@ export function ListExercises({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max bg-white dark:bg-black ">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-          <label className="flex text-title-1">Exercícios</label>
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+          <label className="flex text-4xl text-gray-600 dark:text-white">
+            Exercícios
+          </label>
           <button
-            className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
+            className="transition-all duration-100 py-2 px-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black"
             onClick={() => {
               setNewExercisePopUp(true);
               setEditMenuIsOpen(false);
