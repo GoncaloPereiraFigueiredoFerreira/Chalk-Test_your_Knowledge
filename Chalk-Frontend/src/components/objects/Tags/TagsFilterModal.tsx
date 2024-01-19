@@ -1,28 +1,34 @@
-import { Button, Modal, TextInput, Dropdown } from "flowbite-react";
+import { Button, Modal } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
-
-import { useParams } from "react-router-dom";
 import { APIContext } from "../../../APIContext";
 
 interface Tag {
   id: string;
   name: string;
   path: string;
-  expanded?: boolean;
+  expanded: boolean;
 }
 
 export type TagsList = Tag[];
 
-export function TagsFilterModal({ setTagsList }: any) {
-  const [openModal, setOpenModal] = useState(false);
+export interface TagsModalProps {
+  openModal: boolean;
+  header: string;
+  setOpenModal: (v: boolean) => void;
+  setTagsList: (l: TagsList) => void;
+}
 
+export function TagsFilterModal({
+  header,
+  setTagsList,
+  openModal,
+  setOpenModal,
+}: TagsModalProps) {
   const [selectedTags, setSelectedTags] = useState<TagsList>([]);
   const [allTags, setAllTags] = useState<TagsList>([]);
   const [exposedTags, setExposedTags] = useState<TagsList>([]);
   const { contactBACK } = useContext(APIContext);
 
-  //pede as tags existentes
-  // o pedido pode variar consoante o path pretendido
   useEffect(() => {
     contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then(
       (response) => {
@@ -45,12 +51,12 @@ export function TagsFilterModal({ setTagsList }: any) {
 
   const changeTags = (tag: Tag) => {
     if (tag.expanded === true) {
-      tag.expanded = undefined;
+      tag.expanded = false;
       const tags_to_be_removed = allTags.filter((item) =>
         item.path.startsWith(tag.path + tag.name)
       );
       for (let tag of tags_to_be_removed) {
-        tag.expanded = undefined;
+        tag.expanded = false;
       }
       setExposedTags(
         exposedTags.filter(
@@ -75,7 +81,7 @@ export function TagsFilterModal({ setTagsList }: any) {
   const resetTags = () => {
     //TODO - nao ser preso por fazer isto
     for (let tag of allTags) {
-      tag.expanded = undefined;
+      tag.expanded = false;
     }
   };
 
@@ -99,48 +105,40 @@ export function TagsFilterModal({ setTagsList }: any) {
 
   //seleciona todas as que quer e vao para setTagsList
   return (
-    <div className="flex">
-      <Button onClick={() => setOpenModal(true)}>Filter by tags</Button>
-      <Modal
-        dismissible
-        size="xl"
-        show={openModal}
-        onClose={() => closeModal()}
-      >
-        <Modal.Header> Escolha as tags que pretende</Modal.Header>
-        <Modal.Body>
-          <div className=" ">
-            {exposedTags.map((tag, index) => (
-              <div
-                style={{ marginLeft: getTabs(tag) * 50 }}
-                key={index}
-                className={`px-2 py-2 `}
+    <Modal dismissible size="xl" show={openModal} onClose={() => closeModal()}>
+      <Modal.Header> {header}</Modal.Header>
+      <Modal.Body>
+        <div className=" ">
+          {exposedTags.map((tag, index) => (
+            <div
+              style={{ marginLeft: getTabs(tag) * 50 }}
+              key={index}
+              className={`px-2 py-2 `}
+            >
+              <button
+                className={
+                  selectedTags.includes(tag)
+                    ? `bg-blue-500 text-white px-4 py-2 `
+                    : `bg-gray-200 text-black px-4 py-2 `
+                }
+                onClick={() => changeSelectedTags(tag)}
               >
-                <button
-                  className={
-                    selectedTags.includes(tag)
-                      ? `bg-blue-500 text-white px-4 py-2 `
-                      : `bg-gray-200 text-black px-4 py-2 `
-                  }
-                  onClick={() => changeSelectedTags(tag)}
-                >
-                  {tag.name}
-                </button>
-                <button
-                  className="bg-gray-400 text-white px-4 py-2"
-                  onClick={() => changeTags(tag)}
-                >
-                  {tag.expanded === undefined ? ">" : "<"}
-                </button>
-              </div>
-            ))}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={() => addTagsList()}>Apply</Button>
-          <Button onClick={() => setSelectedTags([])}>Clear tags</Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+                {tag.name}
+              </button>
+              <button
+                className="bg-gray-400 text-white px-4 py-2"
+                onClick={() => changeTags(tag)}
+              >
+                {tag.expanded === undefined ? ">" : "<"}
+              </button>
+            </div>
+          ))}
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={() => addTagsList()}>Apply</Button>
+        <Button onClick={() => setSelectedTags([])}>Clear tags</Button>
+      </Modal.Footer>
+    </Modal>
   );
 }

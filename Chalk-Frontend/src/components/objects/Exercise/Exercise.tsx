@@ -20,6 +20,7 @@ export enum ResolutionType {
 export interface Resolution {
   id: string;
   exerciseID: string;
+  testResolutionId?: string;
   cotation: number;
   comment?: string;
   student?: {
@@ -346,6 +347,7 @@ export function InitExercise(type: ExerciseType): Exercise {
       };
       newExercise = CQExercise;
   }
+  newExercise.identity.points = 1;
   return newExercise;
 }
 

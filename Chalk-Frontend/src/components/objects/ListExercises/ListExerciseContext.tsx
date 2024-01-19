@@ -9,7 +9,7 @@ import { Exercise, ExerciseType, InitExercise } from "../Exercise/Exercise";
 
 // Type of actions allowed on the state
 export enum ListExerciseActionKind {
-  ADD_LIST_EXERCISES = "ADD_LIST_EXERCISES",
+  SET_LIST_EXERCISES = "ADD_LIST_EXERCISES",
   CREATE_NEW_EXERCISE = "CREATE_NEW_EXERCISE",
   EDIT_EXERCISE = "EDIT_EXERCISE",
   ADD_EXERCISE = "ADD_EXERCISE",
@@ -42,10 +42,10 @@ export function ListExerciseStateReducer(
   action: ListExerciseAction
 ) {
   switch (action.type) {
-    case ListExerciseActionKind.ADD_LIST_EXERCISES:
+    case ListExerciseActionKind.SET_LIST_EXERCISES:
       if (action.payload)
         if (action.payload.exercises) {
-          const newListExercises = { ...listExerciseState.listExercises };
+          const newListExercises: { [id: string]: Exercise } = {};
           action.payload.exercises.forEach((element) => {
             newListExercises[element.identity!.id] = element;
           });

@@ -28,14 +28,18 @@ interface SidebarProps {
   toggle: (value: boolean) => void;
 }
 
-import { Dropdown } from "flowbite-react";
-import { Course, UserContext } from "../../../UserContext.tsx";
+import { Dropdown, Modal } from "flowbite-react";
+import { Course, UserContext, UserRole } from "../../../UserContext.tsx";
 import { CreateGroupModal } from "../../pages/Groups/CreateGroup.tsx";
 import { APIContext } from "../../../APIContext.tsx";
+import { TagsFilterModal, TagsList } from "../Tags/TagsFilterModal.tsx";
 
 export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [showGroup, setShowGroup] = useState(false);
-  const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openGroupModal, setGroupModal] = useState(false);
+  const [openCreatModal, setCreatModal] = useState(false);
+  const [tagList, setTagList] = useState<TagsList>([]);
+
   const { contactBACK } = useContext(APIContext);
   const [selectedGroup, setSelectedGroup] = useState<Course>({
     id: "all",
@@ -155,11 +159,23 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
 
         <ul className="sidebar-divisions border-t-0">
           <li>
+            <TagsFilterModal
+              setTagsList={setTagList}
+              openModal={openCreatModal}
+              setOpenModal={setCreatModal}
+              header={
+                "Selecione as tags que pretende ver nos exercícios do teste"
+              }
+            />
             <button
               className="relative inline-block text-lg group"
               onClick={() => {
                 toggle(false);
-                navigate("/webapp/create-test");
+                if (user.user?.role == UserRole.SPECIALIST)
+                  navigate("/webapp/create-test");
+                else {
+                  setCreatModal(true);
+                }
               }}
             >
               {/*Bloco inicial*/}
@@ -283,25 +299,29 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   } group`}
                 >
                   <GroupIcon style={"group-gray-icon"} />
-                  <span className={isOpen ? "" : "hidden"}>Outros Grupos</span>
+                  <span className={isOpen ? "" : "hidden"}>
+                    Todos os Grupos
+                  </span>
                 </button>
               </li>
             </ul>
             {showGrupOptions()}
           </li>
-          <li>
-            <button
-              className="sidebar-item bg-btn-1 group"
-              onClick={() => setOpenCreateModal(true)}
-            >
-              <WorldIcon style={"group-gray-icon"} />
-              <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
-            </button>
-            <CreateGroupModal
-              open={openCreateModal}
-              close={() => setOpenCreateModal(false)}
-            />
-          </li>
+          {user.user?.role === UserRole.SPECIALIST && (
+            <li>
+              <button
+                className="sidebar-item bg-btn-1 group"
+                onClick={() => setGroupModal(true)}
+              >
+                <WorldIcon style={"group-gray-icon"} />
+                <span className={isOpen ? "" : "hidden"}>Criar Novo Grupo</span>
+              </button>
+              <CreateGroupModal
+                open={openGroupModal}
+                close={() => setGroupModal(false)}
+              />
+            </li>
+          )}
         </ul>
 
         <div className="sidebar-divisions border-gray-3 mt-auto">

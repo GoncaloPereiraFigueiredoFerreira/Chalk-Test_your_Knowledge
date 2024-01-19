@@ -7,6 +7,7 @@ import {
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
+import { textToHTML } from "../../interactiveElements/TextareaBlock";
 
 function renderExercise(
   exercise: Exercise,
@@ -32,33 +33,46 @@ function renderExercise(
           Exercício {index + 1} - {ExerciseTypeToString(exercise.type)}
         </label>
         <div>
-          <p>Cotação do Exercício: {exercise.identity.points}</p>
           {testResolutions &&
           testResolutions.resolutions[exercise.identity.id] ? (
             <p>
-              Cotação Obtida:
+              Cotação Obtida:{" "}
               {(exercise.identity.points! *
                 testResolutions.resolutions[exercise.identity.id].points) /
-                100}
+                100}{" "}
+              / {exercise.identity.points}
             </p>
           ) : (
-            <></>
+            <p>Cotação do Exercício: {exercise.identity.points}</p>
           )}
         </div>
       </div>
       {index == exerciseSelected ? (
-        <ExerciseComponent
-          exercise={exercise}
-          context={{
-            context: ExerciseContext.PREVIEW,
-            resolution:
-              testResolutions &&
-              testResolutions.resolutions[exercise.identity.id]
-                ? testResolutions.resolutions[exercise.identity.id].data
-                : undefined,
-          }}
-          position={groupIndex + 1 + "." + (index + 1)}
-        ></ExerciseComponent>
+        <>
+          <ExerciseComponent
+            exercise={exercise}
+            context={{
+              context: ExerciseContext.PREVIEW,
+              resolution:
+                testResolutions &&
+                testResolutions.resolutions[exercise.identity.id]
+                  ? testResolutions.resolutions[exercise.identity.id].data
+                  : undefined,
+            }}
+            position={groupIndex + 1 + "." + (index + 1)}
+          ></ExerciseComponent>
+          {testResolutions &&
+          testResolutions.resolutions[exercise.identity.id] ? (
+            <p className="">
+              <strong>Comentário do Especialista: </strong>
+              {textToHTML(
+                testResolutions.resolutions[exercise.identity.id].comment
+              )}
+            </p>
+          ) : (
+            <></>
+          )}
+        </>
       ) : (
         <></>
       )}

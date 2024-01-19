@@ -52,7 +52,7 @@ export function TestPage() {
         <ListTests
           view={view}
           courseId={""}
-          visibilityType={"PRIVATE"}
+          visibilityType={"PUBLIC"}
           searchKey={searchKey}
           tagsList={[]}
         ></ListTests>
