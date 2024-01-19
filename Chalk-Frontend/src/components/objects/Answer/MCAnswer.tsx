@@ -28,7 +28,7 @@ export function MCAnswer({ solution }: AnswerProps) {
                 <div key={index}>
                   <label
                     htmlFor={"mc" + solution.exerciseID + index}
-                    className="flex px-4 py-2 gap-2 items-center hover:bg-gray-300"
+                    className="flex px-4 py-2 gap-2 items-center"
                   >
                     <input
                       id={"mc" + solution.exerciseID + index}
@@ -49,7 +49,7 @@ export function MCAnswer({ solution }: AnswerProps) {
                         justify ? "h-28" : "h-0"
                       } transition-[height] duration-75`}
                     >
-                      <div className="h-full px-7 overflow-hidden">
+                      <div className="h-full px-7 overflow-hidden text-black">
                         <TextareaBlock
                           disabled={true}
                           className={`${

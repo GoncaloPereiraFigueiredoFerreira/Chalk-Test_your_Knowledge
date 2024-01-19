@@ -142,13 +142,13 @@ export function Correction() {
   return (
     <>
       <div className="h-screen overflow-auto">
-        <div className="flex flex-col w-full gap-4 min-h-max bg-2-1 ">
-          <div className="flex w-full justify-between border-gray-2-2 dark:text-white">
+        <div className="flex flex-col w-full gap-4 min-h-max bg-white dark:bg-black ">
+          <div className="flex w-full justify-between border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] dark:text-white">
             {/*
                 Test Preview
             */}
-            <div className="w-full flex flex-row divide-x-2 border-gray-2-2">
-              <div className="flex flex-col w-3/4 h-screen overflow-auto bg-2-1 px-4 pt-6">
+            <div className="w-full flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+              <div className="flex flex-col w-3/4 h-screen overflow-auto bg-white dark:bg-black px-4 pt-6">
                 <h1 className="text-3xl font-medium">
                   Correção do teste: {test.title}
                 </h1>
@@ -160,18 +160,18 @@ export function Correction() {
               </div>
 
               <div
-                className={`w-full flex flex-col h-screen overflow-auto bg-2-1`}
+                className={`w-full flex flex-col h-screen overflow-auto bg-white dark:bg-black`}
               >
                 <div className="p-4 flex flex-col w-full h-screen space-y-4">
                   {/* Solução se houver */}
-                  <div className="bg-3-1 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto">
+                  <div className="bg-[#dddddd] dark:bg-gray-600 w-full space-y-3 min-h-[30%] max-h-[40%] rounded-lg p-4 overflow-y-auto border-2 border-[#dddddd] dark:border-gray-600">
                     <h3 className="text-xl font-medium">
                       Critérios de Correção
                     </h3>
                     <Solution exid={exID} rubrics={rubrics}></Solution>
                   </div>
                   {/* Resoluçoes */}
-                  <div className=" bg-3-1 w-full h-full rounded-lg p-4">
+                  <div className=" bg-[#dddddd] dark:bg-gray-600 w-full h-full rounded-lg p-4">
                     <ResolutionsComp
                       resolutions={resolutions}
                       exID={exID}

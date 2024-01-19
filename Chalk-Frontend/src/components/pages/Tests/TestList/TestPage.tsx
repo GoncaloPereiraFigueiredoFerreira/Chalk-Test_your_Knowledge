@@ -9,17 +9,19 @@ export function TestPage() {
   const [searchKey, setSearch] = useState("");
 
   return (
-    <div className="flex flex-row divide-x-2 border-gray-2-2">
-      <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8">
+    <div className="flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+      <div className="flex flex-col w-full h-screen overflow-auto bg-white dark:bg-black min-h-max px-8 pb-8">
         <Searchbar setSearch={setSearch}></Searchbar>
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-          <label className="flex text-title-1">Testes</label>
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+          <label className="flex text-4xl text-gray-600 dark:text-white">
+            Testes
+          </label>
           <div className="flex space-x-4">
             <Dropdown
               label=""
               dismissOnClick={false}
               renderTrigger={() => (
-                <button className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2">
+                <button className="transition-all duration-100 py-2 px-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black">
                   {view === ViewType.GRID ? "Grelha" : "Lista"}
                 </button>
               )}
@@ -42,7 +44,7 @@ export function TestPage() {
               </Dropdown.Item>
             </Dropdown>
             <button
-              className="transition-all duration-100 py-2 px-4 rounded-lg bg-btn-4-2"
+              className="transition-all duration-100 py-2 px-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black"
               onClick={() => {}}
             >
               Criar Teste

@@ -36,7 +36,9 @@ function PreviousExerciseButton(
     return (
       <button
         type="button"
-        className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
+        className={
+          "p-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black font-bold text-lg "
+        }
         onClick={() => {
           sendResolution().then(() => {
             if (currentGroup > 1 && currentEx == 1) {
@@ -65,7 +67,9 @@ function NextExerciseButton(
     return (
       <button
         type="button"
-        className="p-4 rounded-lg bg-blue-300 dark:bg-blue-800"
+        className={
+          "p-4 rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black font-bold text-lg "
+        }
         onClick={() => {
           sendResolution().then(() => {
             if (currentGroup < nGroups && currentEx == nGroupExercises) {
@@ -123,9 +127,9 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
     <>
       <div className="mb-6 ">
         <div className="flex justify-between mb-1"></div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <div className=" w-full rounded-full h-2.5 bg-[#dddddd] dark:bg-gray-700">
           <div
-            className="bg-yellow-300 h-2.5 rounded-full"
+            className="bg-[#ffd025] h-2.5 rounded-full"
             style={{
               width: Progress(test, currentGroup, currentEx, nExercises) + "%",
             }}
@@ -135,7 +139,29 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
 
       <div className="w-full relative border-b-2 pb-4 dark:text-white">
         <div className="space-y-4">
-          <h1 className="text-2xl font-bold">Grupo {currentGroup}</h1>
+          <h1 className="text-2xl font-bold">
+            Grupo {currentGroup}{" "}
+            <div className="float-right space-x-5 dark:text-white">
+              {PreviousExerciseButton(
+                currentEx,
+                currentGroup,
+                currentGroup - 2 >= 0
+                  ? test.groups[currentGroup - 2].exercises.length
+                  : 0,
+                setCurrentEx,
+                setCurrentGroup
+              )}
+              {NextExerciseButton(
+                currentEx,
+                currentGroup,
+                test.groups.length,
+                groupData.exercises.length,
+                setCurrentEx,
+                setCurrentGroup,
+                sendResolution
+              )}
+            </div>
+          </h1>
 
           <h2 className="ml-5 text-justify">{groupData.groupInstructions}</h2>
         </div>
@@ -180,7 +206,7 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
 
         <button
           type="button"
-          className="p-4 rounded-lg bg-red-300  dark:bg-red-800"
+          className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
           onClick={() => {
             sendResolution().then(() => {
               endTestResolution().then(() => {

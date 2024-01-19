@@ -21,14 +21,14 @@ function renderExercise(
   return (
     <div
       key={index}
-      className=" rounded-lg w-full p-4 bg-3-2 z-20 dark:bg-gray-700 cursor-pointer"
+      className=" rounded-lg w-full p-4 bg-white dark:bg-black z-20 cursor-pointer"
       onClick={(e) => {
         setSelectedExercise(index == exerciseSelected ? -1 : index);
         setShowExID(index == exerciseSelected ? "" : exercise.identity.id);
         e.stopPropagation();
       }}
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between text-black dark:text-white">
         <label className="text-md font-medium">
           Exercício {index + 1} - {ExerciseTypeToString(exercise.type)}
         </label>
@@ -93,20 +93,20 @@ function renderGroup(
   return (
     <div
       key={index}
-      className="rounded-lg w-full p-4 bg-3-1 cursor-pointer"
+      className="rounded-lg w-full p-4 bg-[#dddddd] dark:bg-gray-600 cursor-pointer"
       onClick={() => {
         setSelectedGroup(index == selectedGroup ? -1 : index);
         setSelectedEx(-1);
         setShowExID("");
       }}
     >
-      <div className="flex justify-between mb-4 z-10">
+      <div className="flex justify-between z-10">
         <label className="text-xl font-medium">Grupo {index + 1}</label>
         <p>Cotação do Grupo: {group.groupPoints}</p>
       </div>
       {selectedGroup == index ? (
         <div>
-          <h2>{group.groupInstructions}</h2>
+          <h2 className="py-3">{group.groupInstructions}</h2>
           <div className="space-y-4">
             {group.exercises.map((exercise, exId) => {
               return renderExercise(

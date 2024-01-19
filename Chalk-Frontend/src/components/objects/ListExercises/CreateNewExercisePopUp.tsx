@@ -24,7 +24,7 @@ export function CreateNewExercisePopUp({
   return (
     <PopUp show={show} closePopUp={closePopUp}>
       <>
-        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-title-1 border-b-2 border-gray-1">
+        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-gray-600 dark:text-white border-b-2 border-[#dddddd]">
           Criar novo exercício
         </label>
         <div className="grid grid-cols-2">
@@ -32,8 +32,8 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.MULTIPLE_CHOICE)}
             className={`${
               ExerciseType.MULTIPLE_CHOICE != newExercisetype
-                ? "bg-btn-4-1"
-                : "btn-selected"
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } w-60 btn-ListExercises group`}
           >
             <CiCircleList className="size-10 stroke-1" />
@@ -43,8 +43,8 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.OPEN_ANSWER)}
             className={`${
               ExerciseType.OPEN_ANSWER != newExercisetype
-                ? "bg-btn-4-1"
-                : "btn-selected"
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } btn-ListExercises group`}
           >
             <PiTextTBold className="size-10" />
@@ -54,8 +54,8 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.TRUE_OR_FALSE)}
             className={`${
               ExerciseType.TRUE_OR_FALSE != newExercisetype
-                ? "bg-btn-4-1"
-                : "btn-selected"
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } w-60 btn-ListExercises group`}
           >
             <TbCheckbox className="size-10 stroke-[2.3]" />
@@ -65,8 +65,8 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.CHAT)}
             className={`${
               ExerciseType.CHAT != newExercisetype
-                ? "bg-btn-4-1"
-                : "btn-selected"
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } w-60 btn-ListExercises group`}
           >
             <PiChatsBold className="size-10" />
@@ -76,7 +76,7 @@ export function CreateNewExercisePopUp({
         <div className="flex justify-end">
           <button
             onClick={() => createNewExercise(newExercisetype)}
-            className="btn-selected btn-ListExercises w-fit group"
+            className="bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] btn-ListExercises w-fit group"
           >
             Seguinte
           </button>

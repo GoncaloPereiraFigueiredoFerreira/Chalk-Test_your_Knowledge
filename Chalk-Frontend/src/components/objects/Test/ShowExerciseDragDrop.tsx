@@ -124,7 +124,7 @@ export function ShowExerciseDragDrop({
     switch (exercise.type) {
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
@@ -134,7 +134,7 @@ export function ShowExerciseDragDrop({
         break;
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
@@ -143,7 +143,7 @@ export function ShowExerciseDragDrop({
         break;
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
@@ -153,7 +153,7 @@ export function ShowExerciseDragDrop({
 
       case ExerciseType.CHAT:
         setTypeLabel(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <PiChatsBold className="size-5" />
             Chat Question
           </label>
@@ -167,7 +167,7 @@ export function ShowExerciseDragDrop({
     switch (exercise.identity.visibility) {
       case "private":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <BiSolidLock className="size-5" />
             Privado
           </label>
@@ -175,7 +175,7 @@ export function ShowExerciseDragDrop({
         break;
       case "not-listed":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <TbLink className="size-5" />
             Não listado
           </label>
@@ -183,7 +183,7 @@ export function ShowExerciseDragDrop({
         break;
       case "course":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <FaUserGraduate className="size-5" />
             Curso
           </label>
@@ -191,7 +191,7 @@ export function ShowExerciseDragDrop({
         break;
       case "institutional":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <LuSchool className="size-5" />
             Institucional
           </label>
@@ -199,7 +199,7 @@ export function ShowExerciseDragDrop({
         break;
       case "public":
         setVisibility(
-          <label className="caracteristics-exercise gray-icon">
+          <label className="caracteristics-exercise ex-icon">
             <MdPublic className="size-5" />
             Público
           </label>
@@ -224,7 +224,7 @@ export function ShowExerciseDragDrop({
               }
         }
         {...listeners}
-        className="flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-3-2"
+        className="flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-white dark:bg-black"
       />
     );
 
@@ -241,7 +241,7 @@ export function ShowExerciseDragDrop({
                 transform: CSS.Translate.toString(transform),
               }
         }
-        className="h-[78px] overflow-hidden cursor-default rounded-lg bg-3-2 group"
+        className="h-[78px] overflow-hidden cursor-default rounded-lg bg-white dark:bg-black group"
         {...listeners}
       >
         <div className="flex flex-col h-full px-5 py-2.5">
@@ -256,7 +256,7 @@ export function ShowExerciseDragDrop({
                 listExerciseButtons
                   ? "group-hover:mr-[75px]"
                   : "group-hover:mr-[118px]"
-              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-3-2 border-gray-1`}
+              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-white dark:bg-black border-[#dddddd]`}
             >
               <div className="flex flex-col justify-around items-end">
                 {visibility}
@@ -284,7 +284,7 @@ export function ShowExerciseDragDrop({
             </div>
 
             {!listExerciseButtons && (
-              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-3-1 bg-input-1">
+              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-[#dddddd] dark:bg-gray-600 text-black bg-white border-[#dddddd] dark:text-black dark:bg-gray-600 dark:border-gray-600 focus:ring-0 focus:border-[#dddddd] focus:dark:border-gray-600">
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1">
                   {value} pts
                 </p>
@@ -301,7 +301,7 @@ export function ShowExerciseDragDrop({
       ref={setNodeRef}
       className={`${
         exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-3-2 group`}
+      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-[#dddddd] dark:bg-black group`} /* group-hover */
       {...listeners}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
@@ -314,7 +314,7 @@ export function ShowExerciseDragDrop({
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl">
+            <label className="flex min-w-max font-medium text-xl dark:text-[#dddddd]">
               {exercise.base.title}
             </label>
           </button>
@@ -327,7 +327,7 @@ export function ShowExerciseDragDrop({
                 : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] bg-3-2 border-gray-1`}
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-black border-gray-600 dark:border-[#dddddd]`}
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
@@ -342,7 +342,7 @@ export function ShowExerciseDragDrop({
           <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
             {listExerciseButtons ? (
               <button
-                className="btn-options-exercise gray-icon"
+                className="btn-options-exercise ex-icon"
                 onClick={() => {
                   contactBACK(
                     "tests/" + testState.test.id + "/createExercise",
@@ -386,7 +386,7 @@ export function ShowExerciseDragDrop({
             ) : (
               <>
                 <button
-                  className="btn-options-exercise gray-icon"
+                  className="btn-options-exercise ex-icon"
                   onClick={() => {
                     if (selectedMenu !== "edit-exercise") {
                       setExerciseID({
@@ -407,7 +407,7 @@ export function ShowExerciseDragDrop({
                   Eliminar
                 </button>
                 <button
-                  className="btn-options-exercise gray-icon"
+                  className="btn-options-exercise ex-icon"
                   onClick={() => {
                     if (selectedMenu !== "edit-exercise") {
                       setSelectedMenu("edit-exercise");
@@ -436,7 +436,7 @@ export function ShowExerciseDragDrop({
             (changeCotationIsActive ? (
               <input
                 id="cotation"
-                className="flex ml-4 w-14 px-2 py-1 rounded-lg bg-input-2"
+                className="flex ml-4 w-14 px-2 py-1 rounded-lg border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600 dark:text-[#dddddd]"
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
                 onKeyDown={(e) => {
@@ -448,16 +448,16 @@ export function ShowExerciseDragDrop({
               />
             ) : (
               <div
-                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-3-1 bg-input-1"
+                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer dark:text-[#dddddd] bg-[#dddddd] dark:bg-gray-600 text-black bg-white border-[#dddddd] dark:text-black dark:bg-gray-600 dark:border-gray-600 focus:ring-0 focus:border-[#dddddd] focus:dark:border-gray-600"
                 onClick={() => handleClick()}
               >
-                <p className="flex justify-center text-base min-w-[56px] px-2 py-1">
+                <p className="flex justify-center text-base min-w-[56px] px-2 py-1 dark:text-[#dddddd] ">
                   {value} pts
                 </p>
               </div>
             ))}
         </div>
-        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-gray-1">
+        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#dddddd]">
           <div className="bg-yellow-600 tag-exercise">Matemática</div>
           <div className="bg-blue-600 tag-exercise">4º ano</div>
           <div className="bg-green-600 tag-exercise">escolinha</div>
@@ -473,7 +473,7 @@ export function ShowExerciseDragDrop({
         <div
           className={`${
             !exerciseIsSelected ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1`}
+          } flex flex-col mx-4 mb-4 border rounded-lg text-black bg-white border-[#dddddd] border-[#dddddd] dark:bg-black dark:text-white`}
         >
           {preview}
         </div>

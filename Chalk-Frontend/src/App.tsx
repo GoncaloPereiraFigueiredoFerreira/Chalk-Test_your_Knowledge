@@ -39,6 +39,7 @@ function App() {
         <Route
           path="/webapp"
           element={user.authenticated ? <WebApp /> : <Login />}
+          // element={<WebApp />}
         >
           <Route index element={<FrontPage />} />
           <Route path="search" element={<SearchList />} />

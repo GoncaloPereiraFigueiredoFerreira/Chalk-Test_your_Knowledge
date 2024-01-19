@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
+import { GarbageIcon } from "../SVGImages/SVGImages";
 
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
@@ -72,15 +73,15 @@ export function GroupDragDrop({
           }}
           className={`${
             isDragging && "opacity-40"
-          } flex flex-col gap-4 rounded-lg px-7 py-5 bg-3-1 h-56 overflow-hidden`}
+          } flex flex-col gap-4 rounded-lg px-7 py-5 bg-[#dddddd] dark:bg-gray-600 h-56 overflow-hidden`}
         >
-          <div className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2">
+          <div className="flex w-full justify-between pb-4 px-4 border-b border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] dark:border-[#dddddd] dark:text-[#dddddd] ">
             <label className="w-full text-xl font-medium">
               Grupo {exerciseGroupPosition + 1}
             </label>
             <div className="flex w-full justify-end items-center gap-3">
               Cotação do Grupo:
-              <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
+              <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-black">
                 {testState.test.groups[exerciseGroupPosition].groupPoints} pts
               </div>
             </div>
@@ -88,7 +89,7 @@ export function GroupDragDrop({
           <div className="px-4">
             <div className="flex items-center justify-between">
               <strong>Instruções do grupo:</strong>
-              <button className="flex p-2 gap-2 rounded-md bg-btn-4-1 group">
+              <button className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group">
                 <FaPencil className="size-5" />
                 Editar
               </button>
@@ -100,13 +101,13 @@ export function GroupDragDrop({
             </div>
           </div>
           <div className="flex gap-7 w-full">
-            <button className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group">
+            <button className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group">
               <FaPencil className="group-gray-icon size-6" />
               <label className="group-gray-icon font-medium text-lg">
                 Lista de Exercicios
               </label>
             </button>
-            <button className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group">
+            <button className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group">
               <RiAddFill className="group-gray-icon size-8" />
               <label className="group-gray-icon font-medium text-lg">
                 Criar Novo
@@ -125,10 +126,10 @@ export function GroupDragDrop({
         ref={setNodeRef}
         className={`${
           isDragging && "opacity-50"
-        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-3-1`}
+        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[#dddddd] dark:bg-gray-600`}
       >
         <div
-          className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2"
+          className="flex w-full justify-between pb-4 px-4 border-b border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]"
           {...listeners}
           onClick={() =>
             setExerciseID({
@@ -142,10 +143,10 @@ export function GroupDragDrop({
           </label>
           <div className="flex w-full justify-end items-center gap-4">
             Cotação do Grupo:
-            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
+            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-black dark:text-[#dddddd]">
               {testState.test.groups[exerciseGroupPosition].groupPoints} pts
             </div>
-            <div className="flex border-l-2 pl-4 border-gray-1">
+            <div className="flex border-l-2 pl-4 border-[#dddddd]">
               <button
                 className="btn-options-exercise gray-icon"
                 onClick={() => {
@@ -174,7 +175,7 @@ export function GroupDragDrop({
           <div className="flex items-center justify-between">
             <strong>Instruções do grupo:</strong>
             <button
-              className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+              className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
               onClick={() => {
                 if (selectedMenu !== "edit-group") {
                   setExerciseID({
@@ -246,7 +247,7 @@ export function GroupDragDrop({
           </SortableContext>
           <div className="flex gap-7 w-full">
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group cursor-pointer"
               onClick={() => {
                 setExerciseID({
                   groupPosition: exerciseGroupPosition,
@@ -255,23 +256,40 @@ export function GroupDragDrop({
                 setSelectedMenu("dd-list-exercises");
               }}
             >
-              <FaPencil className="group-gray-icon size-6" />
-              <label className="group-gray-icon font-medium text-lg">
+              <FaPencil className=" size-6" />
+              <label className=" font-medium text-lg">
                 Lista de Exercicios
               </label>
             </button>
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group cursor-pointer"
               onClick={() => {
                 setSelectedMenu("");
                 setNewExercisePopUp(exerciseGroupPosition);
               }}
             >
-              <RiAddFill className="group-gray-icon size-8" />
-              <label className="group-gray-icon font-medium text-lg">
-                Criar Novo
-              </label>
+              <RiAddFill className=" size-8" />
+              <label className=" font-medium text-lg">Criar Novo</label>
             </button>
+            <div
+              className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group cursor-pointer"
+              onClick={() => {
+                setExerciseID({
+                  groupPosition: -1,
+                  exercisePosition: -1,
+                });
+                dispatch({
+                  type: EditTestActionKind.REMOVE_GROUP,
+                  exercise: {
+                    groupPosition: exerciseID.groupPosition,
+                    exercisePosition: exerciseID.exercisePosition,
+                  },
+                });
+              }}
+            >
+              <GarbageIcon style=" size-8" />
+              <label className=" font-medium text-lg">Remove</label>
+            </div>
           </div>
         </div>
       </div>

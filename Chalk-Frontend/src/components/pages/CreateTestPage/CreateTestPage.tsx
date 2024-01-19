@@ -578,12 +578,12 @@ export function CreateTest({ test }: CreateTestProps) {
         <div
           className={`${
             selectedMenu === "" ? "" : "divide-x-2"
-          } flex flex-row border-gray-2-2`}
+          } flex flex-row border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] bg-white dark:bg-black`}
         >
           <div
             className={`${
               selectedMenu === "dd-list-exercises" ? "w-[60%] px-8 pb-8" : "w-0"
-            } flex flex-col transition-[width] h-screen overflow-y-auto bg-2-1`}
+            } flex flex-col transition-[width] h-screen overflow-y-auto bg-white dark:bg-black`}
           >
             {selectedMenu === "dd-list-exercises" && (
               <>
@@ -601,7 +601,7 @@ export function CreateTest({ test }: CreateTestProps) {
               </>
             )}
           </div>
-          <div className="flex flex-col w-full h-screen px-8 pb-8 overflow-y-auto bg-2-1">
+          <div className="flex flex-col w-full h-screen px-8 pb-8 overflow-y-auto bg-white dark:bg-black">
             <EditTestDragDrop
               exerciseID={exerciseID}
               setExerciseID={(value) => setExerciseID(value)}
@@ -616,9 +616,9 @@ export function CreateTest({ test }: CreateTestProps) {
               selectedMenu === "create-exercise" ||
               selectedMenu === "edit-group" ||
               selectedMenu === "edit-test-info"
-                ? "w-full px-16 pb-8"
+                ? "w-full px-8 pb-8"
                 : "w-0"
-            } flex flex-col h-screen overflow-auto bg-2-1 transition-[width]`}
+            } flex flex-col h-screen overflow-auto bg-white dark:bg-black transition-[width]`}
           >
             {(selectedMenu === "edit-exercise" ||
               selectedMenu === "create-exercise") && (

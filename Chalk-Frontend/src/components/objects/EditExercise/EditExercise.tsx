@@ -428,17 +428,19 @@ export function EditExercise({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-          <label className="flex text-title-1">Editar</label>
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+          <label className="flex text-4xl text-gray-600 dark:text-white">
+            Editar
+          </label>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />
             Cancelar
           </button>
         </div>
-        <div className="rounded-lg bg-3-2">
+        <div className="rounded-lg bg-white dark:bg-black">
           <ExerciseComponent
             position={position ? position : "1"}
             exercise={state.exercise}
@@ -447,12 +449,12 @@ export function EditExercise({
             }}
           ></ExerciseComponent>
         </div>
-        <div className="flex gap-4 px-4 rounded-lg bg-3-2 justify-between">
+        <div className="flex gap-4 px-4 rounded-lg bg-white dark:bg-black justify-between">
           <div className="flex items-center">
             <p className="text-xl font-medium">Título:</p>
             <div className="px-4">
               <input
-                className="rounded-lg bg-input-2"
+                className="rounded-lg border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
                 placeholder="Novo Teste"
                 value={state.exercise.base.title}
                 onChange={(e) =>
@@ -517,11 +519,11 @@ export function EditExercise({
             </>
           )}
         </div>
-        <div className="px-5 py-2 rounded-lg bg-3-2">
+        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
           <EditHeader dispatch={editDispatch} state={state.exercise} />
         </div>
 
-        <div className="px-5 py-2 rounded-lg bg-3-2">
+        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
           <h3 className="font-medium text-xl">Detalhes do Exercício:</h3>
           <ExerciseComponent
             position={position ?? "1"}
@@ -536,7 +538,7 @@ export function EditExercise({
         {state.exercise.type === ExerciseType.CHAT ||
         state.exercise.type === ExerciseType.OPEN_ANSWER ? (
           <>
-            <h3 className="font-medium text-xl">Rúbrica:</h3>
+            <h3 className="font-medium text-xl dark:text-white">Rúbrica:</h3>
             <Rubric
               context={{
                 context: RubricContext.EDIT,
@@ -555,14 +557,14 @@ export function EditExercise({
         )}
         <div className="flex gap-2">
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() => saveEdit(state)}
           >
             <FiSave className="size-5" />
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />

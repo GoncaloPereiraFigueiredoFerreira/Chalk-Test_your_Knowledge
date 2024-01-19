@@ -38,9 +38,9 @@ export function EditTestDragDrop({
   const { user } = useContext(UserContext);
 
   return (
-    <div className="flex flex-col w-full bg-2-1 min-h-max">
-      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-        <div className="text-title-1">
+    <div className="flex flex-col w-full bg-white dark:bg-black min-h-max dark:text-white">
+      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] dark:border-[#dddddd]">
+        <div className="text-4xl text-gray-600 dark:text-white">
           {testState.test.title
             ? testState.test.title
             : "Novo Teste - " + draggingExercises}
@@ -50,7 +50,7 @@ export function EditTestDragDrop({
         <div className="flex items-center justify-between">
           <strong className="text-xl">Informações Gerais do Teste:</strong>
           <button
-            className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() => {
               setSelectedMenu("edit-test-info");
             }}
@@ -74,7 +74,7 @@ export function EditTestDragDrop({
           </p>
         </div>
       </div>
-      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-gray-2-2">
+      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
         <SortableContext items={testState.test.groups.map((group) => group.id)}>
           {testState.test.groups.map((group, index) => (
             <GroupDragDrop
@@ -95,25 +95,23 @@ export function EditTestDragDrop({
           ))}
         </SortableContext>
         <div
-          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-btn-4-1 transition-all group"
+          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group cursor-pointer"
           onClick={() => {
             if (selectedMenu !== "edit-group") {
               dispatch({ type: EditTestActionKind.ADD_GROUP });
             }
           }}
         >
-          <RiAddFill className="group-gray-icon size-8" />
-          <label className="group-gray-icon font-medium text-lg">
-            Novo Grupo
-          </label>
+          <RiAddFill className=" size-8" />
+          <label className=" font-medium text-lg">Novo Grupo</label>
         </div>
       </div>
-      <div className="flex flex-col pt-4 gap-4 border-t-2 border-gray-2-2">
+      <div className="flex flex-col pt-4 gap-4 border-t-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
         <div className="mx-4 mt-4">
           <div className="flex items-center justify-between">
             <strong className="text-xl">Conclusão</strong>
             <button
-              className="flex p-2 gap-2 rounded-md bg-btn-4-1 group"
+              className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
               onClick={() => {
                 setSelectedMenu("edit-test-info");
               }}

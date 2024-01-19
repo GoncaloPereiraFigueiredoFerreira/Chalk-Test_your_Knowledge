@@ -22,14 +22,16 @@ export function ChangeVisibility({
   return (
     <PopUp show={show} closePopUp={closePopUp}>
       <>
-        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-title-1 border-b-2 border-gray-1">
+        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-gray-600 dark:text-white border-b-2 border-[#dddddd]">
           Criar novo exercício
         </label>
         <div className="grid grid-cols-2">
           <button
             onClick={() => setSelectedVisibility("private")}
             className={`${
-              "private" != selectedVisibility ? "bg-btn-4-1" : "btn-selected"
+              "private" != selectedVisibility
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } btn-ListExercises group`}
           >
             <BiSolidLock className="size-10" />
@@ -38,7 +40,9 @@ export function ChangeVisibility({
           <button
             onClick={() => setSelectedVisibility("not-listed")}
             className={`${
-              "not-listed" != selectedVisibility ? "bg-btn-4-1" : "btn-selected"
+              "not-listed" != selectedVisibility
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } btn-ListExercises group`}
           >
             <TbLink className="size-10" />
@@ -47,7 +51,9 @@ export function ChangeVisibility({
           <button
             onClick={() => setSelectedVisibility("course")}
             className={`${
-              "course" != selectedVisibility ? "bg-btn-4-1" : "btn-selected"
+              "course" != selectedVisibility
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } btn-ListExercises group`}
           >
             <FaUserGraduate className="size-10" />
@@ -57,8 +63,8 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("institutional")}
             className={`${
               "institutional" != selectedVisibility
-                ? "bg-btn-4-1"
-                : "btn-selected"
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } btn-ListExercises group`}
           >
             <LuSchool className="size-10" />
@@ -67,7 +73,9 @@ export function ChangeVisibility({
           <button
             onClick={() => setSelectedVisibility("public")}
             className={`${
-              "public" != selectedVisibility ? "bg-btn-4-1" : "btn-selected"
+              "public" != selectedVisibility
+                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } btn-ListExercises group`}
           >
             <MdPublic className="size-10" />
@@ -77,7 +85,7 @@ export function ChangeVisibility({
         <div className="flex justify-end">
           <button
             onClick={() => changeVisibility(selectedVisibility)}
-            className="btn-selected btn-ListExercises group"
+            className="bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black btn-ListExercises group"
           >
             Seguinte
           </button>

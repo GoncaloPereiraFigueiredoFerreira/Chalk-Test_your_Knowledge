@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Root } from "react-dom/client";
 import { MdOutlineAttachFile } from "react-icons/md";
 import { FaBold } from "react-icons/fa";
 import { FaItalic } from "react-icons/fa";
@@ -112,15 +111,17 @@ export function TextareaBlock({
       <div
         className={
           "w-full mb-4 border-2 rounded-lg " +
-          (className !== undefined ? className : "ex-1")
+          (className !== undefined
+            ? className
+            : "text-black bg-white border-[#dddddd]")
         }
       >
         <div
           className={`${
             hasToolbar ? "" : "hidden"
-          } flex items-center justify-between px-3 py-2 border-b-2 rounded-t-lg ex-2`}
+          } flex items-center justify-between px-3 py-2 border-b-2 rounded-t-lg text-black bg-[#dddddd] border-[#dddddd]`}
         >
-          <div className="flex flex-wrap items-center sm:divide-x-2 ex-division">
+          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#dddddd]">
             <div className="flex items-center space-x-1 sm:pr-4">
               <button
                 type="button"

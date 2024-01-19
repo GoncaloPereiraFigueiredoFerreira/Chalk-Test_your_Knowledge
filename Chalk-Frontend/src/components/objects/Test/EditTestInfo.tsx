@@ -77,11 +77,13 @@ export function EditTestInfo({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
-          <label className="flex text-title-1">Editar</label>
+      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-white dark:bg-black">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+          <label className="flex text-4xl text-gray-600 dark:text-white">
+            Editar
+          </label>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() =>
               saveEdit({
                 type: type,
@@ -100,7 +102,7 @@ export function EditTestInfo({
           <div className="flex gap-4 items-center">
             <strong>Título:</strong>
             <input
-              className="rounded-lg bg-input-2"
+              className="rounded-lg border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
               placeholder="Novo Teste"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -128,7 +130,7 @@ export function EditTestInfo({
             <TextareaBlock
               toolbar={true}
               rows={6}
-              placeholder="Coloque aqui as instrucoes do grupo..."
+              placeholder="Coloque aqui as instruções globais..."
               value={globalInstructions}
               onChange={(value) => setGlobalInstructions(value)}
             />
@@ -138,7 +140,7 @@ export function EditTestInfo({
             <TextareaBlock
               toolbar={true}
               rows={6}
-              placeholder="Coloque aqui as instrucoes do grupo..."
+              placeholder="Coloque aqui uma conclusão..."
               value={conclusion}
               onChange={(value) => setConclusion(value)}
             />
@@ -146,7 +148,7 @@ export function EditTestInfo({
         </div>
         <div className="flex gap-2">
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() =>
               saveEdit({
                 type: type,
@@ -161,7 +163,7 @@ export function EditTestInfo({
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-btn-4-1 group"
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
             onClick={() =>
               cancelEdit({
                 type: type,
