@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.models.tests;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,7 @@ import java.util.List;
 public class AutoEvaluationTest extends Test {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="StudentID", referencedColumnName = "ID")
+    @JsonIgnore
     private Student student;
 
     @Column(name = "StudentID", insertable = false, updatable = false)

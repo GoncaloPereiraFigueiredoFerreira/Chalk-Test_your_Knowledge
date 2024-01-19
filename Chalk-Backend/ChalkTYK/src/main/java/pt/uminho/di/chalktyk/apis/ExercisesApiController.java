@@ -88,7 +88,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercise);
             else
                 return new ExceptionResponseEntity<Exercise>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise.");
         } catch (NotFoundException | UnauthorizedException e) {
             return new ExceptionResponseEntity<Exercise>().createRequest(e);
@@ -110,7 +110,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercise);
             else
                 return new ExceptionResponseEntity<Exercise>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Exercise>().createRequest(e);
@@ -139,7 +139,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exId);
             }
             else return new ExceptionResponseEntity<String>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to create exercises.");
 
         } catch (ServiceException e) {
@@ -163,7 +163,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -192,7 +192,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
             else
                 return new ExceptionResponseEntity<String>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to duplicate the exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -221,7 +221,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<String>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -243,7 +243,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Exercise>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise's body.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Exercise>().createRequest(e);
@@ -266,7 +266,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise's visibility.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -289,7 +289,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise's rubric.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -312,7 +312,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise's solution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -340,7 +340,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise's course.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -363,7 +363,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to update the exercise's tags.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -384,7 +384,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseRubric(exerciseId));
             else
                 return new ExceptionResponseEntity<ExerciseRubric>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise's rubric.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<ExerciseRubric>().createRequest(e);
@@ -407,7 +407,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to create the exercise's rubric.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -430,7 +430,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the exercise's rubric.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -453,7 +453,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the exercise's rubric.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -482,7 +482,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to issue the correction of the exercise resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -505,7 +505,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.countExerciseResolutions(exerciseId, total));
             else
                 return new ExceptionResponseEntity<Integer>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to count the exercise's resolutions.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Integer>().createRequest(e);
@@ -532,7 +532,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<ListPairStudentExerciseResolution>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to list exercise's resolutions.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<ListPairStudentExerciseResolution>().createRequest(e);
@@ -555,7 +555,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
             else
                 return new ExceptionResponseEntity<Void>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to create a resolution for the exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -580,7 +580,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.countExerciseResolutionsByStudent(exerciseId, studentId));
 
             return new ExceptionResponseEntity<Integer>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to count the number of resolutions made by a student for the given exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Integer>().createRequest(e);
@@ -605,7 +605,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getStudentListOfExerciseResolutions(exerciseId, studentId));
 
             return new ExceptionResponseEntity<List<ExerciseResolution>>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to list the resolutions made by a student for the given exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<List<ExerciseResolution>>().createRequest(e);
@@ -630,7 +630,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getLastExerciseResolutionByStudent(exerciseId, studentId));
 
             return new ExceptionResponseEntity<ExerciseResolution>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to get the last resolution made by a student for the given exercise.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<ExerciseResolution>().createRequest(e);
@@ -673,7 +673,7 @@ public class ExercisesApiController implements ExercisesApi {
                                 specialistId, title, exerciseType, false));
             else
                 return new ExceptionResponseEntity<List<Exercise>>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to list the exercises with the given filters.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<List<Exercise>>().createRequest(e);
@@ -696,7 +696,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
             
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to add a comment to the resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -718,7 +718,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to remove a comment from the resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -745,7 +745,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseResolution(resolutionId));
 
             return new ExceptionResponseEntity<ExerciseResolution>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to get the exercise resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<ExerciseResolution>().createRequest(e);
@@ -767,7 +767,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the exercise resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -798,7 +798,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to manually correct the exercise resolution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -819,7 +819,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseSolution(exerciseId));
             else
                 return new ExceptionResponseEntity<ExerciseSolution>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise's solution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<ExerciseSolution>().createRequest(e);
@@ -842,7 +842,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to create the exercise's solution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -865,7 +865,7 @@ public class ExercisesApiController implements ExercisesApi {
             }
 
             return new ExceptionResponseEntity<Void>().createRequest(
-                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to delete the exercise's solution.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Void>().createRequest(e);
@@ -886,7 +886,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseCourse(exerciseId));
             else
                 return new ExceptionResponseEntity<String>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise's course identifier.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -907,7 +907,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseInstitution(exerciseId));
             else
                 return new ExceptionResponseEntity<String>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise's institution identifier.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -928,7 +928,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseVisibility(exerciseId).toString());
             else
                 return new ExceptionResponseEntity<String>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise's visibility.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<String>().createRequest(e);
@@ -949,7 +949,7 @@ public class ExercisesApiController implements ExercisesApi {
                 return ResponseEntity.ok(exercisesService.getExerciseTags(exerciseId));
             else
                 return new ExceptionResponseEntity<Set<Tag>>().createRequest(
-                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to access the exercise's tags.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Set<Tag>>().createRequest(e);

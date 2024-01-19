@@ -65,8 +65,7 @@ public interface IExercisesService{
      */
     String duplicateExerciseById(String specialistId, String exerciseId) throws NotFoundException;
 
-    @Transactional(rollbackFor = ServiceException.class)
-    String duplicateExerciseByIdNoSpecialist(String exerciseId) throws NotFoundException;
+    String duplicateExerciseByIdNoSpecialist(String exerciseId, Visibility visibility) throws NotFoundException;
 
     String duplicateExerciseById(String specialistId, String exerciseId, String courseId, Visibility visibility) throws NotFoundException;
 

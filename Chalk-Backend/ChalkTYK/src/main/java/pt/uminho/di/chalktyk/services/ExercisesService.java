@@ -230,8 +230,8 @@ public class ExercisesService implements IExercisesService{
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public String duplicateExerciseByIdNoSpecialist(String exerciseId) throws NotFoundException {
-        return _duplicateExerciseById(null, exerciseId, null, null);
+    public String duplicateExerciseByIdNoSpecialist(String exerciseId, Visibility visibility) throws NotFoundException {
+        return _duplicateExerciseById(null, exerciseId, null, visibility);
     }
 
     /**

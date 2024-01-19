@@ -17,6 +17,8 @@ import pt.uminho.di.chalktyk.models.courses.Course;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.exercises.items.Item;
 import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.Mctype;
+import pt.uminho.di.chalktyk.models.exercises.multiple_choice.MultipleChoiceExercise;
 import pt.uminho.di.chalktyk.models.institutions.Institution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -1670,6 +1672,7 @@ public class TestsService implements ITestsService {
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public Test createAutoEvaluationTest(String studentId, List<String> tagsIds, int nrExercises) throws NotFoundException, BadInputException {
         Student student = studentsService.getStudentById(studentId);
 
@@ -1679,19 +1682,30 @@ public class TestsService implements ITestsService {
         if(tagsIds == null)
             throw new BadInputException("Cannot create auto evaluation test: list of tag identifiers was not provided.");
 
-        //List<Tag> tags = new ArrayList<>();
-        //for (String tagId : tagsIds) {
-        //    Tag tag = tagsService.getTagById(tagId);
-        //    if(tag != null) tags.add(tag);
-        //}
         List<Exercise> exercises = testDAO.getExercisesForAutoEvalTest(tagsIds,PageRequest.of(0, nrExercises)).toList();
         List<TestExercise> testExercises = new ArrayList<>();
         float exercisesPoints = 10f;
 
+        // Checks if any exercises were found
+        if(exercises.isEmpty())
+            throw new NotFoundException("Cannot create auto evaluation test: Could not find any exercises with the given tags.");
+
         for(Exercise exercise: exercises){
-            String dupId = exercisesService.duplicateExerciseByIdNoSpecialist(exercise.getId());
-            testExercises.add(new ReferenceExercise(dupId, exercisesPoints));
             System.out.println(exercise.getId());
+            String dupId = exercisesService.duplicateExerciseByIdNoSpecialist(exercise.getId(), Visibility.TEST);
+            exercise = exercisesService.getExerciseById(dupId);
+            // Any multiple choice exercise that requires any justification
+            // is converted to an exercise that does not require justification
+            if(exercise instanceof MultipleChoiceExercise mce
+                    && !mce.getMctype().equals(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION)
+                    && !mce.getMctype().equals(Mctype.TRUE_FALSE_NO_JUSTIFICATION)){
+                // to check if the exercise is a multiple choice or true or false
+                int MCorTF = mce.getMctype().getCode() / 10;
+                mce.setMctype(MCorTF == 1 ? Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION : Mctype.TRUE_FALSE_NO_JUSTIFICATION);
+                entityManager.detach(mce);
+                exercisesService.updateExerciseBody(dupId, exercise);
+            }
+            testExercises.add(new ReferenceExercise(dupId, exercisesPoints));
         }
 
         TestGroup testGroup = new TestGroup("", exercises.size() * exercisesPoints, testExercises);
@@ -1700,9 +1714,27 @@ public class TestsService implements ITestsService {
                 null, "Teste de autoavaliação", "",
                 exercises.size() * exercisesPoints, "",
                 dateTime, dateTime, student,
-                Visibility.PUBLIC, List.of(testGroup)
+                Visibility.NOT_LISTED, List.of(testGroup)
         );
 
-        return testDAO.save(test);
+        test = testDAO.save(test);
+
+        // count and create tags
+        createTestTags(
+                exercisesService.countTagsOccurrencesForExercisesList(
+                        testExercises.stream()
+                                .map(TestExercise::getId)
+                                .toList())
+                ,test
+        );
+
+        // get tags
+        List<Tag> tags = testTagsDAO.getTestTags(test.getId())
+                                    .stream()
+                                    .map(tt -> tt.getTestTagPK().getTag().clone())
+                                    .toList();
+        test.setTags(tags);
+
+        return test;
     }
 }

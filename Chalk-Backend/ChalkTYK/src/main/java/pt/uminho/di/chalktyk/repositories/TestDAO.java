@@ -33,8 +33,7 @@ public interface TestDAO extends JpaRepository<Test, String> {
 
     @Query("SELECT e FROM MultipleChoiceExercise e WHERE " +
             "(:tagIDS is null or e.id IN (SELECT e1.id FROM Exercise e1 JOIN e1.tags t WHERE t.id IN :tagIDS)) and " +
-            " e.visibility = 'PUBLIC' and" +
-            " (e.mctype = 0 or e.mctype = 4)" +
+            " e.visibility = 'PUBLIC'" +
             " ORDER BY FUNCTION('RANDOM')")
     Page<Exercise> getExercisesForAutoEvalTest(@Param("tagIDS") List<String> tagIDS,
                                                Pageable pageable);
