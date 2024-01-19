@@ -1,7 +1,7 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import {
   ListExerciseActionKind,
   ListExerciseContext,
@@ -15,6 +15,7 @@ import {
   TranslateResolutionIN,
 } from "../../objects/Exercise/Exercise";
 import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
+import { useIsVisible } from "../HomePage/HomePage";
 
 export function ExerciseBankPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
@@ -89,88 +90,102 @@ export function ExerciseBankPage() {
       }
     }
   }, [editMenuIsOpen]);
+  const ref1 = useRef(null);
+  const isVisible1 = useIsVisible(ref1);
+  const [triggered1, setTriggered1] = useState(false);
+
+  useEffect(() => {
+    if (isVisible1) setTriggered1(true);
+  }, [ref1, isVisible1]);
 
   return (
     <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
-      <div className="flex flex-col w-full px-8 pb-8 h-screen overflow-auto bg-white dark:bg-black">
-        <Searchbar></Searchbar>
-        <ListExercises
-          setExerciseID={(value) => setExerciseID(value)}
-          editMenuIsOpen={editMenuIsOpen}
-          setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
-        ></ListExercises>
-      </div>
       <div
+        ref={ref1}
         className={`${
-          editMenuIsOpen ? "w-full px-8 pb-8" : "w-0"
-        } flex flex-col h-screen overflow-auto bg-white dark:bg-black transition-[width]`}
+          isVisible1 || triggered1 ? "opacity-100" : "opacity-0"
+        } flex flex-row divide-x-2 border-gray-2-2 transition-opacity duration-100`}
       >
-        {editMenuIsOpen ? (
-          <EditExercise
-            exercise={listExerciseState.listExercises[exerciseID]}
-            rubric={rubrics[exerciseID]}
-            solution={solutions[exerciseID]}
-            saveEdit={(state) => {
-              const { exerciseTR, solutionTR } = TranslateExerciseOUT(
-                state.exercise
-              );
-              const rubricTR = TranslateRubricOut(
-                state.exercise.type,
-                state.rubric
-              );
-              setRubric(exerciseID, state.rubric);
-              setSolution(exerciseID, state.solution);
-              if (exerciseID === "-1") {
-                contactBACK("exercises", "POST", undefined, {
-                  exercise: exerciseTR,
-                  solution: solutionTR,
-                  rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                }).then((response) => {
-                  response.text().then((jsonRes) => {
-                    dispatch({
-                      type: ListExerciseActionKind.ADD_EXERCISE,
-                      payload: {
-                        exercise: {
-                          ...state.exercise,
-                          identity: {
-                            ...state.exercise.identity,
-                            id: jsonRes,
-                            visibility:
-                              state.exercise.identity?.visibility ?? "",
-                            specialistId:
-                              state.exercise.identity?.specialistId ?? "",
+        <div className="flex flex-col w-full px-8 pb-8 h-screen overflow-auto bg-white dark:bg-black">
+          <Searchbar></Searchbar>
+          <ListExercises
+            setExerciseID={(value) => setExerciseID(value)}
+            editMenuIsOpen={editMenuIsOpen}
+            setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
+          ></ListExercises>
+        </div>
+        <div
+          className={`${
+            editMenuIsOpen ? "w-full px-8 pb-8" : "w-0"
+          } flex flex-col h-screen overflow-auto bg-white dark:bg-black transition-[width]`}
+        >
+          {editMenuIsOpen ? (
+            <EditExercise
+              exercise={listExerciseState.listExercises[exerciseID]}
+              rubric={rubrics[exerciseID]}
+              solution={solutions[exerciseID]}
+              saveEdit={(state) => {
+                const { exerciseTR, solutionTR } = TranslateExerciseOUT(
+                  state.exercise
+                );
+                const rubricTR = TranslateRubricOut(
+                  state.exercise.type,
+                  state.rubric
+                );
+                setRubric(exerciseID, state.rubric);
+                setSolution(exerciseID, state.solution);
+                if (exerciseID === "-1") {
+                  contactBACK("exercises", "POST", undefined, {
+                    exercise: exerciseTR,
+                    solution: solutionTR,
+                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                  }).then((response) => {
+                    response.text().then((jsonRes) => {
+                      dispatch({
+                        type: ListExerciseActionKind.ADD_EXERCISE,
+                        payload: {
+                          exercise: {
+                            ...state.exercise,
+                            identity: {
+                              ...state.exercise.identity,
+                              id: jsonRes,
+                              visibility:
+                                state.exercise.identity?.visibility ?? "",
+                              specialistId:
+                                state.exercise.identity?.specialistId ?? "",
+                            },
                           },
                         },
-                      },
+                      });
                     });
                   });
-                });
-              } else {
-                contactBACK("exercises/" + exerciseID, "PUT", undefined, {
-                  exercise: exerciseTR,
-                  solution: solutionTR,
-                  rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                }).then(() => {
-                  dispatch({
-                    type: ListExerciseActionKind.EDIT_EXERCISE,
-                    payload: { exercise: state.exercise },
+                } else {
+                  contactBACK("exercises/" + exerciseID, "PUT", undefined, {
+                    exercise: exerciseTR,
+                    solution: solutionTR,
+                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                  }).then(() => {
+                    dispatch({
+                      type: ListExerciseActionKind.EDIT_EXERCISE,
+                      payload: { exercise: state.exercise },
+                    });
                   });
-                });
-              }
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
-            cancelEdit={() => {
-              if (exerciseID === "-1")
-                dispatch({
-                  type: ListExerciseActionKind.REMOVE_EXERCISE,
-                  payload: { selectedExercise: exerciseID },
-                });
-              setExerciseID("");
-              setEditMenuIsOpen(false);
-            }}
-          ></EditExercise>
-        ) : null}
+                }
+                setExerciseID("");
+                setEditMenuIsOpen(false);
+              }}
+              cancelEdit={() => {
+                if (exerciseID === "-1")
+                  dispatch({
+                    type: ListExerciseActionKind.REMOVE_EXERCISE,
+                    payload: { selectedExercise: exerciseID },
+                  });
+                setExerciseID("");
+                setEditMenuIsOpen(false);
+              }}
+            ></EditExercise>
+          ) : null}
+        </div>
       </div>
     </ListExerciseContext.Provider>
   );
