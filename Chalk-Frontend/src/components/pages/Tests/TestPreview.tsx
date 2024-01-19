@@ -21,7 +21,7 @@ function renderExercise(
   return (
     <div
       key={index}
-      className=" rounded-lg w-full p-4 bg-3-2 z-20 cursor-pointer"
+      className=" rounded-lg w-full p-4 bg-white dark:bg-black z-20 cursor-pointer"
       onClick={(e) => {
         setSelectedExercise(index == exerciseSelected ? -1 : index);
         setShowExID(index == exerciseSelected ? "" : exercise.identity.id);
@@ -93,7 +93,7 @@ function renderGroup(
   return (
     <div
       key={index}
-      className="rounded-lg w-full p-4 bg-3-1 cursor-pointer"
+      className="rounded-lg w-full p-4 bg-[#dddddd] dark:bg-gray-600 cursor-pointer"
       onClick={() => {
         setSelectedGroup(index == selectedGroup ? -1 : index);
         setSelectedEx(-1);

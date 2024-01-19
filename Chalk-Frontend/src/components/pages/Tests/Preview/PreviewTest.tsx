@@ -104,7 +104,7 @@ export function PreviewTest() {
   return (
     <>
       <div className="flex flex-row divide-x-2 border-gray-2-2">
-        <div className="flex flex-col w-full h-screen overflow-auto bg-2-1 min-h-max px-16 pb-8 dark:text-white">
+        <div className="flex flex-col w-full h-screen overflow-auto bg-white dark:bg-black min-h-max px-16 pb-8 dark:text-white">
           <div className="flex  w-full justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
             <div className="flex flex-col">
               <label className=" text-title-1">

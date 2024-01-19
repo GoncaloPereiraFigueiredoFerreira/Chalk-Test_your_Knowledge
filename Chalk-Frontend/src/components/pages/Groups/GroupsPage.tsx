@@ -28,7 +28,7 @@ export function GroupsPage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen py-16 overflow-auto bg-2-1">
+    <div className="flex flex-col w-full h-screen py-16 overflow-auto bg-white dark:bg-black">
       <div className="flex flex-row w-11/12 self-center gap-4 min-h-max px-16 pb-4 border-b-2 border-gray-2-2 justify-between">
         <div className="flex w-fit float-left justify-between p-4 pt-0 ">
           <label className="flex text-title-1">Todos os grupos</label>

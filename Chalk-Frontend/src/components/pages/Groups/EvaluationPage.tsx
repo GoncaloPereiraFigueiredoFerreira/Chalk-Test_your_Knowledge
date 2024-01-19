@@ -193,7 +193,7 @@ function ShowTestGrid(test: Result) {
 
 function ShowTestList(test: Result) {
   return (
-    <div className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden">
+    <div className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden">
       <div className="p-4 flex justify-between w-full">
         <div className="flex-col w-60">
           <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
@@ -307,7 +307,7 @@ export function EvaluationPage() {
 
   return (
     <>
-      <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-2-1">
+      <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-white dark:bg-black">
         <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
           <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
             <div className="">

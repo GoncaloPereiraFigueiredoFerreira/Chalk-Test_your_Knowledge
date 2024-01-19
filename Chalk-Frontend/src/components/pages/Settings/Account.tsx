@@ -1,4 +1,4 @@
-import { Button, Label, Modal, TextInput } from "flowbite-react";
+import { Label, Modal, TextInput } from "flowbite-react";
 import { useState } from "react";
 
 export function Account() {
@@ -89,7 +89,7 @@ export function Account() {
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
-            <h3 className="mb-5 text-lg font-normal text bg-3-2">
+            <h3 className="mb-5 text-lg font-normal text bg-white dark:bg-black">
               Are you sure you want to delete this product?
             </h3>
             <div className="flex justify-center gap-4">

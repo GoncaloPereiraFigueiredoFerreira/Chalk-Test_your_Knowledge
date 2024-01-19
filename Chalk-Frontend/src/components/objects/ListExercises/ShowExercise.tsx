@@ -151,7 +151,7 @@ export function ShowExercise({
     <div
       className={`${
         selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-ex`}
+      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-[#dddddd] dark:bg-black`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
@@ -179,7 +179,7 @@ export function ShowExercise({
               selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-ex border-gray-1`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-black border-gray-1`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")
@@ -240,7 +240,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg ex-1 border-gray-1 bg-in-ex`}
+          } flex flex-col mx-4 mb-4 border rounded-lg text-black bg-white border-[#dddddd] border-gray-1 dark:bg-black dark:text-white`}
         >
           {preview}
         </div>

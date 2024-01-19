@@ -19,7 +19,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
         <Link
           to={"/webapp/tests/" + test.id + "/preview"}
           key={index}
-          className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
+          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden"
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">
@@ -62,7 +62,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
         <Link
           to={"/webapp/tests/" + test.id + "/preview"}
           key={index}
-          className="max-h-[78px] rounded-lg w-full bg-3-2 overflow-hidden"
+          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden"
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">

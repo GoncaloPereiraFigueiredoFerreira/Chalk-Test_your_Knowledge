@@ -26,41 +26,35 @@ html {
 
   /* userInterface -> gap between frontpage and sidebar */
   .bg-1-1 {
-    @apply bg-gray-300
-    dark:bg-gray-800;
+    @apply bg-gray-300 dark:bg-gray-800;
   }
 
   /* sidebar -> bg */
   .bg-1-3 {
-    @apply bg-[#acacff]
-    dark:bg-black;
+    @apply bg-[#acacff] dark:bg-black;
   }
 
   /* >>> dark: bg-gray-700 <<< */
 
   /* frontpage -> bg */
   .bg-2-1 {
-    @apply bg-white
-    dark:bg-black;
+    @apply bg-white dark:bg-black;
   }
 
   /* >>> dark: bg-gray-600 <<< */
 
   /* PopUp -> bg */
   .bg-3-1 {
-    @apply bg-[#dddddd]
-    dark:bg-gray-600;
+    @apply bg-[#dddddd] dark:bg-gray-600;
   }
 
   /* dropdown -> bg // test group */
   .bg-3-2 {
-    @apply bg-white
-dark:bg-black;
+    @apply bg-white dark:bg-black;
   }
 
   .bg-ex {
-    @apply bg-[#dddddd]
-dark:bg-black;
+    @apply bg-[#dddddd] dark:bg-black;
   }
 
   /* ---------------------- */
@@ -73,16 +67,12 @@ dark:bg-black;
 
   /* exercise -> bg-white & border ignored */
   .ex-1 {
-    @apply text-black
-    bg-white
-    border-[#dddddd];
+    @apply text-black bg-white border-[#dddddd];
   }
 
   /* OA -> bg-toolbar */
   .ex-2 {
-    @apply text-black
-    bg-[#dddddd]
-    border-[#dddddd];
+    @apply text-black bg-[#dddddd] border-[#dddddd];
   }
 
   /* OA -> bg-toolbar */
@@ -96,37 +86,22 @@ dark:bg-black;
 
   /* sidebar-item -> button */
   .bg-btn-1 {
-    @apply text-black
-    dark:text-white
-    bg-[#acacff]
-    dark:bg-black
-    hover:bg-white
-    hover:dark:bg-[#dddddd]
-    hover:dark:text-black;
+    @apply text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black;
   }
 
   /* sidebar-item -> selected button */
   .bg-btn-1-selected {
-    @apply text-black
-    bg-white
-    dark:text-black
-    dark:bg-white;
+    @apply text-black bg-white dark:text-black dark:bg-white;
   }
 
   /* dropdown -> button */
   .bg-btn-2-hover {
-    @apply text-black
-    dark:text-white
-    hover:bg-[#dddddd]
-    dark:hover:bg-gray-600;
+    @apply text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600;
   }
 
   /* dropdown -> button */
   .bg-btn-2 {
-    @apply text-black
-    dark:text-white
-    bg-[#dddddd]
-    dark:bg-gray-600;
+    @apply text-black dark:text-white bg-[#dddddd] dark:bg-gray-600;
   }
 
   /* dropdown -> option */

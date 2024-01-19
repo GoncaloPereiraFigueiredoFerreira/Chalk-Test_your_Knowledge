@@ -438,7 +438,7 @@ export function EditExercise({
             Cancelar
           </button>
         </div>
-        <div className="rounded-lg bg-3-2">
+        <div className="rounded-lg bg-white dark:bg-black">
           <ExerciseComponent
             position={position ? position : "1"}
             exercise={state.exercise}
@@ -447,7 +447,7 @@ export function EditExercise({
             }}
           ></ExerciseComponent>
         </div>
-        <div className="flex gap-4 px-4 rounded-lg bg-3-2 justify-between">
+        <div className="flex gap-4 px-4 rounded-lg bg-white dark:bg-black justify-between">
           <div className="flex items-center">
             <p className="text-xl font-medium">Título:</p>
             <div className="px-4">
@@ -517,11 +517,11 @@ export function EditExercise({
             </>
           )}
         </div>
-        <div className="px-5 py-2 rounded-lg bg-3-2">
+        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
           <EditHeader dispatch={editDispatch} state={state.exercise} />
         </div>
 
-        <div className="px-5 py-2 rounded-lg bg-3-2">
+        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
           <h3 className="font-medium text-xl">Detalhes do Exercício:</h3>
           <ExerciseComponent
             position={position ?? "1"}

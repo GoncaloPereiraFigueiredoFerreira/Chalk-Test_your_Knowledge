@@ -31,7 +31,7 @@ export function DropdownBlock({
         <button
           className={`${
             style ? style : ""
-          } dropdown bg-btn-2-hover border-gray-2-1 group`}
+          } dropdown text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600 border-gray-2-1 group`}
         >
           <label> {chosenOption === null ? text : chosenOption} </label>
           {placement === "bottom" ? <IoChevronDown className="size-5" /> : null}
@@ -43,7 +43,7 @@ export function DropdownBlock({
         <Dropdown.Item
           as="button"
           theme={{
-            base: "bg-btn-3-1 inline-flex px-4 py-2 w-full text-sm group",
+            base: "text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600 inline-flex px-4 py-2 w-full text-sm group",
           }}
           onClick={() => {
             setChosenOption(null);
@@ -57,7 +57,7 @@ export function DropdownBlock({
           <Dropdown.Item
             as="button"
             theme={{
-              base: "bg-btn-3-1 inline-flex px-4 py-2 w-full text-sm group",
+              base: "text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600 inline-flex px-4 py-2 w-full text-sm group",
             }}
             key={index}
             onClick={() => {

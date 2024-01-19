@@ -7,7 +7,7 @@ export function OAAnswer({ solution }: AnswerProps) {
   if (solution.data.type == ExerciseType.OPEN_ANSWER) {
     return (
       <>
-        <div className="w-full ex-1">
+        <div className="w-full text-black bg-white border-[#dddddd]">
           <div className="px-4 rounded-b-lg">
             <TextareaBlock
               value={solution.data.text}

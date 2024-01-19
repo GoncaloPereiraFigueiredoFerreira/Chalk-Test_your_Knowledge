@@ -28,7 +28,7 @@ interface SidebarProps {
   toggle: (value: boolean) => void;
 }
 
-import { Dropdown, Modal } from "flowbite-react";
+import { Dropdown } from "flowbite-react";
 import { Course, UserContext, UserRole } from "../../../UserContext.tsx";
 import { CreateGroupModal } from "../../pages/Groups/CreateGroup.tsx";
 import { APIContext } from "../../../APIContext.tsx";
@@ -97,7 +97,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           >
             <li>
               <Link to={`groups/${selectedGroup.id}/alunos`}>
-                <button className="sidebar-item bg-btn-1 group">
+                <button className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group">
                   <GraduateIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Alunos</span>
                 </button>
@@ -105,7 +105,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </li>
             <li>
               <Link to={`groups/${selectedGroup.id}/testes`}>
-                <button className="sidebar-item bg-btn-1 group">
+                <button className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group">
                   <WorldIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>
                     Testes Partilhados
@@ -115,7 +115,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
             </li>
             <li>
               <Link to={`groups/${selectedGroup.id}/avaliacoes`}>
-                <button className="sidebar-item bg-btn-1 group">
+                <button className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group">
                   <CircularGraficIcon style={"group-gray-icon"} />
                   <span className={isOpen ? "" : "hidden"}>Avaliações</span>
                 </button>
@@ -136,13 +136,15 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   return (
     <>
       <aside
-        className={`sidebar-background bg-1-3 ${isOpen ? "" : "w-max"}`}
+        className={`sidebar-background bg-[#acacff] dark:bg-black ${
+          isOpen ? "" : "w-max"
+        }`}
         aria-label="Sidebar"
       >
         <div className="flex flex-row gap-3">
           <button
             type="button"
-            className="sidebar-item bg-btn-1 w-auto"
+            className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black w-auto"
             onClick={() => {
               toggle(!isOpen);
               setShowGroup(false);
@@ -209,7 +211,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
           <li>
             <button
-              className="sidebar-item bg-btn-1 group"
+              className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group"
               onClick={() => {
                 toggle(false);
                 navigate("/webapp/search");
@@ -221,7 +223,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
           <li>
             <button
-              className="sidebar-item bg-btn-1 group"
+              className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group"
               onClick={() => {
                 toggle(false);
                 navigate("/webapp/tests");
@@ -233,7 +235,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
           <li>
             <button
-              className="sidebar-item bg-btn-1 group"
+              className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group"
               onClick={() => {
                 toggle(false);
                 navigate("/webapp/exercise-bank");
@@ -255,7 +257,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 toggle(true);
                 setShowGroup(!showGroup);
               }}
-              className="sidebar-item bg-btn-1 group"
+              className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group"
             >
               {getGroup()}
             </button>
@@ -273,7 +275,9 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                       navigate(`groups/${item.id}/alunos`);
                     }}
                     className={`sidebar-item ${
-                      item === selectedGroup ? "bg-btn-1-selected" : "bg-btn-1"
+                      item === selectedGroup
+                        ? "text-black bg-white dark:text-black dark:bg-white"
+                        : "text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black"
                     } group`}
                   >
                     <TeacherIcon style={"group-gray-icon"} />
@@ -292,8 +296,8 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   }}
                   className={`sidebar-item ${
                     "all" === selectedGroup.id
-                      ? "bg-btn-1-selected"
-                      : "bg-btn-1"
+                      ? "text-black bg-white dark:text-black dark:bg-white"
+                      : "text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black"
                   } group`}
                 >
                   <GroupIcon style={"group-gray-icon"} />
@@ -307,7 +311,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           {user.user?.role === UserRole.SPECIALIST && (
             <li>
               <button
-                className="sidebar-item bg-btn-1 group"
+                className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group"
                 onClick={() => setGroupModal(true)}
               >
                 <WorldIcon style={"group-gray-icon"} />
@@ -329,7 +333,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 label=""
                 placement="top"
                 renderTrigger={() => (
-                  <button className="sidebar-item bg-btn-1 group">
+                  <button className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group">
                     <img
                       src={user.user?.photoPath ?? ""}
                       className={`${
@@ -390,7 +394,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
 
             <li>
               <button
-                className="sidebar-item bg-btn-1 group"
+                className="sidebar-item text-black dark:text-white bg-[#acacff] dark:bg-black hover:bg-white hover:dark:bg-[#dddddd] hover:dark:text-black group"
                 onClick={toggleDarkMode}
               >
                 {darkMode ? (

@@ -31,7 +31,7 @@ export function Settings() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-2-1">
+    <div className="h-screen overflow-auto bg-white dark:bg-black">
       <div className=" h-screen sm:mx-10 md:mx-26 lg:mx-36 px-4 pt-7 ">
         <div className=" md:max-w-xl lg:max-w-3xl flex flex-row justify-between">
           <h2 className="mb-12 text-3xl font-bold text">Settings</h2>

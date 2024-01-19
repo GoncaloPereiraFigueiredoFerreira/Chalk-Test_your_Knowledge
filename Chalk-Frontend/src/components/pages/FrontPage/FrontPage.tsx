@@ -5,7 +5,7 @@ export function FrontPage() {
   const navigate = useNavigate();
   return (
     <div className="flex flex-row divide-x-2 border-gray-2-2">
-      <div className="flex flex-col w-full h-screen justify-center items-center bg-2-1">
+      <div className="flex flex-col w-full h-screen justify-center items-center bg-white dark:bg-black">
         <MainLogo size="big"></MainLogo>
         <div className="flex flex-row space-x-4 mt-4 ">
           <button

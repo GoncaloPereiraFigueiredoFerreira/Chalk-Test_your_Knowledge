@@ -77,7 +77,7 @@ export function EditTestInfo({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
+      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-white dark:bg-black">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-gray-2-2">
           <label className="flex text-title-1">Editar</label>
           <button
@@ -128,7 +128,7 @@ export function EditTestInfo({
             <TextareaBlock
               toolbar={true}
               rows={6}
-              placeholder="Coloque aqui as instrucoes do grupo..."
+              placeholder="Coloque aqui as instruções globais..."
               value={globalInstructions}
               onChange={(value) => setGlobalInstructions(value)}
             />
@@ -138,7 +138,7 @@ export function EditTestInfo({
             <TextareaBlock
               toolbar={true}
               rows={6}
-              placeholder="Coloque aqui as instrucoes do grupo..."
+              placeholder="Coloque aqui uma conclusão..."
               value={conclusion}
               onChange={(value) => setConclusion(value)}
             />

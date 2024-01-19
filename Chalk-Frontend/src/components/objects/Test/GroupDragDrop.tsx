@@ -73,7 +73,7 @@ export function GroupDragDrop({
           }}
           className={`${
             isDragging && "opacity-40"
-          } flex flex-col gap-4 rounded-lg px-7 py-5 bg-3-1 h-56 overflow-hidden`}
+          } flex flex-col gap-4 rounded-lg px-7 py-5 bg-[#dddddd] dark:bg-gray-600 h-56 overflow-hidden`}
         >
           <div className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2 dark:border-[#dddddd] dark:text-[#dddddd] ">
             <label className="w-full text-xl font-medium">
@@ -81,7 +81,7 @@ export function GroupDragDrop({
             </label>
             <div className="flex w-full justify-end items-center gap-3">
               Cotação do Grupo:
-              <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2">
+              <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-black">
                 {testState.test.groups[exerciseGroupPosition].groupPoints} pts
               </div>
             </div>
@@ -126,7 +126,7 @@ export function GroupDragDrop({
         ref={setNodeRef}
         className={`${
           isDragging && "opacity-50"
-        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-3-1`}
+        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[#dddddd] dark:bg-gray-600`}
       >
         <div
           className="flex w-full justify-between pb-4 px-4 border-b border-gray-2-2"
@@ -143,7 +143,7 @@ export function GroupDragDrop({
           </label>
           <div className="flex w-full justify-end items-center gap-4">
             Cotação do Grupo:
-            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-3-2 dark:text-[#dddddd]">
+            <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-black dark:text-[#dddddd]">
               {testState.test.groups[exerciseGroupPosition].groupPoints} pts
             </div>
             <div className="flex border-l-2 pl-4 border-gray-1">
