@@ -5,6 +5,7 @@ export interface Test {
   type: string;
   conclusion: string;
   author: string;
+  courseId: string;
   title: string;
   visibility: string;
   creationDate: string;
@@ -43,6 +44,7 @@ export function InitTest() {
     creationDate: new Date().toISOString(),
     globalPoints: 0,
     globalInstructions: "",
+    courseId: "",
     groups: [],
   } as Test;
 }

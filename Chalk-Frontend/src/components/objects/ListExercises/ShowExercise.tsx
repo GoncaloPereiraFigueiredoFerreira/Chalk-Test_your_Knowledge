@@ -34,6 +34,7 @@ interface ExerciseProps {
   setSelectedExercise: (value: string) => void;
   changeVisibilityPopUp: string;
   setChangeVisibilityPopUp: (value: string) => void;
+  deleteEx: () => void;
 }
 
 export function ShowExercise({
@@ -46,6 +47,7 @@ export function ShowExercise({
   setSelectedExercise,
   changeVisibilityPopUp,
   setChangeVisibilityPopUp,
+  deleteEx,
 }: ExerciseProps) {
   const [typeLabel, setTypeLabel] = useState(<></>);
   const [visibility, setVisibility] = useState(<></>);
@@ -222,7 +224,10 @@ export function ShowExercise({
               <HiOutlineEyeOff className="size-6" />
               Visibilidade
             </button>
-            <button className="btn-options-exercise ex-icon">
+            <button
+              className="btn-options-exercise ex-icon"
+              onClick={() => deleteEx()}
+            >
               <HiOutlineTrash className="size-6" />
               Eliminar
             </button>

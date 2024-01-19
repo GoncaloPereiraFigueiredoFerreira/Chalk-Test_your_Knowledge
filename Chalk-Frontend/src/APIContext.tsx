@@ -1,6 +1,8 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { UserContext } from "./UserContext";
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 
 function ContactAPI(
   address: string,
@@ -12,7 +14,7 @@ function ContactAPI(
   const query: URLSearchParams = new URLSearchParams();
 
   for (const key in params) {
-    query.append(key, params[key]);
+    if (params[key] !== "") query.append(key, params[key]);
   }
 
   return fetch(address + "?" + new URLSearchParams(query), {
@@ -65,6 +67,8 @@ export function APIProvider({ children }: any) {
   const BACKSERVER = import.meta.env.VITE_BACKEND;
   const CHALKYSERVER = import.meta.env.VITE_AI_API;
   const [cookies] = useCookies(["chalkauthtoken"]);
+  const [alertMsg, setAlertMsg] = useState("");
+
   const { logout } = useContext(UserContext);
 
   const ContactAUTH: contact = (
@@ -95,6 +99,13 @@ export function APIProvider({ children }: any) {
       body
     ).then((response) => {
       if (response.status == 401) logout();
+      else if (response.status === 404 || response.status === 403) {
+        setAlertMsg(response.headers.get("X-Error") ?? "");
+        setTimeout(() => {
+          setAlertMsg("");
+        }, 5000);
+      }
+
       return response;
     });
   };
@@ -122,6 +133,21 @@ export function APIProvider({ children }: any) {
       }}
     >
       {children}
+      <div className="absolute bottom-0 left-1/4 z-40">
+        <>
+          {alertMsg !== "" && (
+            <Alert
+              color="failure"
+              onDismiss={() => {
+                setAlertMsg("");
+              }}
+              icon={HiInformationCircle}
+            >
+              <span className="font-medium text-xl"></span> {alertMsg}
+            </Alert>
+          )}
+        </>
+      </div>
     </APIContext.Provider>
   );
 }

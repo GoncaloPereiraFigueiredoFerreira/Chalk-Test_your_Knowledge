@@ -27,11 +27,7 @@ export interface TestResolution {
 export function PreviewTest() {
   const [test, setTest] = useState<Test>(InitTest());
   const [selEx, setSelectedEx] = useState<string>("");
-  const [testResolution, setTestRes] = useState<TestResolution>({
-    totalPoints: 0,
-    status: "",
-    resolutions: {},
-  });
+  const [testResolution, setTestRes] = useState<TestResolution>();
   const { contactBACK } = useContext(APIContext);
   const { user } = useContext(UserContext);
   const { testID } = useParams();
@@ -48,6 +44,7 @@ export function PreviewTest() {
         setTest(testJson);
       });
     });
+
     if (user.user?.role === UserRole.STUDENT) {
       contactBACK(
         "tests/" + testID + "/resolutions/" + user.user?.id + "/last",
@@ -84,7 +81,11 @@ export function PreviewTest() {
   }, []);
 
   useEffect(() => {
-    if (user.user?.role === UserRole.STUDENT && selEx !== "") {
+    if (
+      user.user?.role === UserRole.STUDENT &&
+      selEx !== "" &&
+      testResolution
+    ) {
       contactBACK(
         "exercises/resolutions/" + testResolution.resolutions[selEx].resId,
         "GET"

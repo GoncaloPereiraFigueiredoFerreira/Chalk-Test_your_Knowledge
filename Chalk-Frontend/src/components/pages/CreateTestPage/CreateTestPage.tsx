@@ -757,6 +757,7 @@ export function CreateTest({ test }: CreateTestProps) {
                   type: testState.test.type,
                   conclusion: testState.test.conclusion,
                   visibility: testState.test.visibility,
+                  courseId: testState.test.courseId,
                   title: testState.test.title,
                   globalInstructions: testState.test.globalInstructions,
                 }}

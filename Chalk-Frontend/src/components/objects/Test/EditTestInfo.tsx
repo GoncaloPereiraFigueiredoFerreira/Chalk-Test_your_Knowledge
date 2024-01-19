@@ -1,8 +1,10 @@
 import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FiSave } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { DropdownBlock } from "../../interactiveElements/DropdownBlock";
+import { APIContext } from "../../../APIContext";
+import { Course, UserContext } from "../../../UserContext";
 
 interface EditTestInfopProps {
   testInfo: {
@@ -10,6 +12,7 @@ interface EditTestInfopProps {
     conclusion: string;
     visibility: string;
     title: string;
+    courseId: string;
     globalInstructions: string;
   };
   saveEdit: (state: {
@@ -17,15 +20,10 @@ interface EditTestInfopProps {
     conclusion: string;
     visibility: string;
     title: string;
+    courseId: string;
     globalInstructions: string;
   }) => void;
-  cancelEdit: (state: {
-    type: string;
-    visibility: string;
-    conclusion: string;
-    title: string;
-    globalInstructions: string;
-  }) => void;
+  cancelEdit: () => void;
 }
 
 export function translateVisibilityToString(visibility: string) {
@@ -63,8 +61,12 @@ export function EditTestInfo({
   saveEdit,
   cancelEdit,
 }: EditTestInfopProps) {
+  const { contactBACK } = useContext(APIContext);
   const [type] = useState(testInfo.type);
   const [conclusion, setConclusion] = useState(testInfo.conclusion);
+  const [course, setCourse] = useState(testInfo.courseId);
+  const [courses, setCourses] = useState<Course[]>([]);
+
   const [visibility, setVisibility] = useState(
     testInfo.visibility
       ? translateVisibilityToString(testInfo.visibility)
@@ -74,6 +76,21 @@ export function EditTestInfo({
   const [globalInstructions, setGlobalInstructions] = useState(
     testInfo.globalInstructions
   );
+
+  useEffect(() => {
+    if (visibility === "Curso") {
+      contactBACK("courses", "GET", { page: "0", itemsPerPage: "50" }).then(
+        (response) =>
+          response.json().then((json) => {
+            let courses: Course[] = [];
+            json.map((c: any) => {
+              courses.push({ id: c.id, name: c.name });
+            });
+            setCourses(courses);
+          })
+      );
+    }
+  }, [visibility]);
 
   return (
     <>
@@ -90,6 +107,7 @@ export function EditTestInfo({
                 visibility: translateStringToVisibility(visibility),
                 conclusion: conclusion,
                 title: title,
+                courseId: course,
                 globalInstructions: globalInstructions,
               })
             }
@@ -124,6 +142,24 @@ export function EditTestInfo({
               text="Visibilidade"
               placement="bottom"
             ></DropdownBlock>
+            {visibility === "Curso" && (
+              <DropdownBlock
+                style="rounded-lg h-[42.19px]"
+                options={[...courses].map((c) => {
+                  return c.name;
+                })}
+                chosenOption={[...courses].find((c) => c.id === course)?.name}
+                setChosenOption={(option) => {
+                  let id: string = "";
+                  courses.map((temp) => {
+                    if (temp.name === option) id = temp.id;
+                  });
+                  setCourse(id);
+                }}
+                text="curso"
+                placement="bottom"
+              ></DropdownBlock>
+            )}
           </div>
           <strong>Instruções globais:</strong>
           <div className="px-4">
@@ -155,6 +191,7 @@ export function EditTestInfo({
                 visibility: translateStringToVisibility(visibility),
                 conclusion: conclusion,
                 title: title,
+                courseId: course,
                 globalInstructions: globalInstructions,
               })
             }
@@ -164,15 +201,7 @@ export function EditTestInfo({
           </button>
           <button
             className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
-            onClick={() =>
-              cancelEdit({
-                type: type,
-                visibility: translateStringToVisibility(visibility),
-                conclusion: conclusion,
-                title: title,
-                globalInstructions: globalInstructions,
-              })
-            }
+            onClick={() => cancelEdit()}
           >
             <IoClose className="size-5" />
             Cancelar

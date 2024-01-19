@@ -54,6 +54,17 @@ export function ListExercises({
     });
   }, [currentPage]);
 
+  const deleteEx = (id: string) => {
+    contactBACK("exercises/" + id, "DELETE").then(() => {
+      dispatch({
+        type: ListExerciseActionKind.REMOVE_EXERCISE,
+        payload: {
+          selectedExercise: id,
+        },
+      });
+    });
+  };
+
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max bg-white dark:bg-black ">
@@ -91,6 +102,7 @@ export function ListExercises({
             setChangeVisibilityPopUp={(value) =>
               setChangeVisibilityPopUp(value)
             }
+            deleteEx={() => {}}
           ></ShowExercise>
         ) : null}
         {Object.keys(listExerciseState.listExercises).map((key, index) =>
@@ -115,6 +127,7 @@ export function ListExercises({
               setChangeVisibilityPopUp={(value) =>
                 setChangeVisibilityPopUp(value)
               }
+              deleteEx={() => deleteEx(key)}
             ></ShowExercise>
           )
         )}
@@ -131,15 +144,21 @@ export function ListExercises({
         show={changeVisibilityPopUp !== ""}
         closePopUp={() => setChangeVisibilityPopUp("")}
         changeVisibility={(newVisibility: string) => {
-          console.log(changeVisibilityPopUp);
-          dispatch({
-            type: ListExerciseActionKind.CHANGE_VISIBILITY_EXERCISE,
-            payload: {
-              selectedExercise: changeVisibilityPopUp,
-              visibility: newVisibility,
-            },
+          contactBACK(
+            "exercises/" + changeVisibilityPopUp + "/visibility",
+            "PUT",
+            undefined,
+            {} // n acabado
+          ).then(() => {
+            dispatch({
+              type: ListExerciseActionKind.CHANGE_VISIBILITY_EXERCISE,
+              payload: {
+                selectedExercise: changeVisibilityPopUp,
+                visibility: newVisibility,
+              },
+            });
+            setChangeVisibilityPopUp("");
           });
-          setChangeVisibilityPopUp("");
         }}
       />
       <CreateNewExercisePopUp

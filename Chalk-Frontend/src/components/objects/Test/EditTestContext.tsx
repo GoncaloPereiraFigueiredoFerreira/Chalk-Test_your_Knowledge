@@ -39,6 +39,7 @@ export interface EditTestAction {
     visibility: string;
     title: string;
     globalInstructions: string;
+    courseId?: string;
   };
   group?: {
     groupPosition: number;
@@ -75,6 +76,7 @@ export function EditTestStateReducer(
   switch (action.type) {
     case EditTestActionKind.EDIT_TEST_INFO:
       if (action.testInfo) {
+        console.log(action.testInfo);
         state.contactBACK(
           "tests/" + state.test.id + "/basicProperties",
           "PUT",
@@ -85,6 +87,10 @@ export function EditTestStateReducer(
             globalInstructions: action.testInfo.globalInstructions,
             conclusion: action.testInfo.conclusion,
             visibility: action.testInfo.visibility,
+            courseId:
+              action.testInfo.visibility === "course"
+                ? action.testInfo.courseId!
+                : "",
           }
         );
         return {

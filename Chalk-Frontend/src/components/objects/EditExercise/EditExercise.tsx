@@ -14,6 +14,10 @@ import {
   MCResolutionData,
   OAResolutionData,
   InitResolutionDataEx,
+  InitExercise,
+  MCExercise,
+  ResolutionItem,
+  ResolutionItems,
 } from "../Exercise/Exercise";
 import { Rubric, RubricContext } from "../Rubric/Rubric";
 import { FiSave } from "react-icons/fi";
@@ -46,6 +50,7 @@ export enum EditActionKind {
   SET_TOPIC = "SET_TOPIC",
   SET_RUBRIC = "SET_RUBRIC",
   SET_SOLUTION = "SET_SOLUTION",
+  SET_SUGESTION = "SET_FULL_EX",
 }
 
 export interface EditAction {
@@ -59,6 +64,7 @@ export interface EditAction {
     value?: boolean;
   };
   dataSolution?: ResolutionData;
+  dataExercise?: Exercise;
   dataRubric?: Rubric;
   dataJK?: ExerciseJustificationKind;
 }
@@ -325,6 +331,15 @@ function EditReducer(state: EditState, action: EditAction) {
       }
       throw new Error("Invalid action");
 
+    case EditActionKind.SET_SUGESTION:
+      return {
+        ...state,
+        solution: action.dataExercise
+          ? InitResolutionDataEx(action.dataExercise)
+          : state.solution,
+        exercise: action.dataExercise ?? state.exercise,
+      };
+
     default:
       return state;
   }
@@ -366,13 +381,19 @@ export function EditExercise({
   };
   const [state, editDispatch] = useReducer(EditReducer, initState);
   const [openModal, setOpenModal] = useState(false);
+  const [exSugestion, setSugestion] = useState<Exercise>();
   const [input, setInput] = useState("");
   const [text, setText] = useState("");
   const { contactBACK } = useContext(APIContext);
 
-  function onCloseModal() {
-    if (text !== "" && input !== "")
+  function generateEx() {
+    if (text !== "" || input !== "") {
+      setSugestion(undefined);
       getAIQuestion(state.exercise.type, text, input);
+    }
+  }
+
+  function onCloseModal() {
     setOpenModal(false);
     setInput("");
     setText("");
@@ -421,8 +442,42 @@ export function EditExercise({
     }).then((response) => {
       response.json().then((json) => {
         console.log(json);
+        let newEx: Exercise | undefined = InitExercise(type);
+        switch (type) {
+          case ExerciseType.TRUE_OR_FALSE:
+            newEx = undefined;
+            break;
+          case ExerciseType.OPEN_ANSWER:
+            newEx.base.statement.text = json.question;
+            break;
+          case ExerciseType.MULTIPLE_CHOICE:
+            newEx.base.statement.text = json.question;
+            let resItems: ResolutionItems = {};
+            let answers: string[] = json.answers;
+            answers.map((option: string, index: number) => {
+              resItems[index.toString()] = {
+                text: option,
+                value: json.correct === index,
+              };
+            });
+            (newEx as MCExercise).props.items = resItems;
+            console.log(newEx);
+            break;
+        }
+        setSugestion(newEx);
       });
     });
+  };
+
+  const acceptQuestion = () => {
+    if (exSugestion) {
+      editDispatch({
+        type: EditActionKind.SET_SUGESTION,
+        dataExercise: exSugestion,
+      });
+      setSugestion(undefined);
+      onCloseModal();
+    }
   };
 
   return (
@@ -475,7 +530,13 @@ export function EditExercise({
               >
                 Sugestão para a criação do exercício
               </button>
-              <Modal show={openModal} size="4xl" onClose={onCloseModal} popup>
+              <Modal
+                show={openModal}
+                size="4xl"
+                onClose={onCloseModal}
+                popup
+                dismissible
+              >
                 <Modal.Header />
                 <Modal.Body>
                   <div className="space-y-6">
@@ -505,14 +566,33 @@ export function EditExercise({
                         }}
                       ></TextareaBlock>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onCloseModal();
-                      }}
-                    >
-                      Submeter
-                    </button>
+                    {exSugestion && (
+                      <ExerciseComponent
+                        exercise={exSugestion}
+                        position={""}
+                        context={{ context: ExerciseContext.PREVIEW }}
+                      />
+                    )}
+                    <div className="flex justify-between w-full">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          generateEx();
+                        }}
+                      >
+                        Gerar
+                      </button>
+                      {exSugestion && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            acceptQuestion();
+                          }}
+                        >
+                          Guardar Exercício
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </Modal.Body>
               </Modal>

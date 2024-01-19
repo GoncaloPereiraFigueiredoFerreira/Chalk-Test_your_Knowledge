@@ -30,18 +30,19 @@ export function TagsFilterModal({
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then(
-      (response) => {
-        response.json().then((tags) => {
-          setAllTags(tags);
-        });
-      }
-    );
-  }, []);
+    if (openModal)
+        contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then(
+        (response) => {
+            response.json().then((tags) => {
+            setAllTags(tags);
+            });
+        }
+        );
+  }, [openModal]);
 
   useEffect(() => {
     setExposedTags(allTags.filter((item) => item.path === "/"));
-  }, [openModal]);
+  }, [allTags]);
 
   const changeSelectedTags = (tag: Tag) => {
     selectedTags.includes(tag)

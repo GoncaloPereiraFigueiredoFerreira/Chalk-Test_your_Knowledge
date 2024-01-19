@@ -26,18 +26,7 @@ export const SolveTestContext = createContext<{
   resolutions: ResolutionData[][];
   setExerciseSolution: Function;
 }>({
-  test: {
-    type: "",
-    conclusion: "",
-    author: "",
-    title: "",
-    creationDate: "",
-    globalPoints: 0,
-    globalInstructions: "",
-    groups: [],
-    id: "",
-    visibility: "",
-  },
+  test: InitTest(),
   resolutions: [],
   setExerciseSolution: () => {},
   nExercises: 0,
@@ -76,7 +65,6 @@ export function SolveTest() {
           });
           return group;
         });
-        console.log(testJson);
         setTest(testJson);
         setResolution(initResolutions(testJson));
       });
@@ -139,7 +127,10 @@ export function SolveTest() {
                       resolutionID={resolutionID}
                     ></SolveTestExercise>
                   ) : (
-                    <SolveTestEnd></SolveTestEnd>
+                    <SolveTestEnd
+                      resolutionID={resolutionID}
+                      maxPoints={test.globalPoints}
+                    ></SolveTestEnd>
                   )}
                 </>
               )}

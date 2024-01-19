@@ -151,7 +151,7 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
                 },
               })
             }
-            value={solutionItem.text}
+            defaultValue={solutionItem.text}
           ></input>
           <input
             className="edit-btn mx-2 px-1 bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2"

@@ -56,6 +56,23 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
     localStorage.setItem("dark-mode", darkMode ? "true" : "false");
   }, [darkMode]);
 
+  useEffect(() => {
+    if (tagList.length > 0) {
+      contactBACK("tests/autoEvaluation", "POST", {
+        tags: tagList
+          .map((tag) => {
+            return tag.id;
+          })
+          .toString(),
+        nrExercises: "10",
+      }).then((response: Response) => {
+        response.json().then((json) => {
+          navigate("/webapp/tests/" + json.id + "/solve");
+        });
+      });
+    }
+  }, [tagList]);
+
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);
   };
