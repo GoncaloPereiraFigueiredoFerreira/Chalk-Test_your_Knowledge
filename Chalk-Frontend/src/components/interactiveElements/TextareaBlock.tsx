@@ -110,16 +110,14 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full mb-4 border-2 rounded-lg " +
-          (className !== undefined
-            ? className
-            : "text-black bg-white border-[#dddddd]")
+          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#dddddd] dark:border-gray-600 overflow-hidden" +
+          (className !== undefined ? className : "")
         }
       >
         <div
           className={`${
             hasToolbar ? "" : "hidden"
-          } flex items-center justify-between px-3 py-2 border-b-2 rounded-t-lg text-black bg-[#dddddd] border-[#dddddd]`}
+          } flex items-center justify-between px-3 py-2 border-b-2 text-black bg-[#dddddd] border-[#dddddd] dark:border-gray-600 dark:bg-gray-700`}
         >
           <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#dddddd]">
             <div className="flex items-center space-x-1 sm:pr-4">
