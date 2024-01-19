@@ -13,6 +13,7 @@ model = "gpt-3.5-turbo"
 requests_sem = Semaphore(int(os.getenv("N_REQ",3)))  
 
 def send_request(message,temperature = 0,presence = 0,frequency = 0):
+    #print("message: {}".format(message),flush=True)
     requests_sem.acquire()
     tokens = 1000 #Todo 
 
@@ -72,9 +73,8 @@ def send_open_answer(answer,question,answer_critiria,answer_topics = None,answer
 
     user_pronpt = gen_user_open_answer(answer)
     resp = send_request_json([sys_pronpt,user_pronpt[0]])
-    ret.append(resp["category"])
 
-    return ret
+    return resp
 
 def send_create_mult(text,questions,user_input = ""):
     text = gen_sys_create_question(text)
@@ -137,7 +137,7 @@ def gen_sys_open_answer(question,answer_critiria,answer_topics = None,answer_aux
         auxiliar = "Consider the following pieces of information, delimited by double quotes, in your answer.\"\"{}\"\"".format(answer_auxiliar)
 
     ret = '''{auxiliar}You will be provided with text delimited by triple quotes that is supposed to be the answer to the question \"{question}\".
-{topics}{criteria}Finally, provide the category in which the question fits. Provide this categorie as {{"category": <insert category here>}}.'''.format(question = question, topics = topics, auxiliar = auxiliar, criteria = criteria)
+{topics}{criteria}Finally, provide the category in which the question fits and a comment abaout the answer. Provide this categorie as {{"category": <insert category here>,"comment": <insert comment here>}}.'''.format(question = question, topics = topics, auxiliar = auxiliar, criteria = criteria)
 
     ret = {"role":"system","content":ret}
 
@@ -197,7 +197,7 @@ def gen_user_create_true_false(user_input,questions = None):
 
     if questions:
         for i in questions:
-            aux = {"Question":i["Question"]}
+            aux = [{"Question":j["Question"]} for j in i]
             ret.append({"role":"assistant","content":json.dumps(aux)})
 
     ret.append({"role":"user","content":user_input + '.Generate a True or False question. The response must be in json, with this format {"Question":question,"True":True or False}.'})

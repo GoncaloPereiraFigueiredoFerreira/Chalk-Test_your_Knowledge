@@ -25,7 +25,7 @@ cache_timeout = 600 # 10 min
 
 @api.route('/open_answer', methods=['GET'])
 def open_answer():
-    req = request.json
+    req = request.get_json()
     question = req["Question"]
 
     topics = None
@@ -44,11 +44,11 @@ def open_answer():
     criteria.sort(key = lambda i: i[1])
     criteria_aux = [i[0] for i in criteria]
 
-    cot = api_ai.send_open_answer(answer,question,criteria_aux,topics,auxiliar)
+    response = api_ai.send_open_answer(answer,question,criteria_aux,topics,auxiliar)
 
-    cot = {"Evaluation":cot}
+    ret = {"Evaluation":response["category"],"Comment":response["comment"]}
 
-    return json.dumps(cot)
+    return json.dumps(ret,ensure_ascii=False)
 
 '''
 {
@@ -65,14 +65,14 @@ def open_answer():
 
 @api.route('/create_mult', methods=['GET'])
 def create_mult():
-    req = request.json
+    req = request.get_json()
 
     h_text = hash(req["Text"])
     user_input = ""
     questions = cache.get(h_text)
     if questions: questions = json.loads(questions)
 
-    if("Input" in req):
+    if("Input" in req) and req["Input"] != "":
         user_input = req["Input"]
         questions = [questions[-1]] if questions else questions
 
@@ -103,14 +103,14 @@ def create_mult():
 
 @api.route('/create_open', methods=['GET'])
 def create_open():
-    req = request.json
+    req = request.get_json()
 
     h_text = hash(req["Text"])
     user_input = ""
     questions = cache.get(h_text)
     if questions: questions = json.loads(questions)
 
-    if("Input" in req):
+    if("Input" in req) and req["Input"] != "":
         user_input = req["Input"]
         questions = [questions[-1]] if questions else questions
 
@@ -145,22 +145,28 @@ def create_true_false():
     user_input = ""
     questions = cache.get(h_text)
     if questions: questions = json.loads(questions)
+    else: questions = []
 
-    if("Input" in req):
+    if("Input" in req) and req["Input"] != "":
         user_input = req["Input"]
         questions = [questions[-1]] if questions else questions
 
 
-    ret = api_ai.send_create_true_false(req["Text"],questions,user_input)
+    response = api_ai.send_create_true_false(req["Text"],questions,user_input)
+    aux = [response]
+
+    for _ in range(2):
+        response = api_ai.send_create_true_false(req["Text"],questions + [aux],user_input)
+        aux.append(response)
 
     if questions:
-        questions.append(ret)
+        questions.append(aux)
         questions = questions[1:] if len(questions) > 5 else questions
         cache.set(h_text,json.dumps(questions),cache_timeout)
     else:
-        cache.set(h_text,json.dumps([ret]),cache_timeout)
+        cache.set(h_text,json.dumps([aux]),cache_timeout)
 
-    return ret
+    return aux
 
 def hash_oral(ex_id,student_id):
     return ex_id + "-" + "student_id"
