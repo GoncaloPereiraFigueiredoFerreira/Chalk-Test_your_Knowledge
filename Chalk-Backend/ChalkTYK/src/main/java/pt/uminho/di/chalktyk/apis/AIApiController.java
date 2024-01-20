@@ -1,7 +1,5 @@
 package pt.uminho.di.chalktyk.apis;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
@@ -9,7 +7,6 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +20,7 @@ import pt.uminho.di.chalktyk.dtos.ChatExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.GenerateQuestionAIDTO;
 import pt.uminho.di.chalktyk.dtos.MultipleChoiceAIDTO;
 import pt.uminho.di.chalktyk.dtos.OpenAnswerAIDTO;
+import pt.uminho.di.chalktyk.dtos.OpenAnswerEvaluationDTO;
 import pt.uminho.di.chalktyk.dtos.TrueOrFalseAIDTO;
 import pt.uminho.di.chalktyk.models.exercises.Exercise;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
@@ -137,7 +135,7 @@ public class AIApiController implements AIApi{
     }
 
     @Override
-    public ResponseEntity<Float> getEvaluationOpenAnswer(String resolutionId, String exerciseId, String jwt) {
+    public ResponseEntity<OpenAnswerEvaluationDTO> getEvaluationOpenAnswer(String resolutionId, String exerciseId, String jwt) {
         try{
             Float total = 0.0f;
 
@@ -175,8 +173,10 @@ public class AIApiController implements AIApi{
 
             List<OACriterion> criteria = rubric.getCriteria();
 
-            for (OACriterion i : criteria) {
-                List<OAStandard> standart = i.getStandards();
+            String[] comments = new String[criteria.size()];
+
+            for (int i = 0; i < criteria.size();i++) {
+                List<OAStandard> standart = criteria.get(i).getStandards();
 
                 JsonArrayBuilder jRubric = Json.createArrayBuilder();
                 standart.forEach(s ->{
@@ -195,12 +195,14 @@ public class AIApiController implements AIApi{
 
                 Float percentage = Float.parseFloat(response.get("Evaluation").toString());
 
-                total = total + percentage * i.getPoints();
+                comments[i] = response.getString("Comment");
+
+                total = total + percentage * criteria.get(i).getPoints();
             }
 
-            return ResponseEntity.ok(total);
+            return ResponseEntity.ok(new OpenAnswerEvaluationDTO(total, comments));
         } catch (ServiceException e) {
-            return new ExceptionResponseEntity<Float>().createRequest(e);
+            return new ExceptionResponseEntity<OpenAnswerEvaluationDTO>().createRequest(e);
         }
 
 
@@ -271,12 +273,9 @@ public class AIApiController implements AIApi{
             request.add("Text",text);
             request.add("Input",input);
 
-            JsonObject response = aiService.bypassBackend("/create_open", request.build().toString());
+            JsonObject response = aiService.bypassBackend("/create_true_false", request.build().toString());
 
-            String question = response.getString("Question");
-            Boolean correct = response.getBoolean("True");
-
-            return ResponseEntity.ok(new TrueOrFalseAIDTO(question, correct));
+            return ResponseEntity.ok(new TrueOrFalseAIDTO(response.getJsonArray("List")));
         }catch(ApiConnectionException e){
             return new ExceptionResponseEntity<TrueOrFalseAIDTO>().createRequest(e);
         }
