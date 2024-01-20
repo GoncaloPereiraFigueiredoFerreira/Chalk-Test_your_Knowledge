@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.apis;
 
 import org.springframework.web.bind.annotation.*;
 import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2001;
+import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
 import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
@@ -41,7 +42,7 @@ public interface TestsApi {
     @RequestMapping(value = "",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Test>> getTests(@NotNull @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema()) @Valid @RequestParam(value = "page", required = true) Integer page,
+    ResponseEntity<CustomPage<Test>> getTests(@NotNull @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema()) @Valid @RequestParam(value = "page", required = true) Integer page,
                                         @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema(allowableValues = {"1", "50"}, minimum = "1", maximum = "50"
                                         )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage,
                                         @Parameter(in = ParameterIn.QUERY, description = "Array of identifiers from the tags that will be used to filter the tests.", schema = @Schema(defaultValue = "[]")) @Valid @RequestParam(value = "tags", required = false) List<String> tags,
@@ -252,7 +253,7 @@ public interface TestsApi {
     @RequestMapping(value = "/{testId}/resolutions",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<TestResolution>> getTestResolutions(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
+    ResponseEntity<CustomPage<TestResolution>> getTestResolutions(@Parameter(in = ParameterIn.PATH, description = "Test identifier", required = true, schema = @Schema()) @PathVariable("testId") String testId,
                                                             @NotNull @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema()) @Valid @RequestParam(value = "page", required = true) Integer page,
                                                             @NotNull @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "", required = true, schema = @Schema(allowableValues = {"1", "50"}, minimum = "1", maximum = "50"
                                                             )) @Valid @RequestParam(value = "itemsPerPage", required = true) Integer itemsPerPage,
@@ -672,7 +673,7 @@ public interface TestsApi {
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("resolutionId") String resolutionId);
 
-    @Operation(summary = "Creates an auto evaluation test.", description = "", tags={ "tests" })
+    @Operation(summary = "Creates an auto evaluation test.", description = "Returns the identifier of the test.", tags={ "tests" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operation successful."),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
@@ -682,9 +683,26 @@ public interface TestsApi {
             produces = { "application/json" },
             value = "/autoEvaluation",
             method = RequestMethod.POST)
-    ResponseEntity<Test> createAutoEvaluationTest(
+    ResponseEntity<String> createAutoEvaluationTest(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("tags") List<String> tags,
             @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("nrExercises") int nrExercises);
+
+    @Operation(summary = "Get auto evaluation tests of a student.", description = "", tags={ "tests" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized operation."),
+            @ApiResponse(responseCode = "403", description = "Forbidden operation.")
+    })
+    @RequestMapping(
+            produces = { "application/json" },
+            value = "/autoEvaluation/student/{studentId}",
+            method = RequestMethod.GET)
+    ResponseEntity<CustomPage<Test>> getAutoEvaluationTestsFromStudent(
+            @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
+            @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("studentId") String studentId,
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("page") int page,
+            @Parameter(in = ParameterIn.QUERY, required = true) @RequestParam("itemsPerPage") int itemsPerPage
+    );
 }
 

@@ -1,6 +1,7 @@
 package pt.uminho.di.chalktyk.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -254,10 +255,10 @@ public class CoursesService implements ICoursesService {
      * @throws NotFoundException if the course does not exist
      */
     @Override
-    public List<Student> getCourseStudents(String courseId, int page, int itemsPerPage) throws NotFoundException {
+    public Page<Student> getCourseStudents(String courseId, int page, int itemsPerPage) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course students: the course does not exist.");
-        return courseDAO.getCourseStudents(courseId, PageRequest.of(page, itemsPerPage)).toList();
+        return courseDAO.getCourseStudents(courseId, PageRequest.of(page, itemsPerPage));
     }
 
     /**
@@ -270,10 +271,10 @@ public class CoursesService implements ICoursesService {
      * @throws NotFoundException if the course does not exist
      */
     @Override
-    public List<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException {
+    public Page<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException {
         if(!courseDAO.existsById(courseId))
             throw new NotFoundException("Could not get course specialists: the course does not exist.");
-        return courseDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage)).toList();
+        return courseDAO.getCourseSpecialists(courseId, PageRequest.of(page, itemsPerPage));
     }
 
 
@@ -307,10 +308,10 @@ public class CoursesService implements ICoursesService {
      * @return list of courses that a specific student is associated with
      */
     @Override
-    public List<Course> getStudentCourses(String studentId, int page, int itemsPerPage) throws NotFoundException {
+    public Page<Course> getStudentCourses(String studentId, int page, int itemsPerPage) throws NotFoundException {
         if(!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Could not get student courses: student does not exist.");
-        return courseDAO.getStudentCourses(studentId, PageRequest.of(page, itemsPerPage)).toList();
+        return courseDAO.getStudentCourses(studentId, PageRequest.of(page, itemsPerPage));
     }
 
     /**
@@ -322,10 +323,10 @@ public class CoursesService implements ICoursesService {
      * @return list of courses that a specific specialist is associated with
      */
     @Override
-    public List<Course> getSpecialistCourses(String specialistId, int page, int itemsPerPage) throws NotFoundException {
+    public Page<Course> getSpecialistCourses(String specialistId, int page, int itemsPerPage) throws NotFoundException {
         if(!specialistsService.existsSpecialistById(specialistId))
             throw new NotFoundException("Could not get specialist courses: specialist does not exist.");
-        return courseDAO.getSpecialistCourses(specialistId, PageRequest.of(page, itemsPerPage)).toList();
+        return courseDAO.getSpecialistCourses(specialistId, PageRequest.of(page, itemsPerPage));
     }
 
     /**
@@ -337,9 +338,9 @@ public class CoursesService implements ICoursesService {
      * @return list of courses that a specific institution is associated with
      */
     @Override
-    public List<Course> getInstitutionCourses(String institutionId, int page, int itemsPerPage) throws NotFoundException {
+    public Page<Course> getInstitutionCourses(String institutionId, int page, int itemsPerPage) throws NotFoundException {
         if(!institutionsService.existsInstitutionById(institutionId))
             throw new NotFoundException("Could not get institution courses: institution does not exist.");
-        return courseDAO.getStudentCourses(institutionId, PageRequest.of(page, itemsPerPage)).toList();
+        return courseDAO.getStudentCourses(institutionId, PageRequest.of(page, itemsPerPage));
     }
 }

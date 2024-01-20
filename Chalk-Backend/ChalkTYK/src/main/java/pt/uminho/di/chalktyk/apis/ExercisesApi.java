@@ -9,13 +9,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
-import pt.uminho.di.chalktyk.dtos.ListPairStudentExerciseResolution;
 import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.dtos.UpdateExerciseDTO;
 import pt.uminho.di.chalktyk.models.exercises.*;
@@ -31,6 +32,7 @@ import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerExercise;
 import pt.uminho.di.chalktyk.models.exercises.open_answer.OpenAnswerRubric;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
+import pt.uminho.di.chalktyk.models.users.Student;
 
 import java.util.List;
 import java.util.Set;
@@ -363,7 +365,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "/{exerciseId}/resolutions",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(
+    ResponseEntity<CustomPage<Pair<Student, ExerciseResolution>>> getExerciseResolutions(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("exerciseId") String exerciseId,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") int page,
@@ -446,7 +448,7 @@ public interface ExercisesApi {
     @RequestMapping(value = "",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Exercise>> getExercises(
+    ResponseEntity<CustomPage<Exercise>> getExercises(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("page") Integer page,
             @Parameter(in = ParameterIn.QUERY, required=true) @RequestParam("itemsPerPage") Integer itemsPerPage,

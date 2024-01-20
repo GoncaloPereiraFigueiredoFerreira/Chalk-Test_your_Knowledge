@@ -1,9 +1,11 @@
 package pt.uminho.di.chalktyk.apis;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateExerciseDTO;
@@ -15,10 +17,10 @@ import pt.uminho.di.chalktyk.models.exercises.items.StringItem;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
 import pt.uminho.di.chalktyk.models.users.Specialist;
+import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
-import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.List;
@@ -513,7 +515,7 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<ListPairStudentExerciseResolution> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest, Boolean onlyNotRevised) {
+    public ResponseEntity<CustomPage<Pair<Student, ExerciseResolution>>> getExerciseResolutions(String jwtToken, String exerciseId, int page, int itemsPerPage, Boolean latest, Boolean onlyNotRevised) {
         try {
             latest = latest == null || latest; // default value is 'true'
             onlyNotRevised = onlyNotRevised != null && onlyNotRevised; // default value is 'false'
@@ -525,17 +527,16 @@ public class ExercisesApiController implements ExercisesApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessExercise(userId, exerciseId)) {
-                    return ResponseEntity.ok(
-                            new ListPairStudentExerciseResolution(
-                                    exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest, onlyNotRevised)));
+                    var p = exercisesService.getExerciseResolutions(exerciseId, page, itemsPerPage, latest, onlyNotRevised);
+                    return ResponseEntity.ok(new CustomPage<>(new ListPairStudentExerciseResolution(p.getContent()), p.getTotalPages()));
                 }
             }
 
-            return new ExceptionResponseEntity<ListPairStudentExerciseResolution>().createRequest(
+            return new ExceptionResponseEntity<CustomPage<Pair<Student, ExerciseResolution>>>().createRequest(
                     HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to list exercise's resolutions.");
         } catch (ServiceException e) {
-            return new ExceptionResponseEntity<ListPairStudentExerciseResolution>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<Pair<Student, ExerciseResolution>>>().createRequest(e);
         }
     }
 
@@ -638,7 +639,7 @@ public class ExercisesApiController implements ExercisesApi {
     }
 
     @Override
-    public ResponseEntity<List<Exercise>> getExercises(String jwtToken, Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibility, String courseId, String institutionId, String specialistId, String title, String exerciseType) {
+    public ResponseEntity<CustomPage<Exercise>> getExercises(String jwtToken, Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibility, String courseId, String institutionId, String specialistId, String title, String exerciseType) {
         try {
             // validate jwt token and get user id and role
             JWT jwt = securityService.validateJWT(jwtToken);
@@ -665,18 +666,18 @@ public class ExercisesApiController implements ExercisesApi {
                 }
             }
 
-            if(perm)
-                return ResponseEntity.ok(
+            if(perm) {
+                return ResponseEntity.ok(new CustomPage<>(
                         exercisesService.getExercises(
                                 page, itemsPerPage, tags, matchAllTags,
                                 vis, courseId, institutionId,
-                                specialistId, title, exerciseType, false));
-            else
-                return new ExceptionResponseEntity<List<Exercise>>().createRequest(
+                                specialistId, title, exerciseType, false)));
+            }
+            else return new ExceptionResponseEntity<CustomPage<Exercise>>().createRequest(
                         HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to list the exercises with the given filters.");
         } catch (ServiceException e) {
-            return new ExceptionResponseEntity<List<Exercise>>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<Exercise>>().createRequest(e);
         }
     }
 

@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.services;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import pt.uminho.di.chalktyk.models.courses.Course;
@@ -111,7 +112,7 @@ public interface ICoursesService {
      * @param itemsPerPage number of items each page has
      * @return list of students that are associated with a specific course.
      */
-    List<Student> getCourseStudents(String courseId, int page, int itemsPerPage) throws NotFoundException;
+    Page<Student> getCourseStudents(String courseId, int page, int itemsPerPage) throws NotFoundException;
 
     /**
      * Get list of specialists that are associated with a specific course.
@@ -121,7 +122,7 @@ public interface ICoursesService {
      * @param itemsPerPage number of items each page has
      * @return list of specialists that are associated with a specific course.
      */
-    List<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException;
+    Page<Specialist> getCourseSpecialists(String courseId, int page, int itemsPerPage) throws NotFoundException;
 
     /**
      * Check if specialist belongs to a course
@@ -149,7 +150,7 @@ public interface ICoursesService {
      * @param itemsPerPage number of courses each page has
      * @return list of courses that a specific student is associated with
      */
-    List<Course> getStudentCourses(String studentId, int page, int itemsPerPage) throws NotFoundException;
+    Page<Course> getStudentCourses(String studentId, int page, int itemsPerPage) throws NotFoundException;
 
     /**
      * Get list of courses that a specific specialist is associated with
@@ -159,7 +160,7 @@ public interface ICoursesService {
      * @param itemsPerPage number of courses each page has
      * @return list of courses that a specific specialist is associated with
      */
-    List<Course> getSpecialistCourses(String specialistId, int page, int itemsPerPage) throws NotFoundException;
+    Page<Course> getSpecialistCourses(String specialistId, int page, int itemsPerPage) throws NotFoundException;
 
     /**
      * Get list of courses that a specific institution is associated with
@@ -169,5 +170,5 @@ public interface ICoursesService {
      * @param itemsPerPage  number of courses each page has
      * @return list of courses that a specific institution is associated with
      */
-    List<Course> getInstitutionCourses(String institutionId, int page, int itemsPerPage) throws NotFoundException;
+    Page<Course> getInstitutionCourses(String institutionId, int page, int itemsPerPage) throws NotFoundException;
 }

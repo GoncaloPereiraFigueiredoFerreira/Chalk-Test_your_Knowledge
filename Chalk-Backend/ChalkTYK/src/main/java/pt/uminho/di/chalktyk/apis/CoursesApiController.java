@@ -1,5 +1,6 @@
 package pt.uminho.di.chalktyk.apis;
 
+import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.models.courses.Course;
@@ -7,8 +8,6 @@ import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.ICoursesService;
 import pt.uminho.di.chalktyk.services.ISecurityService;
-import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
-import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,7 @@ public class CoursesApiController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<List<Student>> getCourseStudents(String jwt, String courseId, int page, int itemsPerPage) {
+    public ResponseEntity<CustomPage<Student>> getCourseStudents(String jwt, String courseId, int page, int itemsPerPage) {
         try {
             JWT token = securityService.validateJWT(jwt);
             String userId = token.getUserId();
@@ -77,17 +76,17 @@ public class CoursesApiController implements CoursesApi {
 
             if ((role.equals("SPECIALIST") && coursesService.checkSpecialistInCourse(courseId, userId)) ||
                     (role.equals("STUDENT") && coursesService.checkStudentInCourse(courseId, userId))) {
-                return ResponseEntity.ok(coursesService.getCourseStudents(courseId, page, itemsPerPage));
+                return ResponseEntity.ok(new CustomPage<>(coursesService.getCourseStudents(courseId, page, itemsPerPage)));
             } else
                 throw new ForbiddenException("User does not have permission to list the students of the course.");
         }
         catch (ServiceException e){
-            return new ExceptionResponseEntity<List<Student>>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<Student>>().createRequest(e);
         }
     }
 
     @Override
-    public ResponseEntity<List<Specialist>> getCourseSpecialists(String jwt, String courseId, int page, int itemsPerPage) {
+    public ResponseEntity<CustomPage<Specialist>> getCourseSpecialists(String jwt, String courseId, int page, int itemsPerPage) {
         try {
             JWT token = securityService.validateJWT(jwt);
             String userId = token.getUserId();
@@ -95,12 +94,12 @@ public class CoursesApiController implements CoursesApi {
 
             if ((role.equals("SPECIALIST") && coursesService.checkSpecialistInCourse(courseId, userId)) ||
                     (role.equals("STUDENT") && coursesService.checkStudentInCourse(courseId, userId))) {
-                return ResponseEntity.ok(coursesService.getCourseSpecialists(courseId, page, itemsPerPage));
+                return ResponseEntity.ok(new CustomPage<>(coursesService.getCourseSpecialists(courseId, page, itemsPerPage)));
             } else
                 throw new ForbiddenException("User does not have permission to list the specialists of the course.");
         }
         catch (ServiceException e){
-            return new ExceptionResponseEntity<List<Specialist>>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<Specialist>>().createRequest(e);
         }
     }
 
@@ -185,7 +184,7 @@ public class CoursesApiController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<List<Course>> getCourses(String jwt, int page, int itemsPerPage, String studentId, String specialistId) {
+    public ResponseEntity<CustomPage<Course>> getCourses(String jwt, int page, int itemsPerPage, String studentId, String specialistId) {
         try {
             JWT token = securityService.validateJWT(jwt);
             String userId = token.getUserId();
@@ -195,19 +194,19 @@ public class CoursesApiController implements CoursesApi {
                 if(specialistId != null && !userId.equals(specialistId))
                     throw new ForbiddenException("Cannot lists courses: User is not allowed to get another user's courses.!");
                 else {
-                    return ResponseEntity.ok(coursesService.getSpecialistCourses(userId, page, itemsPerPage));
+                    return ResponseEntity.ok(new CustomPage<>(coursesService.getSpecialistCourses(userId, page, itemsPerPage)));
                 }
             } else if (role.equals("STUDENT")) {
                 if(studentId != null && !userId.equals(studentId))
                     throw new ForbiddenException("Cannot lists courses: User is not allowed to get another user's courses.!");
                 else {
-                    return ResponseEntity.ok(coursesService.getStudentCourses(userId, page, itemsPerPage));
+                    return ResponseEntity.ok(new CustomPage<>(coursesService.getStudentCourses(userId, page, itemsPerPage)));
                 }
             }
             throw new ForbiddenException("User does not have permission to get courses.");
         }
         catch (ServiceException e){
-            return new ExceptionResponseEntity<List<Course>>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<Course>>().createRequest(e);
         }
     }
 

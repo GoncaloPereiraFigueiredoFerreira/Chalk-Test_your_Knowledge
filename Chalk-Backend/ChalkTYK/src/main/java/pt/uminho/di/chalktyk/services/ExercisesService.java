@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -770,7 +771,7 @@ public class ExercisesService implements IExercisesService{
      */
     @Transactional(rollbackFor = ServiceException.class)
     @Override
-    public List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised) {
+    public Page<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised) {
         Page<ExerciseResolution> resolutions;
 
         // gets the page of resolutions to return
@@ -801,7 +802,7 @@ public class ExercisesService implements IExercisesService{
         List<Pair<Student, ExerciseResolution>> list = new ArrayList<>();
         for (ExerciseResolution res : resolutions)
             list.add(Pair.of(res.getStudent(), res));
-        return list;
+        return new PageImpl<>(list, resolutions.getPageable(), resolutions.getTotalElements());
     }
 
     /**
@@ -926,7 +927,7 @@ public class ExercisesService implements IExercisesService{
      * @return list of exercises that match the given filters
      */
     @Override
-    public List<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
+    public Page<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException {
 
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
@@ -955,7 +956,7 @@ public class ExercisesService implements IExercisesService{
             exercises = exerciseDAO.getExercisesMatchAnyGivenTag(tags,visibilityType,institutionId,courseId,
                                                                  specialistId,title,exerciseType,
                                                                  PageRequest.of(page, itemsPerPage));
-        return exercises.toList();
+        return exercises;
     }
 
     /**

@@ -2,6 +2,7 @@ package pt.uminho.di.chalktyk.apis;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
@@ -59,8 +60,8 @@ public class TestsApiController implements TestsApi {
         return null;
     }
 
-    public ResponseEntity<List<Test>> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType, 
-                                                String title, String specialistId, String courseId, String institutionId, String jwt) {
+    public ResponseEntity<CustomPage<Test>> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, String visibilityType,
+                                                     String title, String specialistId, String courseId, String institutionId, String jwt) {
         try {
             JWT token = securityService.validateJWT(jwt);
             String userId = token.getUserId(),
@@ -83,17 +84,17 @@ public class TestsApiController implements TestsApi {
             }
 
             if(perm)
-                return ResponseEntity.ok(
+                return ResponseEntity.ok(new CustomPage<>(
                         testsService.getTests(
                                 page, itemsPerPage, tags, matchAllTags,
                                 visibility, specialistId, courseId, institutionId,
-                                title, false).stream().toList());
+                                title, false)));
             else
-                return new ExceptionResponseEntity<List<Test>>().createRequest(
+                return new ExceptionResponseEntity<CustomPage<Test>>().createRequest(
                         HttpStatus.FORBIDDEN.value(),
                         "User does not have permission to list the tests with the given filters.");
         } catch (ServiceException e){
-            return new ExceptionResponseEntity<List<Test>>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<Test>>().createRequest(e);
         }
     }
 
@@ -331,7 +332,7 @@ public class TestsApiController implements TestsApi {
         }
     }
 
-    public ResponseEntity<List<TestResolution>> getTestResolutions(String testId, Integer page, Integer itemsPerPage, String jwt) {
+    public ResponseEntity<CustomPage<TestResolution>> getTestResolutions(String testId, Integer page, Integer itemsPerPage, String jwt) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwt);
@@ -345,14 +346,14 @@ public class TestsApiController implements TestsApi {
 
             // if he has permission, execute the request
             if(perm) {
-                return ResponseEntity.ok(testsService.getTestResolutions(testId,page,itemsPerPage));
+                return ResponseEntity.ok(new CustomPage<>(testsService.getTestResolutions(testId,page,itemsPerPage)));
             }
 
-            return new ExceptionResponseEntity<List<TestResolution>>().createRequest(
+            return new ExceptionResponseEntity<CustomPage<TestResolution>>().createRequest(
                     HttpStatus.FORBIDDEN.value(),
                     "User does not have permission to get the test resolutions.");
         } catch (ServiceException e) {
-            return new ExceptionResponseEntity<List<TestResolution>>().createRequest(e);
+            return new ExceptionResponseEntity<CustomPage<TestResolution>>().createRequest(e);
         }
     }
 
@@ -972,7 +973,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Test> createAutoEvaluationTest(String jwtToken, List<String> tagsIds, int nrExercises) {
+    public ResponseEntity<String> createAutoEvaluationTest(String jwtToken, List<String> tagsIds, int nrExercises) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -981,14 +982,35 @@ public class TestsApiController implements TestsApi {
 
             // if he has permission, execute the request
             if(role.equals("STUDENT")) {
-                return ResponseEntity.ok(testsService.createAutoEvaluationTest(userId, tagsIds, nrExercises));
+                return ResponseEntity.ok(testsService.createAutoEvaluationTest(userId, tagsIds, nrExercises).getId());
             }
 
-            return new ExceptionResponseEntity<Test>().createRequest(
+            return new ExceptionResponseEntity<String>().createRequest(
                     HttpStatus.FORBIDDEN.value(),
-                    "User does not have permission to issue the correction of the test resolution.");
+                    "User does not have permission to create an auto evaluation tests.");
         } catch (ServiceException e) {
-            return new ExceptionResponseEntity<Test>().createRequest(e);
+            return new ExceptionResponseEntity<String>().createRequest(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<CustomPage<Test>> getAutoEvaluationTestsFromStudent(String jwtToken, String studentId, int page, int itemsPerPage) {
+        try {
+            // validate jwt token and get user id and role
+            JWT token = securityService.validateJWT(jwtToken);
+            String userId = token.getUserId(),
+                    role = token.getUserRole();
+
+            // if he has permission, execute the request
+            if(role.equals("STUDENT") && userId.equals(studentId)) {
+                return ResponseEntity.ok(new CustomPage<>(testsService.getAutoEvaluationTestsFromStudent(studentId, page, itemsPerPage)));
+            }
+
+            return new ExceptionResponseEntity<CustomPage<Test>>().createRequest(
+                    HttpStatus.FORBIDDEN.value(),
+                    "User does not have permission to get auto evaluation tests for the given student identifier.");
+        } catch (ServiceException e) {
+            return new ExceptionResponseEntity<CustomPage<Test>>().createRequest(e);
         }
     }
 

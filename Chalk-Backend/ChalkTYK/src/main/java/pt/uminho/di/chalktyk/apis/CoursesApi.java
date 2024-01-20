@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.web.bind.annotation.*;
+import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.models.courses.Course;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,7 +44,7 @@ public interface CoursesApi {
     @RequestMapping(value = "",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Course>> getCourses(
+    ResponseEntity<CustomPage<Course>> getCourses(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema(minimum="1", maximum="50"))
@@ -90,7 +91,7 @@ public interface CoursesApi {
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(example = ""))) })
     @RequestMapping(value = "/{courseId}/students",
             method = RequestMethod.GET)
-    ResponseEntity<List<Student>> getCourseStudents(
+    ResponseEntity<CustomPage<Student>> getCourseStudents(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema())
@@ -108,7 +109,7 @@ public interface CoursesApi {
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(example = ""))) })
     @RequestMapping(value = "/{courseId}/specialists",
             method = RequestMethod.GET)
-    ResponseEntity<List<Specialist>> getCourseSpecialists(
+    ResponseEntity<CustomPage<Specialist>> getCourseSpecialists(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token")
             @CookieValue("chalkauthtoken") String jwt,
             @Parameter(in = ParameterIn.PATH, description = "Course identifier", required=true, schema=@Schema())

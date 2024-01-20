@@ -37,4 +37,7 @@ public interface TestDAO extends JpaRepository<Test, String> {
             " ORDER BY FUNCTION('RANDOM')")
     Page<Exercise> getExercisesForAutoEvalTest(@Param("tagIDS") List<String> tagIDS,
                                                Pageable pageable);
+
+    @Query("SELECT t FROM AutoEvaluationTest t WHERE t.student.id = :studentId")
+    Page<Test> getAutoEvaluationTestsFromStudent(@Param("studentId") String studentId, Pageable pageable);
 }

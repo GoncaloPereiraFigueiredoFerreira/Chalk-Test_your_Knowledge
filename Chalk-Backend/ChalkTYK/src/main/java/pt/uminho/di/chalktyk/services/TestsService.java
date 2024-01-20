@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +76,7 @@ public class TestsService implements ITestsService {
     
     @Override
     @Transactional
-    public List<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException {
+    public Page<Test> getTests(Integer page, Integer itemsPerPage, List<String> tags, Boolean matchAllTags, Visibility visibility, String specialistId, String courseId, String institutionId, String title, boolean verifyParams) throws NotFoundException {
         if(verifyParams && courseId!=null) {
             if(!coursesService.existsCourseById(courseId))
                 throw new NotFoundException("There is no course with the given id");
@@ -102,7 +103,7 @@ public class TestsService implements ITestsService {
             tmpTests.add(tmpTest);
         }
 
-        return tmpTests;
+        return new PageImpl<>(tmpTests, tests.getPageable(), tests.getTotalElements());
     }
 
     @Override
@@ -918,11 +919,10 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public List<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
+    public Page<TestResolution> getTestResolutions(String testId, Integer page, Integer itemsPerPage) throws NotFoundException{
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Cannot get test resolutions for test " + testId + ": couldn't find test with given id.");
-
-        return resolutionDAO.getTestResolutions(testId, PageRequest.of(page, itemsPerPage)).stream().toList();
+        return resolutionDAO.getTestResolutions(testId, PageRequest.of(page, itemsPerPage));
     }
 
     @Override
@@ -1736,5 +1736,10 @@ public class TestsService implements ITestsService {
         test.setTags(tags);
 
         return test;
+    }
+
+    @Override
+    public Page<Test> getAutoEvaluationTestsFromStudent(String studentId, int page, int itemsPerPage){
+        return testDAO.getAutoEvaluationTestsFromStudent(studentId, PageRequest.of(page, itemsPerPage));
     }
 }

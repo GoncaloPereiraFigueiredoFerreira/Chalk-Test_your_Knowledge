@@ -2,7 +2,7 @@ package pt.uminho.di.chalktyk.services;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -10,7 +10,6 @@ import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
-import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.List;
 import java.util.Set;
@@ -166,7 +165,7 @@ public interface IExercisesService{
      * @param onlyNotRevised if 'true' only exercises resolutions that haven't been corrected will be returned.
      * @return list of pairs of a student and its correspondent exercise resolution for the requested exercise.
      */
-    List<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised);
+    Page<Pair<Student, ExerciseResolution>> getExerciseResolutions(String exerciseId, Integer page, Integer itemsPerPage, boolean latest, boolean onlyNotRevised);
 
     /**
      * Create a resolution for a specific exercise.
@@ -233,7 +232,7 @@ public interface IExercisesService{
      *                       'false' does not verify database logic
      * @return list of exercises that match the given filters
      */
-    List<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
+    Page<Exercise> getExercises(Integer page, Integer itemsPerPage, List<String> tags, boolean matchAllTags, Visibility visibilityType, String courseId, String institutionId, String specialistId, String title, String exerciseType, boolean verifyParams) throws BadInputException, NotFoundException;
 
     /**
      * Adds a comment to an exercise resolution.

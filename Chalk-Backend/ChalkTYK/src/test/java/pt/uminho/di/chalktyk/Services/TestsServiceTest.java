@@ -325,8 +325,8 @@ public class TestsServiceTest {
         String tr_id1 = testsService.startTest(testId, this.studentId);
         String tr_id2 = testsService.startTest(testId, this.student2Id);
         String tr_id3 = testsService.startTest(testId, this.studentId);
-        List<TestResolution> trs1 = testsService.getTestResolutions(testId, 0, 2);
-        List<TestResolution> trs2 = testsService.getTestResolutions(testId, 1, 2);
+        List<TestResolution> trs1 = testsService.getTestResolutions(testId, 0, 2).getContent();
+        List<TestResolution> trs2 = testsService.getTestResolutions(testId, 1, 2).getContent();
 
         assert trs1.size() == 2;
         assert trs2.size() == 1;
