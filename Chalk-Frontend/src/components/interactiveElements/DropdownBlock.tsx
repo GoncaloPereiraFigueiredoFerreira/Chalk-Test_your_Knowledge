@@ -26,16 +26,17 @@ export function DropdownBlock({
     <Dropdown
       label=""
       placement={placement ? placement : "auto"}
-      className="dark:bg-gray-600"
       renderTrigger={() => (
         <button
-          className={`${
-            style ? style : ""
-          } dropdown text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-600 border-[#dddddd] dark:border-gray-600 group`}
+          className={`dropdown group text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-gray-700 border-[#dddddd] dark:border-gray-700
+            ${style ? style : ""}`}
         >
           <label> {chosenOption === null ? text : chosenOption} </label>
-          {placement === "bottom" ? <IoChevronDown className="size-5" /> : null}
-          {placement === "top" ? <IoChevronUp className="size-5" /> : null}
+          {placement === "top" ? (
+            <IoChevronUp className="size-5 group-gray-icon" />
+          ) : (
+            <IoChevronDown className="size-5 group-gray-icon" />
+          )}
         </button>
       )}
     >

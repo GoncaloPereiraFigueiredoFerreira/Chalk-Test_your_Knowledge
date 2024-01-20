@@ -17,11 +17,11 @@ export function WebApp() {
       <div
         className={`${
           isOpen ? "w-[calc(100vw-256px)]" : "w-[calc(100vw-64px)]"
-        } z-10 h-full`}
+        } z-10 h-full transition-all`}
       >
         <Outlet />
       </div>
-      <div className="fixed top-0 left-0 h-screen w-screen bg-gray-300 dark:bg-gray-800 -z-10"></div>
+      <div className="fixed top-0 left-0 h-screen w-screen bg-[#acacff] dark:bg-gray-900 -z-10"></div>
     </div>
   );
 }

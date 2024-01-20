@@ -110,34 +110,34 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#dddddd] dark:border-gray-600 overflow-hidden" +
+          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#dddddd] dark:border-gray-700 overflow-hidden" +
           (className !== undefined ? className : "")
         }
       >
         <div
           className={`${
             hasToolbar ? "" : "hidden"
-          } flex items-center justify-between px-3 py-2 border-b-2 text-black bg-[#dddddd] border-[#dddddd] dark:border-gray-600 dark:bg-gray-700`}
+          } flex items-center justify-between px-3 py-2 border-b-2 bg-[#dddddd] border-[#dddddd] dark:border-gray-700 dark:bg-gray-800`}
         >
-          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#dddddd]">
+          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#bbbbbb] dark:divide-gray-600">
             <div className="flex items-center space-x-1 sm:pr-4">
               <button
                 type="button"
-                className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
+                className="p-2 rounded cursor-pointer gray-icon focus:outline-none"
                 onClick={() => toggleBold()}
               >
                 <FaBold className="size-4" />
               </button>
               <button
                 type="button"
-                className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
+                className="p-2 rounded cursor-pointer gray-icon focus:outline-none"
                 onClick={() => toggleItalic()}
               >
                 <FaItalic className="size-4" />
               </button>
               <button
                 type="button"
-                className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
+                className="p-2 rounded cursor-pointer gray-icon focus:outline-none"
                 onClick={() => toggleUnderline()}
               >
                 <ImUnderline className="size-4" />
@@ -146,7 +146,7 @@ export function TextareaBlock({
             <div className="flex flex-wrap items-center space-x-1 sm:pl-4">
               <button
                 type="button"
-                className="p-2 rounded cursor-pointer light-mode-gray-icon focus:outline-none"
+                className="p-2 rounded cursor-pointer gray-icon focus:outline-none"
               >
                 <MdOutlineAttachFile className="size-5" />
               </button>

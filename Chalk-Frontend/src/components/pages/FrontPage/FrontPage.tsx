@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 export function FrontPage() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-      <div className="flex flex-col w-full h-screen justify-center items-center bg-white dark:bg-black">
+    <div className="flex flex-row divide-x-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
+      <div className="flex flex-col w-full h-screen justify-center items-center bg-white dark:bg-gray-900">
         <MainLogo size="big"></MainLogo>
         <div className="flex flex-row space-x-4 mt-4 ">
           <button

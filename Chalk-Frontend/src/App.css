@@ -26,3 +26,34 @@ html {
 .chalkBackground {
   background-image: url(../public/blackboard.jpg);
 }
+/* 
+text{
+  black
+  white
+}
+
+placeholder:dark:text-gray-400
+
+blue {
+  #acacff
+  #5555ce
+}
+
+yellow{
+  #ffd025
+}
+
+light gray{
+  #dddddd
+  #bbbbbb
+}
+
+dark gray{
+  gray-900
+  gray-800
+  gray-700
+  gray-600
+}
+
+
+*/

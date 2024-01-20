@@ -75,7 +75,7 @@ export function GroupDragDrop({
             isDragging && "opacity-40"
           } flex flex-col gap-4 rounded-lg px-7 py-5 bg-[#dddddd] dark:bg-gray-600 h-56 overflow-hidden`}
         >
-          <div className="flex w-full justify-between pb-4 px-4 border-b border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] dark:border-[#dddddd] dark:text-[#dddddd] ">
+          <div className="flex w-full justify-between pb-4 px-4 border-b border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd] dark:border-[#dddddd] dark:text-[#dddddd] ">
             <label className="w-full text-xl font-medium">
               Grupo {exerciseGroupPosition + 1}
             </label>
@@ -129,7 +129,7 @@ export function GroupDragDrop({
         } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[#dddddd] dark:bg-gray-600`}
       >
         <div
-          className="flex w-full justify-between pb-4 px-4 border-b border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]"
+          className="flex w-full justify-between pb-4 px-4 border-b border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]"
           {...listeners}
           onClick={() =>
             setExerciseID({
