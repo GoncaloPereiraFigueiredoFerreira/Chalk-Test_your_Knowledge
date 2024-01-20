@@ -869,6 +869,9 @@ public class ExercisesService implements IExercisesService{
         // sets the new data
         res.setData(resolutionData);
 
+        // sets evaluation status
+        res.setStatus(ExerciseResolutionStatus.NOT_REVISED);
+
         // updates resolution
         return exerciseResolutionDAO.save(res);
     }

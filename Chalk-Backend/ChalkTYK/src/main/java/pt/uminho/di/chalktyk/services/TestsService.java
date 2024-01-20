@@ -787,69 +787,26 @@ public class TestsService implements ITestsService {
         if (test == null)
             throw new NotFoundException("Couldn't evaluate test: couldn't find test with id '" + testId + "'");
 
-        // issue exercise corrections
-        // and get exercise points
-        List<List<Float>> exePoints = new ArrayList<>();
+        // get exercise points
+        Map<String, Float> mapExePoints = new HashMap<>();
         for (TestGroup tg: test.getGroups()){
-            List<Float> groupPoints = new ArrayList<>();
-            for (TestExercise exe: tg.getExercises()){
-                try {
-                    groupPoints.add(exe.getPoints());
-                    exercisesService.issueExerciseResolutionsCorrection(exe.getId(), correctionType);
-                }
-                catch (BadInputException | ForbiddenException ignored){
-                    // If an exercise can't be corrected, using the chosen correctionType,
-                    // it just is not corrected.
-                }
-            }
-            exePoints.add(groupPoints);
+            for (TestExercise exe: tg.getExercises())
+                mapExePoints.put(exe.getId(), exe.getPoints());
         }
 
-        // calculate points
-        // check if everything has been revised
-        boolean isRevised = true;
+        // automatically correct all tests
         List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
-        for (int i=0; i < resolutions.size(); i++){
-            TestResolution resolution = resolutions.get(i);
-            List<TestResolutionGroup> groups = resolution.getGroups();
-            for (int j=0; j < groups.size(); j++){
-                TestResolutionGroup trg = groups.get(j);
-                Map<String, TestExerciseResolutionBasic> resMap = trg.getResolutions();
-                float points = 0.0F;
-
-                for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
-                    TestExerciseResolutionBasic pair = entry.getValue();
-                    if (pair != null){
-                        ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
-                        if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
-                            isRevised = false;
-                        
-                        float newPoints = exeRes.getPoints() * exePoints.get(i).get(j) / 100;
-                        pair.setPoints(newPoints);
-                        resMap.put(entry.getKey(), pair);
-                        points += newPoints;
-                    }
-                }
-
-                trg.setResolutions(resMap);
-                trg.setGroupPoints(points);
-            }
-            resolution.setGroups(groups);
-            resolution.updateSum();
-
-            if (isRevised)
-                resolution.setStatus(TestResolutionStatus.REVISED);
-            else
-                resolution.setStatus(TestResolutionStatus.ONGOING);
-            resolutionDAO.save(resolution);
-        }
+        for (TestResolution testResolution : resolutions)
+            _automaticCorrectionSingle(testResolution, correctionType, mapExePoints);
     }
 
+    @Transactional(rollbackFor = ServiceException.class)
+    @Override
     public void automaticCorrectionSingle(String testResolutionId, String correctionType) throws NotFoundException {
         TestResolution resolution = resolutionDAO.findById(testResolutionId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Couldn't evaluate test: couldn't find test resolution with id '" + testResolutionId + "'");
-        
+
         // get exercise points
         Test test = _getTestById(resolution.getTestId());
         Map<String, Float> mapExePoints = new HashMap<>();
@@ -858,41 +815,47 @@ public class TestsService implements ITestsService {
                 mapExePoints.put(exe.getId(), exe.getPoints());
         }
 
+        _automaticCorrectionSingle(resolution, correctionType, mapExePoints);
+    }
+
+    /**
+     * Corrects all exercises, from a single
+     * test resolution, using the given correction type.
+     * @param resolution test resolution to be automatically corrected
+     * @param correctionType correction type
+     * @param mapExePoints Maps exercise id to the total points of the exercise.
+     */
+    private void _automaticCorrectionSingle(TestResolution resolution, String correctionType, Map<String, Float> mapExePoints) throws NotFoundException {
+        assert resolution != null && mapExePoints != null;
+
         boolean isRevised = true;
         List<TestResolutionGroup> groups = resolution.getGroups();
-        for (int i = 0; i < groups.size(); i++){
-            TestResolutionGroup trg = groups.get(i);
-            Float points = 0.0F;
+        for (TestResolutionGroup trg : groups) {
+            float points = 0.0F;
             Map<String, TestExerciseResolutionBasic> resMap = trg.getResolutions();
-            for (Map.Entry<String, TestExerciseResolutionBasic> entry: resMap.entrySet()){
+            assert resMap != null;
+
+            for (Map.Entry<String, TestExerciseResolutionBasic> entry : resMap.entrySet()) {
                 TestExerciseResolutionBasic pair = entry.getValue();
-                
-                if (pair != null){
+
+                if (pair != null) {
+                    Float exeResPercentage = null;
                     try {
-                        exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
-                    }
-                    catch (BadInputException | ForbiddenException ignored){
+                        exeResPercentage = exercisesService.issueExerciseResolutionCorrection(pair.getResolutionId(), correctionType);
+                    } catch (BadInputException | ForbiddenException e) {
                         // If an exercise can't be corrected, using the chosen correctionType,
                         // it just is not corrected.
+                        isRevised = false;
                     }
 
-                    ExerciseResolution exeRes = exercisesService.getExerciseResolution(pair.getResolutionId());
-                    if (exeRes.getStatus().equals(ExerciseResolutionStatus.NOT_REVISED))
-                        isRevised = false;
-                    Float newPoints;
-                    if (exeRes.getPoints() != null)
-                        newPoints = exeRes.getPoints() * mapExePoints.get(entry.getKey()) / 100;
-                    else
-                        newPoints = 0.0F;
-
-                    pair.setPoints(newPoints);
-                    resMap.put(entry.getKey(), pair);
-
-                    // calculate points
-                    points += newPoints;
+                    float newPoints;
+                    if (exeResPercentage != null) {
+                        newPoints = mapExePoints.get(entry.getKey()) * exeResPercentage / 100;
+                        pair.setPoints(newPoints);
+                        points += newPoints; // updates total points of the group
+                    }
                 }
             }
-            trg.setResolutions(resMap);
             trg.setGroupPoints(points);
         }
         resolution.setGroups(groups);
@@ -902,7 +865,7 @@ public class TestsService implements ITestsService {
         if (isRevised)
             resolution.setStatus(TestResolutionStatus.REVISED);
         else
-            resolution.setStatus(TestResolutionStatus.ONGOING);
+            resolution.setStatus(TestResolutionStatus.NOT_REVISED);
         resolutionDAO.save(resolution);
     }
 
@@ -1414,11 +1377,12 @@ public class TestsService implements ITestsService {
                     if(resInfo == null){
                         resolution = exercisesService.createExerciseResolution(testRes.getStudentId(), exeId, resolution.getData());
                         resolution = associateExerciseResToTestRes(resolution, testRes);
-                        resInfo = new TestExerciseResolutionBasic(resolution.getId(), resolution.getPoints());
+                        resInfo = new TestExerciseResolutionBasic(resolution.getId(), 0.0f); // TODO - acho que deveria ser null, mas como o Ray meteu a 0.0f noutros sitios, nao quero mudar a logica
                         mapExeRes.put(exeId, resInfo); // updates info about the resolution in the map
                     }else{
                         // else, updates the current resolution
                         resolution = exercisesService.updateExerciseResolution(resInfo.getResolutionId(), resolution.getData());
+                        resInfo.setPoints(0.0f); // TODO - acho que deveria ser null, mas como o Ray meteu a 0.0f noutros sitios, nao quero mudar a logica
                     }
 
                     res = resolution.getId();
