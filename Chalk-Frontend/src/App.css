@@ -12,13 +12,13 @@ html {
 @layer components {
   div::-webkit-scrollbar {
     @apply w-2
-    bg-gray-300
-    dark:bg-gray-600;
+    bg-slate-300
+    dark:bg-slate-600;
   }
 
   div::-webkit-scrollbar-thumb {
-    @apply bg-gray-400
-    dark:bg-gray-500 
+    @apply bg-slate-400
+    dark:bg-slate-500 
     rounded;
   }
 }
@@ -37,10 +37,11 @@ placeholder:dark:text-gray-400
 blue {
   #acacff
   #5555ce
+  slate-400 (buttons)
 }
 
 yellow{
-  #ffd025
+  #ffd025 (buttons)
 }
 
 light gray{
@@ -48,12 +49,29 @@ light gray{
   #bbbbbb
 }
 
-dark gray{
-  gray-900
-  gray-800
-  gray-700
-  gray-600
+light slate{
+  slate-300
+  slate-400
+  slate-500
+  slate-600
 }
 
+dark slate{
+  slate-900
+  slate-800
+  slate-700
+}
 
+main button color{
+  bg-[#acacff]
+  hover:bg-[#5555ce]
+  dark:bg-slate-600
+  hover:dark:bg-[#ffd025]
+  text-black
+  hover:text-white
+  dark:text-white
+  hover:dark:text-black
+  transition-all
+  duration-100
+}
 */

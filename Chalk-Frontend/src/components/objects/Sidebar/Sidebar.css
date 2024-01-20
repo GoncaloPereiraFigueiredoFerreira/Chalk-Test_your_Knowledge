@@ -17,16 +17,13 @@
     px-3;
   }
 
-  .sidebar-content {
-    @apply;
-  }
-
   .sidebar-divisions {
     @apply pt-5
     mt-3
     space-y-2
-    border-t;
+    border-t-2;
   }
+
   .sidebar-item {
     @apply flex
     items-center

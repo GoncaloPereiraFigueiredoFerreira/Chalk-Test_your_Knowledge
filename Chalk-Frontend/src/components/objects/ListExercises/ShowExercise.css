@@ -30,27 +30,6 @@
     grid-template-columns: min-content min-content auto;
   }
 
-  .header-textarea {
-    @apply block
-    p-4
-    pb-5
-    w-3/4
-    h-28
-    text-gray-900
-    bg-gray-50
-    rounded-lg
-    border
-    border-gray-300
-    focus:ring-blue-500
-    focus:border-blue-500
-    dark:bg-gray-700
-    dark:border-gray-600
-    dark:placeholder-gray-400
-    dark:text-white
-    dark:focus:ring-blue-500
-    dark:focus:border-blue-500;
-  }
-
   .radio-green {
     @apply relative
     h-5
@@ -99,7 +78,6 @@
     before:-translate-y-2/4
     before:-translate-x-2/4
     before:rounded-full
-    
     before:opacity-0
     before:transition-opacity
     checked:border-red-700
@@ -120,7 +98,6 @@
     text-blue-500
     active:border-blue-700
     transition-all
-    
     before:absolute
     before:block
     before:h-12

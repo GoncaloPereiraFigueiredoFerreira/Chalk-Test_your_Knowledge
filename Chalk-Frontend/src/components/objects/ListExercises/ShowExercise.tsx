@@ -151,7 +151,7 @@ export function ShowExercise({
     <div
       className={`${
         selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-[#dddddd] dark:bg-black`}
+      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-[#dddddd] dark:bg-slate-700`}
     >
       <div className="flex flex-col h-full px-5 py-2.5">
         <div className="flex items-center text-sm font-normal transition-all mb-4 group">
@@ -163,7 +163,7 @@ export function ShowExercise({
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl dark:text-[#dddddd]">
+            <label className="flex min-w-max font-medium text-xl text-slate-800 dark:text-white">
               {exercise.base.title}
             </label>
             <div
@@ -179,7 +179,7 @@ export function ShowExercise({
               selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-black border-[#dddddd]`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-slate-700 border-[#bbbbbb] dark:border-slate-500`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")
@@ -231,7 +231,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "hidden" : "flex"
-          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#dddddd]`}
+          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#dddddd] dark:border-slate-500`}
         >
           {exercise.base.tags.map((tag) => {
             return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
@@ -240,7 +240,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg text-black bg-white border-[#dddddd] border-[#dddddd] dark:bg-black dark:text-white`}
+          } flex flex-col mx-4 mb-4 border rounded-lg text-black bg-white border-[#dddddd] dark:bg-black dark:text-white`}
         >
           {preview}
         </div>

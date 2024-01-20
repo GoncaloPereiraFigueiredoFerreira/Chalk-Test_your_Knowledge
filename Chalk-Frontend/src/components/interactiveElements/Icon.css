@@ -40,28 +40,29 @@
     h-4;
   }
 
-  .group-gray-icon {
-    @apply text-gray-500
+  .group-slate-icon {
+    @apply text-slate-600
     transition-all
     group-hover:text-black
     hover:text-black
-    dark:text-gray-400;
+    dark:text-slate-400
+    dark:group-hover:text-white;
   }
 
-  .gray-icon {
-    @apply text-gray-500
+  .slate-icon {
+    @apply text-slate-500
     transition-all
     hover:text-black
-    dark:text-gray-400
+    dark:text-slate-400
     dark:hover:text-white;
   }
 
   .ex-icon {
-    @apply text-gray-600
+    @apply text-slate-500
     transition-all
-    dark:text-[#dddddd]
+    dark:text-slate-400
     hover:text-black
-    hover:dark:text-black;
+    hover:dark:text-white;
   }
 
   .black-icon {
