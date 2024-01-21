@@ -100,27 +100,24 @@ export function Register() {
           switch (result.user.role) {
             case "STUDENT":
               contactBACK("students", "POST", undefined, userInfo).then(
-                (response) => {
-                  response.json().then((user) => {
-                    userInfo["id"] = user.id;
-                    userInfo["photoPath"] = user.photoPath;
-                    login(userInfo);
-                    navigate("/webapp");
-                  });
+                (user) => {
+                  userInfo["id"] = user.id;
+                  userInfo["photoPath"] = user.photoPath;
+                  login(userInfo);
+                  navigate("/webapp");
                 }
               );
               break;
             case "SPECIALIST":
               contactBACK("specialists", "POST", undefined, userInfo).then(
-                (response) => {
-                  response.json().then((user) => {
-                    userInfo["id"] = user.id;
-                    userInfo["photoPath"] = user.photoPath;
-                    login(userInfo);
-                    navigate("/webapp");
-                  });
+                (user) => {
+                  userInfo["id"] = user.id;
+                  userInfo["photoPath"] = user.photoPath;
+                  login(userInfo);
+                  navigate("/webapp");
                 }
               );
+
               break;
           }
         });
@@ -137,7 +134,6 @@ export function Register() {
 
         break;
       default:
-        console.log("N sei o que se passou!");
     }
   };
 

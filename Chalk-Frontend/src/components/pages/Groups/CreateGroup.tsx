@@ -8,10 +8,16 @@ export function CreateGroupModal({ open, close }: any) {
 
   function onCloseModal() {
     if (name !== "")
-      contactBACK("courses", "POST", undefined, {
-        description: "",
-        name: name,
-      }).then(() => {
+      contactBACK(
+        "courses",
+        "POST",
+        undefined,
+        {
+          description: "",
+          name: name,
+        },
+        "none"
+      ).then(() => {
         setGroupName("");
         close();
       });

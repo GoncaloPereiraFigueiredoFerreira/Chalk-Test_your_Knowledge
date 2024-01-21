@@ -81,7 +81,6 @@ export function TFSolve({ exercise, position, context }: TFSolveProps) {
 
   useEffect(() => context.setExerciseSolution(state), [state]);
 
-  console.log(state.items);
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />

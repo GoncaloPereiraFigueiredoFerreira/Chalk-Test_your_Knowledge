@@ -34,12 +34,9 @@ export function AvaliacoesPage() {
       itemsPerPage: "20",
       courseId: id!,
       visibilityType: "COURSE",
-    }).then((response) => {
-      response.json().then((tests) => {
-        console.log(tests);
-
-        setExamList([...tests, ...exampleData]);
-      });
+    }).then((page) => {
+      const tests = page.items;
+      setExamList([...tests, ...exampleData]);
     });
   }, []);
 

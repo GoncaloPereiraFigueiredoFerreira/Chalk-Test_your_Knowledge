@@ -172,7 +172,9 @@ export function ShowExercise({
               className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
             >
               {exercise.base.tags.map((tag) => {
-                return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
+                return (
+                  <div className="bg-yellow-600 tag-exercise"> {tag.name}</div>
+                );
               })}
             </div>
           </button>
@@ -239,7 +241,9 @@ export function ShowExercise({
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#dddddd]`}
         >
           {exercise.base.tags.map((tag) => {
-            return <div className="bg-yellow-600 tag-exercise"> {tag}</div>;
+            return (
+              <div className="bg-yellow-600 tag-exercise"> {tag.name}</div>
+            );
           })}
         </div>
         <div

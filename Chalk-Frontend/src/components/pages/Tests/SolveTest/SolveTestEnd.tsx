@@ -9,13 +9,9 @@ export function SolveTestEnd({ resolutionID, maxPoints }: any) {
 
   useEffect(() => {
     if (resolutionID !== undefined)
-      contactBACK("tests/resolutions/" + resolutionID, "GET").then(
-        (response) => {
-          response.json().then((json) => {
-            if (json.status !== "ongoing") setGrade(json.totalPoints);
-          });
-        }
-      );
+      contactBACK("tests/resolutions/" + resolutionID, "GET").then((json) => {
+        if (json.status !== "NOT_REVISED") setGrade(json.totalPoints);
+      });
   }, []);
 
   return (

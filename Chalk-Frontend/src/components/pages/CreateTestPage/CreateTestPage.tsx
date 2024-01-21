@@ -37,6 +37,7 @@ import { GroupDragDrop } from "../../objects/Test/GroupDragDrop";
 import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
 import { APIContext } from "../../../APIContext";
 import { useParams } from "react-router-dom";
+import { UserContext } from "../../../UserContext";
 
 type EventInfo =
   | {
@@ -88,6 +89,7 @@ export function CreateTest({ test }: CreateTestProps) {
   });
   const { testID } = useParams();
   const { contactBACK } = useContext(APIContext);
+  const { user } = useContext(UserContext);
 
   const inicialState: EditTestState = {
     test: test !== undefined ? test : InitTest(),
@@ -412,35 +414,39 @@ export function CreateTest({ test }: CreateTestProps) {
     // save exercise
     if (activeDnD && activeDnD.type === "add" && activeDnD.added) {
       if (overInfo.type !== "add") {
-        contactBACK("tests/" + testID + "/createExercise", "PUT", undefined, {
-          exercise: {
-            points: 1,
-            id: activeDnD.exercise.identity.id,
-            type: "reference",
+        contactBACK(
+          "tests/" + testID + "/createExercise",
+          "PUT",
+          undefined,
+          {
+            exercise: {
+              points: 1,
+              id: activeDnD.exercise.identity.id,
+              type: "reference",
+            },
+            groupIndex: overInfo.groupPosition,
+            exeIndex:
+              overInfo.type === "exercise" ? overInfo.exercisePosition : 0,
           },
-          groupIndex: overInfo.groupPosition,
-          exeIndex:
-            overInfo.type === "exercise" ? overInfo.exercisePosition : 0,
-        }).then((response) => {
-          response.text().then((id) => {
-            if (overInfo.type !== "add" && activeDnD.added) {
-              dispatch({
-                type: EditTestActionKind.SAVE_DD_NEW_EXERCISE,
-                exercise: {
-                  exercisePosition: activeDnD.added.exercisePosition,
+          "string"
+        ).then((id) => {
+          if (overInfo.type !== "add" && activeDnD.added) {
+            dispatch({
+              type: EditTestActionKind.SAVE_DD_NEW_EXERCISE,
+              exercise: {
+                exercisePosition: activeDnD.added.exercisePosition,
+                groupPosition: activeDnD.added.groupPosition,
+                newID: id,
+                newPosition: {
+                  exercisePosition:
+                    overInfo.type === "exercise"
+                      ? overInfo.exercisePosition
+                      : 0,
                   groupPosition: activeDnD.added.groupPosition,
-                  newID: id,
-                  newPosition: {
-                    exercisePosition:
-                      overInfo.type === "exercise"
-                        ? overInfo.exercisePosition
-                        : 0,
-                    groupPosition: activeDnD.added.groupPosition,
-                  },
                 },
-              });
-            }
-          });
+              },
+            });
+          }
         });
 
         const newListExercises: Exercise[] = JSON.parse(
@@ -536,13 +542,12 @@ export function CreateTest({ test }: CreateTestProps) {
         case ExerciseType.CHAT:
           if (!(exercise.identity.id in rubrics)) {
             setRubric(exercise.identity.id, { criteria: [] });
-            contactBACK("exercises/" + exercise.identity.id + "/rubric", "GET")
-              .then((response) => {
-                response.json().then((json) => {
-                  setRubric(exercise.identity.id, json);
-                });
-              })
-              .catch(() => {});
+            contactBACK(
+              "exercises/" + exercise.identity.id + "/rubric",
+              "GET"
+            ).then((json) => {
+              setRubric(exercise.identity.id, json);
+            });
           }
           break;
         case ExerciseType.MULTIPLE_CHOICE:
@@ -551,13 +556,11 @@ export function CreateTest({ test }: CreateTestProps) {
             contactBACK(
               "exercises/" + exercise.identity.id + "/solution",
               "GET"
-            ).then((response) => {
-              response.json().then((json) => {
-                setSolution(
-                  exercise.identity.id,
-                  TranslateResolutionIN(json.data, exercise)
-                );
-              });
+            ).then((json) => {
+              setSolution(
+                exercise.identity.id,
+                TranslateResolutionIN(json.data, exercise)
+              );
             });
           }
 
@@ -645,9 +648,8 @@ export function CreateTest({ test }: CreateTestProps) {
                 }
                 saveEdit={(state) => {
                   const id = state.exercise.identity.id;
-                  const { exerciseTR, solutionTR } = TranslateExerciseOUT(
-                    state.exercise
-                  );
+                  const { exerciseTR, solutionTR, tagsTR } =
+                    TranslateExerciseOUT(state.exercise);
                   const rubricTR = TranslateRubricOut(
                     state.exercise.type,
                     state.rubric
@@ -665,8 +667,8 @@ export function CreateTest({ test }: CreateTestProps) {
                           type: "concrete",
                           exercise: {
                             ...exerciseTR,
-
-                            solution: solutionTR,
+                            specialistId: user.user?.id,
+                            solution: { data: solutionTR },
                             rubric:
                               Object.keys(rubricTR).length == 0
                                 ? null
@@ -675,36 +677,41 @@ export function CreateTest({ test }: CreateTestProps) {
                         },
                         groupIndex: testState.groupPosition,
                         exeIndex: testState.exercisePosition,
-                      }
-                    ).then((response) => {
-                      response.text().then((jsonRes) => {
-                        dispatch({
-                          type: EditTestActionKind.EDIT_EXERCISE,
+                      },
+                      "string"
+                    ).then((jsonRes) => {
+                      dispatch({
+                        type: EditTestActionKind.EDIT_EXERCISE,
+                        exercise: {
+                          groupPosition: testState.groupPosition,
+                          exercisePosition: testState.exercisePosition,
                           exercise: {
-                            groupPosition: testState.groupPosition,
-                            exercisePosition: testState.exercisePosition,
-                            exercise: {
-                              ...state.exercise,
-                              identity: {
-                                ...state.exercise.identity,
-                                id: jsonRes,
-                                visibility:
-                                  state.exercise.identity?.visibility ?? "",
-                                specialistId:
-                                  state.exercise.identity?.specialistId ?? "",
-                              },
+                            ...state.exercise,
+                            identity: {
+                              ...state.exercise.identity,
+                              id: jsonRes,
+                              visibility:
+                                state.exercise.identity?.visibility ?? "",
+                              specialistId:
+                                state.exercise.identity?.specialistId ?? "",
                             },
                           },
-                        });
+                        },
                       });
                     });
                   } else {
-                    contactBACK("exercises/" + exerciseID, "PUT", undefined, {
-                      exercise: exerciseTR,
-                      solution: solutionTR,
-                      rubric:
-                        Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                    }).then(() => {
+                    contactBACK(
+                      "exercises/" + exerciseID,
+                      "PUT",
+                      undefined,
+                      {
+                        exercise: exerciseTR,
+                        solution: solutionTR,
+                        rubric:
+                          Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                      },
+                      "none"
+                    ).then(() => {
                       dispatch({
                         type: EditTestActionKind.EDIT_EXERCISE,
                         exercise: {

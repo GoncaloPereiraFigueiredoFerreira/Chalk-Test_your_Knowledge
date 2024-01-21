@@ -1,4 +1,4 @@
-import { Link, Outlet, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import {
   CircularProgressbar,
@@ -17,107 +17,6 @@ import { AiTwotoneFileUnknown } from "react-icons/ai";
 import Histogram from "../../objects/Charts/Histogram";
 import { APIContext } from "../../../APIContext";
 
-const exampleData = [
-  {
-    resolution: {
-      id: "string",
-      startDate: "2024-01-06T20:30:54.146Z",
-      submissionDate: "2024-01-06T20:30:54.146Z",
-      submissionNr: 0,
-      totalPoints: 80,
-      studentId: "string",
-      status: "ongoing",
-      groups: [
-        {
-          groupPoints: 30,
-          resolutions: {
-            additionalProp1: {
-              resolutionId: "string",
-              points: 10,
-            },
-            additionalProp2: {
-              resolutionId: "string",
-              points: 10,
-            },
-            additionalProp3: {
-              resolutionId: "string",
-              points: 10,
-            },
-          },
-        },
-        {
-          groupPoints: 50,
-          resolutions: {
-            additionalProp1: {
-              resolutionId: "string",
-              points: 27,
-            },
-            additionalProp2: {
-              resolutionId: "string",
-              points: 23,
-            },
-          },
-        },
-      ],
-      testId: "string",
-    },
-    student: {
-      email: "hugoferreiranogueira@gmail.com",
-      id: "string",
-      name: "Hugo Nogueira",
-    },
-  },
-  {
-    resolution: {
-      id: "string",
-      startDate: "2024-01-06T20:30:54.146Z",
-      submissionDate: "2024-01-06T20:30:54.146Z",
-      submissionNr: 0,
-      totalPoints: 30,
-      studentId: "string",
-      status: "ongoing",
-      groups: [
-        {
-          groupPoints: 25,
-          resolutions: {
-            additionalProp1: {
-              resolutionId: "string",
-              points: 10,
-            },
-            additionalProp2: {
-              resolutionId: "string",
-              points: 10,
-            },
-            additionalProp3: {
-              resolutionId: "string",
-              points: 5,
-            },
-          },
-        },
-        {
-          groupPoints: 5,
-          resolutions: {
-            additionalProp1: {
-              resolutionId: "string",
-              points: 5,
-            },
-            additionalProp2: {
-              resolutionId: "string",
-              points: 0,
-            },
-          },
-        },
-      ],
-      testId: "string",
-    },
-    student: {
-      email: "email@gmail.com",
-      id: "string",
-      name: "Nome diferente",
-    },
-  },
-];
-
 function lista_exercicios(groups: any): number[] {
   let exercicios = [];
   let count = 0;
@@ -132,9 +31,6 @@ function lista_exercicios(groups: any): number[] {
 }
 
 function lista_nota_exercicios(result: any): number[] {
-  console.log("debug aqui");
-  console.log(result);
-  console.log("aqui tambem");
   let groups = result.groups;
   let nota_exercicios = [];
   for (let group of groups) {
@@ -274,7 +170,7 @@ function histogramData(resultsList: ResultList) {
       grade_distribution[4] += 1;
     }
   });
-  console.log(grade_distribution);
+
   return grade_distribution;
 }
 
@@ -297,10 +193,8 @@ export function EvaluationPage() {
 
   useEffect(() => {
     contactBACK("tests/" + results_id + "/resolutions/last", "GET", {}).then(
-      (response) => {
-        response.json().then((tests) => {
-          setResultsList(tests);
-        });
+      (tests) => {
+        setResultsList(tests);
       }
     );
   }, [results_id]);

@@ -5,6 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { TextareaBlock } from "../../../interactiveElements/TextareaBlock";
 import { Answer } from "../../../objects/Answer/Answer";
 import { APIContext } from "../../../../APIContext";
+import { Spinner } from "flowbite-react";
 
 interface ResolutionsProps {
   resolutions: Resolutions;
@@ -27,29 +28,23 @@ export function ResolutionsComp({
   const [auxEx, setAux] = useState<string>(exID);
   const [corrections, setCorrections] = useState<Corrections>({});
   const { contactBACK } = useContext(APIContext);
+  const [waiting, setWaiting] = useState(false);
 
   const askAI = (resId: string, exId: string, type: ExerciseType) => {
     if (type === ExerciseType.CHAT || type === ExerciseType.OPEN_ANSWER) {
       let endpoint = type === ExerciseType.OPEN_ANSWER ? "open" : "chat";
-      contactBACK("/ai/" + endpoint + "/evaluation", "GET", {
+      contactBACK("ai/" + endpoint + "/evaluation", "GET", {
         resolutionId: resId,
         exerciseId: exId,
-      }).then((response) =>
-        response.text().then((cotation) => {
-          console.log(cotation);
-          let newCorr = { ...corrections };
-          if (!(resId in newCorr))
-            newCorr[resId] = {
-              points: Number.parseFloat(cotation),
-              comment: "",
-            };
-          else {
-            newCorr[resId].points = Number.parseFloat(cotation);
-          }
-
-          setCorrections(newCorr);
-        })
-      );
+      }).then((json) => {
+        let newCorr = { ...corrections };
+        newCorr[resId] = {
+          points: Number.parseFloat(json.evaluation),
+          comment: json.comment[0],
+        };
+        setCorrections(newCorr);
+        setWaiting(false);
+      });
     }
   };
 
@@ -108,9 +103,12 @@ export function ResolutionsComp({
         addPoints,
         addComment,
         submitCorrection,
+
         () => {
+          setWaiting(true);
           askAI(selResolution.id, exID, resolutions[exID].type);
-        }
+        },
+        waiting
       )
     : ResolutionList(resolutions, selectResolution);
 }
@@ -157,7 +155,8 @@ function SingleResolution(
   addPoints: Function,
   addComment: Function,
   submitCorrection: Function,
-  askAI: Function
+  askAI: Function,
+  waiting: boolean
 ) {
   return (
     <div className="flex flex-col w-full space-y-4 h-full">
@@ -171,15 +170,22 @@ function SingleResolution(
           </div>
           <h1 className="text-xl">Resolução de {resolution.student?.name}</h1>
         </div>
-        <button
-          type="button"
-          className="p-4 bg-yellow-200"
-          onClick={() => {
-            askAI();
-          }}
-        >
-          <p className="text-sm">Assistência na Correção</p>
-        </button>
+        {resolution.data.type !== ExerciseType.TRUE_OR_FALSE &&
+          resolution.data.type !== ExerciseType.MULTIPLE_CHOICE && (
+            <button
+              type="button"
+              className="p-4 bg-yellow-200"
+              onClick={() => {
+                askAI();
+              }}
+            >
+              {!waiting ? (
+                <p className="text-sm">Assistência na Correção</p>
+              ) : (
+                <Spinner></Spinner>
+              )}
+            </button>
+          )}
       </div>
 
       <h2>

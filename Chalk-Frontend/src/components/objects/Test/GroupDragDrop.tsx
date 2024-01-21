@@ -280,9 +280,8 @@ export function GroupDragDrop({
                 });
                 dispatch({
                   type: EditTestActionKind.REMOVE_GROUP,
-                  exercise: {
-                    groupPosition: exerciseID.groupPosition,
-                    exercisePosition: exerciseID.exercisePosition,
+                  group: {
+                    groupPosition: exerciseGroupPosition,
                   },
                 });
               }}

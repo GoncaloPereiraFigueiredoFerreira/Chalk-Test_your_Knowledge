@@ -357,25 +357,23 @@ export function ShowExerciseDragDrop({
                       groupIndex: groupPosition,
                       exeIndex:
                         testState.test.groups[groupPosition].exercises.length,
-                    }
-                  ).then((response) => {
-                    response.text().then((id) => {
-                      setExerciseID({
+                    },
+                    "string"
+                  ).then((id) => {
+                    setExerciseID({
+                      groupPosition: groupPosition,
+                      exercisePosition:
+                        testState.test.groups[groupPosition].exercises.length,
+                    });
+                    dispatch({
+                      type: EditTestActionKind.ADD_NEW_EXERCISE,
+                      exercise: {
                         groupPosition: groupPosition,
+                        newID: id,
                         exercisePosition:
                           testState.test.groups[groupPosition].exercises.length,
-                      });
-                      dispatch({
-                        type: EditTestActionKind.ADD_NEW_EXERCISE,
-                        exercise: {
-                          groupPosition: groupPosition,
-                          newID: id,
-                          exercisePosition:
-                            testState.test.groups[groupPosition].exercises
-                              .length,
-                          exercise: exercise,
-                        },
-                      });
+                        exercise: exercise,
+                      },
                     });
                   });
                 }}

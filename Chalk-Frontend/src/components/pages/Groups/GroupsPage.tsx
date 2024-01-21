@@ -16,14 +16,13 @@ export function GroupsPage() {
       "GET",
       { page: "0", itemsPerPage: "50" },
       undefined
-    ).then((response) => {
-      response.json().then((groups) => {
-        const tmpL: Course[] = [];
-        groups.map((group: any) => {
-          tmpL.push({ id: group.id, name: group.name } as Course);
-        });
-        setCourses(tmpL);
+    ).then((page) => {
+      let groups = page.items;
+      const tmpL: Course[] = [];
+      groups.map((group: any) => {
+        tmpL.push({ id: group.id, name: group.name } as Course);
       });
+      setCourses(tmpL);
     });
   }, []);
 
