@@ -55,6 +55,7 @@ import pt.uminho.di.chalktyk.models.users.Specialist;
 import pt.uminho.di.chalktyk.repositories.TestTagsDAO;
 import pt.uminho.di.chalktyk.services.*;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
+import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
@@ -272,11 +273,11 @@ public class TestsServiceTest {
         assert tr != null;
         assert tr.getStudentId().equals(this.studentId);
         assert tr.getStatus().equals(TestResolutionStatus.ONGOING);
-        assert tr.getSubmissionNr() == 0;
+        assert tr.getSubmissionNr() == 1;
     }
 
     @Test
-    public void submitTestNoResolution() throws NotFoundException, BadInputException, InterruptedException {
+    public void submitTestNoResolution() throws NotFoundException, BadInputException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
 
         String testId = testsService.createTest(t1);
@@ -341,7 +342,7 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void uploadResolution() throws NotFoundException, BadInputException, InterruptedException {
+    public void uploadResolution() throws NotFoundException, BadInputException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
@@ -353,7 +354,8 @@ public class TestsServiceTest {
         String testResId = testsService.startTest(testId, this.studentId);
 
         ExerciseResolutionData rightMC = createRightMCResolution();
-        ExerciseResolution er1 = exercisesService.createExerciseResolution(this.studentId, exe.getId(), rightMC.clone());
+        ExerciseResolution er1 = new ExerciseResolution();
+        er1.setData(rightMC.clone());
         String exeResId = testsService.uploadResolution(testResId, exe.getId(), er1);
 
         ExerciseResolution er = exercisesService.getExerciseResolution(exeResId);
@@ -370,7 +372,7 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void automaticCorrectionCorrect() throws NotFoundException, BadInputException, InterruptedException {
+    public void automaticCorrectionCorrect() throws NotFoundException, BadInputException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildMCTest();
 
         String testId = testsService.createTest(t1);
@@ -391,13 +393,15 @@ public class TestsServiceTest {
         TestResolution tr = testsService.getTestResolutionById(tr_id);
         assert tr.getTotalPoints() == 6.0F;
         assert tr.getStatus() == TestResolutionStatus.REVISED;
+        assert tr.getSubmissionNr() == 1;
 
+        tr_id = testsService.startTest(testId, this.studentId);
         ExerciseResolution er2 = new ExerciseResolution(null,null,null, createRightMCResolution(), 
                                 ExerciseResolutionStatus.NOT_REVISED, null, null, null);
         testsService.uploadResolution(tr_id, tg.get(1).getExercises().get(1).getId(), er2);
         testsService.submitTestResolution(tr_id);
         tr = testsService.getTestResolutionById(tr_id);
-        assert tr.getTotalPoints() == 8.0F;
+        assert tr.getTotalPoints() == 2.0F;
         assert tr.getStatus() == TestResolutionStatus.REVISED;
         assert tr.getSubmissionNr() == 2;
     }
@@ -438,7 +442,7 @@ public class TestsServiceTest {
     */
 
     @Test
-    public void manualCorrection() throws NotFoundException, BadInputException, InterruptedException {
+    public void manualCorrection() throws NotFoundException, BadInputException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildMCTest();
 
         String testId = testsService.createTest(t1);

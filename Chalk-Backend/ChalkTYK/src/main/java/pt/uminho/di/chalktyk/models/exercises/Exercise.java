@@ -3,10 +3,7 @@ package pt.uminho.di.chalktyk.models.exercises;
 import java.util.Objects;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -58,6 +55,7 @@ public abstract class Exercise {
 	private String title;
 
 	@Column(name = "Type", insertable = false, updatable = false, nullable = false)
+	@JsonProperty("type")
 	private String exerciseType = getExerciseType();
 
 	@Column(name = "Visibility")

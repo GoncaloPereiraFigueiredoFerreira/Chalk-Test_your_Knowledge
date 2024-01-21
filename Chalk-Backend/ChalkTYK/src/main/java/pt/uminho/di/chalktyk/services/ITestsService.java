@@ -291,7 +291,7 @@ public interface ITestsService {
      * @throws NotFoundException     if no test was found with the given id
      * @throws ForbiddenException if the test does not support the requested correction type.
      **/
-    void submitTestResolution(String testResId) throws NotFoundException;
+    void submitTestResolution(String testResId) throws NotFoundException, ForbiddenException;
 
     /**
      * Create a test resolution
@@ -368,7 +368,7 @@ public interface ITestsService {
      * @return True or False
      * @throws NotFoundException if no test or student was found with the given id
      **/
-    Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException;
+    boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException;
 
     /**
      * Retrieves the number of (resolution) submissions a student has made for a specific test
@@ -439,7 +439,7 @@ public interface ITestsService {
      * @throws NotFoundException if no test or exercise were found
      * @throws BadInputException if any property of the resolution is not valid
      */
-    String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException;
+    String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException, ForbiddenException;
 
     /**
      * Add an exercise to a given test

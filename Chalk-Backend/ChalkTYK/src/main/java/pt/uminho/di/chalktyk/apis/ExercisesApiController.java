@@ -660,9 +660,9 @@ public class ExercisesApiController implements ExercisesApi {
             }
             else{
                 if(role.equals("STUDENT"))
-                    perm = exercisesTestsAuthorization.canStudentGetExercise(userId, vis, courseId, institutionId);
+                    perm = exercisesTestsAuthorization.canStudentListExercise(userId, vis, courseId, institutionId);
                 else if (role.equals("SPECIALIST")) {
-                    perm = exercisesTestsAuthorization.canSpecialistGetExercise(userId, specialistId, vis, courseId, institutionId);
+                    perm = exercisesTestsAuthorization.canSpecialistListExercise(userId, specialistId, vis, courseId, institutionId);
                 }
             }
 

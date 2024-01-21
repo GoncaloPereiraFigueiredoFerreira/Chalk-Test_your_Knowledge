@@ -9,6 +9,8 @@ import pt.uminho.di.chalktyk.models.tests.Test;
 import pt.uminho.di.chalktyk.models.tests.TestResolution;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
+import java.util.Objects;
+
 @Service
 public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization{
     private final IExercisesService exercisesService;
@@ -48,6 +50,13 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
     }
 
     @Override
+    public boolean canStudentListExercise(String studentId, Visibility vis, String courseId, String institutionId) {
+        if(Visibility.NOT_LISTED.equals(vis))
+            return false;
+        return canStudentGetExercise(studentId, vis, courseId, institutionId);
+    }
+
+    @Override
     public boolean canStudentGetTest(String studentId, Visibility vis, String courseId, String institutionId) {
         return canStudentGetExercise(studentId,vis,courseId,institutionId);
     }
@@ -56,6 +65,11 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
     public boolean canStudentGetTest(String userId, String testId) throws NotFoundException {
         Test test = testsService.getTestById(testId);
         return canStudentGetTest(userId,test.getVisibility(),test.getCourseId(),test.getInstitutionId());
+    }
+
+    @Override
+    public boolean canStudentListTest(String studentId, Visibility vis, String courseId, String institutionId) {
+        return canStudentListExercise(studentId,vis,courseId,institutionId);
     }
 
     @Override
@@ -123,6 +137,13 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
     }
 
     @Override
+    public boolean canSpecialistListExercise(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId) {
+        if(Visibility.NOT_LISTED.equals(vis) && !Objects.equals(specialistId, ownerId))
+            return false;
+        return canSpecialistGetExercise(specialistId, ownerId, vis, courseId, institutionId);
+    }
+
+    @Override
     public boolean canSpecialistGetTest(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId) {
         return canSpecialistGetExercise(
                 specialistId,
@@ -130,6 +151,11 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
                 vis,
                 courseId,
                 institutionId);
+    }
+
+    @Override
+    public boolean canSpecialistListTest(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId) {
+        return canSpecialistListExercise(specialistId, ownerId, vis, courseId, institutionId);
     }
 
     @Override
