@@ -1,16 +1,16 @@
 
 package pt.uminho.di.chalktyk.apis;
 
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InstitutionsInstitutionIdBody1;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SpecialistsSpecialistIdBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.StudentsStudentIdBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Subscription;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SubscriptionPlan;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SubscriptionsBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SubscriptionsInstitutionsBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SubscriptionsSpecialistsBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SubscriptionsStudentsBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.SubscriptionsSubscriptionPlanIdBody;
+
+
+
+
+
+
+
+
+
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -30,6 +30,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import pt.uminho.di.chalktyk.models.subscriptions.Subscription;
+import pt.uminho.di.chalktyk.models.subscriptions.SubscriptionPlan;
+
 import java.util.List;
 
 @Validated
@@ -97,7 +100,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsInstitutionsInstitutionIdPut(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsInstitutionIdBody1 body
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -109,7 +112,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/institutions",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> subscriptionsInstitutionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsInstitutionsBody body
+    ResponseEntity<Void> subscriptionsInstitutionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -121,7 +124,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> subscriptionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsBody body
+    ResponseEntity<Void> subscriptionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -133,7 +136,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/specialists",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> subscriptionsSpecialistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsSpecialistsBody body
+    ResponseEntity<Void> subscriptionsSpecialistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -183,7 +186,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsSpecialistsSpecialistIdPut(@Parameter(in = ParameterIn.PATH, description = "Specialist identifier", required=true, schema=@Schema()) @PathVariable("specialistId") String specialistId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SpecialistsSpecialistIdBody body
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -195,7 +198,7 @@ public interface SubscriptionsApi {
     @RequestMapping(value = "/subscriptions/students",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> subscriptionsStudentsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsStudentsBody body
+    ResponseEntity<Void> subscriptionsStudentsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -245,7 +248,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsStudentsStudentIdPut(@Parameter(in = ParameterIn.PATH, description = "Student identifier", required=true, schema=@Schema()) @PathVariable("studentId") String studentId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody StudentsStudentIdBody body
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Subscription body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -295,7 +298,7 @@ public interface SubscriptionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> subscriptionsSubscriptionPlanIdPut(@Parameter(in = ParameterIn.PATH, description = "Subscription Plan identifier", required=true, schema=@Schema()) @PathVariable("subscriptionPlanId") String subscriptionPlanId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionsSubscriptionPlanIdBody body
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody SubscriptionPlan body
 , @CookieValue("chalkauthtoken") String jwt);
 
 }

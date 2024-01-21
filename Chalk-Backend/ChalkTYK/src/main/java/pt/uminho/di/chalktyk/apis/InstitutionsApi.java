@@ -1,10 +1,6 @@
 
 package pt.uminho.di.chalktyk.apis;
 
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.Institution;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InstitutionWithoutId;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InstitutionsBody;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InstitutionsInstitutionIdBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -24,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import pt.uminho.di.chalktyk.models.institutions.Institution;
+
 import java.util.List;
 
 @Validated
@@ -62,7 +60,7 @@ public interface InstitutionsApi {
 
     @Operation(summary = "Get institution by institution id", description = "", tags={ "institution" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InstitutionWithoutId.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Institution.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid institution id supplied"),
         
@@ -72,7 +70,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions/{institutionId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<InstitutionWithoutId> getInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
+    ResponseEntity<Institution> getInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -89,7 +87,7 @@ public interface InstitutionsApi {
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
     ResponseEntity<Void> updateInstitutionByID(@Parameter(in = ParameterIn.PATH, description = "Institution identifier", required=true, schema=@Schema()) @PathVariable("institutionId") String institutionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsInstitutionIdBody body
+, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Institution body
 , @CookieValue("chalkauthtoken") String jwt);
 
 
@@ -101,7 +99,7 @@ public interface InstitutionsApi {
     @RequestMapping(value = "/institutions",
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Void> createInstitution(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody InstitutionsBody body
+    ResponseEntity<Void> createInstitution(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Institution body
 , @CookieValue("chalkauthtoken") String jwt);
 
 }

@@ -7,6 +7,7 @@ import pt.uminho.di.chalktyk.apis.utility.ExceptionResponseEntity;
 import pt.uminho.di.chalktyk.apis.utility.JWT;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.dtos.ISODateTimeDTO;
 import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -570,7 +570,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestPublishDate(String jwtToken, String testId, LocalDateTime publishDate) {
+    public ResponseEntity<Void> updateTestPublishDate(String jwtToken, String testId, ISODateTimeDTO publishDate) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -579,7 +579,7 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
-                    testsService.updateTestPublishDate(testId, publishDate);
+                    testsService.updateTestPublishDate(testId, publishDate != null ? publishDate.getValue() : null);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
@@ -685,7 +685,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestDeliverDate(String jwtToken, String testId, LocalDateTime deliverDate) {
+    public ResponseEntity<Void> updateTestDeliverDate(String jwtToken, String testId, ISODateTimeDTO deliverDate) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -694,7 +694,7 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
-                    testsService.updateTestDeliverDate(testId,deliverDate);
+                    testsService.updateTestDeliverDate(testId, deliverDate != null ? deliverDate.getValue() : null);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
@@ -708,7 +708,7 @@ public class TestsApiController implements TestsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTestStartDate(String jwtToken, String testId, LocalDateTime startDate) {
+    public ResponseEntity<Void> updateTestStartDate(String jwtToken, String testId, ISODateTimeDTO startDate) {
         try {
             // validate jwt token and get user id and role
             JWT token = securityService.validateJWT(jwtToken);
@@ -717,7 +717,7 @@ public class TestsApiController implements TestsApi {
 
             if(role.equals("SPECIALIST")) {
                 if(exercisesTestsAuthorization.canSpecialistAccessTest(userId, testId)) {
-                    testsService.updateTestStartDate(testId,startDate);
+                    testsService.updateTestStartDate(testId, startDate != null ? startDate.getValue() : null);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }

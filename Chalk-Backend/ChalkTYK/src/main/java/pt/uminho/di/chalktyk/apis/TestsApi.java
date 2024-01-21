@@ -2,10 +2,11 @@
 package pt.uminho.di.chalktyk.apis;
 
 import org.springframework.web.bind.annotation.*;
-import pt.uminho.di.chalktyk.apis.to_be_removed_models_folder.InlineResponse2001;
+
 import pt.uminho.di.chalktyk.apis.utility.CustomPage;
 import pt.uminho.di.chalktyk.dtos.CreateTestExerciseDTO;
 import pt.uminho.di.chalktyk.dtos.DuplicateTestDTO;
+import pt.uminho.di.chalktyk.dtos.ISODateTimeDTO;
 import pt.uminho.di.chalktyk.dtos.ManualExerciseCorrectionDTO;
 import pt.uminho.di.chalktyk.models.exercises.ExerciseResolution;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -27,7 +28,6 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Validated
@@ -245,7 +245,7 @@ public interface TestsApi {
     @Operation(summary = "Get all test resolutions.", description = "", tags = {"tests"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval.",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = InlineResponse2001.class)))),
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TestResolution.class)))),
             @ApiResponse(responseCode = "401", description = "Unauthorized operation."),             
             @ApiResponse(responseCode = "403", description = "Forbidden operation."),
             @ApiResponse(responseCode = "404", description = "Test not found.")
@@ -414,7 +414,7 @@ public interface TestsApi {
     ResponseEntity<Void> updateTestPublishDate(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
-            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody LocalDateTime publishDate);
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ISODateTimeDTO publishDate);
 
     @Operation(summary = "Updates a test's visibility", description = "", tags={ "tests" })
     @ApiResponses(value = {
@@ -491,7 +491,7 @@ public interface TestsApi {
     ResponseEntity<Void> updateTestDeliverDate(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
-            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody LocalDateTime deliverDate);
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ISODateTimeDTO deliverDate);
 
     @Operation(summary = "Updates a test's start date", description = "", tags={ "tests" })
     @ApiResponses(value = {
@@ -506,7 +506,7 @@ public interface TestsApi {
     ResponseEntity<Void> updateTestStartDate(
             @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwtToken,
             @Parameter(in = ParameterIn.PATH, required = true) @PathVariable("testId") String testId,
-            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody LocalDateTime startDate);
+            @Parameter(in = ParameterIn.DEFAULT, required = true) @RequestBody ISODateTimeDTO startDate);
 
     @Operation(summary = "Updates a test's duration", description = "", tags={ "tests" })
     @ApiResponses(value = {
