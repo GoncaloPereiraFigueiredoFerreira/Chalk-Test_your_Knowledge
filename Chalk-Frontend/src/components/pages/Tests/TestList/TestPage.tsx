@@ -1,12 +1,14 @@
 import { Dropdown } from "flowbite-react";
 import { ListTests, ViewType } from "../../../objects/ListTests/ListTest.tsx";
 import { Searchbar } from "../../../objects/Searchbar/Searchbar.tsx";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { GridIcon, ListIcon } from "../../../objects/SVGImages/SVGImages.tsx";
+import { UserContext, UserRole } from "../../../../UserContext.tsx";
 
 export function TestPage() {
   const [view, setViewType] = useState(ViewType.GRID);
   const [searchKey, setSearch] = useState("");
+  const { user } = useContext(UserContext);
 
   return (
     <div className="flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
@@ -54,7 +56,9 @@ export function TestPage() {
         <ListTests
           view={view}
           courseId={""}
-          visibilityType={"public"}
+          visibilityType={
+            user.user?.role === UserRole.SPECIALIST ? "" : "public"
+          }
           searchKey={searchKey}
           tagsList={[]}
         ></ListTests>

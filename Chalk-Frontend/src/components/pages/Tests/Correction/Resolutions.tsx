@@ -40,11 +40,11 @@ export function ResolutionsComp({
         let newCorr = { ...corrections };
         newCorr[resId] = {
           points: Number.parseFloat(json.evaluation),
-          comment: json.evaluation.comment[0],
+          comment: json.comment[0],
         };
         setCorrections(newCorr);
+        setWaiting(false);
       });
-      setWaiting(false);
     }
   };
 
