@@ -16,10 +16,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import pt.uminho.di.chalktyk.dtos.ChatExerciseDTO;
+import pt.uminho.di.chalktyk.dtos.ChatExerciseEvaluationDTO;
 import pt.uminho.di.chalktyk.dtos.GenerateQuestionAIDTO;
 import pt.uminho.di.chalktyk.dtos.MultipleChoiceAIDTO;
 import pt.uminho.di.chalktyk.dtos.TrueOrFalseAIDTO;
 import pt.uminho.di.chalktyk.dtos.OpenAnswerAIDTO;
+import pt.uminho.di.chalktyk.dtos.OpenAnswerEvaluationDTO;
 
 /**
  * AIApi
@@ -37,21 +39,21 @@ public interface AIApi {
 
     @Operation(summary = "Return the evaluation the the chat exercise given by IA", description = "", tags = { "ai" })
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Float.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatExerciseEvaluationDTO.class))),
         @ApiResponse(responseCode = "400", description = "Invalid camp for Questions or Topics"),
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })
     @RequestMapping(value = "/chat/evaluation", produces = { "application/json"}, method = RequestMethod.GET)
-    ResponseEntity<Float> getEvaluationChat(@Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @RequestParam(value = "resolutionId", required = true) String resolutionId,@Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @RequestParam(value = "exerciseId") String exerciseId, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    ResponseEntity<ChatExerciseEvaluationDTO> getEvaluationChat(@Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @RequestParam(value = "resolutionId", required = true) String resolutionId,@Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @RequestParam(value = "exerciseId") String exerciseId, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return the evaluation the the open answer exercise given by IA", description = "", tags = { "ai" })
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Float.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OpenAnswerEvaluationDTO.class))),
         @ApiResponse(responseCode = "400", description = "Invalid camp for Questions or Topics"),
         @ApiResponse(responseCode = "401", description = "Unauthorized operation")
     })
     @RequestMapping(value = "/open/evaluation", produces = { "application/json"}, method = RequestMethod.GET)
-    ResponseEntity<Float> getEvaluationOpenAnswer(@Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @RequestParam(value = "resolutionId", required = true) String resolutionId,@Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @RequestParam(value = "exerciseId") String exerciseId, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
+    ResponseEntity<OpenAnswerEvaluationDTO> getEvaluationOpenAnswer(@Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @RequestParam(value = "resolutionId", required = true) String resolutionId,@Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @RequestParam(value = "exerciseId") String exerciseId, @Parameter(in = ParameterIn.HEADER, required = true, description = "authentication token") @CookieValue("chalkauthtoken") String jwt);
 
     @Operation(summary = "Return a new multiple choice question based on the text provided and input from the user")
     @ApiResponses(value = {
