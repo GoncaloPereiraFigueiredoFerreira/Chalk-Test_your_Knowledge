@@ -115,12 +115,19 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
         ),
         exerciseId: exerciseData.identity.id,
         studentId: user.user?.id,
-      }
+      },
+      "none"
     );
   };
 
   const endTestResolution = () => {
-    return contactBACK("tests/resolutions/" + resolutionID + "/submit", "PUT");
+    return contactBACK(
+      "tests/resolutions/" + resolutionID + "/submit",
+      "PUT",
+      undefined,
+      undefined,
+      "none"
+    );
   };
 
   return (
@@ -149,7 +156,8 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
                   ? test.groups[currentGroup - 2].exercises.length
                   : 0,
                 setCurrentEx,
-                setCurrentGroup
+                setCurrentGroup,
+                sendResolution
               )}
               {NextExerciseButton(
                 currentEx,

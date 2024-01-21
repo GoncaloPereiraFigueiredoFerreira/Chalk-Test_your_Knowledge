@@ -35,13 +35,17 @@ export function CQSolve(props: CQSolveProps) {
   };
 
   const fetchAnswer = () => {
-    contactBACK("ai/chat/new", "POST", undefined, {
-      topics: props.exercise.props.topics,
-      chat: [...state.msgs].reverse(),
-    }).then((response) => {
-      response.text().then((msg) => {
-        addMsg(msg);
-      });
+    contactBACK(
+      "ai/chat/new",
+      "POST",
+      undefined,
+      {
+        topics: props.exercise.props.topics,
+        chat: [...state.msgs].reverse(),
+      },
+      "string"
+    ).then((msg) => {
+      addMsg(msg);
     });
   };
 

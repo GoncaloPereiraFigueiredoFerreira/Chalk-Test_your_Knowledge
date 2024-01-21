@@ -9,10 +9,8 @@ export function GroupNavBar() {
   const [course, setCourse] = useState<Course>({ id: "-1", name: "" });
 
   useEffect(() => {
-    contactBACK("courses/" + id, "GET").then((response) => {
-      response.json().then((json) => {
-        setCourse({ id: json.id, name: json.name });
-      });
+    contactBACK("courses/" + id, "GET").then((json) => {
+      setCourse({ id: json.id, name: json.name });
     });
   }, [id]);
 

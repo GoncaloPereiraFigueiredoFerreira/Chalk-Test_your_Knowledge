@@ -56,18 +56,15 @@ export function SolveTest() {
   const [resolutionID, setResolutionID] = useState<string>("");
 
   useEffect(() => {
-    contactBACK("tests/" + testID, "GET").then((response) => {
-      response.json().then((testJson: any) => {
-        console.log(testJson);
-        testJson.groups = testJson.groups.map((group: any) => {
-          group.exercises = group.exercises.map((ex: any) => {
-            return TranslateTestExerciseIN(ex);
-          });
-          return group;
+    contactBACK("tests/" + testID, "GET").then((testJson: any) => {
+      testJson.groups = testJson.groups.map((group: any) => {
+        group.exercises = group.exercises.map((ex: any) => {
+          return TranslateTestExerciseIN(ex);
         });
-        setTest(testJson);
-        setResolution(initResolutions(testJson));
+        return group;
       });
+      setTest(testJson);
+      setResolution(initResolutions(testJson));
     });
   }, []);
 
@@ -84,17 +81,18 @@ export function SolveTest() {
   };
 
   const startTestResolution = () => {
-    contactBACK("tests/" + testID + "/resolutions/start", "POST").then(
-      (response) => {
-        response.text().then((id) => {
-          console.log("ResolutionID:", id);
-          if (id !== "") {
-            setResolutionID(id);
-            startTest(true);
-          }
-        });
+    contactBACK(
+      "tests/" + testID + "/resolutions/start",
+      "POST",
+      undefined,
+      undefined,
+      "string"
+    ).then((id) => {
+      if (id !== "") {
+        setResolutionID(id);
+        startTest(true);
       }
-    );
+    });
   };
 
   return (

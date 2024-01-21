@@ -76,7 +76,6 @@ export function EditTestStateReducer(
   switch (action.type) {
     case EditTestActionKind.EDIT_TEST_INFO:
       if (action.testInfo) {
-        console.log(action.testInfo);
         state.contactBACK(
           "tests/" + state.test.id + "/basicProperties",
           "PUT",
@@ -91,7 +90,8 @@ export function EditTestStateReducer(
               action.testInfo.visibility === "course"
                 ? action.testInfo.courseId!
                 : "",
-          }
+          },
+          "none"
         );
         return {
           ...state,
@@ -202,7 +202,10 @@ export function EditTestStateReducer(
               newGroups[action.exercise.groupPosition].exercises[
                 action.exercise.exercisePosition
               ].identity.id,
-            "DELETE"
+            "DELETE",
+            undefined,
+            undefined,
+            "none"
           );
 
           // remove exercise
@@ -273,7 +276,8 @@ export function EditTestStateReducer(
         "tests/" + state.test.id + "/groups",
         "PUT",
         undefined,
-        trGroups
+        trGroups,
+        "none"
       );
 
       return {
@@ -304,7 +308,8 @@ export function EditTestStateReducer(
           "tests/" + state.test.id + "/groups",
           "PUT",
           undefined,
-          trGroups
+          trGroups,
+          "none"
         );
 
         // update globalCotation
@@ -342,7 +347,8 @@ export function EditTestStateReducer(
           "tests/" + state.test.id + "/groups",
           "PUT",
           undefined,
-          trGroups
+          trGroups,
+          "none"
         );
         return {
           ...state,
@@ -386,7 +392,8 @@ export function EditTestStateReducer(
             "tests/" + state.test.id + "/groups",
             "PUT",
             undefined,
-            trGroups
+            trGroups,
+            "none"
           );
           return {
             ...state,
@@ -458,7 +465,8 @@ export function EditTestStateReducer(
             "tests/" + state.test.id + "/groups",
             "PUT",
             undefined,
-            trGroups
+            trGroups,
+            "none"
           );
 
           return {
@@ -487,7 +495,8 @@ export function EditTestStateReducer(
             "tests/" + state.test.id + "/groups",
             "PUT",
             undefined,
-            trGroups
+            trGroups,
+            "none"
           );
           return {
             ...state,
@@ -524,7 +533,8 @@ export function EditTestStateReducer(
           "tests/" + state.test.id + "/groups",
           "PUT",
           undefined,
-          trGroups
+          trGroups,
+          "none"
         );
         return {
           ...state,

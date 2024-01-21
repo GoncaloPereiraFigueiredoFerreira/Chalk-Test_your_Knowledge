@@ -29,21 +29,22 @@ export function AlunosPage() {
     contactBACK("courses/" + id + "/students", "GET", {
       page: "0",
       itemsPerPage: "50",
-    }).then((response) => {
-      response.json().then((students) => {
-        console.log(students);
-        setStudentList(students);
-      });
+    }).then((page) => {
+      let students = page.items;
+      setStudentList(students);
     });
   }, [id]);
 
   const addStudent = () => {
     if (email !== "") {
-      contactBACK("courses/" + id + "/students/add", "POST", undefined, [
-        email,
-      ]).then(() => {
+      contactBACK(
+        "courses/" + id + "/students/add",
+        "POST",
+        undefined,
+        [email],
+        "none"
+      ).then(() => {
         setEmail("");
-
         setOpenModal(false);
       });
     }
@@ -58,9 +59,13 @@ export function AlunosPage() {
   };
 
   const removeStudent = (emailToRemove: string) => {
-    contactBACK("courses/" + id + "/students/remove", "DELETE", undefined, [
-      emailToRemove,
-    ]).then(() => {
+    contactBACK(
+      "courses/" + id + "/students/remove",
+      "DELETE",
+      undefined,
+      [emailToRemove],
+      "none"
+    ).then(() => {
       setStudentList((prevlist) =>
         prevlist.filter((student) => student.email !== emailToRemove)
       );

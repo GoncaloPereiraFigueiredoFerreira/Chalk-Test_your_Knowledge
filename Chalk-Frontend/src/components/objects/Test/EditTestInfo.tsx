@@ -80,14 +80,14 @@ export function EditTestInfo({
   useEffect(() => {
     if (visibility === "Curso") {
       contactBACK("courses", "GET", { page: "0", itemsPerPage: "50" }).then(
-        (response) =>
-          response.json().then((json) => {
-            let courses: Course[] = [];
-            json.map((c: any) => {
-              courses.push({ id: c.id, name: c.name });
-            });
-            setCourses(courses);
-          })
+        (page) => {
+          let courses = page.items;
+          let courseL: Course[] = [];
+          courses.map((c: any) => {
+            courseL.push({ id: c.id, name: c.name });
+          });
+          setCourses(courseL);
+        }
       );
     }
   }, [visibility]);

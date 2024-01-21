@@ -1,8 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Exercise, TranslateExerciseIN } from "../Exercise/Exercise";
 import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
 import { SortableContext } from "@dnd-kit/sortable";
 import { APIContext } from "../../../APIContext";
+import { UserContext } from "../../../UserContext";
+import { Pagination } from "flowbite-react";
 
 interface ExerciseBankDragDropProps {
   exerciseID: {
@@ -32,24 +34,31 @@ export function ExerciseBankDragDrop({
   setListExercises,
 }: ExerciseBankDragDropProps) {
   const { contactBACK } = useContext(APIContext);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const onPageChange = (page: number) => setCurrentPage(page);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     contactBACK("exercises", "GET", {
-      page: "0",
+      page: (currentPage - 1).toString(),
       itemsPerPage: "10",
       visibility: "public",
-    }).then((response) => {
-      response.json().then((exercises) => {
-        const exerciseL: Exercise[] = [];
-        exercises.map((ex: any) => {
-          let exercise: Exercise = TranslateExerciseIN(ex);
-          exercise.identity.points = 1;
-          exerciseL.push(exercise);
-        });
-        setListExercises(exerciseL);
+      specialistId: user.user?.id!,
+    }).then((page) => {
+      setTotalPages(page.totalPages);
+      const exercises = page.items;
+      const exerciseL: Exercise[] = [];
+      exercises.map((ex: any) => {
+        let exercise: Exercise = TranslateExerciseIN(ex);
+        console.log(ex);
+        console.log(exercise);
+        exercise.identity.points = 1;
+        exerciseL.push(exercise);
       });
+      setListExercises(exerciseL);
     });
-  }, []);
+  }, [currentPage]);
 
   return (
     <>
@@ -87,6 +96,12 @@ export function ExerciseBankDragDrop({
             ></ShowExerciseDragDrop>
           ))}
         </SortableContext>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          showIcons
+        />
       </div>
     </>
   );

@@ -83,22 +83,18 @@ export function Login() {
             courses: [],
           };
           contactBACK("users/login", "POST", undefined, userInfo).then(
-            (response) => {
-              response.json().then((user) => {
-                userInfo["id"] = user.id;
-                userInfo["photoPath"] = user.photoPath;
-                console.log(user);
-                contactBACK(
-                  "courses",
-                  "GET",
-                  { page: "0", itemsPerPage: "5" },
-                  undefined
-                ).then((groupResponse) => {
-                  groupResponse.json().then((groups) => {
-                    login({ ...userInfo, courses: groups });
-                    navigate("/webapp");
-                  });
-                });
+            (user) => {
+              userInfo["id"] = user.id;
+              userInfo["photoPath"] = user.photoPath;
+              contactBACK(
+                "courses",
+                "GET",
+                { page: "0", itemsPerPage: "5" },
+                undefined
+              ).then((page) => {
+                let groups = page.items;
+                login({ ...userInfo, courses: groups });
+                navigate("/webapp");
               });
             }
           );

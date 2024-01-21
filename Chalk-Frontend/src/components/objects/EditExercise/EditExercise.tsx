@@ -16,15 +16,17 @@ import {
   InitResolutionDataEx,
   InitExercise,
   MCExercise,
-  ResolutionItem,
   ResolutionItems,
+  TFExercise,
+  Tag,
 } from "../Exercise/Exercise";
 import { Rubric, RubricContext } from "../Rubric/Rubric";
 import { FiSave } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { APIContext } from "../../../APIContext";
-import { Modal } from "flowbite-react";
+import { Modal, Spinner } from "flowbite-react";
 import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
+import { TagsFilterModal } from "../Tags/TagsFilterModal";
 
 //------------------------------------//
 //                                    //
@@ -51,6 +53,7 @@ export enum EditActionKind {
   SET_RUBRIC = "SET_RUBRIC",
   SET_SOLUTION = "SET_SOLUTION",
   SET_SUGESTION = "SET_FULL_EX",
+  SET_TAGS = "SET_TAGS",
 }
 
 export interface EditAction {
@@ -63,6 +66,7 @@ export interface EditAction {
     justification?: string;
     value?: boolean;
   };
+  dataTagsList?: Tag[];
   dataSolution?: ResolutionData;
   dataExercise?: Exercise;
   dataRubric?: Rubric;
@@ -340,6 +344,15 @@ function EditReducer(state: EditState, action: EditAction) {
         exercise: action.dataExercise ?? state.exercise,
       };
 
+    case EditActionKind.SET_TAGS:
+      return {
+        ...state,
+        exercise: {
+          ...state.exercise,
+          base: { ...state.exercise.base, tags: action.dataTagsList! },
+        },
+      };
+
     default:
       return state;
   }
@@ -384,6 +397,8 @@ export function EditExercise({
   const [exSugestion, setSugestion] = useState<Exercise>();
   const [input, setInput] = useState("");
   const [text, setText] = useState("");
+  const [openTagsModal, setTagsModal] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const { contactBACK } = useContext(APIContext);
 
   function generateEx() {
@@ -439,33 +454,38 @@ export function EditExercise({
     contactBACK("ai/new/" + endpoint, "POST", undefined, {
       text: text,
       input: input,
-    }).then((response) => {
-      response.json().then((json) => {
-        console.log(json);
-        let newEx: Exercise | undefined = InitExercise(type);
-        switch (type) {
-          case ExerciseType.TRUE_OR_FALSE:
-            newEx = undefined;
-            break;
-          case ExerciseType.OPEN_ANSWER:
-            newEx.base.statement.text = json.question;
-            break;
-          case ExerciseType.MULTIPLE_CHOICE:
-            newEx.base.statement.text = json.question;
-            let resItems: ResolutionItems = {};
-            let answers: string[] = json.answers;
-            answers.map((option: string, index: number) => {
-              resItems[index.toString()] = {
-                text: option,
-                value: json.correct === index,
-              };
-            });
-            (newEx as MCExercise).props.items = resItems;
-            console.log(newEx);
-            break;
-        }
-        setSugestion(newEx);
-      });
+    }).then((json) => {
+      let newEx: Exercise | undefined = InitExercise(type);
+      switch (type) {
+        case ExerciseType.TRUE_OR_FALSE:
+          newEx.base.statement.text = text;
+          let resItemsTF: ResolutionItems = {};
+          json.list.map((statement: any, index: number) => {
+            resItemsTF[index.toString()] = {
+              text: statement.question,
+              value: statement.correct,
+            };
+          });
+          (newEx as TFExercise).props.items = resItemsTF;
+          break;
+        case ExerciseType.OPEN_ANSWER:
+          newEx.base.statement.text = json.question;
+          break;
+        case ExerciseType.MULTIPLE_CHOICE:
+          newEx.base.statement.text = json.question;
+          let resItems: ResolutionItems = {};
+          let answers: string[] = json.answers;
+          answers.map((option: string, index: number) => {
+            resItems[index.toString()] = {
+              text: option,
+              value: json.correct === index,
+            };
+          });
+          (newEx as MCExercise).props.items = resItems;
+          break;
+      }
+      setWaiting(false);
+      setSugestion(newEx);
     });
   };
 
@@ -504,7 +524,7 @@ export function EditExercise({
             }}
           ></ExerciseComponent>
         </div>
-        <div className="flex gap-4 px-4 rounded-lg bg-white dark:bg-black justify-between">
+        <div className="flex gap-4 px-5 rounded-lg bg-white dark:bg-black justify-between">
           <div className="flex items-center">
             <p className="text-xl font-medium">Título:</p>
             <div className="px-4">
@@ -573,32 +593,68 @@ export function EditExercise({
                         context={{ context: ExerciseContext.PREVIEW }}
                       />
                     )}
-                    <div className="flex justify-between w-full">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          generateEx();
-                        }}
-                      >
-                        Gerar
-                      </button>
-                      {exSugestion && (
+                    {!waiting ? (
+                      <div className="flex justify-between w-full">
                         <button
                           type="button"
                           onClick={() => {
-                            acceptQuestion();
+                            generateEx();
+                            setWaiting(true);
                           }}
                         >
-                          Guardar Exercício
+                          Gerar Novo Exercício
                         </button>
-                      )}
-                    </div>
+                        {exSugestion && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              acceptQuestion();
+                            }}
+                          >
+                            Guardar Exercício
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex w-full justify-center">
+                        <Spinner></Spinner>
+                      </div>
+                    )}
                   </div>
                 </Modal.Body>
               </Modal>
             </>
           )}
         </div>
+
+        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black flex justify-between">
+          <div className="flex space-x-3 items-center">
+            <p className="text-xl font-medium">Tags:</p>
+            {state.exercise.base.tags.map((tag) => {
+              return <p>{tag.name}</p>;
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={() => setTagsModal(true)}
+            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+          >
+            Escolher Tags
+          </button>
+
+          <TagsFilterModal
+            header="Selecione as tags a adicionar ao seu Exercício"
+            openModal={openTagsModal}
+            setOpenModal={setTagsModal}
+            setTagsList={(tags) => {
+              editDispatch({
+                type: EditActionKind.SET_TAGS,
+                dataTagsList: tags,
+              });
+            }}
+          ></TagsFilterModal>
+        </div>
+
         <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
           <EditHeader dispatch={editDispatch} state={state.exercise} />
         </div>
@@ -618,7 +674,9 @@ export function EditExercise({
         {state.exercise.type === ExerciseType.CHAT ||
         state.exercise.type === ExerciseType.OPEN_ANSWER ? (
           <>
-            <h3 className="font-medium text-xl dark:text-white">Rúbrica:</h3>
+            <h3 className="px-5 font-medium text-xl dark:text-white">
+              Rúbrica:
+            </h3>
             <Rubric
               context={{
                 context: RubricContext.EDIT,

@@ -60,10 +60,8 @@ export function ExerciseBankPage() {
           if (!(exerciseID in rubrics)) {
             setRubric(exerciseID, { criteria: [] });
             contactBACK("exercises/" + exerciseID + "/rubric", "GET").then(
-              (response) => {
-                response.json().then((json) => {
-                  setRubric(exerciseID, json);
-                });
+              (json) => {
+                setRubric(exerciseID, json);
               }
             );
           }
@@ -72,16 +70,14 @@ export function ExerciseBankPage() {
         case ExerciseType.TRUE_OR_FALSE:
           if (!(exerciseID in solutions)) {
             contactBACK("exercises/" + exerciseID + "/solution", "GET").then(
-              (response) => {
-                response.json().then((json) => {
-                  setSolution(
-                    exerciseID,
-                    TranslateResolutionIN(
-                      json.data,
-                      listExerciseState.listExercises[exerciseID]
-                    )
-                  );
-                });
+              (json) => {
+                setSolution(
+                  exerciseID,
+                  TranslateResolutionIN(
+                    json.data,
+                    listExerciseState.listExercises[exerciseID]
+                  )
+                );
               }
             );
           }
@@ -125,7 +121,7 @@ export function ExerciseBankPage() {
               rubric={rubrics[exerciseID]}
               solution={solutions[exerciseID]}
               saveEdit={(state) => {
-                const { exerciseTR, solutionTR } = TranslateExerciseOUT(
+                const { exerciseTR, solutionTR, tagsTR } = TranslateExerciseOUT(
                   state.exercise
                 );
                 const rubricTR = TranslateRubricOut(
@@ -135,36 +131,50 @@ export function ExerciseBankPage() {
                 setRubric(exerciseID, state.rubric);
                 setSolution(exerciseID, state.solution);
                 if (exerciseID === "-1") {
-                  contactBACK("exercises", "POST", undefined, {
-                    exercise: exerciseTR,
-                    solution: solutionTR,
-                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                  }).then((response) => {
-                    response.text().then((jsonRes) => {
-                      dispatch({
-                        type: ListExerciseActionKind.ADD_EXERCISE,
-                        payload: {
-                          exercise: {
-                            ...state.exercise,
-                            identity: {
-                              ...state.exercise.identity,
-                              id: jsonRes,
-                              visibility:
-                                state.exercise.identity?.visibility ?? "",
-                              specialistId:
-                                state.exercise.identity?.specialistId ?? "",
-                            },
+                  contactBACK(
+                    "exercises",
+                    "POST",
+                    undefined,
+                    {
+                      exercise: exerciseTR,
+                      solution: solutionTR,
+                      rubric:
+                        Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                      tagsIds: tagsTR,
+                    },
+                    "string"
+                  ).then((jsonRes) => {
+                    dispatch({
+                      type: ListExerciseActionKind.ADD_EXERCISE,
+                      payload: {
+                        exercise: {
+                          ...state.exercise,
+                          identity: {
+                            ...state.exercise.identity,
+                            id: jsonRes,
+                            visibility:
+                              state.exercise.identity?.visibility ?? "",
+                            specialistId:
+                              state.exercise.identity?.specialistId ?? "",
                           },
                         },
-                      });
+                      },
                     });
                   });
                 } else {
-                  contactBACK("exercises/" + exerciseID, "PUT", undefined, {
-                    exercise: exerciseTR,
-                    solution: solutionTR,
-                    rubric: Object.keys(rubricTR).length == 0 ? null : rubricTR,
-                  }).then(() => {
+                  contactBACK(
+                    "exercises/" + exerciseID,
+                    "PUT",
+                    undefined,
+                    {
+                      exercise: exerciseTR,
+                      solution: solutionTR,
+                      rubric:
+                        Object.keys(rubricTR).length == 0 ? null : rubricTR,
+                      tagsIds: tagsTR,
+                    },
+                    "none"
+                  ).then(() => {
                     dispatch({
                       type: ListExerciseActionKind.EDIT_EXERCISE,
                       payload: { exercise: state.exercise },

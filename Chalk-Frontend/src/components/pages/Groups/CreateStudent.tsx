@@ -25,9 +25,13 @@ export function CreateStudentModal({ studentList, setStudentList }: any) {
         email: email,
       };
 
-      contactBACK("courses/" + id + "/students/add", "POST", undefined, [
-        email,
-      ]).then((response) => {
+      contactBACK(
+        "courses/" + id + "/students/add",
+        "POST",
+        undefined,
+        [email],
+        "none"
+      ).then(() => {
         setStudentList([...studentList, newStudent]);
         setEmail("");
         setOpenModal(false);

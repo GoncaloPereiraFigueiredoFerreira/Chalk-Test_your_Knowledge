@@ -118,6 +118,13 @@ export enum ExerciseJustificationKind {
   JUSTIFY_MARKED = "Apenas Selecionadas",
   NO_JUSTIFICATION = "Nenhuma",
 }
+
+export interface Tag {
+  id: string;
+  name: string;
+  path: string;
+}
+
 export type Exercise = OAExercise | TFExercise | MCExercise | CQExercise;
 
 export interface OAProps {}
@@ -170,7 +177,7 @@ export interface ExerciseHeader {
 export interface ExerciseBase {
   title: string;
   statement: ExerciseHeader;
-  tags: string[];
+  tags: Tag[];
 }
 
 export interface ExerciseIdentity {
@@ -436,15 +443,16 @@ export function InitResolutionDataType(type: ExerciseType): ResolutionData {
 export function TranslateExerciseOUT(exercise: Exercise): {
   exerciseTR: any;
   solutionTR: any;
-  //faltam as tags
+  tagsTR: any;
 } {
   let exerciseTR = {};
-
+  let tagsTR = [...exercise.base.tags].map((tag) => tag.id);
   const exerciseBASE = {
     title: exercise.base.title,
     visibility: exercise.identity.visibility,
     statement: exercise.base.statement,
     specialistId: exercise.identity.specialistId,
+    tags: exercise.base.tags,
   };
 
   let solutionTR: any = {};
@@ -515,20 +523,15 @@ export function TranslateExerciseOUT(exercise: Exercise): {
       break;
   }
 
-  return { exerciseTR: exerciseTR, solutionTR: solutionTR };
+  return { exerciseTR: exerciseTR, solutionTR: solutionTR, tagsTR: tagsTR };
 }
 
 export function TranslateExerciseIN(exercise: any): Exercise {
-  const tags: string[] = [];
-  exercise.tags.map((tag: any) => {
-    tags.push(tag.name);
-  });
-
   const exerciseBase = {
     base: {
       title: exercise.title,
       statement: exercise.statement,
-      tags: tags,
+      tags: exercise.tags,
     },
     identity: {
       id: exercise.id,

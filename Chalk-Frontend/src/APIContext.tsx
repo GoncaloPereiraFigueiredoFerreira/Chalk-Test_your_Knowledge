@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useCookies } from "react-cookie";
 import { UserContext } from "./UserContext";
 import { Alert } from "flowbite-react";
@@ -9,7 +9,7 @@ function ContactAPI(
   method: "POST" | "PUT" | "GET" | "DELETE",
   token: string,
   params?: { [key: string]: string },
-  body?: object
+  body?: object | string
 ) {
   const query: URLSearchParams = new URLSearchParams();
 
@@ -26,7 +26,7 @@ function ContactAPI(
       chalkauthtoken: token,
     },
 
-    body: JSON.stringify(body),
+    body: typeof body !== "string" ? JSON.stringify(body) : body,
   });
 }
 
@@ -34,38 +34,31 @@ export type contact = (
   adress: string,
   method: "POST" | "PUT" | "GET" | "DELETE",
   params?: { [key: string]: string },
-  body?: object
-) => Promise<Response>;
+  body?: object | string,
+  responseType?: "json" | "string" | "none"
+) => Promise<any>;
 
 export const APIContext = createContext<{
   contactBACK: contact;
   contactAUTH: contact;
-  contactCHALKY: contact;
 }>({
   contactBACK: (
     adress: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
-    body?: object
+    body?: object | string
   ) => ContactAPI(adress, method, "", params, body),
   contactAUTH: (
     adress: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
-    body?: object
-  ) => ContactAPI(adress, method, "", params, body),
-  contactCHALKY: (
-    adress: string,
-    method: "POST" | "PUT" | "GET" | "DELETE",
-    params?: { [key: string]: string },
-    body?: object
+    body?: object | string
   ) => ContactAPI(adress, method, "", params, body),
 });
 
 export function APIProvider({ children }: any) {
   const AUTHSERVER = import.meta.env.VITE_AUTH;
   const BACKSERVER = import.meta.env.VITE_BACKEND;
-  const CHALKYSERVER = import.meta.env.VITE_AI_API;
   const [cookies] = useCookies(["chalkauthtoken"]);
   const [alertMsg, setAlertMsg] = useState("");
 
@@ -75,7 +68,7 @@ export function APIProvider({ children }: any) {
     endpoint: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
-    body?: object
+    body?: object | string
   ) => {
     return ContactAPI(
       AUTHSERVER + endpoint,
@@ -89,7 +82,8 @@ export function APIProvider({ children }: any) {
     endpoint: string,
     method: "POST" | "PUT" | "GET" | "DELETE",
     params?: { [key: string]: string },
-    body?: object
+    body?: object | string,
+    responseType?: "string" | "json" | "none"
   ) => {
     return ContactAPI(
       BACKSERVER + endpoint,
@@ -104,24 +98,13 @@ export function APIProvider({ children }: any) {
         setTimeout(() => {
           setAlertMsg("");
         }, 5000);
+      } else {
+        if (responseType === undefined || responseType === "json")
+          return response.json();
+        else if (responseType === "string") return response.text();
+        else return;
       }
-
-      return response;
     });
-  };
-  const ContactCHALKY: contact = (
-    endpoint: string,
-    method: "POST" | "PUT" | "GET" | "DELETE",
-    params?: { [key: string]: string },
-    body?: object
-  ) => {
-    return ContactAPI(
-      CHALKYSERVER + endpoint,
-      method,
-      cookies.chalkauthtoken,
-      params,
-      body
-    );
   };
 
   return (
@@ -129,7 +112,6 @@ export function APIProvider({ children }: any) {
       value={{
         contactBACK: ContactBACK,
         contactAUTH: ContactAUTH,
-        contactCHALKY: ContactCHALKY,
       }}
     >
       {children}

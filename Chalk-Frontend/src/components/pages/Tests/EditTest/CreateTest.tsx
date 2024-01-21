@@ -14,13 +14,12 @@ export function CreateTestPage() {
       "tests",
       "POST",
       undefined,
-      CreateTest(user.user?.id ?? "")
-    ).then((response) => {
-      response.text().then((id) => {
-        {
-          navigate("/webapp/tests/" + id + "/edit");
-        }
-      });
+      CreateTest(user.user?.id ?? ""),
+      "string"
+    ).then((id) => {
+      {
+        navigate("/webapp/tests/" + id + "/edit");
+      }
     });
   }, []);
 

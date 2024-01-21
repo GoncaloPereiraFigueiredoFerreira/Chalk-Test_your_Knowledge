@@ -266,6 +266,7 @@ export function ListTests({
   const onPageChange = (page: number) => setCurrentPage(page);
   const [testList, setTestList] = useState<TestList>([]);
   const { user } = useContext(UserContext);
+  const [totalPages, setTotalPages] = useState(1);
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
@@ -278,15 +279,15 @@ export function ListTests({
         courseId: courseId,
         visibilityType: visibilityType,
         tags: requestTags,
-      }).then((response) => {
-        response.json().then((tests) => {
-          tests.map((test: any) => {
-            return (test["tags"] = test.tags.map((tag: any) => {
-              return tag.name;
-            }));
-          });
-          setTestList(tests);
+      }).then((page) => {
+        const tests = page.items;
+        setTotalPages(page.totalPages);
+        tests.map((test: any) => {
+          return (test["tags"] = test.tags.map((tag: any) => {
+            return tag.name;
+          }));
         });
+        setTestList(tests);
       });
     } else {
       contactBACK("tests", "GET", {
@@ -295,37 +296,31 @@ export function ListTests({
         courseId: courseId,
         visibilityType: visibilityType,
         tags: requestTags,
-      }).then((response) => {
-        response.json().then((tests) => {
-          let promises: Promise<any>[] = [];
-          tests.map((test: any) => {
-            promises.push(
-              contactBACK(
-                "tests/" + test.id + "/resolutions/" + user.user!.id + "/last",
-                "GET"
-              )
-                .then((response) => {
-                  return response.json().then((exam) => {
-                    return exam.status.toLowerCase().includes("revised")
-                      ? exam.totalPoints
-                      : undefined;
-                  });
-                })
-                .catch(() => {
-                  return undefined;
-                })
-            );
-          });
-          Promise.all(promises).then((results) => {
-            tests.map((teste: any, index: number) => {
-              teste.totalPoints = results[index];
-              let tags = teste.tags.map((tag: any) => {
-                return tag.name;
-              });
-              teste.tags = tags;
+      }).then((page) => {
+        let tests = page.items;
+        setTotalPages(page.totalPages);
+        let promises: Promise<any>[] = [];
+        tests.map((test: any) => {
+          promises.push(
+            contactBACK(
+              "tests/" + test.id + "/resolutions/" + user.user!.id + "/last",
+              "GET"
+            ).then((exam) => {
+              return exam && exam.status === "REVISED"
+                ? exam.totalPoints
+                : undefined;
+            })
+          );
+        });
+        Promise.all(promises).then((results) => {
+          tests.map((teste: any, index: number) => {
+            teste.totalPoints = results[index];
+            let tags = teste.tags.map((tag: any) => {
+              return tag.name;
             });
-            setTestList(tests);
+            teste.tags = tags;
           });
+          setTestList(tests);
         });
       });
     }
@@ -354,7 +349,7 @@ export function ListTests({
         <div className="flex w-full justify-center">
           <Pagination
             currentPage={currentPage}
-            totalPages={3}
+            totalPages={totalPages}
             onPageChange={onPageChange}
             showIcons
           />

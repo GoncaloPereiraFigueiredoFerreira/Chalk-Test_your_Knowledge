@@ -20,8 +20,6 @@ export function TFEdit({ exercise, context }: TFEditProps) {
   const [openJustificationkind, setOpenJustificationkind] = useState(
     exercise.props.justifyType !== ExerciseJustificationKind.NO_JUSTIFICATION
   );
-  console.log(openJustificationkind);
-  console.log(exercise.props.justifyType);
 
   return (
     <>

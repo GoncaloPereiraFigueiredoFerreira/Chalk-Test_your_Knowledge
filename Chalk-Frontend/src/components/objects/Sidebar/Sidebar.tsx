@@ -58,17 +58,21 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
 
   useEffect(() => {
     if (tagList.length > 0) {
-      contactBACK("tests/autoEvaluation", "POST", {
-        tags: tagList
-          .map((tag) => {
-            return tag.id;
-          })
-          .toString(),
-        nrExercises: "10",
-      }).then((response: Response) => {
-        response.json().then((json) => {
-          navigate("/webapp/tests/" + json.id + "/solve");
-        });
+      contactBACK(
+        "tests/autoEvaluation",
+        "POST",
+        {
+          tags: tagList
+            .map((tag) => {
+              return tag.id;
+            })
+            .toString(),
+          nrExercises: "10",
+        },
+        undefined,
+        "string"
+      ).then((id) => {
+        navigate("/webapp/tests/" + id + "/solve");
       });
     }
   }, [tagList]);
@@ -145,7 +149,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   }
 
   function handleLogout() {
-    contactBACK("users/logout", "POST", undefined, undefined).then(() => {
+    contactBACK("users/logout", "POST", undefined, undefined,"none").then(() => {
       logout();
     });
   }

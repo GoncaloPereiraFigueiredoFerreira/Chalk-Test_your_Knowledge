@@ -2,14 +2,14 @@ import { Button, Modal } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
 import { APIContext } from "../../../APIContext";
 
-interface Tag {
+interface ShowTag {
   id: string;
   name: string;
   path: string;
   expanded: boolean;
 }
 
-export type TagsList = Tag[];
+export type TagsList = ShowTag[];
 
 export interface TagsModalProps {
   openModal: boolean;
@@ -31,26 +31,24 @@ export function TagsFilterModal({
 
   useEffect(() => {
     if (openModal)
-        contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then(
-        (response) => {
-            response.json().then((tags) => {
-            setAllTags(tags);
-            });
+      contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then(
+        (tags) => {
+          setAllTags(tags);
         }
-        );
+      );
   }, [openModal]);
 
   useEffect(() => {
     setExposedTags(allTags.filter((item) => item.path === "/"));
   }, [allTags]);
 
-  const changeSelectedTags = (tag: Tag) => {
+  const changeSelectedTags = (tag: ShowTag) => {
     selectedTags.includes(tag)
       ? setSelectedTags(selectedTags.filter((item) => item != tag))
       : setSelectedTags([...selectedTags, tag]);
   };
 
-  const changeTags = (tag: Tag) => {
+  const changeTags = (tag: ShowTag) => {
     if (tag.expanded === true) {
       tag.expanded = false;
       const tags_to_be_removed = allTags.filter((item) =>
@@ -97,7 +95,7 @@ export function TagsFilterModal({
     resetTags();
   };
 
-  const getTabs = (tag: Tag) => {
+  const getTabs = (tag: ShowTag) => {
     const number_of_tabs = tag.path.split("/").length - 2;
     return number_of_tabs;
   };

@@ -27,6 +27,7 @@ export function ListExercises({
   setEditMenuIsOpen,
 }: ListExercisesProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
   const [newExercisePopUp, setNewExercisePopUp] = useState(false);
   const [changeVisibilityPopUp, setChangeVisibilityPopUp] = useState("");
@@ -38,31 +39,33 @@ export function ListExercises({
       page: (currentPage - 1).toString(),
       itemsPerPage: "10",
       visibility: "public",
-    }).then((response) => {
-      response.json().then((exercises) => {
-        const exerciseL: Exercise[] = [];
-        exercises.map((ex: any) => {
-          exerciseL.push(TranslateExerciseIN(ex));
-        });
-        dispatch({
-          type: ListExerciseActionKind.SET_LIST_EXERCISES,
-          payload: {
-            exercises: exerciseL,
-          },
-        });
+    }).then((page) => {
+      const exercises = page.items;
+      setTotalPages(page.totalPages);
+      const exerciseL: Exercise[] = [];
+      exercises.map((ex: any) => {
+        exerciseL.push(TranslateExerciseIN(ex));
+      });
+      dispatch({
+        type: ListExerciseActionKind.SET_LIST_EXERCISES,
+        payload: {
+          exercises: exerciseL,
+        },
       });
     });
   }, [currentPage]);
 
   const deleteEx = (id: string) => {
-    contactBACK("exercises/" + id, "DELETE").then(() => {
-      dispatch({
-        type: ListExerciseActionKind.REMOVE_EXERCISE,
-        payload: {
-          selectedExercise: id,
-        },
-      });
-    });
+    contactBACK("exercises/" + id, "DELETE", undefined, undefined, "none").then(
+      () => {
+        dispatch({
+          type: ListExerciseActionKind.REMOVE_EXERCISE,
+          payload: {
+            selectedExercise: id,
+          },
+        });
+      }
+    );
   };
 
   return (
@@ -134,7 +137,7 @@ export function ListExercises({
         <div className="w-full flex justify-center">
           <Pagination
             currentPage={currentPage}
-            totalPages={30}
+            totalPages={totalPages}
             onPageChange={onPageChange}
             showIcons
           />
@@ -148,7 +151,8 @@ export function ListExercises({
             "exercises/" + changeVisibilityPopUp + "/visibility",
             "PUT",
             undefined,
-            {} // n acabado
+            newVisibility,
+            "none"
           ).then(() => {
             dispatch({
               type: ListExerciseActionKind.CHANGE_VISIBILITY_EXERCISE,

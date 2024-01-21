@@ -12,16 +12,14 @@ export function EditTest() {
   const { testID } = useParams();
 
   useEffect(() => {
-    contactBACK("tests/" + testID, "GET").then((response) => {
-      response.json().then((testJson: any) => {
-        testJson.groups = testJson.groups.map((group: any) => {
-          group.exercises = group.exercises.map((ex: any) => {
-            return TranslateTestExerciseIN(ex);
-          });
-          return group;
+    contactBACK("tests/" + testID, "GET").then((testJson: any) => {
+      testJson.groups = testJson.groups.map((group: any) => {
+        group.exercises = group.exercises.map((ex: any) => {
+          return TranslateTestExerciseIN(ex);
         });
-        setTest(testJson);
+        return group;
       });
+      setTest(testJson);
     });
   }, []);
 

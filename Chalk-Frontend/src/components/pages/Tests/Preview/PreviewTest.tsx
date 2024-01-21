@@ -33,48 +33,44 @@ export function PreviewTest() {
   const { testID } = useParams();
 
   useEffect(() => {
-    contactBACK("tests/" + testID, "GET").then((response) => {
-      response.json().then((testJson: any) => {
-        testJson.groups = testJson.groups.map((group: any) => {
-          group.exercises = group.exercises.map((ex: any) => {
-            return TranslateTestExerciseIN(ex);
-          });
-          return group;
+    contactBACK("tests/" + testID, "GET").then((testJson: any) => {
+      testJson.groups = testJson.groups.map((group: any) => {
+        group.exercises = group.exercises.map((ex: any) => {
+          return TranslateTestExerciseIN(ex);
         });
-        setTest(testJson);
+        return group;
       });
+      setTest(testJson);
     });
 
     if (user.user?.role === UserRole.STUDENT) {
       contactBACK(
         "tests/" + testID + "/resolutions/" + user.user?.id + "/last",
         "GET"
-      ).then((response) => {
-        response.json().then((res: any) => {
-          const temp: {
-            [id: string]: {
-              resId: string;
-              data: ResolutionData | undefined;
-              points: number;
-              comment: string;
-            };
-          } = {};
+      ).then((res: any) => {
+        const temp: {
+          [id: string]: {
+            resId: string;
+            data: ResolutionData | undefined;
+            points: number;
+            comment: string;
+          };
+        } = {};
 
-          res.groups.map((groupRes: any) => {
-            Object.keys(groupRes.resolutions).map((exRes: string) => {
-              temp[exRes] = {
-                resId: groupRes.resolutions[exRes].resolutionId,
-                data: undefined,
-                points: groupRes.resolutions[exRes].points,
-                comment: "",
-              };
-            });
+        res.groups.map((groupRes: any) => {
+          Object.keys(groupRes.resolutions).map((exRes: string) => {
+            temp[exRes] = {
+              resId: groupRes.resolutions[exRes].resolutionId,
+              data: undefined,
+              points: groupRes.resolutions[exRes].points,
+              comment: "",
+            };
           });
-          setTestRes({
-            resolutions: temp,
-            totalPoints: res.totalPoints,
-            status: res.status,
-          });
+        });
+        setTestRes({
+          resolutions: temp,
+          totalPoints: res.totalPoints,
+          status: res.status,
         });
       });
     }
@@ -89,15 +85,13 @@ export function PreviewTest() {
       contactBACK(
         "exercises/resolutions/" + testResolution.resolutions[selEx].resId,
         "GET"
-      ).then((response) => {
-        response.json().then((exRes) => {
-          const newResData = TranslateTestResolutionIN(exRes.data);
-          const tmp = { ...testResolution };
-          tmp.resolutions[selEx].data = newResData;
-          tmp.resolutions[selEx].points = exRes.points;
-          tmp.resolutions[selEx].comment = exRes.comment.items[0].text;
-          setTestRes(tmp);
-        });
+      ).then((exRes) => {
+        const newResData = TranslateTestResolutionIN(exRes.data);
+        const tmp = { ...testResolution };
+        tmp.resolutions[selEx].data = newResData;
+        tmp.resolutions[selEx].points = exRes.points;
+        tmp.resolutions[selEx].comment = exRes.comment.items[0].text;
+        setTestRes(tmp);
       });
     }
   }, [selEx]);
