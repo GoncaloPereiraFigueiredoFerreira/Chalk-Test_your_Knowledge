@@ -17,7 +17,7 @@ export function PopUp({ show, children, closePopUp }: PopUpProps) {
         <button className="popup-btn" onClick={() => closePopUp()} />
         <div className="flex w-full min-h-max">
           <button className="popup-btn" onClick={() => closePopUp()} />
-          <div className="min-w-max min-h-max p-6 rounded-xl shadow-2xl shadow-gray-800 bg-[#dddddd] dark:bg-gray-600">
+          <div className="min-w-max min-h-max p-6 rounded-xl shadow-2xl shadow-slate-700 dark:shadow-black bg-white dark:bg-slate-800">
             {children}
           </div>
           <button className="popup-btn" onClick={() => closePopUp()} />

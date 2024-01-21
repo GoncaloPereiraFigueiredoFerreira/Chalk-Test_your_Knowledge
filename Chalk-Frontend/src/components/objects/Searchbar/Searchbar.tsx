@@ -40,7 +40,7 @@ export function Searchbar({ setSearch }: any) {
             <input
               type="text"
               className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border-2 border-l-0 bg-inherit text-black border-[#dddddd] dark:text-white placeholder:dark:text-gray-400 dark:border-slate-700 focus:ring-0 focus:border-[#dddddd] focus:dark:border-slate-700"
-              placeholder="Search..."
+              placeholder="Procurar..."
               value={searchText}
               onChange={(text) => setSearchs(text.target.value)}
               required

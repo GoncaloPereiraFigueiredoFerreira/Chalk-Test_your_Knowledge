@@ -1,3 +1,4 @@
+import { textToHTML } from "../../../interactiveElements/TextareaBlock";
 import { ExerciseHeader } from "../Exercise";
 
 export enum ImgPos {
@@ -35,15 +36,17 @@ export function ExerciseHeaderComp({ header }: HeaderProps) {
       }
     }
     return (
-      <div className={"mx-12 mb-6 " + style}>
+      <div className={"pb-4 text-base " + style}>
         {ImgPos.LEFT === header.imagePosition ? imgComponent : null}
-        {header.text}
+        {textToHTML(header.text)}
         {ImgPos.LEFT === header.imagePosition ? null : imgComponent}
       </div>
     );
   } else {
     return (
-      <div className="mx-12 mb-6 text-black dark:text-white">{header.text}</div>
+      <div className="pb-4 text-black dark:text-white text-base">
+        {textToHTML(header.text)}
+      </div>
     );
   }
 }

@@ -3,6 +3,7 @@ import { MdOutlineAttachFile } from "react-icons/md";
 import { FaBold } from "react-icons/fa";
 import { FaItalic } from "react-icons/fa";
 import { ImUnderline } from "react-icons/im";
+import { elements } from "chart.js";
 
 interface TextareaBlockProps {
   className?: string;
@@ -117,7 +118,7 @@ export function TextareaBlock({
         <div
           className={`${
             hasToolbar ? "" : "hidden"
-          } flex items-center justify-between px-3 py-2 border-b-2 bg-[#dddddd] border-[#dddddd] dark:border-slate-700 dark:bg-slate-800`}
+          } flex items-center justify-between px-3 py-2 border-b-2 bg-[#dddddd] border-[#dddddd] dark:border-slate-700 dark:bg-[#2e3c50]`}
         >
           <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#bbbbbb] dark:divide-slate-600">
             <div className="flex items-center space-x-1 sm:pr-4">
@@ -182,15 +183,18 @@ export function textToHTML(stringHTML: string) {
   let newStringHTML: string;
   const divRef = useRef<HTMLDivElement>(null);
 
-  newStringHTML = stringHTML
-    .replace("<i>", "<em>")
-    .replace("</i>", "</em>")
-    .replace("<b>", "<strong>")
-    .replace("</b>", "</strong>");
+  useEffect(() => {
+    if (divRef.current) {
+      newStringHTML = stringHTML
+        .replace("<i>", "<em>")
+        .replace("</i>", "</em>")
+        .replace("<b>", "<strong>")
+        .replace("</b>", "</strong>");
 
-  if (divRef.current) {
-    divRef.current.innerHTML = newStringHTML ?? "";
-  }
+      divRef.current.innerHTML = newStringHTML ?? "";
+      console.log("asdasdasdasdas");
+    }
+  }, [divRef, stringHTML]);
 
   return <div className="block" ref={divRef}></div>;
 }

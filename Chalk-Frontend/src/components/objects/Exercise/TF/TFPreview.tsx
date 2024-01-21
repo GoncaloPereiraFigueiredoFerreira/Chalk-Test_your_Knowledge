@@ -11,17 +11,8 @@ export function TFPreview({ exercise, position, context }: TFPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />
-      <p className="text-black dark:text-white">
-        <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
-      </p>
-      <div className="grid-layout-exercise mt-4 gap-2 min-h-max items-center">
-        <div className="flex text-xl font-bold px-4 text-black dark:text-white">
-          V
-        </div>
-        <div className="flex text-xl font-bold px-4 text-black dark:text-white">
-          F
-        </div>
-        <div></div>
+      <div>Indique se as seguintes opções são Verdadeiras ou Falsas:</div>
+      <div className="flex flex-col pl-4 pr-4 py-4 text-black dark:text-white">
         {Object.entries(exercise.props.items).map(([index, value]) => (
           <TFShowStatement
             key={index}
@@ -40,7 +31,7 @@ export function TFPreview({ exercise, position, context }: TFPreviewProps) {
 function TFShowStatement(props: any) {
   return (
     <>
-      <div className="flex items-start justify-center">
+      <div className="flex flex-row px-4 py-2 gap-4 items-center">
         <input
           className="radio-green"
           type="radio"
@@ -53,8 +44,6 @@ function TFShowStatement(props: any) {
           }
           disabled
         ></input>
-      </div>
-      <div className="flex items-start justify-center">
         <input
           className="radio-red"
           type="radio"
@@ -67,9 +56,7 @@ function TFShowStatement(props: any) {
           }
           disabled
         ></input>
-      </div>
-      <div className="">
-        <p>{props.text}</p>
+        <div className="text-base">{props.text}</div>
       </div>
     </>
   );

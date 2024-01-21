@@ -1,5 +1,4 @@
 import { ShowExercise } from "./ShowExercise";
-import "./ListExercises.css";
 import { useContext, useEffect, useState } from "react";
 import { CreateNewExercisePopUp } from "./CreateNewExercisePopUp";
 import {

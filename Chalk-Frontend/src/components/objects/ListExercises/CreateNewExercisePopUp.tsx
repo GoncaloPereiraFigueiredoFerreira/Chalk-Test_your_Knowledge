@@ -1,4 +1,4 @@
-import "./ListExercises.css";
+import "./PopUpListExercise.css";
 import { useState } from "react";
 import { ExerciseType } from "../Exercise/Exercise";
 import { PopUp } from "../../interactiveElements/PopUp";
@@ -27,14 +27,14 @@ export function CreateNewExercisePopUp({
         <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-gray-600 dark:text-white border-b-2 border-[#dddddd]">
           Criar novo exercício
         </label>
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 gap-4 py-4 px-4">
           <button
             onClick={() => setNewExercisetype(ExerciseType.MULTIPLE_CHOICE)}
             className={`${
               ExerciseType.MULTIPLE_CHOICE != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } w-60 btn-ListExercises group`}
+            } rounded-xl btn-PopUp group`}
           >
             <CiCircleList className="size-10 stroke-1" />
             Escolha múltipla
@@ -43,9 +43,9 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.OPEN_ANSWER)}
             className={`${
               ExerciseType.OPEN_ANSWER != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } btn-ListExercises group`}
+            } rounded-xl btn-PopUp group`}
           >
             <PiTextTBold className="size-10" />
             Resposta aberta
@@ -54,9 +54,9 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.TRUE_OR_FALSE)}
             className={`${
               ExerciseType.TRUE_OR_FALSE != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } w-60 btn-ListExercises group`}
+            } rounded-xl btn-PopUp group`}
           >
             <TbCheckbox className="size-10 stroke-[2.3]" />
             Verdadeiro ou falso
@@ -65,20 +65,20 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.CHAT)}
             className={`${
               ExerciseType.CHAT != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025]"
+                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } w-60 btn-ListExercises group`}
+            } rounded-xl btn-PopUp group`}
           >
             <PiChatsBold className="size-10" />
             Chat
           </button>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-4">
           <button
             onClick={() => createNewExercise(newExercisetype)}
-            className="bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] btn-ListExercises w-fit group"
+            className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
           >
-            Seguinte
+            Criar Exercício
           </button>
         </div>
       </>

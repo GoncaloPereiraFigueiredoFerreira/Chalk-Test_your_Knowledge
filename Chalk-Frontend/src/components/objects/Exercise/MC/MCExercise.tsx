@@ -58,11 +58,11 @@ export function MCExerciseComp({
   return (
     <>
       {context.context !== ExerciseContext.EDIT ? (
-        <div className="m-5 text-4xl text-black dark:text-white ">
+        <div className="p-4 text-2xl font-medium text-black dark:text-white">
           {position + ") " + exercise.base.title}
         </div>
       ) : null}
-      <div className="m-5 text-lg ">{exerciseDisplay}</div>
+      <div className="px-12 text-lg">{exerciseDisplay}</div>
     </>
   );
 }
