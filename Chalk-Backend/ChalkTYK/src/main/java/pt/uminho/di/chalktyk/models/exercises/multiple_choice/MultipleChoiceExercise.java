@@ -43,10 +43,10 @@ public class MultipleChoiceExercise extends Exercise {
 	@Override
 	public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
 		if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType()))
-			throw new BadInputException("Exercise resolution does not match exercise type (multiple choice).");
+			throw new BadInputException("Exercise (re)solution does not match exercise type (multiple choice).");
 		// checks if the resolution answers to a subset of the items. Cannot have answers to not existent items.
 		if(!items.keySet().containsAll(((MultipleChoiceData) exerciseResolutionData).getIds()))
-			throw new BadInputException("Exercise resolution has items that do not refer to any question.");
+			throw new BadInputException("Exercise (re)solution has items that do not refer to any question.");
 		exerciseResolutionData.verifyInsertProperties();
 	}
 

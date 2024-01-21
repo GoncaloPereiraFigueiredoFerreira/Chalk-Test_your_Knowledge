@@ -3,6 +3,7 @@ package pt.uminho.di.chalktyk.services;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 import pt.uminho.di.chalktyk.models.exercises.*;
 import pt.uminho.di.chalktyk.models.miscellaneous.Tag;
 import pt.uminho.di.chalktyk.models.miscellaneous.Visibility;
@@ -10,6 +11,7 @@ import pt.uminho.di.chalktyk.models.users.Student;
 import pt.uminho.di.chalktyk.services.exceptions.BadInputException;
 import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 import pt.uminho.di.chalktyk.services.exceptions.ForbiddenException;
+import pt.uminho.di.chalktyk.services.exceptions.ServiceException;
 
 import java.util.List;
 import java.util.Set;
@@ -178,7 +180,10 @@ public interface IExercisesService{
      * @throws BadInputException if there is some problem regarding the resolution of the exercise,
      *                           like the type of resolution does not match the type of the exercise
      */
-    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException;
+    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException, ForbiddenException;
+
+    @Transactional(rollbackFor = ServiceException.class)
+    ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData, Integer submissionNr) throws NotFoundException, BadInputException, ForbiddenException;
 
     /**
      * Create a resolution for a specific exercise.

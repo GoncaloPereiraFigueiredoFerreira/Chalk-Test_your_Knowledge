@@ -97,6 +97,9 @@ public interface ExerciseResolutionDAO extends JpaRepository<ExerciseResolution,
     @Query("SELECT r FROM ExerciseResolution r JOIN FETCH r.student s WHERE r.student.id = :studentId AND r.exercise.id = :exerciseId AND r.submissionNr = (SELECT MAX(r2.submissionNr) FROM ExerciseResolution r2 WHERE r2.exercise.id = :exerciseId AND r.student.id = r2.student.id)")
     ExerciseResolution getStudentLastResolution(@Param("studentId") String studentId, @Param("exerciseId") String exerciseId);
 
+    @Query("SELECT r FROM ExerciseResolution r WHERE r.student.id = :studentId AND r.exercise.id = :exerciseId AND r.submissionNr = :submissionNr")
+    ExerciseResolution getStudentResolutionBySubmissionNr(@Param("studentId") String studentId, @Param("exerciseId") String exerciseId, @Param("submissionNr") int submissionNr);
+
     /**
      * Counts the number of resolutions made by a student for a specific exercise.
      * @param exerciseId identifier of the exercise

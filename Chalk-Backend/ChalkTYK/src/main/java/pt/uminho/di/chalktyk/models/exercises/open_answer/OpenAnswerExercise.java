@@ -20,7 +20,7 @@ public class OpenAnswerExercise extends Exercise {
 	@Override
     public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
         if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType()))
-            throw new BadInputException("Exercise resolution does not match exercise type (open answer).");
+            throw new BadInputException("Exercise (re)solution does not match exercise type (open answer).");
         OpenAnswerData openAnswerData = (OpenAnswerData) exerciseResolutionData;
         openAnswerData.verifyInsertProperties();
     }

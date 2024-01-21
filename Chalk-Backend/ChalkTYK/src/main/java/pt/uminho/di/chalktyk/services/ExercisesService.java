@@ -818,7 +818,17 @@ public class ExercisesService implements IExercisesService{
      */
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException {
+    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData) throws NotFoundException, BadInputException, ForbiddenException {
+        return _createExerciseResolution(studentId, exerciseId, resolutionData, null);
+    }
+
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public ExerciseResolution createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData, Integer submissionNr) throws NotFoundException, BadInputException, ForbiddenException {
+        return _createExerciseResolution(studentId, exerciseId, resolutionData, submissionNr);
+    }
+
+    private ExerciseResolution _createExerciseResolution(String studentId, String exerciseId, ExerciseResolutionData resolutionData, Integer submissionNr) throws NotFoundException, BadInputException, ForbiddenException {
         // checks if exercise exists
         Exercise exercise = exerciseDAO.findById(exerciseId).orElse(null);
         if (exercise == null)
@@ -840,14 +850,22 @@ public class ExercisesService implements IExercisesService{
                 null, // new resolution so it cannot have a comment
                 exercise,
                 student
-                );
+        );
 
         // checks the resolution data against the exercise data
         checkResolutionData(resolution);
 
         // sets resolution number
-        ExerciseResolution lastResolution = exerciseResolutionDAO.getStudentLastResolution(studentId,exerciseId);
-        int submissionNr = lastResolution != null ? lastResolution.getSubmissionNr() + 1 : 1;
+        if(submissionNr == null) {
+            ExerciseResolution lastResolution = exerciseResolutionDAO.getStudentLastResolution(studentId, exerciseId);
+            submissionNr = lastResolution != null ? lastResolution.getSubmissionNr() + 1 : 1;
+        }else{
+            // Checks if there is no resolution with the given submission number
+            ExerciseResolution resolutionWithSubmissionNr =
+                    exerciseResolutionDAO.getStudentResolutionBySubmissionNr(studentId, exerciseId, submissionNr);
+            if(resolutionWithSubmissionNr != null)
+                throw new ForbiddenException("Could not create exercise resolution: There is already a resolution with the given submission number.");
+        }
         resolution.setSubmissionNr(submissionNr);
 
         // persists resolution

@@ -78,9 +78,9 @@ public class TestsApiController implements TestsApi {
             }
 
             if(role.equals("STUDENT"))
-                perm = exercisesTestsAuthorization.canStudentGetTest(userId, visibility, courseId, institutionId);
+                perm = exercisesTestsAuthorization.canStudentListTest(userId, visibility, courseId, institutionId);
             else if (role.equals("SPECIALIST")) {
-                perm = exercisesTestsAuthorization.canSpecialistGetTest(userId, specialistId, visibility, courseId, institutionId);
+                perm = exercisesTestsAuthorization.canSpecialistListTest(userId, specialistId, visibility, courseId, institutionId);
             }
 
             if(perm)

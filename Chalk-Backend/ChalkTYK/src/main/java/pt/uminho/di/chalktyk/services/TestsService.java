@@ -926,8 +926,6 @@ public class TestsService implements ITestsService {
         if (testId == null)
             throw new BadInputException("Cannot create test resolution: resolution must belong to a test");
         Test test = _getTestById(testId);
-        if (test == null)
-            throw new NotFoundException("Cannot create test resolution: couldn't find test");
         if (resolution == null)
             throw new BadInputException("Cannot create a test resolution with a 'null' body");
 
@@ -976,6 +974,10 @@ public class TestsService implements ITestsService {
 
         student = entityManager.getReference(Student.class, student.getId());
         resolution.setStudent(student);
+
+        TestResolution lastRes = resolutionDAO.getStudentLastResolution(student.getId(), testId);
+        int submissionNr = lastRes != null ? lastRes.getSubmissionNr() + 1 : 1;
+        resolution.setSubmissionNr(submissionNr);
 
         return resolutionDAO.save(resolution);
     }
@@ -1115,16 +1117,16 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public Boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
+    public boolean canStudentSubmitResolution(String testId, String studentId) throws NotFoundException {
         if (!testDAO.existsById(testId))
             throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't find test with given id.");
         if (!studentsService.existsStudentById(studentId))
             throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't find student with given id.");
-
         Test test = _getTestById(testId);
-        if (test == null)
-            throw new NotFoundException("Can't check if student '" + studentId + "' can make a submission for test '" + testId + "'': couldn't fetch non relational test with given id.");
+        return _canStudentSubmitTestResolution(test, studentId);
+    }
 
+    private boolean _canStudentSubmitTestResolution(Test test, String studentId) throws NotFoundException {
         Visibility vis = test.getVisibility();
         if (vis.equals(Visibility.PRIVATE)){ return false; }
         else if (vis.equals(Visibility.COURSE)){
@@ -1360,8 +1362,11 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException {
+    public String uploadResolution(String testResId, String exeId, ExerciseResolution resolution) throws NotFoundException, BadInputException, ForbiddenException {
         TestResolution testRes = getTestResolutionById(testResId);
+
+        if(!testRes.getStatus().equals(TestResolutionStatus.ONGOING))
+            throw new ForbiddenException("Could not upload exercise resolution: Test was already submitted.");
 
         boolean found = false;
         String res = null;
@@ -1375,7 +1380,7 @@ public class TestsService implements ITestsService {
                     // if associated with exercise id there is no info about a resolution,
                     // then an exercise resolution is created
                     if(resInfo == null){
-                        resolution = exercisesService.createExerciseResolution(testRes.getStudentId(), exeId, resolution.getData());
+                        resolution = exercisesService.createExerciseResolution(testRes.getStudentId(), exeId, resolution.getData(), testRes.getSubmissionNr());
                         resolution = associateExerciseResToTestRes(resolution, testRes);
                         resInfo = new TestExerciseResolutionBasic(resolution.getId(), 0.0f); // TODO - acho que deveria ser null, mas como o Ray meteu a 0.0f noutros sitios, nao quero mudar a logica
                         mapExeRes.put(exeId, resInfo); // updates info about the resolution in the map
@@ -1619,12 +1624,14 @@ public class TestsService implements ITestsService {
         throw new NotFoundException("Could not get exercise resolution: there is no exercise in the test with the given identifier");
     }
 
-    public void submitTestResolution(String testResId) throws NotFoundException {
+    public void submitTestResolution(String testResId) throws NotFoundException, ForbiddenException {
         TestResolution resolution = resolutionDAO.findById(testResId).orElse(null);
         if (resolution == null)
             throw new NotFoundException("Could not submit test: couldn't find test resolution");
 
-        resolution.setSubmissionNr(resolution.getSubmissionNr() + 1);
+        if(!resolution.getStatus().equals(TestResolutionStatus.ONGOING))
+            throw new ForbiddenException("Could not submit test: Test was already submitted.");
+
         resolution.setSubmissionDate(LocalDateTime.now());
         resolutionDAO.save(resolution);
         automaticCorrectionSingle(testResId, "auto");

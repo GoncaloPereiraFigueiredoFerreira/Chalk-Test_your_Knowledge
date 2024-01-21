@@ -51,7 +51,7 @@ public class ChatExercise extends Exercise {
     @Override
     public void verifyResolutionProperties(ExerciseResolutionData exerciseResolutionData) throws BadInputException {
         if(exerciseResolutionData == null || !exerciseResolutionData.getType().equals(this.getExerciseType())) {
-            throw new BadInputException("Exercise resolution does not match exercise type (chat exercise)");
+            throw new BadInputException("Exercise (re)solution does not match exercise type (chat exercise)");
         }
         ChatExerciseData chatExerciseData = (ChatExerciseData) exerciseResolutionData;
         chatExerciseData.verifyInsertProperties();

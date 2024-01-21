@@ -35,4 +35,8 @@ public interface TestResolutionDAO extends JpaRepository<TestResolution,String> 
 
     @Query(value = "SELECT DISTINCT studentid FROM test_resolution WHERE testid = :testId", nativeQuery = true)
     List<String> getDistinctStudentsForTest(@Param("testId") String testId);
+    
+    @Query("SELECT r FROM TestResolution r JOIN FETCH r.student s WHERE r.student.id = :studentId AND r.test.id = :testId AND r.submissionNr = (SELECT MAX(r2.submissionNr) FROM TestResolution r2 WHERE r2.test.id = :testId AND r.student.id = r2.student.id)")
+    TestResolution getStudentLastResolution(@Param("studentId") String studentId, @Param("testId") String testId);
+
 }

@@ -5,7 +5,12 @@ import pt.uminho.di.chalktyk.services.exceptions.NotFoundException;
 
 public interface IExercisesTestsAuthorization {
     boolean canStudentGetExercise(String studentId, Visibility vis, String courseId, String institutionId);
+
+    boolean canStudentListTest(String studentId, Visibility vis, String courseId, String institutionId);
+
     boolean canStudentGetExercise(String studentId, String exerciseId) throws NotFoundException;
+
+    boolean canStudentListExercise(String studentId, Visibility vis, String courseId, String institutionId);
 
     boolean canStudentGetTest(String studentId, Visibility vis, String courseId, String institutionId);
 
@@ -15,7 +20,12 @@ public interface IExercisesTestsAuthorization {
 
     boolean canSpecialistGetExercise(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId);
     boolean canSpecialistGetExercise(String specialistId, String exerciseId) throws NotFoundException;
+
+    boolean canSpecialistListExercise(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId);
+
     boolean canSpecialistGetTest(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId);
+
+    boolean canSpecialistListTest(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId);
 
     boolean canSpecialistAccessExercise(String specialistId, String ownerId, Visibility vis, String courseId, String institutionId);
     boolean canSpecialistAccessExercise(String specialistId, String exerciseId) throws NotFoundException;
