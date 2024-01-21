@@ -242,7 +242,7 @@ def eval_oral():
 
     ret = resp
 
-    return ret
+    return json.dumps(ret,ensure_ascii=False)
 
 if __name__ == '__main__':
     api.run(host="0.0.0.0")

@@ -221,7 +221,7 @@ def gen_user_oral(answer):
     return {"role":"user","content":answer}
 
 def gen_sys_eval_oral(topics):
-    ret = "Consider the following topics:\n{}You will be provided with question and answers referent to the topics presented. You must evaluate the answers from 0 to 10 based on who the answers cover the topics presented.\nThe output must only be in json, with the format {{\"Cotation\": evaluation}}. "
+    ret = "Consider the following topics:\n{}You will be provided with question and answers referent to the topics presented. You must evaluate the answers from 0 to 10 and a comment based on who the answers cover the topics presented.\nThe output must only be in json, with the format {{\"Cotation\": evaluation, \"Comment\":comment}}. "
     aux = ""
 
     for i in topics:
