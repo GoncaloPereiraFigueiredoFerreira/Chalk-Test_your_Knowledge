@@ -281,7 +281,7 @@ public interface ITestsService {
      * @throws BadInputException if any property of the test resolution is not valid.
      * @throws NotFoundException if no test was found with the given id
      **/
-    String startTest(String testId, String studentId) throws BadInputException, NotFoundException;
+    String startTest(String testId, String studentId) throws BadInputException, NotFoundException, ForbiddenException;
 
     /**
      * Submits a test resolution and revises it (with 'auto' correction type)

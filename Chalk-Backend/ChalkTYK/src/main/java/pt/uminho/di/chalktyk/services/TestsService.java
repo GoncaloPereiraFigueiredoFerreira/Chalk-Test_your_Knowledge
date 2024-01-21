@@ -156,7 +156,7 @@ public class TestsService implements ITestsService {
         body.calculatePoints(); // updates global/group points
         body.setCreationDate(LocalDateTime.now()); // set creation date
         body.verifyProperties();
-        body.setId(null);                       // to prevent overwrite attacks
+        body.setId(null); // to prevent overwrite attacks
 
         // Check if specialist is valid
         String specialistId = body.getSpecialistId();
@@ -225,6 +225,7 @@ public class TestsService implements ITestsService {
                         if (tmp.getTags() != null)
                             tagIds = tmp.getTags().stream().map(Tag::getId).toList();
                         tmp.setSpecialist(specialist);
+                        tmp.setVisibility(Visibility.TEST); // set visibility to test
                         dupExerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
                     }
 
@@ -459,11 +460,11 @@ public class TestsService implements ITestsService {
         if (test == null)
             throw new NotFoundException("Couldn't update test publish date: couldn't find test with id '" + testId + "'");
 
-        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(testId);
-        if (!resolutions.isEmpty())
+        boolean hasResolutions = resolutionDAO.existsTestResolutions(testId);
+        if (hasResolutions)
             throw new BadInputException("Couldn't update test publish date: there are already some test resolutions.");
-
-        if (test.getCreationDate().isAfter(publishDate))
+        
+        if (publishDate != null && test.getCreationDate().isAfter(publishDate))
             publishDate = test.getCreationDate();
 
         test.setPublishDate(publishDate);
@@ -471,15 +472,16 @@ public class TestsService implements ITestsService {
     }
 
     private Test _updateTestPublishDate(Test test, LocalDateTime publishDate) throws BadInputException {
-        List<TestResolution> resolutions = resolutionDAO.getTestResolutions(test.getId());
-
-        if (!resolutions.isEmpty())
+        assert test != null;
+        boolean hasResolutions = resolutionDAO.existsTestResolutions(test.getId());
+        if (hasResolutions)
             throw new BadInputException("Couldn't update test publish date: there are already some test resolutions.");
 
-        if (test.getCreationDate().isAfter(publishDate))
+        if (publishDate != null && test.getCreationDate().isAfter(publishDate))
             publishDate = test.getCreationDate();
 
         test.setPublishDate(publishDate);
+        testDAO.save(test);
         return test;
     }
 
@@ -577,34 +579,45 @@ public class TestsService implements ITestsService {
             for (TestExercise exe: tg.getExercises()){
                 // duplicate or persist exercise
                 String exerciseId;
+                if(exe != null) {
+                    // if the exercise is a concrete exercise, the exercise must be persisted
+                    // and a reference, with the id of the persisted exercise, needs to be created.
+                    // This allows the exercises to be persisted independently of the test.
+                    if (exe instanceof ConcreteExercise ce) {
+                        Exercise tmp = ce.getExercise();
+                        List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                        tmp.setVisibility(Visibility.TEST); // set visibility to test
 
-                // if the exercise is a concrete exercise, the exercise must be persisted
-                // and a reference, with the id of the persisted exercise, needs to be created.
-                // This allows the exercises to be persisted independently of the test.
-                if (exe instanceof ConcreteExercise ce){
-                    Exercise tmp = ce.getExercise();
-                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
-                    exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
-                    exercisesCollectionChanged = true;
-                }
-                // Else the exercise is a reference to an existing exercise.
-                // First we need to check if it was already an exercise of the
-                // test. If it isn't the exercise needs to be duplicated and
-                // a new reference, containing the id of the duplicate,
-                // needs to be created.
-                else {
-                    // checks if exercise belonged to the test already
-                    if(ogExercisesIds.contains(exe.getId())){
-                        exerciseId = exe.getId();
-                        ogExercisesIds.remove(exe.getId());
-                    } else {
-                        exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
-                        exercisesCollectionChanged = true;
+                        // checks if exercise with the given id already existed in the collection.
+                        // if so, the exercise body must be updated.
+                        if(ogExercisesIds.contains(tmp.getId())){
+                            exerciseId = exe.getId();
+                            ogExercisesIds.remove(exerciseId);
+                            exercisesService.updateAllOnExercise(exerciseId, tmp, tmp.getRubric(), tmp.getSolution(), tagIds, Visibility.TEST);
+                        }else{
+                            exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                            exercisesCollectionChanged = true;
+                        }
                     }
+                    // Else the exercise is a reference to an existing exercise.
+                    // First we need to check if it was already an exercise of the
+                    // test. If it isn't the exercise needs to be duplicated and
+                    // a new reference, containing the id of the duplicate,
+                    // needs to be created.
+                    else {
+                        // checks if exercise belonged to the test already
+                        if (ogExercisesIds.contains(exe.getId())) {
+                            exerciseId = exe.getId();
+                            ogExercisesIds.remove(exe.getId());
+                        } else {
+                            exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                            exercisesCollectionChanged = true;
+                        }
+                    }
+                    ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
+                    newExes.add(newExe);
+                    allNewExesIds.add(exerciseId);
                 }
-                ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
-                newExes.add(newExe);
-                allNewExesIds.add(exerciseId);
             }
 
             TestGroup newTG = new TestGroup(tg.getGroupInstructions(), tg.getGroupPoints(), newExes);
@@ -657,34 +670,45 @@ public class TestsService implements ITestsService {
         for (TestExercise exe: group.getExercises()){
             // duplicate or persist exercise
             String exerciseId;
+            if(exe != null) {
+                // if the exercise is a concrete exercise, the exercise must be persisted
+                // and a reference, with the id of the persisted exercise, needs to be created.
+                // This allows the exercises to be persisted independently of the test.
+                if (exe instanceof ConcreteExercise ce) {
+                    Exercise tmp = ce.getExercise();
+                    List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
+                    tmp.setVisibility(Visibility.TEST); // set visibility to test
 
-            // if the exercise is a concrete exercise, the exercise must be persisted
-            // and a reference, with the id of the persisted exercise, needs to be created.
-            // This allows the exercises to be persisted independently of the test.
-            if (exe instanceof ConcreteExercise ce){
-                Exercise tmp = ce.getExercise();
-                List<String> tagIds = tmp.getTags().stream().map(Tag::getId).toList();
-                exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
-                exercisesCollectionChanged = true;
-            }
-            // Else the exercise is a reference to an existing exercise.
-            // First we need to check if it was already an exercise of the
-            // test. If it isn't the exercise needs to be duplicated and
-            // a new reference, containing the id of the duplicate,
-            // needs to be created.
-            else {
-                // checks if exercise belonged to the test already
-                if(ogExercisesIds.contains(exe.getId())){
-                    exerciseId = exe.getId();
-                    ogExercisesIds.remove(exe.getId());
-                } else {
-                    exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
-                    exercisesCollectionChanged = true;
+                    // checks if exercise with the given id already existed in the collection.
+                    // if so, the exercise body must be updated.
+                    if(ogExercisesIds.contains(tmp.getId())){
+                        exerciseId = exe.getId();
+                        ogExercisesIds.remove(exerciseId);
+                        exercisesService.updateAllOnExercise(exerciseId, tmp, tmp.getRubric(), tmp.getSolution(), tagIds, Visibility.TEST);
+                    }else{
+                        exerciseId = exercisesService.createExercise(tmp, tmp.getSolution(), tmp.getRubric(), tagIds);
+                        exercisesCollectionChanged = true;
+                    }
                 }
+                // Else the exercise is a reference to an existing exercise.
+                // First we need to check if it was already an exercise of the
+                // test. If it isn't the exercise needs to be duplicated and
+                // a new reference, containing the id of the duplicate,
+                // needs to be created.
+                else {
+                    // checks if exercise belonged to the test already
+                    if (ogExercisesIds.contains(exe.getId())) {
+                        exerciseId = exe.getId();
+                        ogExercisesIds.remove(exe.getId());
+                    } else {
+                        exerciseId = exercisesService.duplicateExerciseById(specialistId, exe.getId(), null, Visibility.TEST);
+                        exercisesCollectionChanged = true;
+                    }
+                }
+                ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
+                newExes.add(newExe);
+                allNewExesIds.add(exerciseId);
             }
-            ReferenceExercise newExe = new ReferenceExercise(exerciseId, exe.getPoints());
-            newExes.add(newExe);
-            allNewExesIds.add(exerciseId);
         }
 
         TestGroup newTG = new TestGroup(group.getGroupInstructions(), group.getGroupPoints(), newExes);
@@ -899,14 +923,18 @@ public class TestsService implements ITestsService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public String startTest(String testId, String studentId) throws BadInputException, NotFoundException {
+    public String startTest(String testId, String studentId) throws BadInputException, NotFoundException, ForbiddenException {
         Test test = testDAO.findById(testId).orElse(null);
         if (test == null)
             throw new NotFoundException("Can't start test: couldn't find test with id '" + testId + "'");
         Student student = studentsService.getStudentById(studentId);
         if (student == null)
             throw new NotFoundException("Can't start test: couldn't find student with id '" + studentId + "'");
-
+        
+        LocalDateTime now = LocalDateTime.now();
+        if(test.getPublishDate() == null || test.getPublishDate().isAfter(now))
+            throw new ForbiddenException("Could not start test: The test has not been published yet.");
+        
         TestResolution resolution = new TestResolution(null,
                 LocalDateTime.now(),
                 null,
@@ -1428,6 +1456,7 @@ public class TestsService implements ITestsService {
         List<String> tagIds = new ArrayList<>();
         if (exercise instanceof ConcreteExercise ce){
             Exercise exe = ce.getExercise();
+            exe.setVisibility(Visibility.TEST);
             if (exe.getTags() != null)
                 tagIds = exe.getTags().stream().map(Tag::getId).toList();
             dupExeId = exercisesService.createExercise(exe, exe.getSolution(), exe.getRubric(), tagIds);
@@ -1439,7 +1468,7 @@ public class TestsService implements ITestsService {
             if (exe == null)
                 throw new NotFoundException("Couldn't add exercise to test: couldn't find exercise with id '" + re.getId() + "'");
             
-            dupExeId = exercisesService.duplicateExerciseById(exe.getSpecialistId(), exe.getId());
+            dupExeId = exercisesService.duplicateExerciseById(exe.getSpecialistId(), exe.getId(), null, Visibility.TEST);
             exeFinalId = dupExeId;
             points = re.getPoints();
             tagIds = exe.getTags().stream().map(Tag::getId).toList();

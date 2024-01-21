@@ -236,7 +236,7 @@ public class TestsServiceTest {
     */
 
     @Test
-    public void deleteTest() throws BadInputException, NotFoundException, InterruptedException {
+    public void deleteTest() throws BadInputException, NotFoundException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
@@ -264,7 +264,7 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void startTest() throws NotFoundException, BadInputException {
+    public void startTest() throws NotFoundException, BadInputException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
 
         String testId = testsService.createTest(t1);
@@ -292,7 +292,7 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void deleteTestResolution() throws BadInputException, NotFoundException, InterruptedException {
+    public void deleteTestResolution() throws BadInputException, NotFoundException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
@@ -315,7 +315,7 @@ public class TestsServiceTest {
     }
 
     @Test
-    public void getTestResolutions() throws NotFoundException, BadInputException, InterruptedException {
+    public void getTestResolutions() throws NotFoundException, BadInputException, InterruptedException, ForbiddenException {
         pt.uminho.di.chalktyk.models.tests.Test t1 = buildTest(false,75);
         String testId = testsService.createTest(t1);
 
