@@ -766,6 +766,7 @@ export function CreateTest({ test }: CreateTestProps) {
                   visibility: testState.test.visibility,
                   courseId: testState.test.courseId,
                   title: testState.test.title,
+                  tags: testState.test.tags,
                   globalInstructions: testState.test.globalInstructions,
                 }}
                 saveEdit={(state) => {

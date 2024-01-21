@@ -10,6 +10,8 @@ import { textToHTML } from "../../interactiveElements/TextareaBlock";
 import { SortableContext } from "@dnd-kit/sortable";
 import { UserContext } from "../../../UserContext";
 import { translateVisibilityToString } from "./EditTestInfo";
+import { APIContext } from "../../../APIContext";
+import { useParams } from "react-router-dom";
 
 interface EditTestProps {
   exerciseID: {
@@ -36,6 +38,8 @@ export function EditTestDragDrop({
   const [newExercisePopUp, setNewExercisePopUp] = useState(-1);
   const { testState, dispatch } = useEditTestContext();
   const { user } = useContext(UserContext);
+  const { contactBACK } = useContext(APIContext);
+  const { testID } = useParams();
 
   return (
     <div className="flex flex-col w-full bg-white dark:bg-black min-h-max dark:text-white">
@@ -45,6 +49,36 @@ export function EditTestDragDrop({
             ? testState.test.title
             : "Novo Teste - " + draggingExercises}
         </div>
+        <button
+          type="button"
+          disabled={
+            testState.test.publishDate !== null &&
+            testState.test.publishDate !== ""
+          }
+          onClick={() => {
+            let date = new Date().toISOString();
+            contactBACK(
+              "tests/" + testID + "/publishDate",
+              "PUT",
+              undefined,
+              { value: date },
+              "none"
+            ).then(() => {
+              dispatch({
+                type: EditTestActionKind.PUBLISH_TEST,
+                dataString: date,
+              });
+            });
+          }}
+          className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+        >
+          {testState.test.publishDate !== null &&
+          testState.test.publishDate !== "" ? (
+            <p>Teste publicado!</p>
+          ) : (
+            <p>Publicar Teste</p>
+          )}
+        </button>
       </div>
       <div className="flex flex-col px-4 pt-4 gap-4">
         <div className="flex items-center justify-between">

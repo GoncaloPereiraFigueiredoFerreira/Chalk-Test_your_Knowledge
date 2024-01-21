@@ -4,7 +4,8 @@ import { FiSave } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { DropdownBlock } from "../../interactiveElements/DropdownBlock";
 import { APIContext } from "../../../APIContext";
-import { Course, UserContext } from "../../../UserContext";
+import { Course } from "../../../UserContext";
+import { Tag } from "../Exercise/Exercise";
 
 interface EditTestInfopProps {
   testInfo: {
@@ -14,6 +15,7 @@ interface EditTestInfopProps {
     title: string;
     courseId: string;
     globalInstructions: string;
+    tags: Tag[];
   };
   saveEdit: (state: {
     type: string;
