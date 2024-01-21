@@ -11,7 +11,9 @@ export function TFPreview({ exercise, position, context }: TFPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement} />
-      <div>Indique se as seguintes opções são Verdadeiras ou Falsas:</div>
+      <div className="text-base">
+        Indique se as seguintes opções são Verdadeiras ou Falsas:
+      </div>
       <div className="flex flex-col pl-4 pr-4 py-4 text-black dark:text-white">
         {Object.entries(exercise.props.items).map(([index, value]) => (
           <TFShowStatement

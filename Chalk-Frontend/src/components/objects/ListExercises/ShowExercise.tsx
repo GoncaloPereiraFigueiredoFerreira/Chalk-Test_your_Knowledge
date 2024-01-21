@@ -248,7 +248,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } flex flex-col mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500`}
+          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500`}
         >
           {preview}
         </div>

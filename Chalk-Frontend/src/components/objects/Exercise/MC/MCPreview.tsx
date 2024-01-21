@@ -11,9 +11,7 @@ export function MCPreview({ exercise, position, context }: MCPreviewProps) {
   return (
     <>
       <ExerciseHeaderComp header={exercise.base.statement}></ExerciseHeaderComp>
-      <p className="text-sm text-black dark:text-white">
-        <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
-      </p>
+      <div className="text-base">Selecione a opções correta:</div>
       <div className="flex flex-col pl-4 pr-4 py-4 text-black dark:text-white">
         {Object.entries(exercise.props.items).map(([index, value]) => (
           <label
@@ -37,6 +35,9 @@ export function MCPreview({ exercise, position, context }: MCPreviewProps) {
           </label>
         ))}
       </div>
+      <p className="pb-4 text-sm text-black dark:text-white">
+        <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
+      </p>
     </>
   );
 }

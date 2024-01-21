@@ -44,7 +44,7 @@ export function ExerciseHeaderComp({ header }: HeaderProps) {
     );
   } else {
     return (
-      <div className="pb-4 text-black dark:text-white text-base">
+      <div className="pb-2 text-black dark:text-white text-base">
         {textToHTML(header.text)}
       </div>
     );

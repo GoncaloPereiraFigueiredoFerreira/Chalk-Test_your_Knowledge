@@ -776,7 +776,7 @@ export function CreateTest({ test }: CreateTestProps) {
         </div>
         <DragOverlay>
           {activeDnD && activeDnD.type === "add" && (
-            <div className="shadow-2xl border-2 border-gray-300 rounded-lg">
+            <div className="shadow-2xl border-2 border-slate-300 rounded-lg">
               <ShowExerciseDragDrop
                 listExerciseButtons={true}
                 exercise={activeDnD.exercise}
@@ -792,7 +792,7 @@ export function CreateTest({ test }: CreateTestProps) {
             </div>
           )}
           {activeDnD && activeDnD.type === "exercise" && (
-            <div className="shadow-2xl border-2 border-gray-300 rounded-lg">
+            <div className="shadow-2xl border-2 border-slate-300 rounded-lg">
               <ShowExerciseDragDrop
                 listExerciseButtons={false}
                 exercise={activeDnD.exercise}
@@ -808,7 +808,7 @@ export function CreateTest({ test }: CreateTestProps) {
             </div>
           )}
           {activeDnD && activeDnD.type === "group" && (
-            <div className="shadow-2xl border-2 border-gray-300 rounded-lg">
+            <div className="shadow-2xl border-2 border-slate-300 rounded-lg">
               <GroupDragDrop
                 exerciseGroupPosition={activeDnD.groupPosition}
                 exerciseGroupID={activeDnD.exerciseGroupID}

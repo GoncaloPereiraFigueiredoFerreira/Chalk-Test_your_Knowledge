@@ -15,9 +15,9 @@ export function PopUp({ show, children, closePopUp }: PopUpProps) {
     >
       <div className="flex flex-col w-screen h-screen">
         <button className="popup-btn" onClick={() => closePopUp()} />
-        <div className="flex w-full min-h-max">
+        <div className="flex w-full">
           <button className="popup-btn" onClick={() => closePopUp()} />
-          <div className="min-w-max min-h-max p-6 rounded-xl shadow-2xl shadow-slate-700 dark:shadow-black bg-white dark:bg-slate-800">
+          <div className="min-w-max min-h-max max-h-[90vh] overflow-auto p-6 rounded-xl shadow-2xl shadow-slate-700 dark:shadow-black bg-white dark:bg-slate-800">
             {children}
           </div>
           <button className="popup-btn" onClick={() => closePopUp()} />

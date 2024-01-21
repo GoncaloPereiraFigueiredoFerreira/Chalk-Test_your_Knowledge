@@ -3,7 +3,6 @@ import { MdOutlineAttachFile } from "react-icons/md";
 import { FaBold } from "react-icons/fa";
 import { FaItalic } from "react-icons/fa";
 import { ImUnderline } from "react-icons/im";
-import { elements } from "chart.js";
 
 interface TextareaBlockProps {
   className?: string;
@@ -192,7 +191,6 @@ export function textToHTML(stringHTML: string) {
         .replace("</b>", "</strong>");
 
       divRef.current.innerHTML = newStringHTML ?? "";
-      console.log("asdasdasdasdas");
     }
   }, [divRef, stringHTML]);
 

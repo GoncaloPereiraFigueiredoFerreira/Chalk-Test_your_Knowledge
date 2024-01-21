@@ -8,6 +8,7 @@ import {
 } from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
+import { HiOutlineTrash } from "react-icons/hi";
 
 import "../Exercise.css";
 
@@ -20,20 +21,28 @@ export function TFEdit({ exercise, context }: TFEditProps) {
   const [openJustificationkind, setOpenJustificationkind] = useState(
     exercise.props.justifyType !== ExerciseJustificationKind.NO_JUSTIFICATION
   );
-  console.log(openJustificationkind);
-  console.log(exercise.props.justifyType);
 
   return (
     <>
-      <p className="block mb-2 text-md text-black dark:text-white">
+      <p className="block mb-4 text-md text-black dark:text-white">
         Adicione as afirmações e indique se são verdadeiras ou falsas
-        <input
-          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg items-center bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2"
-          value="Add"
+      </p>
+      <ul className="flex flex-col gap-2">
+        {Object.keys(exercise.props.items).map((value, index) => (
+          <TFStatementEdit
+            key={index}
+            position={index}
+            id={value}
+            dispatch={context.dispatch}
+            solution={context.solutionData}
+          ></TFStatementEdit>
+        ))}
+        <button
+          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
           onClick={() => {
             for (
               let newID = 0;
-              newID < Object.keys(exercise.props.items).length + 1;
+              newID < Object.keys(exercise.props.items!).length + 1;
               newID++
             ) {
               if (exercise.props.items[newID.toString()] === undefined) {
@@ -45,34 +54,16 @@ export function TFEdit({ exercise, context }: TFEditProps) {
               }
             }
           }}
-        ></input>
-      </p>
-      <table className="table-auto mt-4">
-        <thead>
-          <tr>
-            <th className="p-3 text-black dark:text-white">V</th>
-            <th className="p-3 text-black dark:text-white">F</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(exercise.props.items).map((value, index) => (
-            <TFStatementEdit
-              key={index}
-              position={index}
-              id={value}
-              dispatch={context.dispatch}
-              solution={context.solutionData}
-            ></TFStatementEdit>
-          ))}
-        </tbody>
-      </table>
+        >
+          Adicionar
+        </button>
+      </ul>
       <div className="flex flex-col">
         <div className="mt-5 flex items-center">
           <input
             id="bordered-checkbox"
             type="checkbox"
-            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
+            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600 outline-none"
             onChange={() => {
               if (openJustificationkind)
                 context.dispatch({
@@ -90,7 +81,7 @@ export function TFEdit({ exercise, context }: TFEditProps) {
           />
           <label
             htmlFor="bordered-checkbox"
-            className="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            className="w-full py-4 ml-2 text-sm font-medium text-black dark:text-slate-300"
           >
             Pedir a justificação?
           </label>
@@ -138,71 +129,64 @@ function TFStatementEdit({
   const name = "radio-button-" + position;
 
   if (solution.type === ExerciseType.TRUE_OR_FALSE) {
+    console.log(solutionItem);
+
     const solutionItem = solution.items[id];
 
     return (
-      <>
-        <tr>
-          <td className="p-3">
-            <input
-              className="radio-green"
-              type="radio"
-              name={name}
-              onChange={() => {
-                dispatch({
-                  type: EditActionKind.CHANGE_ITEM_TF,
-                  dataString: id,
-                  dataItem: { value: true },
-                });
-              }}
-              checked={solutionItem.value}
-            ></input>
-          </td>
-          <td className="p-3">
-            <input
-              className="radio-red"
-              type="radio"
-              name={name}
-              onChange={() => {
-                dispatch({
-                  type: EditActionKind.CHANGE_ITEM_TF,
-                  dataString: id,
-                  dataItem: { value: false },
-                });
-              }}
-              checked={!solutionItem.value}
-            ></input>
-          </td>
-          <td>
-            <input
-              type="text"
-              className="basic-input-text rounded-md resize-y"
-              onChange={(e) =>
-                dispatch({
-                  type: EditActionKind.CHANGE_ITEM_TEXT,
-                  dataString: id,
-                  dataItem: {
-                    text: e.target.value,
-                  },
-                })
-              }
-              value={solutionItem.text}
-            ></input>
-          </td>
-          <td>
-            <input
-              className="edit-btn  mx-2 px-1 hover:border-2  bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2  "
-              onClick={() =>
-                dispatch({
-                  type: EditActionKind.REMOVE_ITEM,
-                  dataString: id,
-                })
-              }
-              value="Remove"
-            ></input>
-          </td>
-        </tr>
-      </>
+      <li className="flex items-center gap-2">
+        <input
+          className="radio-green mr-3"
+          type="radio"
+          name={name}
+          onChange={() => {
+            dispatch({
+              type: EditActionKind.CHANGE_ITEM_TF,
+              dataString: id,
+              dataItem: { value: true },
+            });
+          }}
+          checked={solutionItem.value}
+        ></input>
+        <input
+          className="radio-red mr-3"
+          type="radio"
+          name={name}
+          onChange={() => {
+            dispatch({
+              type: EditActionKind.CHANGE_ITEM_TF,
+              dataString: id,
+              dataItem: { value: false },
+            });
+          }}
+          checked={!solutionItem.value}
+        ></input>
+        <input
+          type="text"
+          className="w-full rounded-lg border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+          onChange={(e) =>
+            dispatch({
+              type: EditActionKind.CHANGE_ITEM_TEXT,
+              dataString: id,
+              dataItem: {
+                text: e.target.value,
+              },
+            })
+          }
+          value={solutionItem.text}
+        ></input>
+        <button
+          className="flex p-2.5 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          onClick={() =>
+            dispatch({
+              type: EditActionKind.REMOVE_ITEM,
+              dataString: id,
+            })
+          }
+        >
+          <HiOutlineTrash className="size-5" />
+        </button>
+      </li>
     );
-  } else <></>;
+  } else return <></>;
 }

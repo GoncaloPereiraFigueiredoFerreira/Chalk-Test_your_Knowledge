@@ -122,9 +122,9 @@
     bg-white
     rounded-lg
     border-2
-    border-gray-300
+    border-slate-300
     focus:ring-0
-    focus:border-gray-300;
+    focus:border-slate-300;
   }
 }
 @tailwind utilities;

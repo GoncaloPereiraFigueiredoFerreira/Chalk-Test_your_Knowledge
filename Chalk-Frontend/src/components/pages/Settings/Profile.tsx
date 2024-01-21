@@ -107,7 +107,7 @@ export function Profile() {
                     />
                   </div>
 
-                  <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">
+                  <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-slate-300">
                     <button className="bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] rounded-md p-3">
                       Edit
                     </button>
