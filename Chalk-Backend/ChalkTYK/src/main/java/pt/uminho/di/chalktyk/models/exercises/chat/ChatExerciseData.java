@@ -26,11 +26,11 @@ public class ChatExerciseData extends ExerciseResolutionData{
     @Override
     public void verifyInsertProperties() throws BadInputException {
         if(chat == null){
-            throw new BadInputException("Chat exercise data topics cannot be null");
+            throw new BadInputException("Chat exercise (re)solution data must not have a 'null' chat.");
         }else{
             for (String string : chat) {
                 if(string == null){
-                    throw new BadInputException("Chat exercise data topics elements cannot be null");
+                    throw new BadInputException("Chat exercise (re)solution data must not have a 'null' chat elements.");
                 } 
             }
         }
