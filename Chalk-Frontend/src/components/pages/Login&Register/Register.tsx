@@ -18,6 +18,18 @@ enum ErrorType {
   MISS = 6,
 }
 
+function defaultIcon(role: UserRole): string {
+  switch (role) {
+    case UserRole.SPECIALIST:
+      return "https://cdn-icons-png.flaticon.com/512/6681/6681354.png";
+    case UserRole.STUDENT:
+      return "https://cdn-icons-png.flaticon.com/512/194/194931.png";
+    default:
+      return "";
+  }
+}
+
+
 function renderErrorToast(err: ErrorType, setError: Function) {
   let message = "";
   switch (err) {
@@ -70,7 +82,7 @@ export function Register() {
   const submitGoogleRegister = (acessToken: any) => {
     contactAUTH("google", "POST", undefined, {
       acess_token: acessToken,
-      role: role,
+      role: role
     }).then((response) => handleUserRegister(response));
   };
 
@@ -80,7 +92,7 @@ export function Register() {
         email: email,
         name: name,
         password: password,
-        role: role,
+        role: role
       }).then((response) => handleUserRegister(response));
     } else setErrorState(ErrorType.NOMATCH);
   };
@@ -92,7 +104,7 @@ export function Register() {
           const userInfo: User = {
             email: result.user.username,
             name: result.user.name,
-            photoPath: "",
+            photoPath : defaultIcon(role),
             role: result.user.role,
             courses: [],
             id: "",
