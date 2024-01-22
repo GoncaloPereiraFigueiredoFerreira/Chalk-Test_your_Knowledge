@@ -117,6 +117,7 @@ function EditReducer(state: EditState, action: EditAction) {
         ...exercise.base.statement,
         imagePath: action.dataString ?? "",
       };
+
       return changeStatement(newStatement4);
 
     case EditActionKind.CHANGE_IMG_POS:

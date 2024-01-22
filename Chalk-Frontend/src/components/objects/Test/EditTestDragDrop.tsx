@@ -38,9 +38,9 @@ export function EditTestDragDrop({
   const { user } = useContext(UserContext);
 
   return (
-    <div className="flex flex-col w-full bg-white dark:bg-black min-h-max dark:text-white">
-      <div className="flex w-full items-center justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd] dark:border-[#dddddd]">
-        <div className="text-4xl text-gray-600 dark:text-white">
+    <div className="flex flex-col w-full min-h-max text-black dark:text-white">
+      <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex text-4xl text-slate-600 dark:text-white">
           {testState.test.title
             ? testState.test.title
             : "Novo Teste - " + draggingExercises}
@@ -50,7 +50,7 @@ export function EditTestDragDrop({
         <div className="flex items-center justify-between">
           <strong className="text-xl">Informações Gerais do Teste:</strong>
           <button
-            className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex gap-2 py-2 px-3 text-base rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() => {
               setSelectedMenu("edit-test-info");
             }}
@@ -74,7 +74,7 @@ export function EditTestDragDrop({
           </p>
         </div>
       </div>
-      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
+      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
         <SortableContext items={testState.test.groups.map((group) => group.id)}>
           {testState.test.groups.map((group, index) => (
             <GroupDragDrop
@@ -95,7 +95,7 @@ export function EditTestDragDrop({
           ))}
         </SortableContext>
         <div
-          className="flex w-full p-3 gap-2 justify-center items-center rounded-lg bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] transition-all group cursor-pointer"
+          className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
           onClick={() => {
             if (selectedMenu !== "edit-group") {
               dispatch({ type: EditTestActionKind.ADD_GROUP });
@@ -106,12 +106,12 @@ export function EditTestDragDrop({
           <label className=" font-medium text-lg">Novo Grupo</label>
         </div>
       </div>
-      <div className="flex flex-col pt-4 gap-4 border-t-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
+      <div className="flex flex-col pt-4 gap-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
         <div className="mx-4 mt-4">
           <div className="flex items-center justify-between">
             <strong className="text-xl">Conclusão</strong>
             <button
-              className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+              className="flex gap-2 py-2 px-3 text-base rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
               onClick={() => {
                 setSelectedMenu("edit-test-info");
               }}

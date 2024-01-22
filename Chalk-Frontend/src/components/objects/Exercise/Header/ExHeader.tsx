@@ -13,14 +13,15 @@ interface HeaderProps {
 }
 
 export function ExerciseHeaderComp({ header }: HeaderProps) {
+  let imgComponent = <></>;
+  let style = "";
+
   if (header.imagePath) {
-    const imgComponent = (
-      <div className="flex w-full justify-center m-4">
+    imgComponent = (
+      <div className="flex min-w-fit justify-center p-4">
         <img className="max-h-52" src={header.imagePath}></img>
       </div>
     );
-
-    let style;
 
     switch (header.imagePosition) {
       case ImgPos.BOT:
@@ -31,22 +32,16 @@ export function ExerciseHeaderComp({ header }: HeaderProps) {
         break;
       }
       default: {
-        style = "grid grid-cols-2 items-center";
+        style = "flex items-center";
         break;
       }
     }
-    return (
-      <div className={"pb-4 text-base " + style}>
-        {ImgPos.LEFT === header.imagePosition ? imgComponent : null}
-        {textToHTML(header.text)}
-        {ImgPos.LEFT === header.imagePosition ? null : imgComponent}
-      </div>
-    );
-  } else {
-    return (
-      <div className="pb-2 text-black dark:text-white text-base">
-        {textToHTML(header.text)}
-      </div>
-    );
   }
+  return (
+    <div className={"pb-2 text-black dark:text-white text-base " + style}>
+      {ImgPos.LEFT === header.imagePosition ? imgComponent : null}
+      {textToHTML(header.text)}
+      {ImgPos.LEFT !== header.imagePosition ? imgComponent : null}
+    </div>
+  );
 }

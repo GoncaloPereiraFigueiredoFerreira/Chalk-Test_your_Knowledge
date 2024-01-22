@@ -48,7 +48,6 @@ export function TextareaBlock({
     if (divRef.current) {
       // 1: get htmlContent
       let htmlContent = divRef.current.innerHTML.toString();
-      console.log(htmlContent);
 
       const indexOfFirstP = htmlContent.indexOf("<p>");
       const indexOfFirstDiv = htmlContent.indexOf("<div>");
