@@ -1,3 +1,4 @@
+import "../Exercise.css";
 import { useState } from "react";
 import {
   CreateEditProps,
@@ -8,7 +9,7 @@ import {
 } from "../Exercise";
 import { EditAction, EditActionKind } from "../../EditExercise/EditExercise";
 import { DropdownBlock } from "../../../interactiveElements/DropdownBlock";
-import "../Exercise.css";
+import { HiOutlineTrash } from "react-icons/hi";
 
 interface MCEditProps {
   context: CreateEditProps;
@@ -22,18 +23,28 @@ export function MCEdit({ context, exercise }: MCEditProps) {
 
   return (
     <>
-      <p className="block mb-2 text-md text-gray-900 dark:text-white">
+      <p className="block pb-4 text-base text-black dark:text-white">
         Adicione as afirmações e escolha a opção correta.
-        <input
-          className="edit-btn mt-2 mr-2 px-2 hover:scale-110 text-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2"
-          value="Add"
+      </p>
+      <ul className="flex flex-col gap-2">
+        {Object.keys(exercise.props.items!).map((value, index) => (
+          <MCStatementEdit
+            key={index}
+            position={index}
+            id={value}
+            solution={context.solutionData}
+            dispatch={context.dispatch}
+          ></MCStatementEdit>
+        ))}
+        <button
+          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
           onClick={() => {
             for (
               let newID = 0;
               newID < Object.keys(exercise.props.items!).length + 1;
               newID++
             ) {
-              if (exercise.props.items![newID.toString()] === undefined) {
+              if (exercise.props.items[newID.toString()] === undefined) {
                 context.dispatch({
                   type: EditActionKind.ADD_ITEM,
                   dataString: newID.toString(),
@@ -42,28 +53,16 @@ export function MCEdit({ context, exercise }: MCEditProps) {
               }
             }
           }}
-        ></input>
-      </p>
-      <ul>
-        {Object.keys(exercise.props.items!).map((value, index) => {
-          return (
-            <MCStatementEdit
-              key={index}
-              position={index}
-              id={value}
-              solution={context.solutionData}
-              dispatch={context.dispatch}
-            ></MCStatementEdit>
-          );
-        })}
+        >
+          Adicionar
+        </button>
       </ul>
-
       <div className="flex flex-col">
-        <div className="mt-5 flex items-center">
+        <div className="pt-5 flex items-center">
           <input
             id="bordered-checkbox"
             type="checkbox"
-            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
+            className="p-2 rounded outline-0 bg-[#dddddd] border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600 outline-none"
             onChange={() => {
               if (openJustificationkind)
                 context.dispatch({
@@ -81,15 +80,15 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           />
           <label
             htmlFor="bordered-checkbox"
-            className="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            className="w-full py-4 pl-2 text-base font-medium text-black dark:text-slate-300"
           >
             Pedir a justificação?
           </label>
         </div>
         <div
           className={`${
-            openJustificationkind ? "max-h-96" : "max-h-0 overflow-hidden"
-          } transition-[max-height] ml-3 h-12`}
+            openJustificationkind ? "max-h-96" : "max-h-0"
+          } transition-[max-height] pl-3 h-12 overflow-hidden`}
         >
           <DropdownBlock
             options={[
@@ -105,8 +104,8 @@ export function MCEdit({ context, exercise }: MCEditProps) {
                 dataJK: justifyKind,
               })
             }
-            style="rounded-lg h-full"
-            placement="top"
+            style="rounded-lg h-full text-base"
+            placement="bottom"
           ></DropdownBlock>
         </div>
       </div>
@@ -125,46 +124,45 @@ function MCStatementEdit({ dispatch, id, solution }: MCStatementEditProps) {
   if (solution.type === ExerciseType.MULTIPLE_CHOICE) {
     const solutionItem = solution.items[id];
     return (
-      <>
-        <li className="flex items-center space-y-1">
-          <input
-            className="radio-blue mr-3"
-            type="radio"
-            name={name}
-            onChange={() => {
-              dispatch({
-                type: EditActionKind.CHANGE_ITEM_MC,
-                dataString: id,
-              });
-            }}
-            checked={solutionItem.value}
-          ></input>
-          <input
-            type="text"
-            className="basic-input-text rounded-md"
-            onChange={(e) =>
-              dispatch({
-                type: EditActionKind.CHANGE_ITEM_TEXT,
-                dataString: id,
-                dataItem: {
-                  text: e.target.value,
-                },
-              })
-            }
-            defaultValue={solutionItem.text}
-          ></input>
-          <input
-            className="edit-btn mx-2 px-1 bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black ml-2"
-            onClick={() =>
-              dispatch({
-                type: EditActionKind.REMOVE_ITEM,
-                dataString: id,
-              })
-            }
-            value="Remove"
-          ></input>
-        </li>
-      </>
+      <li className="flex items-center gap-2">
+        <input
+          className="radio-blue mr-3"
+          type="radio"
+          name={name}
+          onChange={() => {
+            dispatch({
+              type: EditActionKind.CHANGE_ITEM_MC,
+              dataString: id,
+            });
+          }}
+          checked={solutionItem.value}
+        ></input>
+        <input
+          type="text"
+          className="w-full rounded-lg border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+          onChange={(e) =>
+            dispatch({
+              type: EditActionKind.CHANGE_ITEM_TEXT,
+              dataString: id,
+              dataItem: {
+                text: e.target.value,
+              },
+            })
+          }
+          value={solutionItem.text}
+        ></input>
+        <button
+          className="flex p-2.5 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          onClick={() =>
+            dispatch({
+              type: EditActionKind.REMOVE_ITEM,
+              dataString: id,
+            })
+          }
+        >
+          <HiOutlineTrash className="size-5" />
+        </button>
+      </li>
     );
-  } else <></>;
+  } else return <></>;
 }

@@ -3,7 +3,4 @@
 @tailwind utilities;
 
 @layer components {
-  .edit-btn {
-    @apply cursor-pointer rounded-md p-1;
-  }
 }

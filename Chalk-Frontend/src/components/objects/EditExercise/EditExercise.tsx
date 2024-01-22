@@ -27,6 +27,7 @@ import { APIContext } from "../../../APIContext";
 import { Modal, Spinner } from "flowbite-react";
 import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
 import { TagsFilterModal } from "../Tags/TagsFilterModal";
+import { ExerciseSuggestionPopUp } from "./ExerciseSuggestionPopUp";
 
 //------------------------------------//
 //                                    //
@@ -128,6 +129,7 @@ function EditReducer(state: EditState, action: EditAction) {
         ...exercise.base.statement,
         imagePath: action.dataString ?? "",
       };
+
       return changeStatement(newStatement4);
 
     case EditActionKind.CHANGE_IMG_POS:
@@ -187,7 +189,7 @@ function EditReducer(state: EditState, action: EditAction) {
             ...exercise,
             props: { ...exercise.props, items: newItems },
           } as Exercise,
-          solution: { ...solution, items: newItems } as ResolutionData,
+          solution: { ...solution, items: newSolutionItems } as ResolutionData,
         };
       } else throw new Error("Invalid action");
 
@@ -502,20 +504,20 @@ export function EditExercise({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-          <label className="flex text-4xl text-gray-600 dark:text-white">
+      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1 text-black dark:text-white">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+          <label className="flex text-4xl text-slate-600 dark:text-white">
             Editar
           </label>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />
             Cancelar
           </button>
         </div>
-        <div className="rounded-lg bg-white dark:bg-black">
+        <div className="mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500">
           <ExerciseComponent
             position={position ? position : "1"}
             exercise={state.exercise}
@@ -524,191 +526,185 @@ export function EditExercise({
             }}
           ></ExerciseComponent>
         </div>
-        <div className="flex gap-4 px-5 rounded-lg bg-white dark:bg-black justify-between">
-          <div className="flex items-center">
-            <p className="text-xl font-medium">Título:</p>
-            <div className="px-4">
-              <input
-                className="rounded-lg border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
-                placeholder="Novo Teste"
-                value={state.exercise.base.title}
-                onChange={(e) =>
-                  editDispatch({
-                    type: EditActionKind.CHANGE_TITLE,
-                    dataString: e.target.value,
-                  } as EditAction)
-                }
-              />
-            </div>
-          </div>
-          {state.exercise.type !== ExerciseType.CHAT && (
-            <>
-              <button
-                type="button"
-                className="p-4 bg-yellow-300"
-                onClick={() => setOpenModal(true)}
-              >
-                Sugestão para a criação do exercício
-              </button>
-              <Modal
-                show={openModal}
-                size="4xl"
-                onClose={onCloseModal}
-                popup
-                dismissible
-              >
-                <Modal.Header />
-                <Modal.Body>
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                      Defina o texto de base para a criação da pergunta e as
-                      diretrizes a seguir
-                    </h3>
-                    <div>
-                      <label className="text-xl">Texto de base:</label>
-                      <TextareaBlock
-                        toolbar={false}
-                        value={text}
-                        rows={3}
-                        onChange={(e) => {
-                          setText(e);
+        {state.exercise.type !== ExerciseType.CHAT && (
+          <div className="px-4 pt-8 pb-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+            <button
+              type="button"
+              className="w-full py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+              onClick={() => setOpenModal(true)}
+            >
+              Sugestão para a criação do exercício
+            </button>
+            <Modal
+              show={openModal}
+              size="4xl"
+              onClose={onCloseModal}
+              popup
+              dismissible
+            >
+              <Modal.Header />
+              <Modal.Body>
+                <div className="space-y-6">
+                  <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                    Defina o texto de base para a criação da pergunta e as
+                    diretrizes a seguir
+                  </h3>
+                  <div>
+                    <label className="text-xl">Texto de base:</label>
+                    <TextareaBlock
+                      toolbar={false}
+                      value={text}
+                      rows={3}
+                      onChange={(e) => {
+                        setText(e);
+                      }}
+                    ></TextareaBlock>
+                  </div>
+                  <div>
+                    <label className="text-xl">Diretrizes:</label>
+                    <TextareaBlock
+                      toolbar={false}
+                      value={input}
+                      rows={3}
+                      onChange={(e) => {
+                        setInput(e);
+                      }}
+                    ></TextareaBlock>
+                  </div>
+                  {exSugestion && (
+                    <ExerciseComponent
+                      exercise={exSugestion}
+                      position={""}
+                      context={{ context: ExerciseContext.PREVIEW }}
+                    />
+                  )}
+                  {!waiting ? (
+                    <div className="flex justify-between w-full">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          generateEx();
+                          setWaiting(true);
                         }}
-                      ></TextareaBlock>
-                    </div>
-                    <div>
-                      <label className="text-xl">Diretrizes:</label>
-                      <TextareaBlock
-                        toolbar={false}
-                        value={input}
-                        rows={3}
-                        onChange={(e) => {
-                          setInput(e);
-                        }}
-                      ></TextareaBlock>
-                    </div>
-                    {exSugestion && (
-                      <ExerciseComponent
-                        exercise={exSugestion}
-                        position={""}
-                        context={{ context: ExerciseContext.PREVIEW }}
-                      />
-                    )}
-                    {!waiting ? (
-                      <div className="flex justify-between w-full">
+                      >
+                        Gerar Novo Exercício
+                      </button>
+                      {exSugestion && (
                         <button
                           type="button"
                           onClick={() => {
-                            generateEx();
-                            setWaiting(true);
+                            acceptQuestion();
                           }}
                         >
-                          Gerar Novo Exercício
+                          Guardar Exercício
                         </button>
-                        {exSugestion && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              acceptQuestion();
-                            }}
-                          >
-                            Guardar Exercício
-                          </button>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="flex w-full justify-center">
-                        <Spinner></Spinner>
-                      </div>
-                    )}
-                  </div>
-                </Modal.Body>
-              </Modal>
-            </>
-          )}
-        </div>
-
-        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black flex justify-between">
-          <div className="flex space-x-3 items-center">
-            <p className="text-xl font-medium">Tags:</p>
-            {state.exercise.base.tags.map((tag) => {
-              return <p>{tag.name}</p>;
-            })}
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex w-full justify-center">
+                      <Spinner></Spinner>
+                    </div>
+                  )}
+                </div>
+              </Modal.Body>
+            </Modal>
           </div>
-          <button
-            type="button"
-            onClick={() => setTagsModal(true)}
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
-          >
-            Escolher Tags
-          </button>
-
-          <TagsFilterModal
-            header="Selecione as tags a adicionar ao seu Exercício"
-            openModal={openTagsModal}
-            setOpenModal={setTagsModal}
-            setTagsList={(tags) => {
-              editDispatch({
-                type: EditActionKind.SET_TAGS,
-                dataTagsList: tags,
-              });
-            }}
-          ></TagsFilterModal>
-        </div>
-
-        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
-          <EditHeader dispatch={editDispatch} state={state.exercise} />
-        </div>
-
-        <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
-          <h3 className="font-medium text-xl">Detalhes do Exercício:</h3>
-          <ExerciseComponent
-            position={position ?? "1"}
-            exercise={state.exercise}
-            context={{
-              context: ExerciseContext.EDIT,
-              dispatch: editDispatch,
-              solutionData: state.solution,
-            }}
-          ></ExerciseComponent>
-        </div>
-        {state.exercise.type === ExerciseType.CHAT ||
-        state.exercise.type === ExerciseType.OPEN_ANSWER ? (
-          <>
-            <h3 className="px-5 font-medium text-xl dark:text-white">
-              Rúbrica:
-            </h3>
-            <Rubric
-              context={{
-                context: RubricContext.EDIT,
-                setRubric: (rubric: Rubric) => {
-                  editDispatch({
-                    type: EditActionKind.SET_RUBRIC,
-                    dataRubric: rubric,
-                  });
-                },
-              }}
-              rubric={state.rubric ?? { criteria: [] }}
-            ></Rubric>
-          </>
-        ) : (
-          <></>
         )}
-        <div className="flex gap-2">
-          <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
-            onClick={() => saveEdit(state)}
-          >
-            <FiSave className="size-5" />
-            Guardar e fechar
-          </button>
-          <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
-            onClick={() => cancelEdit(state)}
-          >
-            <IoClose className="size-5" />
-            Cancelar
-          </button>
+
+        <div className="flex flex-col gap-4 px-4 justify-between pt-8 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+          <div className="flex items-center gap-4">
+            <p className="text-xl font-medium">Título:</p>
+            <input
+              className="rounded-lg w-full border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+              placeholder="Novo Teste"
+              value={state.exercise.base.title}
+              onChange={(e) =>
+                editDispatch({
+                  type: EditActionKind.CHANGE_TITLE,
+                  dataString: e.target.value,
+                } as EditAction)
+              }
+            />
+          </div>
         </div>
+      </div>
+
+      <div className="px-5 py-2 rounded-lg bg-white dark:bg-black flex justify-between">
+        <div className="flex space-x-3 items-center">
+          <p className="text-xl font-medium">Tags:</p>
+          {state.exercise.base.tags.map((tag) => {
+            return <p>{tag.name}</p>;
+          })}
+        </div>
+        <button
+          type="button"
+          onClick={() => setTagsModal(true)}
+          className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+        >
+          Escolher Tags
+        </button>
+
+        <TagsFilterModal
+          header="Selecione as tags a adicionar ao seu Exercício"
+          openModal={openTagsModal}
+          setOpenModal={setTagsModal}
+          setTagsList={(tags) => {
+            editDispatch({
+              type: EditActionKind.SET_TAGS,
+              dataTagsList: tags,
+            });
+          }}
+        ></TagsFilterModal>
+      </div>
+
+      <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
+        <EditHeader dispatch={editDispatch} state={state.exercise} />
+      </div>
+      <div className="pt-8 px-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+        <h3 className="pb-4 font-medium text-xl">Detalhes do Exercício:</h3>
+        <ExerciseComponent
+          position={position ?? "1"}
+          exercise={state.exercise}
+          context={{
+            context: ExerciseContext.EDIT,
+            dispatch: editDispatch,
+            solutionData: state.solution,
+          }}
+        ></ExerciseComponent>
+      </div>
+      {(state.exercise.type === ExerciseType.CHAT ||
+        state.exercise.type === ExerciseType.OPEN_ANSWER) && (
+        <div className="py-2 px-4">
+          <p className="text-xl font-medium">Rúbrica:</p>
+          <Rubric
+            context={{
+              context: RubricContext.EDIT,
+              setRubric: (rubric: Rubric) => {
+                editDispatch({
+                  type: EditActionKind.SET_RUBRIC,
+                  dataRubric: rubric,
+                });
+              },
+            }}
+            rubric={state.rubric ?? { criteria: [] }}
+          ></Rubric>
+        </div>
+      )}
+      <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+        <button
+          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          onClick={() => saveEdit(state)}
+        >
+          <FiSave className="size-5" />
+          Guardar e fechar
+        </button>
+        <button
+          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          onClick={() => cancelEdit(state)}
+        >
+          <IoClose className="size-5" />
+          Cancelar
+        </button>
       </div>
     </>
   );

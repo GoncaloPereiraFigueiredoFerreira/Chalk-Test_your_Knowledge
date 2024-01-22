@@ -581,12 +581,12 @@ export function CreateTest({ test }: CreateTestProps) {
         <div
           className={`${
             selectedMenu === "" ? "" : "divide-x-2"
-          } flex flex-row border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] bg-white dark:bg-black`}
+          } flex flex-row bg-white dark:bg-slate-900 divide-[#bbbbbb] dark:divide-slate-600`}
         >
           <div
             className={`${
               selectedMenu === "dd-list-exercises" ? "w-[60%] px-8 pb-8" : "w-0"
-            } flex flex-col transition-[width] h-screen overflow-y-auto bg-white dark:bg-black`}
+            } flex flex-col transition-[width] h-screen overflow-y-auto`}
           >
             {selectedMenu === "dd-list-exercises" && (
               <>
@@ -604,7 +604,7 @@ export function CreateTest({ test }: CreateTestProps) {
               </>
             )}
           </div>
-          <div className="flex flex-col w-full h-screen px-8 pb-8 overflow-y-auto bg-white dark:bg-black">
+          <div className="flex flex-col w-full px-8 pb-8 h-screen overflow-auto">
             <EditTestDragDrop
               exerciseID={exerciseID}
               setExerciseID={(value) => setExerciseID(value)}
@@ -621,7 +621,7 @@ export function CreateTest({ test }: CreateTestProps) {
               selectedMenu === "edit-test-info"
                 ? "w-full px-8 pb-8"
                 : "w-0"
-            } flex flex-col h-screen overflow-auto bg-white dark:bg-black transition-[width]`}
+            } flex flex-col h-screen overflow-auto transition-[width]`}
           >
             {(selectedMenu === "edit-exercise" ||
               selectedMenu === "create-exercise") && (
@@ -785,7 +785,7 @@ export function CreateTest({ test }: CreateTestProps) {
         </div>
         <DragOverlay>
           {activeDnD && activeDnD.type === "add" && (
-            <div className="shadow-2xl border-2 border-gray-300 rounded-lg">
+            <div className="shadow-2xl border-2 border-slate-600 rounded-lg">
               <ShowExerciseDragDrop
                 listExerciseButtons={true}
                 exercise={activeDnD.exercise}
@@ -801,7 +801,7 @@ export function CreateTest({ test }: CreateTestProps) {
             </div>
           )}
           {activeDnD && activeDnD.type === "exercise" && (
-            <div className="shadow-2xl border-2 border-gray-300 rounded-lg">
+            <div className="shadow-2xl border-2 border-slate-600 rounded-lg">
               <ShowExerciseDragDrop
                 listExerciseButtons={false}
                 exercise={activeDnD.exercise}
@@ -817,7 +817,7 @@ export function CreateTest({ test }: CreateTestProps) {
             </div>
           )}
           {activeDnD && activeDnD.type === "group" && (
-            <div className="shadow-2xl border-2 border-gray-300 rounded-lg">
+            <div className="shadow-2xl border-2 border-slate-600 rounded-lg">
               <GroupDragDrop
                 exerciseGroupPosition={activeDnD.groupPosition}
                 exerciseGroupID={activeDnD.exerciseGroupID}

@@ -26,7 +26,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({ credentials: true }));
+app.use(cors({ credentials: true, origin: process.env.FRONTEND }));
 
 app.use("/", indexRouter);
 

@@ -1,7 +1,7 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
 import { Searchbar } from "../../objects/Searchbar/Searchbar";
-import { useContext, useEffect, useReducer, useRef, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import {
   ListExerciseActionKind,
   ListExerciseContext,
@@ -15,7 +15,6 @@ import {
   TranslateResolutionIN,
 } from "../../objects/Exercise/Exercise";
 import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
-import { useIsVisible } from "../HomePage/HomePage";
 
 export function ExerciseBankPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
@@ -86,23 +85,11 @@ export function ExerciseBankPage() {
       }
     }
   }, [editMenuIsOpen]);
-  const ref1 = useRef(null);
-  const isVisible1 = useIsVisible(ref1);
-  const [triggered1, setTriggered1] = useState(false);
-
-  useEffect(() => {
-    if (isVisible1) setTriggered1(true);
-  }, [ref1, isVisible1]);
 
   return (
-    <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
-      <div
-        ref={ref1}
-        className={`${
-          isVisible1 || triggered1 ? "opacity-100" : "opacity-0"
-        } flex flex-row divide-x-2 border-gray-2-2 transition-opacity duration-100`}
-      >
-        <div className="flex flex-col w-full px-8 pb-8 h-screen overflow-auto bg-white dark:bg-black">
+    <div className="flex w-full divide-x-2 bg-white dark:bg-slate-900 divide-[#bbbbbb] dark:divide-slate-600">
+      <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
+        <div className="flex flex-col w-full px-8 pb-8 h-screen overflow-auto">
           <Searchbar></Searchbar>
           <ListExercises
             setExerciseID={(value) => setExerciseID(value)}
@@ -113,7 +100,7 @@ export function ExerciseBankPage() {
         <div
           className={`${
             editMenuIsOpen ? "w-full px-8 pb-8" : "w-0"
-          } flex flex-col h-screen overflow-auto bg-white dark:bg-black transition-[width]`}
+          } flex flex-col h-screen overflow-auto transition-[width]`}
         >
           {editMenuIsOpen ? (
             <EditExercise
@@ -196,7 +183,7 @@ export function ExerciseBankPage() {
             ></EditExercise>
           ) : null}
         </div>
-      </div>
-    </ListExerciseContext.Provider>
+      </ListExerciseContext.Provider>
+    </div>
   );
 }

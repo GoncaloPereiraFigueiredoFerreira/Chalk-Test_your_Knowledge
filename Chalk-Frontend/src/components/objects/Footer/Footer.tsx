@@ -81,7 +81,7 @@ export function Footer() {
           <div className="mt-8 flex flex-col justify-center  gap-8 lg:mt-0 lg:grid-cols-5 lg:gap-y-16">
             {/* <div className="col-span-2">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-black">
                     Get the latest news!
                   </h2>
 
@@ -111,7 +111,7 @@ export function Footer() {
             <div className="flex flex-row justify-evenly w-full">
               {footer.map((column, index1) => (
                 <div key={index1} className="col-span-2 sm:col-span-1">
-                  <p className="font-medium text-gray-900">{column.header}</p>
+                  <p className="font-medium text-black">{column.header}</p>
                   <ul className="mt-6 space-y-4 text-sm">
                     {column.items.map((item, index2) => (
                       <li key={index1 + "," + index2}>

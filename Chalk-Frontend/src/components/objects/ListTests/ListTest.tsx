@@ -23,7 +23,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">
-              <h5 className="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h5 className="mb-1 text-xl font-bold tracking-tight text-black dark:text-white">
                 {test.title}
               </h5>
 
@@ -66,7 +66,7 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">
-              <h5 className="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h5 className="mb-1 text-xl font-bold tracking-tight text-black dark:text-white">
                 {test.title}
               </h5>
 
@@ -147,7 +147,7 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
           </div>
 
           <div className="p-5 bg-slate-300">
-            <h5 className="mb-2  px-2 text-2xl font-bold tracking-tight border-b border-slate-500 pb-2 text-gray-900 dark:text-white">
+            <h5 className="mb-2  px-2 text-2xl font-bold tracking-tight border-b border-slate-500 pb-2 text-black dark:text-white">
               {test.title}
             </h5>
 
@@ -192,7 +192,7 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
           </div>
 
           <div className="p-5">
-            <h5 className="mb-2 text-2xl px-2 font-bold border-b border-black pb-2 tracking-tight text-gray-900 dark:text-white">
+            <h5 className="mb-2 text-2xl px-2 font-bold border-b border-black pb-2 tracking-tight text-black dark:text-white">
               {test.title}
             </h5>
 
