@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import { GroupDragDrop } from "./GroupDragDrop";
 import { CreateNewExercisePopUp } from "../ListExercises/CreateNewExercisePopUp";
@@ -6,7 +6,6 @@ import { ExerciseType } from "../Exercise/Exercise";
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import "./EditTestDragDrop.css";
-import { textToHTML } from "../../interactiveElements/TextareaBlock";
 import { SortableContext } from "@dnd-kit/sortable";
 import { UserContext } from "../../../UserContext";
 import { translateVisibilityToString } from "./EditTestInfo";
@@ -40,6 +39,19 @@ export function EditTestDragDrop({
   const { user } = useContext(UserContext);
   const { contactBACK } = useContext(APIContext);
   const { testID } = useParams();
+  const divRefConclusion = useRef<HTMLDivElement>(null);
+  const divRefGlobalInstructions = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRefGlobalInstructions.current)
+      divRefGlobalInstructions.current.innerHTML =
+        testState.test.globalInstructions ?? "";
+  }, [divRefGlobalInstructions, testState.test.globalInstructions]);
+
+  useEffect(() => {
+    if (divRefConclusion.current)
+      divRefConclusion.current.innerHTML = testState.test.conclusion ?? "";
+  }, [divRefConclusion, testState.test.conclusion]);
 
   return (
     <div className="flex flex-col w-full min-h-max text-black dark:text-white">
@@ -104,7 +116,7 @@ export function EditTestDragDrop({
         <div className="flex flex-col py-4 gap-4">
           <strong className="text-xl">Instruções do Teste</strong>
           <p className="text-md mx-4">
-            {textToHTML(testState.test.globalInstructions)}
+            <div className="block" ref={divRefGlobalInstructions}></div>
           </p>
         </div>
       </div>
@@ -155,7 +167,7 @@ export function EditTestDragDrop({
             </button>
           </div>
           <p className="text-md mx-4">
-            {textToHTML(testState.test.conclusion)}
+            <div className="block" ref={divRefConclusion}></div>
           </p>
         </div>
       </div>

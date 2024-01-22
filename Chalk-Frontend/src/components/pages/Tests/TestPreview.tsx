@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -7,7 +7,6 @@ import {
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
-import { textToHTML } from "../../interactiveElements/TextareaBlock";
 
 function renderExercise(
   exercise: Exercise,
@@ -18,6 +17,15 @@ function renderExercise(
   setShowExID: Function,
   testResolutions?: TestResolution
 ) {
+  const divRef = useRef<HTMLDivElement>(null);
+
+  if (testResolutions)
+    useEffect(() => {
+      if (divRef.current)
+        divRef.current.innerHTML =
+          testResolutions.resolutions[exercise.identity.id].comment ?? "";
+    }, [divRef, testResolutions.resolutions[exercise.identity.id].comment]);
+
   return (
     <div
       key={index}
@@ -63,9 +71,7 @@ function renderExercise(
           testResolutions.resolutions[exercise.identity.id] ? (
             <p className="">
               <strong>Comentário do Especialista: </strong>
-              {textToHTML(
-                testResolutions.resolutions[exercise.identity.id].comment
-              )}
+              <div className="block" ref={divRef}></div>
             </p>
           ) : (
             <></>

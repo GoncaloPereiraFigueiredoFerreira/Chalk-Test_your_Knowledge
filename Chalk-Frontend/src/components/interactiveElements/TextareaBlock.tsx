@@ -41,7 +41,14 @@ export function TextareaBlock({
 
   const handleBlur = () => {
     setIsFocused(false);
-    if (onChange != undefined) onChange(text);
+    if (onChange != undefined)
+      onChange(
+        text
+          .replace("<i>", "<em>")
+          .replace("</i>", "</em>")
+          .replace("<b>", "<strong>")
+          .replace("</b>", "</strong>")
+      );
   };
 
   const handleInput = () => {
@@ -175,23 +182,4 @@ export function TextareaBlock({
       </div>
     </>
   );
-}
-
-export function textToHTML(stringHTML: string) {
-  let newStringHTML: string;
-  const divRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRef.current) {
-      newStringHTML = stringHTML
-        .replace("<i>", "<em>")
-        .replace("</i>", "</em>")
-        .replace("<b>", "<strong>")
-        .replace("</b>", "</strong>");
-
-      divRef.current.innerHTML = newStringHTML ?? "";
-    }
-  }, [divRef, stringHTML]);
-
-  return <div className="block" ref={divRef}></div>;
 }
