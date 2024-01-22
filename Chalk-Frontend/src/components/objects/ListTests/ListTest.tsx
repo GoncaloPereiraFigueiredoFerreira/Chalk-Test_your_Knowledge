@@ -101,7 +101,7 @@ function ShowTestList(
               })}
             </div>
             <div className="flex space-x-2">
-              {(test.publishDate === null || test.publishDate === "") && (
+              {test.publishDate === null || test.publishDate === "" ? (
                 <>
                   <button
                     type="button"
@@ -119,23 +119,23 @@ function ShowTestList(
                       deleteTest();
                       e.stopPropagation();
                     }}
-                    className="z-30 inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                    className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                   >
                     Delete
                   </button>
                 </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    navigate("/webapp/tests/" + test.id + "/correction");
+                    e.stopPropagation();
+                  }}
+                  className="z-30  inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                >
+                  Evaluate
+                </button>
               )}
-
-              <button
-                type="button"
-                onClick={(e) => {
-                  navigate("/webapp/tests/" + test.id + "/correction");
-                  e.stopPropagation();
-                }}
-                className="z-30  inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-              >
-                Evaluate
-              </button>
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@ function ShowTestGrid(
               })}
             </div>
             <div className="flex w-full px-2 justify-end">
-              {(test.publishDate === null || test.publishDate === "") && (
+              {test.publishDate === null || test.publishDate === "" ? (
                 <>
                   <button
                     type="button"
@@ -264,7 +264,7 @@ function ShowTestGrid(
                       navigate("/webapp/tests/" + test.id + "/edit");
                       e.stopPropagation();
                     }}
-                    className="z-30  inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="z-30  inline-flex items-center px-6 py-2 h-12 text-sm font-medium text-center text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Edit
                   </button>
@@ -274,22 +274,23 @@ function ShowTestGrid(
                       deleteTest();
                       e.stopPropagation();
                     }}
-                    className="z-30 inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                    className="z-30 inline-flex items-center px-6 py-2 h-12  text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                   >
                     Delete
                   </button>
                 </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    navigate("/webapp/tests/" + test.id + "/correction");
+                    e.stopPropagation();
+                  }}
+                  className="z-30 inline-flex items-center px-6 h-12 text-sm font-medium text-center text-white bg-green-700  hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                >
+                  Evaluate
+                </button>
               )}
-              <button
-                type="button"
-                onClick={(e) => {
-                  navigate("/webapp/tests/" + test.id + "/correction");
-                  e.stopPropagation();
-                }}
-                className="z-30 inline-flex items-center px-6 h-12 text-sm font-medium text-center text-white bg-green-700  hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              >
-                Evaluate
-              </button>
             </div>
           </div>
         </div>

@@ -26,6 +26,9 @@ export function TFPreview({ exercise, position, context }: TFPreviewProps) {
           />
         ))}
       </div>
+      <p className="pb-4 text-sm text-black dark:text-white">
+        <strong>Tipo de Justificação:</strong> {exercise.props.justifyType}
+      </p>
     </>
   );
 }

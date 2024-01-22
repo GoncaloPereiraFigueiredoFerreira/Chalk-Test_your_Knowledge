@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -17,15 +17,6 @@ function renderExercise(
   setShowExID: Function,
   testResolutions?: TestResolution
 ) {
-  const divRef = useRef<HTMLDivElement>(null);
-
-  if (testResolutions)
-    useEffect(() => {
-      if (divRef.current)
-        divRef.current.innerHTML =
-          testResolutions.resolutions[exercise.identity.id].comment ?? "";
-    }, [divRef, testResolutions.resolutions[exercise.identity.id].comment]);
-
   return (
     <div
       key={index}
@@ -71,7 +62,7 @@ function renderExercise(
           testResolutions.resolutions[exercise.identity.id] ? (
             <p className="">
               <strong>Comentário do Especialista: </strong>
-              <div className="block" ref={divRef}></div>
+              {testResolutions.resolutions[exercise.identity.id].comment}
             </p>
           ) : (
             <></>
