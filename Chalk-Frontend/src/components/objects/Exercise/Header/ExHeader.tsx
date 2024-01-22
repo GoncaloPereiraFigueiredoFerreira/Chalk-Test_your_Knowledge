@@ -1,4 +1,4 @@
-import { textToHTML } from "../../../interactiveElements/TextareaBlock";
+import { useEffect, useRef } from "react";
 import { ExerciseHeader } from "../Exercise";
 
 export enum ImgPos {
@@ -15,6 +15,11 @@ interface HeaderProps {
 export function ExerciseHeaderComp({ header }: HeaderProps) {
   let imgComponent = <></>;
   let style = "";
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRef.current) divRef.current.innerHTML = header.text ?? "";
+  }, [divRef, header]);
 
   if (header.imagePath) {
     imgComponent = (
@@ -40,7 +45,7 @@ export function ExerciseHeaderComp({ header }: HeaderProps) {
   return (
     <div className={"pb-2 text-black dark:text-white text-base " + style}>
       {ImgPos.LEFT === header.imagePosition ? imgComponent : null}
-      {textToHTML(header.text)}
+      <div className="block" ref={divRef}></div>
       {ImgPos.LEFT !== header.imagePosition ? imgComponent : null}
     </div>
   );

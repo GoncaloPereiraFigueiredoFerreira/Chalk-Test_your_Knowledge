@@ -518,7 +518,7 @@ export function EditExercise({
             Cancelar
           </button>
         </div>
-        <div className="mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500">
+        <div className="mx-4 mb-4 border rounded-lg bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500">
           <ExerciseComponent
             position={position ? position : "1"}
             exercise={state.exercise}
@@ -634,7 +634,7 @@ export function EditExercise({
         </div>
       </div>
 
-      <div className="px-5 py-2 rounded-lg bg-white dark:bg-black flex justify-between">
+      <div className="px-5 py-2 rounded-lg flex justify-between">
         <div className="flex space-x-3 items-center">
           <p className="text-xl font-medium">Tags:</p>
           {state.exercise.base.tags.map((tag) => {
@@ -644,7 +644,7 @@ export function EditExercise({
         <button
           type="button"
           onClick={() => setTagsModal(true)}
-          className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
         >
           Escolher Tags
         </button>
@@ -662,7 +662,7 @@ export function EditExercise({
         ></TagsFilterModal>
       </div>
 
-      <div className="px-5 py-2 rounded-lg bg-white dark:bg-black">
+      <div className="px-5 py-2 rounded-lg">
         <EditHeader dispatch={editDispatch} state={state.exercise} />
       </div>
       <div className="pt-8 px-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
