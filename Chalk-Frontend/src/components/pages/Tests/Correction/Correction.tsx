@@ -6,7 +6,7 @@ import {
   Resolution,
   ResolutionType,
   TranslateTestExerciseIN,
-  TranslateTestResolutionIN,
+  TranslateTestResolutionINType,
 } from "../../../objects/Exercise/Exercise";
 import { Rubric } from "../../../objects/Rubric/Rubric";
 import { InitTest, Test } from "../../../objects/Test/Test";
@@ -105,7 +105,8 @@ export function Correction() {
         })
           .then((page) => {
             let resJson = page.items;
-            if (json.type === "CE" || json.type === "OA") setRubric(exID, json);
+            if (json && (json.type === "CE" || json.type === "OA"))
+              setRubric(exID, json);
             resJson.map((res: any) => {
               const newRes: Resolution = {
                 id: res.resolution.id,
@@ -118,7 +119,10 @@ export function Correction() {
                 },
                 cotation: 0,
                 type: ResolutionType.PENDING,
-                data: TranslateTestResolutionIN(res.resolution.data),
+                data: TranslateTestResolutionINType(
+                  res.resolution.data,
+                  resolutions[exID].type
+                ),
               };
               addResolution(exID, newRes.id, newRes);
             });

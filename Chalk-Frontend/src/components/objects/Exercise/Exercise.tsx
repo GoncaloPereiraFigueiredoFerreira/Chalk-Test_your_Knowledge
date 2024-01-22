@@ -520,6 +520,7 @@ export function TranslateExerciseOUT(exercise: Exercise): {
         maxAnswers: exercise.props.maxAnswers,
       };
       solutionTR["type"] = "CE";
+      solutionTR["chat"] = [];
       break;
   }
 
@@ -634,7 +635,7 @@ export function TranslateResolutionIN(
     case ExerciseType.CHAT:
       const CQRes: CQResolutionData = {
         type: ExerciseType.CHAT,
-        msgs: [...solution.chat], // CHECK WITH BRONZE
+        msgs: [...solution.chat],
       };
       newRes = CQRes;
       break;
@@ -690,6 +691,7 @@ export function TranslateResolutionOUT(resolution: ResolutionData) {
       return { type: "MC", items: { ...resolution.items } };
   }
 }
+
 export function TranslateTestResolutionIN(resolution: any): ResolutionData {
   let newRes: ResolutionData;
   switch (resolution.type) {
@@ -702,16 +704,61 @@ export function TranslateTestResolutionIN(resolution: any): ResolutionData {
       break;
 
     case "MC":
-      // Got to fix this
-      const MCRes: TFResolutionData = {
+      const TFRes: TFResolutionData = {
         type: ExerciseType.TRUE_OR_FALSE,
+        items: resolution.items,
+        justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
+      };
+      newRes = TFRes;
+      break;
+
+    case "OA":
+      const OARes: OAResolutionData = {
+        type: ExerciseType.OPEN_ANSWER,
+        text: resolution.text,
+      };
+      newRes = OARes;
+      break;
+
+    default:
+      newRes = InitResolutionDataType(ExerciseType.MULTIPLE_CHOICE);
+  }
+  return newRes;
+}
+
+export function TranslateTestResolutionINType(
+  resolution: any,
+  type: ExerciseType
+): ResolutionData {
+  let newRes: ResolutionData;
+  switch (type) {
+    case ExerciseType.CHAT:
+      const CQRes: CQResolutionData = {
+        type: ExerciseType.CHAT,
+        msgs: [...resolution.chat],
+      };
+      newRes = CQRes;
+      break;
+
+    case ExerciseType.TRUE_OR_FALSE:
+      const TFRes: TFResolutionData = {
+        type: ExerciseType.TRUE_OR_FALSE,
+        items: resolution.items,
+        justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
+      };
+      newRes = TFRes;
+      break;
+
+    case ExerciseType.MULTIPLE_CHOICE:
+      const MCRes: MCResolutionData = {
+        type: ExerciseType.MULTIPLE_CHOICE,
         items: resolution.items,
         justifyType: ExerciseJustificationKind.JUSTIFY_ALL,
       };
       newRes = MCRes;
       break;
 
-    case "OA":
+    case ExerciseType.OPEN_ANSWER:
       const OARes: OAResolutionData = {
         type: ExerciseType.OPEN_ANSWER,
         text: resolution.text,

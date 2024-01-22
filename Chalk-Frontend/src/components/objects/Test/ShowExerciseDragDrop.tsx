@@ -456,17 +456,9 @@ export function ShowExerciseDragDrop({
             ))}
         </div>
         <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#dddddd]">
-          <div className="bg-yellow-600 tag-exercise">Matemática</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-green-600 tag-exercise">escolinha</div>
-          <div className="bg-blue-600 tag-exercise">4º ano</div>
+          {exercise.base.tags.map((tag) => {
+            return <div className="bg-yellow-600 tag-exercise">{tag.name}</div>;
+          })}
         </div>
         <div
           className={`${

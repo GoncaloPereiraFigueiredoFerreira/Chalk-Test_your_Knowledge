@@ -37,10 +37,8 @@ function renderExercise(
           testResolutions.resolutions[exercise.identity.id] ? (
             <p>
               Cotação Obtida:{" "}
-              {(exercise.identity.points! *
-                testResolutions.resolutions[exercise.identity.id].points) /
-                100}{" "}
-              / {exercise.identity.points}
+              {testResolutions.resolutions[exercise.identity.id].points}/{" "}
+              {exercise.identity.points}
             </p>
           ) : (
             <p>Cotação do Exercício: {exercise.identity.points}</p>

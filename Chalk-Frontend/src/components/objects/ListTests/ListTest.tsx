@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { Badge, Pagination } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserRole, UserContext } from "../../../UserContext.tsx";
 import {
   CircularProgressbar,
@@ -12,14 +12,23 @@ import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
 
-function ShowTestList(test: TestPreview, index: number, role: UserRole) {
+function ShowTestList(
+  test: TestPreview,
+  index: number,
+  role: UserRole,
+  deleteTest: () => void,
+  navigate: (url: string) => void
+) {
   return (
     <>
       {role == UserRole.STUDENT ? (
-        <Link
-          to={"/webapp/tests/" + test.id + "/preview"}
+        <div
           key={index}
-          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden"
+          onClick={(e) => {
+            navigate("/webapp/tests/" + test.id + "/preview");
+            e.stopPropagation();
+          }}
+          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden z-10"
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">
@@ -44,25 +53,32 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
             <div className="flex justify-end space-x-2 w-60">
               <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-36">
                 <strong>Last Grade:</strong>
-                {test.totalPoints === undefined
+                {test.globalPoints === undefined
                   ? "TBD"
-                  : ` ${test.totalPoints}%`}
+                  : ` ${test.globalPoints}%`}
               </div>
 
-              <Link
-                to={"/webapp/tests/" + test.id + "/solve"}
-                className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              <button
+                type="button"
+                onClick={(e) => {
+                  navigate("/webapp/tests/" + test.id + "/solve");
+                  e.stopPropagation();
+                }}
+                className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
-              </Link>
+              </button>
             </div>
           </div>
-        </Link>
+        </div>
       ) : (
-        <Link
-          to={"/webapp/tests/" + test.id + "/preview"}
+        <div
           key={index}
-          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden"
+          onClick={(e) => {
+            navigate("/webapp/tests/" + test.id + "/preview");
+            e.stopPropagation();
+          }}
+          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden z-10"
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">
@@ -85,45 +101,69 @@ function ShowTestList(test: TestPreview, index: number, role: UserRole) {
               })}
             </div>
             <div className="flex space-x-2">
-              <Link
-                to={"/webapp/tests/" + test.id + "/edit"}
-                className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Edit
-              </Link>
+              {(test.publishDate === null || test.publishDate === "") && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      navigate("/webapp/tests/" + test.id + "/edit");
+                      e.stopPropagation();
+                    }}
+                    className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      deleteTest();
+                      e.stopPropagation();
+                    }}
+                    className="z-30 inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
 
-              <Link
-                to={"/webapp/tests/" + test.id + "/correction"}
-                className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+              <button
+                type="button"
+                onClick={(e) => {
+                  navigate("/webapp/tests/" + test.id + "/correction");
+                  e.stopPropagation();
+                }}
+                className="z-30  inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Evaluate
-              </Link>
-
-              <Link
-                to={"/webapp/tests/" + test.id + "/solve"}
-                className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              >
-                Solve
-              </Link>
+              </button>
             </div>
           </div>
-        </Link>
+        </div>
       )}
     </>
   );
 }
 
-function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
+function ShowTestGrid(
+  test: TestPreview,
+  index: number,
+  role: UserRole,
+  deleteTest: () => void,
+  navigate: (url: string) => void
+) {
   return (
     <>
       {role == UserRole.STUDENT ? (
-        <Link
-          to={"/webapp/tests/" + test.id + "/preview"}
+        <div
           key={index}
-          className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
+          onClick={(e) => {
+            navigate("/webapp/tests/" + test.id + "/preview");
+            e.stopPropagation();
+          }}
+          className=" z-10 max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
           <div className="py-10 px-20 ">
-            {test.totalPoints === undefined ? (
+            {test.globalPoints === undefined ? (
               <CircularProgressbarWithChildren value={0}>
                 <AiTwotoneFileUnknown size="100" />
                 <div style={{ fontSize: 12, marginTop: -5 }}>
@@ -132,14 +172,14 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
               </CircularProgressbarWithChildren>
             ) : (
               <CircularProgressbar
-                value={test.totalPoints}
-                text={`${test.totalPoints}%`}
+                value={test.globalPoints}
+                text={`${test.globalPoints}%`}
                 styles={buildStyles({
-                  textColor: `rgba(${480 - test.totalPoints * 4.8}, ${
-                    4.8 * test.totalPoints
+                  textColor: `rgba(${480 - test.globalPoints * 4.8}, ${
+                    4.8 * test.globalPoints
                   }, ${0})`,
-                  pathColor: `rgba(${480 - test.totalPoints * 4.8}, ${
-                    4.8 * test.totalPoints
+                  pathColor: `rgba(${480 - test.globalPoints * 4.8}, ${
+                    4.8 * test.globalPoints
                   }, ${0})`,
                 })}
               />
@@ -167,25 +207,31 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
             <div className="flex w-full px-2 justify-between">
               <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
                 <strong>Last Grade:</strong>
-                {test.totalPoints === undefined
+                {test.globalPoints === undefined
                   ? "TBD"
-                  : ` ${test.totalPoints}%`}
+                  : ` ${test.globalPoints}%`}
               </div>
-
-              <Link
-                to={"/webapp/tests/" + test.id + "/solve"}
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              <button
+                type="button"
+                onClick={(e) => {
+                  navigate("/webapp/tests/" + test.id + "/solve");
+                  e.stopPropagation();
+                }}
+                className="z-30  inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Solve
-              </Link>
+              </button>
             </div>
           </div>
-        </Link>
+        </div>
       ) : (
-        <Link
-          to={"/webapp/tests/" + test.id + "/preview"}
+        <div
           key={index}
-          className=" max-w-lg  bg-white  border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
+          onClick={(e) => {
+            navigate("/webapp/tests/" + test.id + "/preview");
+            e.stopPropagation();
+          }}
+          className=" z-10 max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
         >
           <div className="flex justify-center py-16  bg-yellow-300">
             <FaTasks size="120" />
@@ -209,30 +255,44 @@ function ShowTestGrid(test: TestPreview, index: number, role: UserRole) {
                 );
               })}
             </div>
-            <div className="flex w-full px-2 justify-center">
-              <Link
-                to={"/webapp/tests/" + test.id + "/edit"}
-                className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Edit
-              </Link>
-
-              <Link
-                to={"/webapp/tests/" + test.id + "/correction"}
-                className="inline-flex items-center px-6 h-12 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            <div className="flex w-full px-2 justify-end">
+              {(test.publishDate === null || test.publishDate === "") && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      navigate("/webapp/tests/" + test.id + "/edit");
+                      e.stopPropagation();
+                    }}
+                    className="z-30  inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      deleteTest();
+                      e.stopPropagation();
+                    }}
+                    className="z-30 inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={(e) => {
+                  navigate("/webapp/tests/" + test.id + "/correction");
+                  e.stopPropagation();
+                }}
+                className="z-30 inline-flex items-center px-6 h-12 text-sm font-medium text-center text-white bg-green-700  hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 Evaluate
-              </Link>
-
-              <Link
-                to={"/webapp/tests/" + test.id + "/solve"}
-                className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-green-700  hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              >
-                Solve
-              </Link>
+              </button>
             </div>
           </div>
-        </Link>
+        </div>
       )}
     </>
   );
@@ -244,8 +304,8 @@ interface TestPreview {
   title: string;
   status: string;
   tags: string[];
-  publishDate?: Date;
-  totalPoints?: any;
+  publishDate?: string;
+  globalPoints?: number;
 }
 
 type TestList = TestPreview[];
@@ -268,6 +328,7 @@ export function ListTests({
   const { user } = useContext(UserContext);
   const [totalPages, setTotalPages] = useState(1);
   const { contactBACK } = useContext(APIContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let requestTags: any = tagsList.map((tag: any) => tag.id);
@@ -314,7 +375,9 @@ export function ListTests({
         });
         Promise.all(promises).then((results) => {
           tests.map((teste: any, index: number) => {
-            teste.totalPoints = results[index];
+            if (results[index])
+              teste.globalPoints = (results[index] / teste.globalPoints) * 100;
+            else teste.globalPoints = undefined;
             let tags = teste.tags.map((tag: any) => {
               return tag.name;
             });
@@ -330,19 +393,39 @@ export function ListTests({
     item.title.toLowerCase().includes(searchKey.toLowerCase())
   );
 
+  const deleteTest = (id: string) => {
+    contactBACK("tests/" + id, "DELETE", undefined, undefined, "none").then(
+      () => {
+        setTestList([...testList].filter((test) => id !== test.id));
+      }
+    );
+  };
+
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max pb-8">
         {view == ViewType.GRID ? (
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:grid-cols-3 md:gaps-4">
             {filteredItems.map((test, index) => {
-              return ShowTestGrid(test, index, user.user!.role);
+              return ShowTestGrid(
+                test,
+                index,
+                user.user!.role,
+                () => deleteTest(test.id),
+                navigate
+              );
             })}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-2">
             {filteredItems.map((test, index) => {
-              return ShowTestList(test, index, user.user!.role);
+              return ShowTestList(
+                test,
+                index,
+                user.user!.role,
+                () => deleteTest(test.id),
+                navigate
+              );
             })}
           </div>
         )}
