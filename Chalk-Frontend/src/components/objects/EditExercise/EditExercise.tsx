@@ -632,84 +632,84 @@ export function EditExercise({
             />
           </div>
         </div>
-      </div>
 
-      <div className="px-5 py-2 rounded-lg flex justify-between">
-        <div className="flex space-x-3 items-center">
-          <p className="text-xl font-medium">Tags:</p>
-          {state.exercise.base.tags.map((tag) => {
-            return <p>{tag.name}</p>;
-          })}
-        </div>
-        <button
-          type="button"
-          onClick={() => setTagsModal(true)}
-          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
-        >
-          Escolher Tags
-        </button>
+        <div className="px-5 py-2 rounded-lg flex justify-between">
+          <div className="flex space-x-3 items-center">
+            <p className="text-xl font-medium">Tags:</p>
+            {state.exercise.base.tags.map((tag) => {
+              return <p>{tag.name}</p>;
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={() => setTagsModal(true)}
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          >
+            Escolher Tags
+          </button>
 
-        <TagsFilterModal
-          header="Selecione as tags a adicionar ao seu Exercício"
-          openModal={openTagsModal}
-          setOpenModal={setTagsModal}
-          setTagsList={(tags) => {
-            editDispatch({
-              type: EditActionKind.SET_TAGS,
-              dataTagsList: tags,
-            });
-          }}
-        ></TagsFilterModal>
-      </div>
-
-      <div className="px-5 py-2 rounded-lg">
-        <EditHeader dispatch={editDispatch} state={state.exercise} />
-      </div>
-      <div className="pt-8 px-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
-        <h3 className="pb-4 font-medium text-xl">Detalhes do Exercício:</h3>
-        <ExerciseComponent
-          position={position ?? "1"}
-          exercise={state.exercise}
-          context={{
-            context: ExerciseContext.EDIT,
-            dispatch: editDispatch,
-            solutionData: state.solution,
-          }}
-        ></ExerciseComponent>
-      </div>
-      {(state.exercise.type === ExerciseType.CHAT ||
-        state.exercise.type === ExerciseType.OPEN_ANSWER) && (
-        <div className="py-2 px-4">
-          <p className="text-xl font-medium">Rúbrica:</p>
-          <Rubric
-            context={{
-              context: RubricContext.EDIT,
-              setRubric: (rubric: Rubric) => {
-                editDispatch({
-                  type: EditActionKind.SET_RUBRIC,
-                  dataRubric: rubric,
-                });
-              },
+          <TagsFilterModal
+            header="Selecione as tags a adicionar ao seu Exercício"
+            openModal={openTagsModal}
+            setOpenModal={setTagsModal}
+            setTagsList={(tags) => {
+              editDispatch({
+                type: EditActionKind.SET_TAGS,
+                dataTagsList: tags,
+              });
             }}
-            rubric={state.rubric ?? { criteria: [] }}
-          ></Rubric>
+          ></TagsFilterModal>
         </div>
-      )}
-      <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
-        <button
-          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
-          onClick={() => saveEdit(state)}
-        >
-          <FiSave className="size-5" />
-          Guardar e fechar
-        </button>
-        <button
-          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
-          onClick={() => cancelEdit(state)}
-        >
-          <IoClose className="size-5" />
-          Cancelar
-        </button>
+
+        <div className="px-5 rounded-lg">
+          <EditHeader dispatch={editDispatch} state={state.exercise} />
+        </div>
+        <div className="pt-8 px-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+          <h3 className="pb-4 font-medium text-xl">Detalhes do Exercício:</h3>
+          <ExerciseComponent
+            position={position ?? "1"}
+            exercise={state.exercise}
+            context={{
+              context: ExerciseContext.EDIT,
+              dispatch: editDispatch,
+              solutionData: state.solution,
+            }}
+          ></ExerciseComponent>
+        </div>
+        {(state.exercise.type === ExerciseType.CHAT ||
+          state.exercise.type === ExerciseType.OPEN_ANSWER) && (
+          <div className="py-2 px-4">
+            <p className="text-xl font-medium">Rúbrica:</p>
+            <Rubric
+              context={{
+                context: RubricContext.EDIT,
+                setRubric: (rubric: Rubric) => {
+                  editDispatch({
+                    type: EditActionKind.SET_RUBRIC,
+                    dataRubric: rubric,
+                  });
+                },
+              }}
+              rubric={state.rubric ?? { criteria: [] }}
+            ></Rubric>
+          </div>
+        )}
+        <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+          <button
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            onClick={() => saveEdit(state)}
+          >
+            <FiSave className="size-5" />
+            Guardar e fechar
+          </button>
+          <button
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            onClick={() => cancelEdit(state)}
+          >
+            <IoClose className="size-5" />
+            Cancelar
+          </button>
+        </div>
       </div>
     </>
   );
