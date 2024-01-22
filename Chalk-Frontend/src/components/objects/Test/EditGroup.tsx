@@ -18,14 +18,14 @@ export function EditGroup({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-white dark:bg-black">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
-          <label className="flex text-4xl text-gray-600 dark:text-white">
+      <div className="flex flex-col w-full gap-4 min-h-max text-black dark:text-white">
+        <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+          <label className="flex text-4xl text-slate-600 dark:text-white">
             Editar
           </label>
           <div className="flex gap-4">
             <button
-              className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+              className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
               onClick={() => cancelEdit(state)}
             >
               <IoClose className="size-5" />
@@ -41,16 +41,16 @@ export function EditGroup({
           value={state}
           onChange={(value) => setState(value)}
         />
-        <div className="flex gap-2">
+        <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() => saveEdit(state)}
           >
             <FiSave className="size-5" />
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />

@@ -242,13 +242,11 @@ export function ShowExercise({
             !selectedExercise ? "hidden" : "flex"
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#bbbbbb] dark:border-slate-500`}
         >
-          {exercise.base.tags.map((tag, key) => {
-            return (
-              <div key={key} className="bg-yellow-600 tag-exercise">
-                {tag.name}
-              </div>
-            );
-          })}
+          {exercise.base.tags.map((tag, key) => (
+            <div key={key} className="bg-yellow-600 tag-exercise">
+              {tag.name}
+            </div>
+          ))}
         </div>
         <div
           className={`${

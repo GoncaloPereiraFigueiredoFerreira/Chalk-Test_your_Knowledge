@@ -82,7 +82,7 @@ export function EditTestDragDrop({
               });
             });
           }}
-          className="flex p-2 gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
         >
           {testState.test.publishDate !== null &&
           testState.test.publishDate !== "" ? (

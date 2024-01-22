@@ -7,6 +7,7 @@ export enum StardardLevels {
   WELL_DONE = "4",
   SATISFACTORY = "3",
   INSATISFACTORY = "2",
+  NULL = "0",
 }
 
 export interface Standard {
