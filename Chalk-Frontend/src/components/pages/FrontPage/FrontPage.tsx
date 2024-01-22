@@ -14,7 +14,7 @@ export function FrontPage() {
           >
             Banco de exercícios
             <div className="text-xs truncate opacity-50">
-              Additional Text Below
+              Aceder ao banco de exercícios
             </div>
           </button>
           <button
@@ -23,27 +23,27 @@ export function FrontPage() {
           >
             Os meus Testes
             <div className="text-xs truncate opacity-50">
-              Additional Text Below
+              Aceder ao próprio conjunto de testes
             </div>
           </button>
         </div>
         <div className="flex flex-row space-x-4 mt-4 mb-28">
           <button
             className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
-            onClick={() => navigate("exercise-bank")}
+            onClick={() => navigate("create-test")}
           >
             Criar Novo Teste
             <div className="text-xs truncate opacity-50">
-              Additional Text Below
+              Criar um novo teste
             </div>
           </button>
           <button
             className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
             onClick={() => navigate("groups")}
           >
-            Manage Groups
+            Administrar Groups
             <div className="text-xs truncate opacity-50">
-              Additional Text Below
+              Visite os seus grupos
             </div>
           </button>
         </div>
