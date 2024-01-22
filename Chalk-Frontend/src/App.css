@@ -30,9 +30,10 @@ html {
 text{
   black
   white
+  slate-300
 }
 
-placeholder:dark:text-gray-400
+placeholder:dark:text-slate-400
 
 blue {
   #acacff

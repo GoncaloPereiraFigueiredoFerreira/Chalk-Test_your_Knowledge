@@ -49,14 +49,14 @@ export function CQExerciseComp({
       exerciseDisplay = <></>;
       break;
   }
-  return (
+  return context.context !== ExerciseContext.EDIT ? (
     <>
-      {context.context !== ExerciseContext.EDIT ? (
-        <div className="p-4 text-2xl font-medium text-black dark:text-white">
-          {position + ") " + exercise.base.title}
-        </div>
-      ) : null}
+      <div className="p-4 text-2xl font-medium text-black dark:text-white">
+        {position + ") " + exercise.base.title}
+      </div>
       <div className="px-12 text-lg">{exerciseDisplay}</div>
     </>
+  ) : (
+    <div className="text-lg">{exerciseDisplay}</div>
   );
 }

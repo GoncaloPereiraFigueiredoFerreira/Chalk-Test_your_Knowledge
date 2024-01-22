@@ -129,8 +129,6 @@ function TFStatementEdit({
   const name = "radio-button-" + position;
 
   if (solution.type === ExerciseType.TRUE_OR_FALSE) {
-    console.log(solutionItem);
-
     const solutionItem = solution.items[id];
 
     return (

@@ -176,7 +176,7 @@ function EditReducer(state: EditState, action: EditAction) {
             ...exercise,
             props: { ...exercise.props, items: newItems },
           } as Exercise,
-          solution: { ...solution, items: newItems } as ResolutionData,
+          solution: { ...solution, items: newSolutionItems } as ResolutionData,
         };
       } else throw new Error("Invalid action");
 
