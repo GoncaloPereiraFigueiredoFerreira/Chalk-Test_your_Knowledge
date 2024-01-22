@@ -44,7 +44,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
       <div>
         <label
           htmlFor="message"
-          className="block mb-2 ml-1 text-xl font-medium text-black dark:text-white"
+          className="block pb-2 text-xl font-medium text-black dark:text-white"
         >
           Enunciado:
         </label>
@@ -61,11 +61,11 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
           }
         ></TextareaBlock>
       </div>
-      <div className="mt-2 mx-3 font-medium">
+      <div className="px-4 pb-4 font-medium">
         <input
           id="putImg"
           type="checkbox"
-          className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600"
+          className="p-2 rounded outline-0 bg-[#dddddd] border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600"
           onChange={() => {
             if (addImg)
               dispatch({
@@ -81,20 +81,20 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
         ></input>
         <label
           htmlFor="putImg"
-          className="w-full py-4 ml-2 text-sm  text-black dark:text-slate-300"
+          className="w-full py-4 ml-2 text-base font-medium text-black dark:text-slate-300"
         >
           Adicionar uma imagem
         </label>
         <div
           className={`${
-            addImg ? "max-h-96" : "max-h-0 overflow-hidden"
-          } transition-[max-height]`}
+            addImg ? "max-h-96" : "max-h-0"
+          } transition-[max-height] overflow-hidden`}
         >
-          <div className={"flex flex-row pt-3 gap-5"}>
-            <div className="flex flex-col">
+          <div className={"flex flex-row pt-4 gap-4"}>
+            <div className="flex flex-col w-full">
               <label
                 htmlFor="image"
-                className="mb-2 ml-1 text-sm text-black dark:text-white"
+                className="pb-2 pl-1 text-base text-black dark:text-white"
               >
                 Imagem:
               </label>
@@ -102,7 +102,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
                 id="image"
                 placeholder="Imagem"
                 type="url"
-                className="flex rounded-lg text-black dark:text-white bg-inherit border-2 border-[#dddddd] dark:border-slate-700 focus:ring-0 focus:border-[#dddddd] focus:dark:border-slate-700"
+                className="w-full rounded-lg text-black dark:text-white bg-inherit border-2 border-[#dddddd] dark:border-slate-700 focus:ring-0 focus:border-[#dddddd] focus:dark:border-slate-700"
                 value={state.base.statement.imagePath}
                 onChange={(e) =>
                   dispatch({
@@ -116,7 +116,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
             <div className="flex flex-col">
               <label
                 htmlFor="pos"
-                className="mb-2 text-sm text-black dark:text-white"
+                className="pb-2 text-base text-black dark:text-white"
               >
                 Posição:
               </label>
@@ -138,7 +138,7 @@ export function EditHeader({ dispatch, state }: EditHeaderProps) {
                     dataImgPos: translateStringToImgPos(position),
                   })
                 }
-                style="flex h-11 rounded-lg"
+                style="h-11 rounded-lg text-base"
                 placement="bottom"
               ></DropdownBlock>
             </div>

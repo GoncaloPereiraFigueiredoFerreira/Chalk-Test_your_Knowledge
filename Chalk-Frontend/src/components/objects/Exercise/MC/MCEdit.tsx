@@ -23,7 +23,7 @@ export function MCEdit({ context, exercise }: MCEditProps) {
 
   return (
     <>
-      <p className="block mb-4 text-md text-black dark:text-white">
+      <p className="block pb-4 text-base text-black dark:text-white">
         Adicione as afirmações e escolha a opção correta.
       </p>
       <ul className="flex flex-col gap-2">
@@ -58,11 +58,11 @@ export function MCEdit({ context, exercise }: MCEditProps) {
         </button>
       </ul>
       <div className="flex flex-col">
-        <div className="mt-5 flex items-center">
+        <div className="pt-5 flex items-center">
           <input
             id="bordered-checkbox"
             type="checkbox"
-            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600 outline-none"
+            className="p-2 rounded outline-0 bg-[#dddddd] border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600 outline-none"
             onChange={() => {
               if (openJustificationkind)
                 context.dispatch({
@@ -80,15 +80,15 @@ export function MCEdit({ context, exercise }: MCEditProps) {
           />
           <label
             htmlFor="bordered-checkbox"
-            className="w-full py-4 ml-2 text-sm font-medium text-black dark:text-slate-300"
+            className="w-full py-4 pl-2 text-base font-medium text-black dark:text-slate-300"
           >
             Pedir a justificação?
           </label>
         </div>
         <div
           className={`${
-            openJustificationkind ? "max-h-96" : "max-h-0 overflow-hidden"
-          } transition-[max-height] ml-3 h-12`}
+            openJustificationkind ? "max-h-96" : "max-h-0"
+          } transition-[max-height] pl-3 h-12 overflow-hidden`}
         >
           <DropdownBlock
             options={[
@@ -104,8 +104,8 @@ export function MCEdit({ context, exercise }: MCEditProps) {
                 dataJK: justifyKind,
               })
             }
-            style="rounded-lg h-full"
-            placement="top"
+            style="rounded-lg h-full text-base"
+            placement="bottom"
           ></DropdownBlock>
         </div>
       </div>
