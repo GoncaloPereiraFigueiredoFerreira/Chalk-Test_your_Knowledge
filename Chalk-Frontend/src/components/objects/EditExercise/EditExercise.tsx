@@ -405,6 +405,7 @@ export function EditExercise({
 
   function generateEx() {
     if (text !== "" || input !== "") {
+      setWaiting(true);
       setSugestion(undefined);
       getAIQuestion(state.exercise.type, text, input);
     }
@@ -543,14 +544,17 @@ export function EditExercise({
               dismissible
             >
               <Modal.Header />
+              <label className="flex w-full max-w-4xl justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-[#bbbbbb]">
+                Sugestão de Exercício
+              </label>
               <Modal.Body>
-                <div className="space-y-6">
-                  <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                <div className="flex flex-col text-xl p-4">
+                  <label className="pb-4">
                     Defina o texto de base para a criação da pergunta e as
                     diretrizes a seguir
-                  </h3>
+                  </label>
                   <div>
-                    <label className="text-xl">Texto de base:</label>
+                    <label className="text-xl pb-4">Texto de base:</label>
                     <TextareaBlock
                       toolbar={false}
                       value={text}
@@ -561,7 +565,7 @@ export function EditExercise({
                     ></TextareaBlock>
                   </div>
                   <div>
-                    <label className="text-xl">Diretrizes:</label>
+                    <label className="text-xl pb-4">Diretrizes:</label>
                     <TextareaBlock
                       toolbar={false}
                       value={input}
@@ -574,7 +578,7 @@ export function EditExercise({
                   {exSugestion && (
                     <ExerciseComponent
                       exercise={exSugestion}
-                      position={""}
+                      position={"1"}
                       context={{ context: ExerciseContext.PREVIEW }}
                     />
                   )}
@@ -582,9 +586,9 @@ export function EditExercise({
                     <div className="flex justify-between w-full">
                       <button
                         type="button"
+                        className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
                         onClick={() => {
                           generateEx();
-                          setWaiting(true);
                         }}
                       >
                         Gerar Novo Exercício
@@ -592,6 +596,7 @@ export function EditExercise({
                       {exSugestion && (
                         <button
                           type="button"
+                          className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
                           onClick={() => {
                             acceptQuestion();
                           }}
