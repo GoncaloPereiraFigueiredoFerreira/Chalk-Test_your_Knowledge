@@ -8,9 +8,9 @@ services:
       - backend
       - auth
     environment:
-      - VITE_BACKEND=http://localhost:7777/backend/v1/
-      - VITE_AUTH=http://localhost:7777/auth/
-      - VITE_AI_API=http://localhost:7777/api/
+      - VITE_BACKEND=http://${LOCALHOST}:7777/backend/v1/
+      - VITE_AUTH=http://${LOCALHOST}:7777/auth/
+      - VITE_AI_API=http://${LOCALHOST}:7777/api/
       - VITE_G_CLIENTID=${G_CLIENTID}
     ports:
       - 5173:5173
