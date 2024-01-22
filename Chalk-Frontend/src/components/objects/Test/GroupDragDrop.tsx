@@ -88,7 +88,7 @@ export function GroupDragDrop({
           }}
           className={`${
             isDragging && "opacity-40"
-          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[#c1cfec] dark:bg-[#1e2a3f] text-black dark:text-white h-56 overflow-hidden`}
+          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[rgb(203,213,225)] dark:bg-[#1e2a3f] text-black dark:text-white h-56 overflow-hidden`}
         >
           <div className="flex w-full justify-between pb-4 px-4 border-b-2 border-[#bbbbbb] dark:border-slate-600">
             <label className="flex w-full items-center text-xl font-medium">
@@ -145,7 +145,7 @@ export function GroupDragDrop({
         ref={setNodeRef}
         className={`${
           isDragging && "opacity-50"
-        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[#c8d6f5] dark:bg-[#1e2a3f] text-black dark:text-white`}
+        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-slate-300 dark:bg-[#1e2a3f] text-black dark:text-white`}
       >
         <div
           className="flex w-full justify-between pb-4 px-4 border-b-2 border-[#bbbbbb] dark:border-slate-600"
