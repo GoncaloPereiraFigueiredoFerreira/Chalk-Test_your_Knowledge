@@ -6,22 +6,16 @@ export function WebApp() {
   const [isOpen, toggle] = useState(true);
 
   return (
-    <div className="flex flex-row h-full w-full">
+    <div className="flex flex-row h-full">
+      <Sidebar isOpen={isOpen} toggle={toggle}></Sidebar>
       <div
-        className={`${
-          isOpen ? "min-w-[256px]" : "min-w-[64px]"
-        } flex overflow-hidden transition-all`}
-      >
-        <Sidebar isOpen={isOpen} toggle={toggle}></Sidebar>
-      </div>
-      <div
-        className={`${
-          isOpen ? "w-[calc(100vw-256px)]" : "w-[calc(100vw-64px)]"
-        } z-10 h-full`}
+        className={`z-10 h-full transition-all ${
+          isOpen ? "w-[calc(100vw-256px)] ml-64" : "w-[calc(100vw-64px)] ml-16"
+        }`}
       >
         <Outlet />
       </div>
-      <div className="fixed top-0 left-0 h-screen w-screen bg-gray-300 dark:bg-gray-800 -z-10"></div>
+      <div className="fixed top-0 left-0 h-screen w-screen bg-[#acacff] dark:bg-gray-900 -z-10"></div>
     </div>
   );
 }

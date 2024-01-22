@@ -54,7 +54,7 @@ export function TestesPartilhadosPage() {
           </div>
           <div className="flex  items-center">
             <button
-              className="  w-24 h-10 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              className="  w-24 h-10 text-sm font-medium text-black focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               onClick={() => {}}
             >
               Adicionar teste

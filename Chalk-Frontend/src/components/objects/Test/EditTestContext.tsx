@@ -29,10 +29,12 @@ export enum EditTestActionKind {
   SELECT_EXERCISE_POSITION = "SELECT_EXERCISE_POSITION",
   MOVE_EXERCISE = "MOVE_EXERCISE",
   MOVE_GROUP = "MOVE_GROUP",
+  PUBLISH_TEST = "PUBLISH_TEST",
 }
 
 export interface EditTestAction {
   type: EditTestActionKind;
+  dataString?: string;
   testInfo?: {
     type: string;
     conclusion: string;
@@ -74,6 +76,12 @@ export function EditTestStateReducer(
   action: EditTestAction
 ) {
   switch (action.type) {
+    case EditTestActionKind.PUBLISH_TEST:
+      return {
+        ...state,
+        test: { ...state.test, publishDate: action.dataString! },
+      };
+
     case EditTestActionKind.EDIT_TEST_INFO:
       if (action.testInfo) {
         state.contactBACK(

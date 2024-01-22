@@ -4,7 +4,8 @@ import { FiSave } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { DropdownBlock } from "../../interactiveElements/DropdownBlock";
 import { APIContext } from "../../../APIContext";
-import { Course, UserContext } from "../../../UserContext";
+import { Course } from "../../../UserContext";
+import { Tag } from "../Exercise/Exercise";
 
 interface EditTestInfopProps {
   testInfo: {
@@ -14,6 +15,7 @@ interface EditTestInfopProps {
     title: string;
     courseId: string;
     globalInstructions: string;
+    tags: Tag[];
   };
   saveEdit: (state: {
     type: string;
@@ -95,7 +97,7 @@ export function EditTestInfo({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-white dark:bg-black">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
           <label className="flex text-4xl text-gray-600 dark:text-white">
             Editar
           </label>

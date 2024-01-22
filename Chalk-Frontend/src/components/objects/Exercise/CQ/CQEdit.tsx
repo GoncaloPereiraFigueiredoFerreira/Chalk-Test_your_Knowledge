@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EditActionKind } from "../../EditExercise/EditExercise";
 import { CQExercise, CreateEditProps } from "../Exercise";
-import "../Exercise.css";
+import { HiOutlineTrash } from "react-icons/hi";
 
 interface CQEditProps {
   context: CreateEditProps;
@@ -41,62 +41,66 @@ export function CQEdit({ context, exercise }: CQEditProps) {
 
   const renderTopics = () => {
     return (
-      <div className="flex-col flex space-y-4 mb-3">
-        {topics.map((topic, index) => {
-          return (
-            <div className="flex flex-row space-x-4 items-center">
-              <input
-                type="text"
-                value={topic}
-                className="w-full rounded-md"
-                onChange={(e) => {
-                  changeTopic(index, e.target.value);
-                }}
-              />
-              <button
-                className="edit-btn bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black mx-2 px-1"
-                onClick={() => deleteTopic(index)}
-              >
-                Remove
-              </button>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
-  return (
-    <div className="flex-col flex space-y-4">
-      <div className="flex space-x-8 dark:text-white">
-        <label>Indique o número máximo de respostas do aluno:</label>
-        <input
-          type="number"
-          className="basic-input-text rounded-md w-20 mb-1"
-          min={1}
-          onChange={(e) =>
-            context.dispatch({
-              type: EditActionKind.CHANGE_MAX_ANSWERS,
-              dataString: e.target.value,
-            })
-          }
-          value={exercise.props.maxAnswers}
-        ></input>
-      </div>
-      <div className="flex space-x-8 dark:text-white">
-        <label className="pt-2">
-          Indique os tópicos que a AI deverá abordar:
-        </label>
+      <div className="flex-col flex gap-2">
+        {topics.map((topic, index) => (
+          <div className="flex flex-row items-center gap-2">
+            <input
+              type="text"
+              value={topic}
+              className="w-full rounded-lg border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+              onChange={(e) => {
+                changeTopic(index, e.target.value);
+              }}
+            />
+            <button
+              className="flex p-2.5 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+              onClick={() => deleteTopic(index)}
+            >
+              <HiOutlineTrash className="size-5" />
+            </button>
+          </div>
+        ))}
         <button
-          className="edit-btn mt-2 px-2 text-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black w-fit self-center cursor-pointer p-1 rounded-md"
+          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
           onClick={() => {
             addTopic();
           }}
         >
-          Add
+          Adicionar
         </button>
       </div>
-      {renderTopics()}
+    );
+  };
+
+  const handleChange = (value: string) => {
+    let cleanValue = value.replace(/[^\d]/g, "").replace(/$0*/g, "");
+    if (cleanValue === "") {
+      cleanValue = "0";
+    }
+
+    context.dispatch({
+      type: EditActionKind.CHANGE_MAX_ANSWERS,
+      dataString: cleanValue,
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-4 dark:text-white items-center">
+        <label>Indique o número máximo de respostas do aluno:</label>
+        <input
+          id="input-answers"
+          type="text"
+          className="w-20 rounded-lg border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+          onChange={(e) => handleChange(e.target.value)}
+          value={exercise.props.maxAnswers ?? 5}
+        ></input>
+        <label htmlFor="input-answers">respostas</label>
+      </div>
+      <div className="flex dark:text-white">
+        <label>Indique os tópicos que a AI deverá abordar:</label>
+      </div>
+      <div className="flex flex-col">{renderTopics()}</div>
     </div>
   );
 }

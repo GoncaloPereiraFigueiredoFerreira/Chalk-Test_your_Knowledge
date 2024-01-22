@@ -259,7 +259,7 @@ function FBEdit(props: any) {
         }}
       ></ExerciseHeaderEdit> */}
       <FBEditStateContext.Provider value={{ state, dispatch }}>
-        <p className="block mb-2 text-sm text-gray-900 dark:text-white">
+        <p className="block mb-2 text-sm text-black dark:text-white">
           Escreva o texto a ser substituído
         </p>
         <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
@@ -268,7 +268,7 @@ function FBEdit(props: any) {
               <div className="flex items-center space-x-1 sm:pr-4">
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-black hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
                 >
                   <FileUploadIcon></FileUploadIcon>
                   <span className="sr-only">Attach file</span>
@@ -277,7 +277,7 @@ function FBEdit(props: any) {
               <div className="flex flex-wrap items-center space-x-1 sm:pl-4">
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-black hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
                 >
                   <ListIcon></ListIcon>
                   <span className="sr-only">Add list</span>
@@ -285,7 +285,7 @@ function FBEdit(props: any) {
 
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="p-2 text-gray-500 rounded cursor-pointer hover:text-black hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
                 >
                   <DownloadIcon></DownloadIcon>
                   <span className="sr-only">Download</span>
@@ -304,7 +304,7 @@ function FBEdit(props: any) {
             ></textarea>
           </div>
         </div>
-        <p className="block mb-2 text-sm text-gray-900 dark:text-white">
+        <p className="block mb-2 text-sm text-black dark:text-white">
           Assinale as palavras a preencher
         </p>
 

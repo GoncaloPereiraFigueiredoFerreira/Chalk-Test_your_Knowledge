@@ -1,4 +1,4 @@
-import { Exercise } from "../Exercise/Exercise";
+import { Exercise, Tag } from "../Exercise/Exercise";
 
 export interface Test {
   id: string;
@@ -9,6 +9,8 @@ export interface Test {
   title: string;
   visibility: string;
   creationDate: string;
+  publishDate: string;
+  tags: Tag[];
   globalPoints: number;
   globalInstructions: string;
   groups: ExerciseGroup[];
@@ -41,11 +43,13 @@ export function InitTest() {
     author: "",
     visibility: "private",
     title: "Novo Teste",
+    publishDate: "",
     creationDate: new Date().toISOString(),
     globalPoints: 0,
     globalInstructions: "",
     courseId: "",
     groups: [],
+    tags: [],
   } as Test;
 }
 

@@ -24,7 +24,7 @@ export function Contacts() {
             <div className="mb-12 w-full shrink-0 grow-0 basis-auto md:px-3 lg:mb-0 lg:w-5/12 lg:px-6">
               <form>
                 <div className="relative mb-6" data-te-input-wrapper-init>
-                  <label className="block text-2xl mb-2 font-medium text-gray-900 dark:text-white">
+                  <label className="block text-2xl mb-2 font-medium text-black dark:text-white">
                     Name
                     <input
                       type="text"
@@ -37,7 +37,7 @@ export function Contacts() {
                   </label>
                 </div>
                 <div className="relative mb-6" data-te-input-wrapper-init>
-                  <label className="block text-2xl mb-2 font-medium text-gray-900 dark:text-white">
+                  <label className="block text-2xl mb-2 font-medium text-black dark:text-white">
                     Email address
                     <input
                       type="email"
@@ -50,7 +50,7 @@ export function Contacts() {
                   </label>
                 </div>
                 <div className="relative mb-6" data-te-input-wrapper-init>
-                  <label className="block text-2xl mb-2 font-medium text-gray-900 dark:text-white">
+                  <label className="block text-2xl mb-2 font-medium text-black dark:text-white">
                     Message
                     <textarea
                       className="peer block min-h-[auto] w-full rounded border-0 bg-white  py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 easeLinear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
