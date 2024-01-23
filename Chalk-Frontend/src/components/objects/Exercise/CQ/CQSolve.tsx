@@ -79,7 +79,7 @@ export function CQSolve(props: CQSolveProps) {
           {state.msgs.length % 2 == 0 ? (
             <div className="flex w-full mt-2 space-x-3 max-w-xs">
               <div className="flex-shrink-0 h-10 w-10 rounded-full">
-                <img src="/chalk-simple.svg"></img>
+                <img src="/better-chalky.png"></img>
               </div>
               <div>
                 <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
@@ -115,7 +115,7 @@ export function CQSolve(props: CQSolveProps) {
                 >
                   <div className="flex-shrink-0 h-10 w-10 rounded-full ">
                     <div className="flex-shrink-0 h-10 w-10 rounded-full">
-                      <img src="/chalk-simple.svg"></img>
+                      <img src="/better-chalky.png"></img>
                     </div>
                   </div>
                   <div>
@@ -144,7 +144,7 @@ export function CQSolve(props: CQSolveProps) {
                   className="flex w-full mt-2 space-x-3 max-w-xs"
                 >
                   <div className="flex-shrink-0 h-10 w-10 rounded-full ">
-                    <img src="/chalk-simple.svg"></img>
+                    <img src="/better-chalky.png"></img>
                   </div>
                   <div>
                     <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
