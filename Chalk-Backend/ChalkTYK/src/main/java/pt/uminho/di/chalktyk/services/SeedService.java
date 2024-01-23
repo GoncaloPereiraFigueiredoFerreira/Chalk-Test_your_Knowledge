@@ -1513,7 +1513,7 @@ public class SeedService implements ISeedService{
         String texto1 = "Responda ás seguintes perguntas sobre História";
 
         // Exame Portugues_nºgrupo_parte_nºquestao
-        Exercise exercise1 = createVFJustifyExercise_History_1_1(specialist.getId(),course.getId(),Arrays.asList(tags.get(1)));
+        Exercise exercise1 = createVFJustifyExercise_History_1_1(specialist.getId(),course.getId(),tags);
         Exercise exercise2 = createChatExercise_History_1_2(specialist.getId(),course.getId(),tags);
 
         TestExercise tex1 = new ConcreteExercise(100.0F,exercise1);

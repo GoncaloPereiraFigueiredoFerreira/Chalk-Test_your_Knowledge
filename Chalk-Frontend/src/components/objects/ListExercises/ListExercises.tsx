@@ -18,12 +18,14 @@ interface ListExercisesProps {
   setExerciseID: (value: string) => void;
   editMenuIsOpen: boolean;
   setEditMenuIsOpen: (value: boolean) => void;
+  tagsList: any;
 }
 
 export function ListExercises({
   setExerciseID,
   editMenuIsOpen,
   setEditMenuIsOpen,
+  tagsList,
 }: ListExercisesProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -34,10 +36,14 @@ export function ListExercises({
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
+    let requestTags: any = tagsList.map((tag: any) => tag.id);
+    if (requestTags.length == 0) requestTags = "";
+
     contactBACK("exercises", "GET", {
       page: (currentPage - 1).toString(),
       itemsPerPage: "10",
       visibility: "public",
+      tags: requestTags,
     }).then((page) => {
       const exercises = page.items;
       setTotalPages(page.totalPages);
@@ -52,7 +58,7 @@ export function ListExercises({
         },
       });
     });
-  }, [currentPage]);
+  }, [currentPage, tagsList]);
 
   const deleteEx = (id: string) => {
     contactBACK("exercises/" + id, "DELETE", undefined, undefined, "none").then(

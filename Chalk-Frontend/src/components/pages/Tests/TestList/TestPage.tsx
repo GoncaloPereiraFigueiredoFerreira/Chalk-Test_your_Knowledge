@@ -1,20 +1,37 @@
 import { ListTests, ViewType } from "../../../objects/ListTests/ListTest.tsx";
-import { Searchbar } from "../../../objects/Searchbar/Searchbar.tsx";
+
 import { useContext, useState } from "react";
 import { FaListUl } from "react-icons/fa";
 import { HiViewGrid } from "react-icons/hi";
 import { UserContext, UserRole } from "../../../../UserContext.tsx";
+import {
+  TagsList,
+  TagsFilterModal,
+} from "../../../objects/Tags/TagsFilterModal.tsx";
+import { FilterByTagsSearchBar } from "../../../objects/Searchbar/FilterByTagsSearchBar.tsx";
 
 export function TestPage() {
   const [view, setViewType] = useState(ViewType.GRID);
   const [kindOfTest, setKindOfTest] = useState<"Public" | "Private">("Public");
   const [searchKey, setSearch] = useState("");
   const { user } = useContext(UserContext);
+  const [tagsList, setTagsList] = useState<TagsList>([]);
+  const [openModal, setOpenModal] = useState(false);
 
   return (
     <div className="flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
       <div className="flex flex-col w-full h-screen overflow-auto bg-white dark:bg-black min-h-max px-8 pb-8">
-        <Searchbar setSearch={setSearch}></Searchbar>
+        <FilterByTagsSearchBar
+          setSearch={setSearch}
+          setOpenModal={setOpenModal}
+          tagsList={tagsList}
+        ></FilterByTagsSearchBar>
+        <TagsFilterModal
+          setTagsList={setTagsList}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          header={"Selecione as tags que pretende ver"}
+        ></TagsFilterModal>
         <div className="flex flex-col w-full gap-4 min-h-max">
           <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-slate-600">
             <label className="flex text-4xl text-slate-600 dark:text-white">
@@ -27,8 +44,8 @@ export function TestPage() {
               Criar Teste
             </button>
           </div>
-          <div className="flex justify-between">
-            <div className="flex gap-4">
+          <div className="flex self-end">
+            <div className="flex gap-4 px-4">
               {kindOfTest === "Private" ? (
                 <button
                   onClick={() => setKindOfTest("Public")}
@@ -68,11 +85,16 @@ export function TestPage() {
           <ListTests
             view={view}
             courseId={""}
-            visibilityType={
-              user.user?.role === UserRole.SPECIALIST ? "" : "public"
-            }
+            visibilityType={kindOfTest == "Public" ? "public" : ""}
             searchKey={searchKey}
-            tagsList={[]}
+            tagsList={tagsList}
+            differentRoute={
+              kindOfTest == "Public"
+                ? ""
+                : user.user?.role === UserRole.SPECIALIST
+                ? ""
+                : `/autoEvaluation/student/${user.user?.id}`
+            }
           ></ListTests>
         </div>
       </div>

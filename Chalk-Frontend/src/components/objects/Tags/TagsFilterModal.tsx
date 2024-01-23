@@ -30,13 +30,14 @@ export function TagsFilterModal({
   const { contactBACK } = useContext(APIContext);
 
   useEffect(() => {
-    if (openModal)
-      contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then(
-        (tags) => {
-          setAllTags(tags);
-        }
-      );
-  }, [openModal]);
+    contactBACK("tags/path", "GET", { path: "/", level: "-1" }).then((tags) => {
+      const tagsWithExpanded = tags.map((tag: ShowTag) => ({
+        ...tag,
+        expanded: false,
+      }));
+      setAllTags(tagsWithExpanded);
+    });
+  }, []);
 
   useEffect(() => {
     setExposedTags(allTags.filter((item) => item.path === "/"));
@@ -128,7 +129,7 @@ export function TagsFilterModal({
                 className="bg-gray-400 text-white px-4 py-2"
                 onClick={() => changeTags(tag)}
               >
-                {tag.expanded === undefined ? ">" : "<"}
+                {tag.expanded == false ? ">" : "<"}
               </button>
             </div>
           ))}

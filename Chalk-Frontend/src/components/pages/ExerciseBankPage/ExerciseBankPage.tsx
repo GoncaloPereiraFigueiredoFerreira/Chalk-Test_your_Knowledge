@@ -1,7 +1,8 @@
 import { ListExercises } from "../../objects/ListExercises/ListExercises";
 import { EditExercise } from "../../objects/EditExercise/EditExercise";
-import { Searchbar } from "../../objects/Searchbar/Searchbar";
+import { FilterByTagsSearchBar } from "../../objects/Searchbar/FilterByTagsSearchBar";
 import { useContext, useEffect, useReducer, useState } from "react";
+
 import {
   ListExerciseActionKind,
   ListExerciseContext,
@@ -15,6 +16,7 @@ import {
   TranslateResolutionIN,
 } from "../../objects/Exercise/Exercise";
 import { Rubric, TranslateRubricOut } from "../../objects/Rubric/Rubric";
+import { TagsList, TagsFilterModal } from "../../objects/Tags/TagsFilterModal";
 
 export function ExerciseBankPage() {
   const [editMenuIsOpen, setEditMenuIsOpen] = useState(false);
@@ -24,6 +26,9 @@ export function ExerciseBankPage() {
   const [solutions, setSolutions] = useState<{ [id: string]: ResolutionData }>(
     {}
   );
+  const [tagsList, setTagsList] = useState<TagsList>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [searchKey, setSearch] = useState("");
 
   const inicialState = {
     listExercises: {},
@@ -90,11 +95,22 @@ export function ExerciseBankPage() {
     <div className="flex w-full divide-x-2 bg-white dark:bg-slate-900 divide-slate-400 dark:divide-slate-600">
       <ListExerciseContext.Provider value={{ listExerciseState, dispatch }}>
         <div className="flex flex-col w-full px-8 pb-8 h-screen overflow-auto">
-          <Searchbar></Searchbar>
+          <FilterByTagsSearchBar
+            setSearch={setSearch}
+            setOpenModal={setOpenModal}
+            tagsList={tagsList}
+          ></FilterByTagsSearchBar>
+          <TagsFilterModal
+            setTagsList={setTagsList}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            header={"Selecione as tags que pretende ver"}
+          ></TagsFilterModal>
           <ListExercises
             setExerciseID={(value) => setExerciseID(value)}
             editMenuIsOpen={editMenuIsOpen}
             setEditMenuIsOpen={(value) => setEditMenuIsOpen(value)}
+            tagsList={tagsList}
           ></ListExercises>
         </div>
         <div
