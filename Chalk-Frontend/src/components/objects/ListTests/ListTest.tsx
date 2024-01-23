@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { Badge, Pagination } from "flowbite-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserRole, UserContext } from "../../../UserContext.tsx";
 import {
   CircularProgressbar,
@@ -322,6 +322,7 @@ export function ListTests({
   visibilityType,
   searchKey,
   tagsList,
+  differentRoute,
 }: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
@@ -352,7 +353,7 @@ export function ListTests({
         setTestList(tests);
       });
     } else {
-      contactBACK("tests", "GET", {
+      contactBACK("tests" + differentRoute, "GET", {
         page: (currentPage - 1).toString(),
         itemsPerPage: "20",
         courseId: courseId,
@@ -388,7 +389,7 @@ export function ListTests({
         });
       });
     }
-  }, [currentPage, tagsList]);
+  }, [currentPage, tagsList, visibilityType]);
 
   const filteredItems: TestList = testList.filter((item) =>
     item.title.toLowerCase().includes(searchKey.toLowerCase())
