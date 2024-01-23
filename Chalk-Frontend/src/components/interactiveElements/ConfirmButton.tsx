@@ -5,7 +5,7 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 type OptionalEventHandler = (event?: React.SyntheticEvent<Element, Event>) => void;
 
 interface ConfirmButtonProps {
-  onConfirm?: OptionalEventHandler;
+  onConfirm: OptionalEventHandler;
   onCancel?: OptionalEventHandler;
   confirmationMessage: string;
   button: ReactNode; // Use ReactNode for the button element
