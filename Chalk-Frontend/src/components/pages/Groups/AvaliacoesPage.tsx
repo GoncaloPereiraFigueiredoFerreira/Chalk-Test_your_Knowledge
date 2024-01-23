@@ -8,11 +8,6 @@ import {
 } from "../../objects/SVGImages/SVGImages";
 import { APIContext } from "../../../APIContext.tsx";
 
-const exampleData = [
-  { id: "111111", title: "1 Historia 2023" },
-  { id: "22222", title: "2 Historia 2023" },
-];
-
 interface Test {
   id: string;
   title: string;
@@ -36,7 +31,7 @@ export function AvaliacoesPage() {
       visibilityType: "COURSE",
     }).then((page) => {
       const tests = page.items;
-      setExamList([...tests, ...exampleData]);
+      setExamList(tests);
     });
   }, []);
 
