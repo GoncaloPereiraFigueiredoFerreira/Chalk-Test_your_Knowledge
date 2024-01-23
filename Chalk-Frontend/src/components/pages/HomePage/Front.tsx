@@ -61,7 +61,7 @@ export function Front() {
                   : "opacity-0 translate-y-96"
               }`}
             >
-              <img src="chalky.png" className=" h-full object-contain" alt="" />
+              <img src="better-chalky.png" className=" h-full object-contain" alt="" />
             </div>
           </div>
         </div>

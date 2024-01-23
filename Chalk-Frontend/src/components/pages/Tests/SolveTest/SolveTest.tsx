@@ -88,7 +88,7 @@ export function SolveTest() {
       undefined,
       "string"
     ).then((id) => {
-      if (id !== "") {
+      if (id && id !== "") {
         setResolutionID(id);
         startTest(true);
       }

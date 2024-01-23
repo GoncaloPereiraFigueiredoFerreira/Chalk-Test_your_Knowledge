@@ -96,13 +96,13 @@ export function EditTestInfo({
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-white dark:bg-black">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
-          <label className="flex text-4xl text-gray-600 dark:text-white">
+      <div className="flex flex-col w-full gap-4 min-h-max text-black dark:text-white">
+        <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+          <label className="flex text-4xl text-slate-600 dark:text-white">
             Editar
           </label>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() =>
               saveEdit({
                 type: type,
@@ -122,7 +122,7 @@ export function EditTestInfo({
           <div className="flex gap-4 items-center">
             <strong>Título:</strong>
             <input
-              className="rounded-lg border-[#dddddd] focus:ring-0 dark:bg-gray-600 dark:border-gray-600 dark:focus:border-gray-600"
+              className="rounded-lg w-full border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
               placeholder="Novo Teste"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -164,29 +164,25 @@ export function EditTestInfo({
             )}
           </div>
           <strong>Instruções globais:</strong>
-          <div className="px-4">
-            <TextareaBlock
-              toolbar={true}
-              rows={6}
-              placeholder="Coloque aqui as instruções globais..."
-              value={globalInstructions}
-              onChange={(value) => setGlobalInstructions(value)}
-            />
-          </div>
+          <TextareaBlock
+            toolbar={true}
+            rows={6}
+            placeholder="Coloque aqui as instruções globais..."
+            value={globalInstructions}
+            onChange={(value) => setGlobalInstructions(value)}
+          />
           <strong>Conclusão:</strong>
-          <div className="px-4">
-            <TextareaBlock
-              toolbar={true}
-              rows={6}
-              placeholder="Coloque aqui uma conclusão..."
-              value={conclusion}
-              onChange={(value) => setConclusion(value)}
-            />
-          </div>
+          <TextareaBlock
+            toolbar={true}
+            rows={6}
+            placeholder="Coloque aqui uma conclusão..."
+            value={conclusion}
+            onChange={(value) => setConclusion(value)}
+          />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() =>
               saveEdit({
                 type: type,
@@ -202,7 +198,7 @@ export function EditTestInfo({
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 rounded-md bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
             onClick={() => cancelEdit()}
           >
             <IoClose className="size-5" />

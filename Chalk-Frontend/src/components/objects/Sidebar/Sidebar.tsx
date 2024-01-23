@@ -159,15 +159,17 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   }
 
   function handleLogout() {
-    contactBACK("users/logout", "POST", undefined, undefined,"none").then(() => {
-      logout();
-    });
+    contactBACK("users/logout", "POST", undefined, undefined, "none").then(
+      () => {
+        logout();
+      }
+    );
   }
 
   return (
     <>
       <div
-        className={`sidebar-background bg-[#acacff] dark:bg-slate-800 ${
+        className={`sidebar-background bg-[#94a8c4] dark:bg-slate-800 ${
           isOpen ? "" : "w-max"
         }`}
         aria-label="Sidebar"
