@@ -11,6 +11,7 @@ import { UserContext } from "../../../UserContext";
 import { translateVisibilityToString } from "./EditTestInfo";
 import { APIContext } from "../../../APIContext";
 import { useParams } from "react-router-dom";
+import ConfirmButton from "../../interactiveElements/ConfirmButton";
 
 interface EditTestProps {
   exerciseID: {
@@ -61,27 +62,29 @@ export function EditTestDragDrop({
             ? testState.test.title
             : "Novo Teste - " + draggingExercises}
         </div>
-        <button
+        <ConfirmButton
+        onConfirm={() => {
+          let date = new Date().toISOString();
+          contactBACK(
+            "tests/" + testID + "/publishDate",
+            "PUT",
+            undefined,
+            { value: date },
+            "none"
+          ).then(() => {
+            dispatch({
+              type: EditTestActionKind.PUBLISH_TEST,
+              dataString: date,
+            });
+          });
+        }}
+        confirmationMessage="Tem acerteza que deseja publicar o teste?"
+        button={<button
           type="button"
           disabled={
             testState.test.publishDate !== null &&
             testState.test.publishDate !== ""
           }
-          onClick={() => {
-            let date = new Date().toISOString();
-            contactBACK(
-              "tests/" + testID + "/publishDate",
-              "PUT",
-              undefined,
-              { value: date },
-              "none"
-            ).then(() => {
-              dispatch({
-                type: EditTestActionKind.PUBLISH_TEST,
-                dataString: date,
-              });
-            });
-          }}
           className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
         >
           {testState.test.publishDate !== null &&
@@ -90,7 +93,10 @@ export function EditTestDragDrop({
           ) : (
             <p>Publicar Teste</p>
           )}
-        </button>
+        </button>}
+        >
+
+        </ConfirmButton>
       </div>
       <div className="flex flex-col px-4 pt-4 gap-4">
         <div className="flex items-center justify-between">
