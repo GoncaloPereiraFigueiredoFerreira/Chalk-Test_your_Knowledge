@@ -701,7 +701,7 @@ export function CreateTest({ test }: CreateTestProps) {
                     });
                   } else {
                     contactBACK(
-                      "exercises/" + exerciseID,
+                      "exercises/" + id,
                       "PUT",
                       undefined,
                       {

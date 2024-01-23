@@ -100,7 +100,10 @@ export function APIProvider({ children }: any) {
         }, 5000);
       } else {
         if (responseType === undefined || responseType === "json")
-          return response.json();
+          return response
+            .json()
+            .then((json) => json)
+            .catch(() => {});
         else if (responseType === "string") return response.text();
         else return;
       }
