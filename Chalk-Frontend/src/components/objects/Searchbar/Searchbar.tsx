@@ -32,7 +32,7 @@ export function Searchbar({ setSearch }: any) {
               <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />
               <button
                 type="submit"
-                className="px-4 py-2 pointer-events-auto text-sm rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                className="px-4 py-2 pointer-events-auto text-sm rounded-lg font-medium btn-base-color"
               >
                 Search
               </button>

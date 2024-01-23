@@ -38,7 +38,7 @@ export function TFEdit({ exercise, context }: TFEditProps) {
           ></TFStatementEdit>
         ))}
         <button
-          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
           onClick={() => {
             for (
               let newID = 0;
@@ -174,7 +174,7 @@ function TFStatementEdit({
           value={solutionItem.text}
         ></input>
         <button
-          className="flex p-2.5 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          className="flex p-2.5 text-base rounded-lg font-medium btn-base-color group"
           onClick={() =>
             dispatch({
               type: EditActionKind.REMOVE_ITEM,

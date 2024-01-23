@@ -7,6 +7,10 @@ import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
 
+const classname = " bg-[#d8e3f1]";
+// const classname = " bg-[#c6d6eb]";
+// const classname = " bg-[#afc8eb]";
+
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
   exerciseGroupID: string;
@@ -86,11 +90,14 @@ export function GroupDragDrop({
             transition,
             transform: CSS.Translate.toString(transform),
           }}
-          className={`${
-            isDragging && "opacity-40"
-          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-[rgb(203,213,225)] dark:bg-[#1e2a3f] text-black dark:text-white h-56 overflow-hidden`}
+          className={
+            `${
+              isDragging && "opacity-40"
+            } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default dark:bg-[#1e2a3f] text-black dark:text-white h-56 overflow-hidden` +
+            classname
+          }
         >
-          <div className="flex w-full justify-between pb-4 px-4 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+          <div className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600">
             <label className="flex w-full items-center text-xl font-medium">
               Grupo {exerciseGroupPosition + 1}
             </label>
@@ -99,7 +106,7 @@ export function GroupDragDrop({
               <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-slate-600">
                 {testState.test.groups[exerciseGroupPosition].groupPoints} pts
               </div>
-              <div className="flex border-l-2 pl-4 border-[#bbbbbb] dark:border-slate-600">
+              <div className="flex border-l-2 pl-4 border-slate-400 dark:border-slate-600">
                 <button className="btn-options-exercise ex-icon">
                   <HiOutlineTrash className="size-5" />
                   Eliminar
@@ -110,7 +117,7 @@ export function GroupDragDrop({
           <div className="px-4">
             <div className="flex items-center justify-between">
               <strong>Instruções do grupo:</strong>
-              <button className="flex gap-2 py-2 px-3 text-base rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group">
+              <button className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group">
                 <FaPencil className="size-5" />
                 Editar
               </button>
@@ -120,13 +127,13 @@ export function GroupDragDrop({
             </div>
           </div>
           <div className="flex gap-7 w-full">
-            <button className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group">
+            <button className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group">
               <FaPencil className="group-gray-icon size-6" />
               <label className="group-gray-icon font-medium text-lg">
                 Lista de Exercicios
               </label>
             </button>
-            <button className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group">
+            <button className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group">
               <RiAddFill className="group-gray-icon size-8" />
               <label className="group-gray-icon font-medium text-lg">
                 Criar Novo
@@ -143,12 +150,15 @@ export function GroupDragDrop({
       <div
         {...attributes}
         ref={setNodeRef}
-        className={`${
-          isDragging && "opacity-50"
-        } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default bg-slate-300 dark:bg-[#1e2a3f] text-black dark:text-white`}
+        className={
+          `${
+            isDragging && "opacity-50"
+          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default dark:bg-[#1e2a3f] text-black dark:text-white` +
+          classname
+        }
       >
         <div
-          className="flex w-full justify-between pb-4 px-4 border-b-2 border-[#bbbbbb] dark:border-slate-600"
+          className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600"
           {...listeners}
           onClick={() =>
             setExerciseID({
@@ -165,7 +175,7 @@ export function GroupDragDrop({
             <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-slate-600">
               {testState.test.groups[exerciseGroupPosition].groupPoints} pts
             </div>
-            <div className="flex border-l-2 pl-4 border-[#bbbbbb] dark:border-slate-600">
+            <div className="flex border-l-2 pl-4 border-slate-400 dark:border-slate-600">
               <button
                 className="btn-options-exercise ex-icon"
                 onClick={() => {
@@ -194,7 +204,7 @@ export function GroupDragDrop({
           <div className="flex items-center justify-between">
             <strong>Instruções do grupo:</strong>
             <button
-              className="flex gap-2 py-2 px-3 text-base rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+              className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group"
               onClick={() => {
                 if (selectedMenu !== "edit-group") {
                   setExerciseID({
@@ -264,7 +274,7 @@ export function GroupDragDrop({
           </SortableContext>
           <div className="flex gap-7 w-full">
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group"
               onClick={() => {
                 setExerciseID({
                   groupPosition: exerciseGroupPosition,
@@ -279,7 +289,7 @@ export function GroupDragDrop({
               </label>
             </button>
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group"
               onClick={() => {
                 setSelectedMenu("");
                 setNewExercisePopUp(exerciseGroupPosition);

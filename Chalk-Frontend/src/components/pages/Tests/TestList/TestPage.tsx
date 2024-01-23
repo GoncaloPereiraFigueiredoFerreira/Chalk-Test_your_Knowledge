@@ -21,7 +21,7 @@ export function TestPage() {
               {kindOfTest === "Public" ? "Testes públicos" : "Os meus testes"}
             </label>
             <button
-              className="py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+              className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
               onClick={() => {}}
             >
               Criar Teste
@@ -32,14 +32,14 @@ export function TestPage() {
               {kindOfTest === "Private" ? (
                 <button
                   onClick={() => setKindOfTest("Public")}
-                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
                 >
                   Testes públicos
                 </button>
               ) : (
                 <button
                   onClick={() => setKindOfTest("Private")}
-                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
                 >
                   Os meus testes
                 </button>
@@ -48,7 +48,7 @@ export function TestPage() {
             <div className="flex gap-4">
               {view === ViewType.GRID ? (
                 <button
-                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
                   onClick={() => setViewType(ViewType.LIST)}
                 >
                   <FaListUl className="size-5 scale-90" />
@@ -56,7 +56,7 @@ export function TestPage() {
                 </button>
               ) : (
                 <button
-                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                  className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
                   onClick={() => setViewType(ViewType.GRID)}
                 >
                   <HiViewGrid className="size-5 scale-110" />

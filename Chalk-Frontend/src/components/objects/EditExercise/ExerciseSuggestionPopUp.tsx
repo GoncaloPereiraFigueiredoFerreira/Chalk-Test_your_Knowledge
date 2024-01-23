@@ -53,13 +53,13 @@ export function ExerciseSuggestionPopUp({
           <div className="flex justify-end mt-4 gap-4">
             <button
               onClick={() => closePopUp()}
-              className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+              className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
             >
               Cancelar
             </button>
             <button
               onClick={() => onClose()}
-              className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+              className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
             >
               Submeter
             </button>

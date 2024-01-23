@@ -16,6 +16,11 @@
   background: linear-gradient(to bottom left, #d9dadb 0%, #616262 100%);
 }
 
+.shadowed {
+  -webkit-filter: drop-shadow(100px 100px 30px #222);
+  filter: drop-shadow(20px 10px 20px #222);
+}
+
 @keyframes slide-in {
   0% {
     transform: translateX(-100%);

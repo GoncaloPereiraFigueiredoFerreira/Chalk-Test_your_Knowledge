@@ -30,7 +30,7 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("private")}
             className={`${
               "private" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -41,7 +41,7 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("not-listed")}
             className={`${
               "not-listed" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -52,7 +52,7 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("course")}
             className={`${
               "course" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -63,7 +63,7 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("institutional")}
             className={`${
               "institutional" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -74,7 +74,7 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("public")}
             className={`${
               "public" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -85,7 +85,7 @@ export function ChangeVisibility({
         <div className="flex justify-end mt-4">
           <button
             onClick={() => changeVisibility(selectedVisibility)}
-            className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
           >
             Guardar
           </button>

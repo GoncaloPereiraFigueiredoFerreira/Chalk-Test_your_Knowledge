@@ -75,7 +75,7 @@ export function ListExercises({
             Exercícios
           </label>
           <button
-            className="py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+            className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
             onClick={() => {
               setNewExercisePopUp(true);
               setEditMenuIsOpen(false);

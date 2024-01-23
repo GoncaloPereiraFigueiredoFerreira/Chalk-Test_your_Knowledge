@@ -5,6 +5,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { APIContext } from "../../../APIContext";
 import { UserContext } from "../../../UserContext";
 import { Pagination } from "flowbite-react";
+import { IoClose } from "react-icons/io5";
 
 interface ExerciseBankDragDropProps {
   exerciseID: {
@@ -63,15 +64,15 @@ export function ExerciseBankDragDrop({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max ">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-[#bbbbbb] divide-[#dddddd] dark:divide-[#dddddd]">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-slate-600">
           <label className="flex text-4xl text-gray-600 dark:text-white">
             Exercícios
           </label>
           <button
-            className="transition-all duration-100 rounded-lg text-4xl hover:scale-125 dark:text-white"
+            className="py-2 px-3 rounded-lg btn-base-color group"
             onClick={() => setSelectedMenu("")}
           >
-            x
+            <IoClose className="size-5" />
           </button>
         </div>
         <SortableContext

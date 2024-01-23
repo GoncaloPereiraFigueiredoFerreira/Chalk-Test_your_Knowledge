@@ -32,7 +32,7 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.MULTIPLE_CHOICE)}
             className={`${
               ExerciseType.MULTIPLE_CHOICE != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -43,7 +43,7 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.OPEN_ANSWER)}
             className={`${
               ExerciseType.OPEN_ANSWER != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -54,7 +54,7 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.TRUE_OR_FALSE)}
             className={`${
               ExerciseType.TRUE_OR_FALSE != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -65,7 +65,7 @@ export function CreateNewExercisePopUp({
             onClick={() => setNewExercisetype(ExerciseType.CHAT)}
             className={`${
               ExerciseType.CHAT != newExercisetype
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
             } rounded-xl btn-PopUp group`}
           >
@@ -76,7 +76,7 @@ export function CreateNewExercisePopUp({
         <div className="flex justify-end mt-4">
           <button
             onClick={() => createNewExercise(newExercisetype)}
-            className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
           >
             Criar Exercício
           </button>

@@ -511,7 +511,7 @@ export function EditExercise({
             Editar
           </label>
           <button
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />
@@ -531,7 +531,7 @@ export function EditExercise({
           <div className="px-4 pt-8 pb-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
             <button
               type="button"
-              className="w-full py-2 px-4 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+              className="w-full py-2 px-4 text-base rounded-lg font-medium btn-base-color"
               onClick={() => setOpenModal(true)}
             >
               Sugestão para a criação do exercício
@@ -586,7 +586,7 @@ export function EditExercise({
                     <div className="flex justify-between w-full">
                       <button
                         type="button"
-                        className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                        className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
                         onClick={() => {
                           generateEx();
                         }}
@@ -596,7 +596,7 @@ export function EditExercise({
                       {exSugestion && (
                         <button
                           type="button"
-                          className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                          className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
                           onClick={() => {
                             acceptQuestion();
                           }}
@@ -643,7 +643,7 @@ export function EditExercise({
           <button
             type="button"
             onClick={() => setTagsModal(true)}
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
           >
             Escolher Tags
           </button>
@@ -696,14 +696,14 @@ export function EditExercise({
         )}
         <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
           <button
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() => saveEdit(state)}
           >
             <FiSave className="size-5" />
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />
