@@ -24,7 +24,7 @@ export function Searchbar({ setSearch }: any) {
             chosenOption={chosenOption}
             setChosenOption={setChosenOption}
             clearOption="Todas as categorias"
-            style="rounded-l-lg"
+            style="rounded-l-lg border-slate-400"
             placement="bottom"
           ></DropdownBlock>
           <form className="relative w-full justify-center">
@@ -39,7 +39,7 @@ export function Searchbar({ setSearch }: any) {
             </div>
             <input
               type="text"
-              className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border-2 border-l-0 bg-inherit text-black border-[#dddddd] dark:text-white placeholder:dark:text-gray-400 dark:border-slate-700 focus:ring-0 focus:border-[#dddddd] focus:dark:border-slate-700"
+              className="py-2.5 pl-10 pr-24 rounded-r-lg w-full z-20 border-2 border-l-0 bg-inherit text-black border-slate-400 dark:text-white placeholder:dark:text-gray-400 dark:border-slate-700 focus:ring-0 focus:border-slate-400 focus:dark:border-slate-700"
               placeholder="Procurar..."
               value={searchText}
               onChange={(text) => setSearchs(text.target.value)}

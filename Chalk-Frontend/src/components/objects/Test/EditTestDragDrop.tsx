@@ -55,7 +55,7 @@ export function EditTestDragDrop({
 
   return (
     <div className="flex flex-col w-full min-h-max text-black dark:text-white">
-      <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+      <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-slate-400 dark:border-slate-600">
         <div className="flex text-4xl text-slate-600 dark:text-white">
           {testState.test.title
             ? testState.test.title
@@ -120,7 +120,7 @@ export function EditTestDragDrop({
           </p>
         </div>
       </div>
-      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-slate-400 dark:border-slate-600">
         <SortableContext items={testState.test.groups.map((group) => group.id)}>
           {testState.test.groups.map((group, index) => (
             <GroupDragDrop
@@ -152,7 +152,7 @@ export function EditTestDragDrop({
           <label className=" font-medium text-lg">Novo Grupo</label>
         </div>
       </div>
-      <div className="flex flex-col pt-4 gap-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+      <div className="flex flex-col pt-4 gap-4 border-t-2 border-slate-400 dark:border-slate-600">
         <div className="mx-4 mt-4">
           <div className="flex items-center justify-between">
             <strong className="text-xl">Conclusão</strong>

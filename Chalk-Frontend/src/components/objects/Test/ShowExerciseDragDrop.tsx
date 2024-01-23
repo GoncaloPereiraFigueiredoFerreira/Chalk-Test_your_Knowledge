@@ -24,9 +24,6 @@ import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
 
 const classname = " bg-[#bdcee6]";
-// const classname = " bg-[#95abca]";
-// const classname = " bg-[#7fa8dd]";
-// const classname = " bg-[#7ba5db]";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;

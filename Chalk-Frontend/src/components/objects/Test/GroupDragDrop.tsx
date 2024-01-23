@@ -8,8 +8,6 @@ import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
 
 const classname = " bg-[#d8e3f1]";
-// const classname = " bg-[#c6d6eb]";
-// const classname = " bg-[#afc8eb]";
 
 interface GroupDragDropProps {
   exerciseGroupPosition: number;

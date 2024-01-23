@@ -27,7 +27,6 @@ import { APIContext } from "../../../APIContext";
 import { Modal, Spinner } from "flowbite-react";
 import { TextareaBlock } from "../../interactiveElements/TextareaBlock";
 import { TagsFilterModal } from "../Tags/TagsFilterModal";
-import { ExerciseSuggestionPopUp } from "./ExerciseSuggestionPopUp";
 
 //------------------------------------//
 //                                    //
@@ -506,7 +505,7 @@ export function EditExercise({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max mt-8 bg-2-1 text-black dark:text-white">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
           <label className="flex text-4xl text-slate-600 dark:text-white">
             Editar
           </label>
@@ -518,7 +517,7 @@ export function EditExercise({
             Cancelar
           </button>
         </div>
-        <div className="mx-4 mb-4 border rounded-lg bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500">
+        <div className="mx-4 mb-4 border rounded-lg bg-white dark:bg-slate-800 border-slate-400 dark:border-slate-500">
           <ExerciseComponent
             position={position ? position : "1"}
             exercise={state.exercise}
@@ -528,7 +527,7 @@ export function EditExercise({
           ></ExerciseComponent>
         </div>
         {state.exercise.type !== ExerciseType.CHAT && (
-          <div className="px-4 pt-8 pb-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+          <div className="px-4 pt-8 pb-4 border-t-2 border-slate-400 dark:border-slate-600">
             <button
               type="button"
               className="w-full py-2 px-4 text-base rounded-lg font-medium btn-base-color"
@@ -544,7 +543,7 @@ export function EditExercise({
               dismissible
             >
               <Modal.Header />
-              <label className="flex w-full max-w-4xl justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-[#bbbbbb]">
+              <label className="flex w-full max-w-4xl justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-slate-400">
                 Sugestão de Exercício
               </label>
               <Modal.Body>
@@ -616,11 +615,11 @@ export function EditExercise({
           </div>
         )}
 
-        <div className="flex flex-col gap-4 px-4 justify-between pt-8 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex flex-col gap-4 px-4 justify-between pt-8 border-t-2 border-slate-400 dark:border-slate-600">
           <div className="flex items-center gap-4">
             <p className="text-xl font-medium">Título:</p>
             <input
-              className="rounded-lg w-full border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+              className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
               placeholder="Novo Teste"
               value={state.exercise.base.title}
               onChange={(e) =>
@@ -664,7 +663,7 @@ export function EditExercise({
         <div className="px-5 rounded-lg">
           <EditHeader dispatch={editDispatch} state={state.exercise} />
         </div>
-        <div className="pt-8 px-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="pt-8 px-4 border-t-2 border-slate-400 dark:border-slate-600">
           <h3 className="pb-4 font-medium text-xl">Detalhes do Exercício:</h3>
           <ExerciseComponent
             position={position ?? "1"}
@@ -694,7 +693,7 @@ export function EditExercise({
             ></Rubric>
           </div>
         )}
-        <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex gap-2 p-4 border-t-2 border-slate-400 dark:border-slate-600">
           <button
             className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() => saveEdit(state)}

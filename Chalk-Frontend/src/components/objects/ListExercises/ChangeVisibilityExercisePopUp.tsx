@@ -22,7 +22,7 @@ export function ChangeVisibility({
   return (
     <PopUp show={show} closePopUp={closePopUp}>
       <>
-        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-[#bbbbbb]">
+        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-slate-400">
           Criar novo exercício
         </label>
         <div className="grid grid-cols-2 gap-4 py-4 px-4">

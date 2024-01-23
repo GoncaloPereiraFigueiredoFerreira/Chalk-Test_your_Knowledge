@@ -116,16 +116,16 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#dddddd] dark:border-slate-700 overflow-hidden" +
+          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#bdcee6] dark:border-slate-700 overflow-hidden" +
           (className !== undefined ? className : "")
         }
       >
         <div
           className={`${
             hasToolbar ? "" : "hidden"
-          } flex items-center justify-between px-3 py-2 border-b-2 bg-[#dddddd] border-[#dddddd] dark:border-slate-700 dark:bg-[#2e3c50]`}
+          } flex items-center rounded-t-md justify-between px-3 py-2 border-b-2 bg-[#d8e3f1] border-[#bdcee6] dark:border-slate-700 dark:bg-[#2e3c50]`}
         >
-          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#bbbbbb] dark:divide-slate-600">
+          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#bdcee6] dark:divide-slate-600">
             <div className="flex items-center space-x-1 sm:pr-4">
               <button
                 type="button"

@@ -70,7 +70,7 @@ export function ListExercises({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
           <label className="flex text-4xl text-slate-600 dark:text-white">
             Exercícios
           </label>
