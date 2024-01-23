@@ -81,6 +81,7 @@ export function TestesPartilhadosPage() {
           visibilityType={"COURSE"}
           searchKey={searchKey}
           tagsList={tagsList}
+          differentRoute={""}
         ></ListTests>
       </div>
     </div>

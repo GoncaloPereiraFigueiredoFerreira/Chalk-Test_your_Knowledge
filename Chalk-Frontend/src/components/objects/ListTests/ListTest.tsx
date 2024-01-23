@@ -322,6 +322,7 @@ export function ListTests({
   visibilityType,
   searchKey,
   tagsList,
+  differentRoute,
 }: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChange = (page: number) => setCurrentPage(page);
@@ -352,7 +353,7 @@ export function ListTests({
         setTestList(tests);
       });
     } else {
-      contactBACK("tests", "GET", {
+      contactBACK("tests" + differentRoute, "GET", {
         page: (currentPage - 1).toString(),
         itemsPerPage: "20",
         courseId: courseId,
@@ -388,7 +389,7 @@ export function ListTests({
         });
       });
     }
-  }, [currentPage, tagsList]);
+  }, [currentPage, tagsList, visibilityType]);
 
   const filteredItems: TestList = testList.filter((item) =>
     item.title.toLowerCase().includes(searchKey.toLowerCase())
