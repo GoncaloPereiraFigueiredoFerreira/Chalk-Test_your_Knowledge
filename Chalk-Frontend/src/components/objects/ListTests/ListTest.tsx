@@ -98,7 +98,8 @@ function ShowTestList(
               })}
             </div>
             <div className="flex gap-2 justify-end">
-              {test.publishDate === null || test.publishDate === "" ? (
+              {(test.publishDate === null || test.publishDate === "") &&
+              user.id === test.specialistId ? (
                 <>
                   <button
                     type="button"
@@ -126,16 +127,20 @@ function ShowTestList(
                   ></ConfirmButton>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    navigate("/webapp/tests/" + test.id + "/correction");
-                    e.stopPropagation();
-                  }}
-                  className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100 active:scale-90"
-                >
-                  Avaliar
-                </button>
+                <>
+                  {user.id === test.specialistId && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        navigate("/webapp/tests/" + test.id + "/correction");
+                        e.stopPropagation();
+                      }}
+                      className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100 active:scale-90"
+                    >
+                      Avaliar
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -262,7 +267,8 @@ function ShowTestGrid(
               </div>
             </div>
             <div className="flex w-full px-2 justify-end gap-2">
-              {test.publishDate === null || test.publishDate === "" ? (
+              {(test.publishDate === null || test.publishDate === "") &&
+              user.id === test.specialistId ? (
                 <>
                   <button
                     type="button"
@@ -293,16 +299,20 @@ function ShowTestGrid(
                   ></ConfirmButton>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    navigate("/webapp/tests/" + test.id + "/correction");
-                    e.stopPropagation();
-                  }}
-                  className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100 active:scale-90"
-                >
-                  Avaliar
-                </button>
+                <>
+                  {user.id === test.specialistId && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        navigate("/webapp/tests/" + test.id + "/correction");
+                        e.stopPropagation();
+                      }}
+                      className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100 active:scale-90"
+                    >
+                      Avaliar
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -357,7 +367,7 @@ export function ListTests({
         tags: requestTags,
       }).then((page) => {
         const tests = page.items;
-        setTotalPages(page.totalPages==0?1:page.totalPages);
+        setTotalPages(page.totalPages == 0 ? 1 : page.totalPages);
         tests.map((test: any) => {
           return (test["tags"] = test.tags.map((tag: any) => {
             return tag.name;
@@ -462,13 +472,14 @@ export function ListTests({
           </div>
         )}
         <div className="flex w-full justify-center">
-          {totalPages!=1&&
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            showIcons
-          />}
+          {totalPages != 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              showIcons
+            />
+          )}
         </div>
       </div>
     </>

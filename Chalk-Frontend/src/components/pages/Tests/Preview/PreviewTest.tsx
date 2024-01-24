@@ -104,14 +104,17 @@ export function PreviewTest() {
           </p>
           <div className="flex gap-4">
             {user.user?.role === UserRole.SPECIALIST ? (
-              <>
-                <Link
-                  to="../edit"
-                  className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
-                >
-                  Editar teste
-                </Link>
-              </>
+              user.user?.id === test.specialistId &&
+              test.publishDate === "" && (
+                <>
+                  <Link
+                    to="../edit"
+                    className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                  >
+                    Editar teste
+                  </Link>
+                </>
+              )
             ) : (
               <>
                 <div className="py-2 px-4 text-base rounded-lg font-medium border-2 bg-[#d8e3f1] dark:bg-[#1e2a3f] border-[#95abca] dark:border-slate-600">
