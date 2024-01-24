@@ -262,7 +262,7 @@ public class SeedService implements ISeedService{
         //Exercise
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement(texto+"\n"+"Compare, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem à impossibilidade de usarem a mão esquerda.","",""));
-        exercise.setTitle("Pergunta 1");
+        exercise.setTitle("Pergunta Pt 1.1");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -271,7 +271,7 @@ public class SeedService implements ISeedService{
 
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Compare, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem à impossibilidade de usarem a mão esquerda.","",""));
-        exercise2.setTitle("Pergunta 1");
+        exercise2.setTitle("Pergunta Pt 1.1");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -339,7 +339,7 @@ public class SeedService implements ISeedService{
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement(texto+"\nA forma como pai e filha são tratados no hotel permite concluir que são clientes habituais.\r\n" + //
                 "Apresente duas evidências que comprovem esta afirmação.\r","",""));
-        exercise.setTitle("Pergunta 2");
+        exercise.setTitle("Pergunta Pt 1.2");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -348,7 +348,7 @@ public class SeedService implements ISeedService{
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("A forma como pai e filha são tratados no hotel permite concluir que são clientes habituais.\r\n" + //
                 "Apresente duas evidências que comprovem esta afirmação.\r","",""));
-        exercise2.setTitle("Pergunta 2");
+        exercise2.setTitle("Pergunta Pt 1.2");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -421,7 +421,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement(texto+"\nExplique em que medida se pode afirmar que as expressões «Tu és Sete-Sóis porque vês às claras, tu\r\n" + //
                 "serás Sete-Luas porque vês às escuras» (linhas 40 e 41) e «Lua onde estás, Sol aonde vais» (linha 44)\r\n" + //
                 "evidenciam a relação que, no excerto, se estabelece entre Baltasar e Blimunda","",""));
-        exercise.setTitle("Pergunta 3");
+        exercise.setTitle("Pergunta Pt 1.3");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -431,7 +431,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("Explique em que medida se pode afirmar que as expressões «Tu és Sete-Sóis porque vês às claras, tu\r\n" + //
                 "serás Sete-Luas porque vês às escuras» (linhas 40 e 41) e «Lua onde estás, Sol aonde vais» (linha 44)\r\n" + //
                 "evidenciam a relação que, no excerto, se estabelece entre Baltasar e Blimunda","",""));
-        exercise2.setTitle("Pergunta 3");
+        exercise2.setTitle("Pergunta Pt 1.3");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -505,7 +505,7 @@ public class SeedService implements ISeedService{
         OpenAnswerExercise exercise = new OpenAnswerExercise();
         exercise.setStatement(new ExerciseStatement(texto+"\nExplicite, com base em dois aspetos significativos, o modo como o sujeito poético reage à figura feminina\r\n" + //
                 "evocada no poema. Fundamente a sua resposta com transcrições pertinentes.","",""));
-        exercise.setTitle("Pergunta 4");
+        exercise.setTitle("Pergunta Pt 2.1");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -514,7 +514,7 @@ public class SeedService implements ISeedService{
         OpenAnswerExercise exercise2 = new OpenAnswerExercise();
         exercise2.setStatement(new ExerciseStatement("Explicite, com base em dois aspetos significativos, o modo como o sujeito poético reage à figura feminina\r\n" + //
                 "evocada no poema. Fundamente a sua resposta com transcrições pertinentes.","",""));
-        exercise2.setTitle("Pergunta 4");
+        exercise2.setTitle("Pergunta Pt 2.1");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -560,7 +560,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nConsidere as afirmações seguintes sobre o soneto. \r\nIdentifique as duas afirmações falsas","",""));
-        exercise.setTitle("Pergunta 5");
+        exercise.setTitle("Pergunta Pt 2.2");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -569,7 +569,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Considere as afirmações seguintes sobre o soneto. \r\nIdentifique as duas afirmações falsas","",""));
-        exercise2.setTitle("Pergunta 5");
+        exercise2.setTitle("Pergunta Pt 2.2");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -610,7 +610,7 @@ public class SeedService implements ISeedService{
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nSelecione a opção que completa corretamente a frase seguinte.\r\n" + //
                 "Na segunda quadra, o sujeito poético pretende enfatizar","",""));
-        exercise.setTitle("Pergunta 6");
+        exercise.setTitle("Pergunta Pt 2.3");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -620,7 +620,7 @@ public class SeedService implements ISeedService{
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Selecione a opção que completa corretamente a frase seguinte.\r\n" + //
                 "Na segunda quadra, o sujeito poético pretende enfatizar","",""));
-        exercise2.setTitle("Pergunta 6");
+        exercise2.setTitle("Pergunta Pt 2.3");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -677,7 +677,7 @@ public class SeedService implements ISeedService{
                 "•  um desenvolvimento no qual explicite um aspeto em que os poemas se aproximam e um aspeto em que\r\n" + //
                 "os poemas se distinguem;\r\n" + //
                 "•  uma conclusão adequada ao desenvolvimento do texto.","",""));
-        exercise.setTitle("Pergunta 4");
+        exercise.setTitle("Pergunta Pt 3.1");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -690,7 +690,7 @@ public class SeedService implements ISeedService{
                 "•  um desenvolvimento no qual explicite um aspeto em que os poemas se aproximam e um aspeto em que\r\n" + //
                 "os poemas se distinguem;\r\n" + //
                 "•  uma conclusão adequada ao desenvolvimento do texto.","",""));
-        exercise2.setTitle("Pergunta 4");
+        exercise2.setTitle("Pergunta Pt 3.1");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -733,7 +733,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement("Segundo o autor do texto, olhar o céu estrelado constitui uma experiência","",""));
-        exercise.setTitle("Pergunta 1");
+        exercise.setTitle("Pergunta Pt 4.1");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -742,7 +742,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement(texto+"\nSegundo o autor do texto, olhar o céu estrelado constitui uma experiência","",""));
-        exercise2.setTitle("Pergunta 1");
+        exercise2.setTitle("Pergunta Pt 4.1");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -789,7 +789,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement("Através da expressão «estranho e paradoxal» (linha 7), depreende-se que","",""));
-        exercise.setTitle("Pergunta 2");
+        exercise.setTitle("Pergunta Pt 4.2");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -798,7 +798,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Através da expressão «estranho e paradoxal» (linha 7), depreende-se que","",""));
-        exercise2.setTitle("Pergunta 2");
+        exercise2.setTitle("Pergunta Pt 4.2");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -841,7 +841,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nDe acordo com o autor do texto, os estudos levados a cabo sobre o Universo permitiram","",""));
-        exercise.setTitle("Pergunta 3");
+        exercise.setTitle("Pergunta Pt 4.3");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -851,7 +851,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("De acordo com o autor do texto, os estudos levados a cabo sobre o Universo permitiram","",""));
-        exercise2.setTitle("Pergunta 3");
+        exercise2.setTitle("Pergunta Pt 4.3");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -894,7 +894,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nA fim de pôr em destaque a intrínseca e inquebrável relação do homem com o Universo, o autor recorre a\r","",""));
-        exercise.setTitle("Pergunta 4");
+        exercise.setTitle("Pergunta Pt 4.4");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -903,7 +903,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("A fim de pôr em destaque a intrínseca e inquebrável relação do homem com o Universo, o autor recorre a\r","",""));
-        exercise2.setTitle("Pergunta 4");
+        exercise2.setTitle("Pergunta Pt 4.4");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -946,7 +946,7 @@ public class SeedService implements ISeedService{
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nO pronome pessoal «nos» desempenha a função sintática de complemento direto em todas as expressões\r\n" + //
                 "abaixo apresentadas, exceto em","",""));
-        exercise.setTitle("Pergunta 5");
+        exercise.setTitle("Pergunta Pt 4.5");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -956,7 +956,7 @@ public class SeedService implements ISeedService{
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("O pronome pessoal «nos» desempenha a função sintática de complemento direto em todas as expressões\r\n" + //
                 "abaixo apresentadas, exceto em","",""));
-        exercise2.setTitle("Pergunta 5");
+        exercise2.setTitle("Pergunta Pt 4.5");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -999,7 +999,7 @@ public class SeedService implements ISeedService{
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nTal como em «que não somos nem estamos de todo no centro do mundo, do Universo» (linhas 19 e 20), está\r\n" + //
                 "presente uma oração subordinada substantiva completiva em","",""));
-        exercise.setTitle("Pergunta 6");
+        exercise.setTitle("Pergunta Pt 4.6");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -1009,7 +1009,7 @@ public class SeedService implements ISeedService{
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Tal como em «que não somos nem estamos de todo no centro do mundo, do Universo» (linhas 19 e 20), está\r\n" + //
                 "presente uma oração subordinada substantiva completiva em","",""));
-        exercise2.setTitle("Pergunta 6");
+        exercise2.setTitle("Pergunta Pt 4.6");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -1053,7 +1053,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise.setStatement(new ExerciseStatement(texto+"\nA única expressão em que estão presentes exemplos dos três tipos de dêixis (temporal, espacial e pessoal) é","",""));
-        exercise.setTitle("Pergunta 7");
+        exercise.setTitle("Pergunta Pt 4.7");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -1062,7 +1062,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.MULTIPLE_CHOICE_NO_JUSTIFICATION,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("A única expressão em que estão presentes exemplos dos três tipos de dêixis (temporal, espacial e pessoal) é","",""));
-        exercise2.setTitle("Pergunta 7");
+        exercise2.setTitle("Pergunta Pt 4.7");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -1193,7 +1193,7 @@ public class SeedService implements ISeedService{
                 "um deles ilustrado com um exemplo significativo;\r\n" + //
                 "− formule uma conclusão adequada à argumentação desenvolvida;\r\n" + //
                 "− utilize um discurso valorativo (juízo de valor explícito ou implícito).","",""));
-        exercise.setTitle("Texto");
+        exercise.setTitle("Pergunta Pt 5.1");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -1208,7 +1208,7 @@ public class SeedService implements ISeedService{
                 "um deles ilustrado com um exemplo significativo;\r\n" + //
                 "− formule uma conclusão adequada à argumentação desenvolvida;\r\n" + //
                 "− utilize um discurso valorativo (juízo de valor explícito ou implícito).","",""));
-        exercise2.setTitle("Texto");
+        exercise2.setTitle("Pergunta Pt 5.1");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -1452,7 +1452,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise = new MultipleChoiceExercise(Mctype.TRUE_FALSE__JUSTIFY_FALSE_UNMARKED,itemResolutions);
         exercise.setStatement(new ExerciseStatement("Responda ás seguintes questões de verdadeiro ou falso, justificando as falsas","",""));
-        exercise.setTitle("Pergunta 1 do Teste de História");
+        exercise.setTitle("Pergunta Hist 1.1");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -1461,7 +1461,7 @@ public class SeedService implements ISeedService{
 
         MultipleChoiceExercise exercise2 = new MultipleChoiceExercise(Mctype.TRUE_FALSE__JUSTIFY_FALSE_UNMARKED,itemResolutions);
         exercise2.setStatement(new ExerciseStatement("Responda ás seguintes questões de verdadeiro ou falso, justificando as falsas","",""));
-        exercise2.setTitle("Pergunta 1");
+        exercise2.setTitle("Pergunta Hist 1.1");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);
@@ -1489,7 +1489,7 @@ public class SeedService implements ISeedService{
 
         ChatExercise exercise = new ChatExercise(tagsAI);
         exercise.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
-        exercise.setTitle("Pergunta 2 do Teste de História");
+        exercise.setTitle("Pergunta Hist 1.2");
         exercise.setSpecialist(new Specialist(specialistId));
         exercise.setCourse(new Course(courseId));
         exercise.setVisibility(Visibility.PUBLIC);
@@ -1498,7 +1498,7 @@ public class SeedService implements ISeedService{
 
         ChatExercise exercise2 = new ChatExercise(tagsAI);
         exercise2.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
-        exercise2.setTitle("Pergunta 2");
+        exercise2.setTitle("Pergunta Hist 1.2");
         exercise2.setSpecialist(new Specialist(specialistId));
         exercise2.setCourse(new Course(courseId));
         exercise2.setVisibility(Visibility.PUBLIC);

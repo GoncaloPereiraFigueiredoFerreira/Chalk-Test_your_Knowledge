@@ -152,7 +152,9 @@ export function EditTestStateReducer(
         );
         newGroups[action.exercise.groupPosition].groupPoints =
           newGroups[action.exercise.groupPosition].groupPoints +
-          (action.exercise.exercise.identity.points ?? 0);
+          (action.exercise.exercise.identity.points ?? 1);
+        console.log(newGroups[action.exercise.groupPosition].groupPoints);
+
         return {
           ...state,
           test: {
@@ -249,14 +251,30 @@ export function EditTestStateReducer(
 
     case EditTestActionKind.EDIT_EXERCISE:
       if (action.exercise && action.exercise.exercise) {
-        const newGroups: ExerciseGroup[] = [...state.test.groups];
+        const newGroups: ExerciseGroup[] = JSON.parse(
+          JSON.stringify(state.test.groups)
+        );
         newGroups[action.exercise.groupPosition].exercises[
           action.exercise.exercisePosition
         ] = action.exercise.exercise;
+        // update groupCotation
+        let auxCotation = 0;
+        newGroups[action.exercise.groupPosition].exercises.forEach(
+          (element) => {
+            auxCotation += element.identity.points ?? 0;
+          }
+        );
+        newGroups[action.exercise.groupPosition].groupPoints = auxCotation;
+        // update globalCotation
+        auxCotation = 0;
+        newGroups.forEach((element) => {
+          auxCotation += element.groupPoints;
+        });
         return {
           ...state,
           test: {
             ...state.test,
+            globalPoints: auxCotation,
             groups: newGroups,
           },
         } as EditTestState;

@@ -385,7 +385,7 @@ export function ListTests({
               undefined,
               "string"
             ).then((any) => {
-              if (any) {
+              if (any != "0") {
                 return contactBACK(
                   "tests/" +
                     test.id +

@@ -39,7 +39,7 @@ interface ExerciseProps {
   deleteEx: () => void;
 }
 
-import { Course, UserContext, UserRole } from "../../../UserContext.tsx";
+import { UserContext, UserRole } from "../../../UserContext.tsx";
 
 export function ShowExercise({
   position,
@@ -253,13 +253,9 @@ export function ShowExercise({
             {exercise.base.title}
           </label>
           <div className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}>
-            {exercise.base.tags.map((tag, key) => {
-              return (
-                <div key={key} className="bg-yellow-600 tag-exercise">
-                  {tag.name}
-                </div>
-              );
-            })}
+            {exercise.base.tags.map((tag, key) => (
+              <TagBlock key={key}>{tag.name}</TagBlock>
+            ))}
           </div>
         </button>
         <div className="pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#bdcee6] dark:bg-[#2e3c50] border-slate-500 dark:border-slate-500">
