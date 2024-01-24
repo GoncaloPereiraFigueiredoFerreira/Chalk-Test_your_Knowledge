@@ -30,6 +30,11 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
         if(vis == null)
             return false;
 
+        System.out.println("studentId: " + studentId);
+        System.out.println("vis: " + vis);
+        System.out.println("courseId: " + courseId);
+        System.out.println("institutionId: " + institutionId);
+
         // if an institution is provided, the student can only
         // check the exercises if the student belongs
         // to the institution and if the visibility is set to INSTITUTION
@@ -44,7 +49,7 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
         // to the course and if the visibility is set to COURSE
         try {
             if (courseId != null)
-                return coursesService.checkStudentInCourse(studentId, courseId)
+                return coursesService.checkStudentInCourse(courseId, studentId)
                         && Visibility.COURSE.equals(vis);
         }catch (NotFoundException e) {return false;}
 
@@ -122,7 +127,7 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
         // to the course and if the visibility is set to COURSE
         try {
             if (courseId != null)
-                return coursesService.checkStudentInCourse(courseId, specialistId)
+                return coursesService.checkSpecialistInCourse(courseId, specialistId)
                         && Visibility.COURSE.equals(vis);
         }catch (NotFoundException e) {return false;}
 
