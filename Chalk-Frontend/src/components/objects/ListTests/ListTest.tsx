@@ -351,9 +351,9 @@ export function ListTests({
       contactBACK("tests", "GET", {
         page: (currentPage - 1).toString(),
         itemsPerPage: "20",
-        specialistId: user.user.id,
         courseId: courseId,
         visibilityType: visibilityType,
+        specialistId: visibilityType === "" ? user.user.id : "",
         tags: requestTags,
       }).then((page) => {
         const tests = page.items;
