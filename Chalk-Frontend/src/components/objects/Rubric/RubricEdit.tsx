@@ -4,8 +4,30 @@ import {
   RubricContext,
   Standard,
   createNewCriteria,
+  StardardLevels,
 } from "./Rubric";
 import "../Exercise/Exercise.css";
+
+export function standardLevelToString(num: string) {
+  switch (num) {
+    case StardardLevels.NULL:
+    case "NULL":
+      return "Reduzido";
+    case StardardLevels.SATISFACTORY:
+    case "SATISFACTORY":
+      return "Não Satisfaz";
+    case StardardLevels.SATISFACTORY:
+    case "SATISFACTORY":
+      return "Satisfaz";
+    case StardardLevels.WELL_DONE:
+    case "WELL_DONE":
+      return "Satisfaz Bastante";
+    case StardardLevels.EXCELENT:
+    case "EXCELENT":
+      return "Excelente";
+  }
+  return "Não computado";
+}
 
 export function RubricEdit(rubric: Rubric, setState: Function) {
   const addCriteria = () => {
@@ -129,42 +151,49 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                 </div>
               </div>
               <div className="mr-2 flex flex-col gap-2">
-                {crt.standards.map((standard, standIndex) => {
-                  return (
-                    <div className=" flex flex-row gap-4">
-                      <p className="font-medium dark:text-white my-auto w-1/4">
-                        {standard.title}
-                      </p>
-                      <input
-                        type="number"
-                        className="rounded-lg w-fit border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
-                        value={standard.percentage}
-                        min={0}
-                        max={100}
-                        onChange={(e) =>
-                          changeStandardPercentage(
-                            critIndex,
-                            standIndex,
-                            e.target.value
-                          )
-                        }
-                      ></input>
-                      <input
-                        type="text"
-                        className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
-                        value={standard.description}
-                        onChange={(e) =>
-                          changeStandardDescription(
-                            critIndex,
-                            standIndex,
-                            e.target.value
-                          )
-                        }
-                        placeholder="Descrição"
-                      ></input>
-                    </div>
-                  );
-                })}
+                {crt.standards
+                  .sort(function (a, b) {
+                    // Compare the 2 dates
+                    if (a.title < b.title) return -1;
+                    if (a.title > b.title) return 1;
+                    return 0;
+                  })
+                  .map((standard, standIndex) => {
+                    return (
+                      <div className=" flex flex-row gap-4">
+                        <p className="font-medium dark:text-white my-auto w-1/4">
+                          {standardLevelToString(standard.title)}
+                        </p>
+                        <input
+                          type="number"
+                          className="rounded-lg w-fit border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+                          value={standard.percentage}
+                          min={0}
+                          max={100}
+                          onChange={(e) =>
+                            changeStandardPercentage(
+                              critIndex,
+                              standIndex,
+                              e.target.value
+                            )
+                          }
+                        ></input>
+                        <input
+                          type="text"
+                          className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+                          value={standard.description}
+                          onChange={(e) =>
+                            changeStandardDescription(
+                              critIndex,
+                              standIndex,
+                              e.target.value
+                            )
+                          }
+                          placeholder="Descrição"
+                        ></input>
+                      </div>
+                    );
+                  })}
               </div>
               <button
                 className=" mx-2 p-1 px-2 text-md rounded-md float-right btn-base-color active:scale-95"

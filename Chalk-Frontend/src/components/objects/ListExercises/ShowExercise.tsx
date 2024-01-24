@@ -218,7 +218,7 @@ export function ShowExercise({
             Editar
           </button>
           <button
-            className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600 ease-in-out active:scale-90"
+            className="btn-options-exercise ex-icon ease-in-out active:scale-90"
             onClick={() => {
               if (changeVisibilityPopUp === "") {
                 setChangeVisibilityPopUp(exercise.identity.id);
@@ -229,7 +229,7 @@ export function ShowExercise({
             Visibilidade
           </button>
           <button
-            className="btn-options-exercise ex-icon"
+            className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600 ease-in-out active:scale-90"
             onClick={() => deleteEx()}
           >
             <HiOutlineTrash className="size-6" />
