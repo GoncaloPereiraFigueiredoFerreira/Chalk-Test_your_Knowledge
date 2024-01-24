@@ -250,11 +250,10 @@ export function textToHTML(stringHTML: string) {
 }
 
 export function textToHTMLHooks(stringHTML: string) {
-  let newStringHTML: string;
   const divRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (divRef.current) {
-      divRef.current.innerHTML = newStringHTML ?? "";
+      divRef.current.innerHTML = stringHTML ?? "";
     }
   }, [divRef, stringHTML]);
 
