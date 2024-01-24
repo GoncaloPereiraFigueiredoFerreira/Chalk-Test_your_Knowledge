@@ -158,16 +158,16 @@ function ShowTestGrid(
             navigate("/webapp/tests/" + test.id + "/preview");
             e.stopPropagation();
           }}
-          className=" z-10 max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-slate-800 dark:border-slate-700 overflow-hidden"
+          className="flex flex-col max-w-lg rounded-lg shadow-2xl bg-white dark:bg-slate-800 shadow-slate-400 dark:shadow-black overflow-hidden"
         >
-          <div className="py-10 px-20 ">
+
             {test.globalPoints === undefined ? (
-              <CircularProgressbarWithChildren value={0}>
-                <AiTwotoneFileUnknown size="100" />
-                <div style={{ fontSize: 12, marginTop: -5 }}>
-                  <strong>Por avaliar...</strong>
-                </div>
-              </CircularProgressbarWithChildren>
+              <div className="flex justify-center py-16 bg-[#bdcee6] dark:bg-slate-700">
+                <FaTasks
+                  size="120"
+                  className="text-slate-800 dark:text-slate-400"
+                />
+              </div>
             ) : (
               <CircularProgressbar
                 value={test.globalPoints}
@@ -182,22 +182,25 @@ function ShowTestGrid(
                 })}
               />
             )}
-          </div>
 
-          <div className="p-5 bg-slate-300">
-            <h5 className="mb-2  px-2 text-2xl font-bold tracking-tight border-b border-slate-500 pb-2 text-black dark:text-white">
-              {test.title}
-            </h5>
-
-            <p className="mb-2  px-2 font-normal text-slate-700 dark:text-slate-400">
-              <strong>Autor:</strong> {test.specialistId}
-            </p>
-            <div className="flex flex-wrap gap-3 px-2 items-center mb-4 text-slate-700 dark:text-slate-400">
-              <strong>Tópicos:</strong>
-              {test.tags.map((tag, index) => {
-                return <TagBlock key={index}>{tag}</TagBlock>;
-              })}
+          <div className="flex flex-col justify-between p-4 gap-4 h-full">
+            <div className="flex flex-col gap-4">
+              <p className="text-2xl px-2 border-b-2 pb-2 tracking-tight font-bold text-slate-600 dark:text-white border-slate-400 dark:border-slate-600">
+                {test.title}
+              </p>
+              <div className="flex flex-col px-2 gap-2">
+                <p className="font-normal text-slate-700 dark:text-slate-200">
+                  <strong>Autor:</strong> {test.specialistId}
+                </p>
+                <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
+                  <strong>Tópicos:</strong>
+                  {test.tags.map((tag, index) => {
+                    return <TagBlock key={index}>{tag}</TagBlock>;
+                  })}
+                </div>
+              </div>
             </div>
+          
             <div className="flex w-full px-2 justify-between">
               <div className="flex gap-3 items-center mb-4 text-slate-700 dark:text-slate-400">
                 <strong>Avaliação Final:</strong>
