@@ -44,10 +44,9 @@ export function ExerciseBankDragDrop({
     contactBACK("exercises", "GET", {
       page: (currentPage - 1).toString(),
       itemsPerPage: "10",
-      visibility: "public",
-      specialistId: user.user?.id!,
+      visibility: "public"
     }).then((page) => {
-      setTotalPages(page.totalPages);
+      setTotalPages(page.totalPages==0?1:page.totalPages);
       const exercises = page.items;
       const exerciseL: Exercise[] = [];
       exercises.map((ex: any) => {
