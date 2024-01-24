@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import { GroupDragDrop } from "./GroupDragDrop";
 import { CreateNewExercisePopUp } from "../ListExercises/CreateNewExercisePopUp";
@@ -12,6 +12,7 @@ import { translateVisibilityToString } from "./EditTestInfo";
 import { APIContext } from "../../../APIContext";
 import { useParams } from "react-router-dom";
 import ConfirmButton from "../../interactiveElements/ConfirmButton";
+import { textToHTMLHooks } from "../../interactiveElements/TextareaBlock";
 
 interface EditTestProps {
   exerciseID: {
@@ -40,19 +41,6 @@ export function EditTestDragDrop({
   const { user } = useContext(UserContext);
   const { contactBACK } = useContext(APIContext);
   const { testID } = useParams();
-  const divRefConclusion = useRef<HTMLDivElement>(null);
-  const divRefGlobalInstructions = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRefGlobalInstructions.current)
-      divRefGlobalInstructions.current.innerHTML =
-        testState.test.globalInstructions ?? "";
-  }, [divRefGlobalInstructions, testState.test.globalInstructions]);
-
-  useEffect(() => {
-    if (divRefConclusion.current)
-      divRefConclusion.current.innerHTML = testState.test.conclusion ?? "";
-  }, [divRefConclusion, testState.test.conclusion]);
 
   return (
     <div className="flex flex-col w-full min-h-max text-black dark:text-white">
@@ -78,7 +66,7 @@ export function EditTestDragDrop({
               });
             });
           }}
-          confirmationMessage="Tem acerteza que deseja publicar o teste?"
+          confirmationMessage="Tem a certeza que deseja publicar o teste?"
           button={
             <button
               type="button"
@@ -113,7 +101,12 @@ export function EditTestDragDrop({
         </div>
         <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
           <p>Autor: </p>
-          <p>{testState.test.author}</p>
+          <p>
+            {" "}
+            {testState.test.specialistId === user.user?.id
+              ? user.user.email
+              : testState.test.specialistId}
+          </p>
           <p>Visibilidade do Teste: </p>
           <p>{translateVisibilityToString(testState.test.visibility)}</p>
           <p>Cotação máxima do teste: </p>
@@ -122,7 +115,7 @@ export function EditTestDragDrop({
         <div className="flex flex-col pt-4 gap-4">
           <strong className="text-xl">Instruções do Teste</strong>
           <p className="text-md mx-4">
-            <div className="block" ref={divRefGlobalInstructions}></div>
+            {textToHTMLHooks(testState.test.globalInstructions)}
           </p>
         </div>
       </div>
@@ -173,7 +166,7 @@ export function EditTestDragDrop({
             </button>
           </div>
           <p className="text-md mx-4">
-            <div className="block" ref={divRefConclusion}></div>
+            {textToHTMLHooks(testState.test.conclusion)}
           </p>
         </div>
       </div>

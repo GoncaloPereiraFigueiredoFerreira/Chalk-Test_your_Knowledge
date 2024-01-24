@@ -88,8 +88,8 @@ export function PreviewTest() {
         const newResData = TranslateTestResolutionIN(exRes.data);
         const tmp = { ...testResolution };
         tmp.resolutions[selEx].data = newResData;
-        tmp.resolutions[selEx].points = exRes.points;
-        tmp.resolutions[selEx].comment = exRes.comment.items[0].text;
+        tmp.resolutions[selEx].comment =
+          exRes.comment !== null ? exRes.comment.items[0].text : "";
         setTestRes(tmp);
       });
     }

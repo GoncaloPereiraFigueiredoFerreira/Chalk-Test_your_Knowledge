@@ -303,6 +303,7 @@ export function InitExercise(type: ExerciseType): Exercise {
 
   const identity: ExerciseIdentity = {
     id: "",
+    points: 1,
     specialistId: "",
     visibility: "public",
   };

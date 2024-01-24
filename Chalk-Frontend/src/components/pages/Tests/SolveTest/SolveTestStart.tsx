@@ -1,9 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { SolveTestContext } from "./SolveTest";
+import { UserContext } from "../../../../UserContext";
 import { TagBlock } from "../../../interactiveElements/TagBlock";
 
 export function SolveTestLanding(props: any) {
   const { test, nExercises } = useContext(SolveTestContext);
+  const divRef = useRef<HTMLDivElement>(null);
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (divRef.current)
+      divRef.current.innerHTML = test.globalInstructions ?? "";
+  }, [divRef, test.globalInstructions]);
+
   return (
     <>
       <div className="space-y-12 w-full text-black dark:text-white">
@@ -12,7 +21,10 @@ export function SolveTestLanding(props: any) {
             <strong>Título:</strong> {test.title}
           </p>
           <p className="text-xl">
-            <strong>Autor:</strong> {test.author}
+            <strong>Autor:</strong>{" "}
+            {test.specialistId === user.user?.id
+              ? user.user.email
+              : test.specialistId}
           </p>
           <p className="text-xl">
             <strong>Data:</strong> {test.creationDate}
@@ -28,7 +40,7 @@ export function SolveTestLanding(props: any) {
         <div className="w-full">
           <h2 className=" font-bold text-lg">Instruções básicas do teste:</h2>
 
-          <p className="w-full text-lg p-4">{test.globalInstructions}</p>
+          <p className="w-full text-lg p-4" ref={divRef}></p>
         </div>
         <p className=" text-lg">
           <strong>Número de exercicios:</strong> {nExercises}

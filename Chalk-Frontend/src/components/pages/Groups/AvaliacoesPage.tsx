@@ -14,8 +14,8 @@ interface Test {
 type TestList = Test[];
 
 export function AvaliacoesPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const [searchKey, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "row">("row");
   const { contactBACK } = useContext(APIContext);
   const [examList, setExamList] = useState<TestList>([]);
   const { id } = useParams();
@@ -25,8 +25,8 @@ export function AvaliacoesPage() {
     contactBACK("tests", "GET", {
       page: "0",
       itemsPerPage: "20",
-      courseId: id!,
       visibilityType: "COURSE",
+      courseId: id!,
     }).then((page) => {
       const tests = page.items;
       setExamList(tests);
@@ -37,14 +37,11 @@ export function AvaliacoesPage() {
     item.title.toLowerCase().includes(searchKey.toLowerCase())
   );
 
-  const addEvaluation = () => {
-    //falta fazer
-  };
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col w-full overflow-auto">
-      <div className="flex w-full justify-around px-4 gap-16">
+      <div className="flex w-full px-8 py-4 gap-4 justify-center">
         <div className="relative w-1/2 justify-center">
           <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1.5 pointer-events-none">
             <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />
@@ -59,12 +56,6 @@ export function AvaliacoesPage() {
           />
         </div>
         <div className="flex gap-4">
-          <button
-            className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
-            onClick={addEvaluation}
-          >
-            Adicionar Avaliacao
-          </button>
           {viewMode === "grid" ? (
             <button
               className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"

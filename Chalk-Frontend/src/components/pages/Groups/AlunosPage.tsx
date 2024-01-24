@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { APIContext } from "../../../APIContext";
+
 import { Modal, TextInput } from "flowbite-react";
+import { UserContext, UserRole } from "../../../UserContext";
 import { IoSearch } from "react-icons/io5";
 import { FaListUl } from "react-icons/fa";
 import { HiViewGrid } from "react-icons/hi";
@@ -20,6 +22,7 @@ export function AlunosPage() {
   const { contactBACK } = useContext(APIContext);
   const [email, setEmail] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     contactBACK("courses/" + id + "/students", "GET", {
@@ -74,7 +77,7 @@ export function AlunosPage() {
 
   return (
     <div className="flex flex-col w-full overflow-auto">
-      <div className="flex w-full justify-around px-4 gap-16">
+      <div className="flex w-full px-8 py-4 gap-4 justify-center">
         <div className="relative w-1/2 justify-center">
           <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1.5 pointer-events-none">
             <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />
@@ -89,12 +92,14 @@ export function AlunosPage() {
           />
         </div>
         <div className="flex gap-4">
-          <button
-            className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
-            onClick={() => setOpenModal(true)}
-          >
-            Adicionar Aluno
-          </button>
+          {user.user?.role === UserRole.SPECIALIST && (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+              onClick={() => setOpenModal(true)}
+            >
+              Adicionar Aluno
+            </button>
+          )}
           {viewMode === "grid" ? (
             <button
               className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"

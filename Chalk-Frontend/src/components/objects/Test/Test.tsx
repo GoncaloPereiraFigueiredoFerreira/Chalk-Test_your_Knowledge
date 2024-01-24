@@ -4,7 +4,7 @@ export interface Test {
   id: string;
   type: string;
   conclusion: string;
-  author: string;
+  specialistId: string;
   courseId: string;
   title: string;
   visibility: string;
@@ -40,7 +40,7 @@ export function InitTest() {
     id: "",
     type: "",
     conclusion: "",
-    author: "",
+    specialistId: "",
     visibility: "private",
     title: "Novo Teste",
     publishDate: "",
@@ -55,7 +55,7 @@ export function InitTest() {
 
 export function CreateTest(author: string) {
   const test: Test = InitTest();
-  test.author = author;
+  test.specialistId = author;
   return test;
 }
 

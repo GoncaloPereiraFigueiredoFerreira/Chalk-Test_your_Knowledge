@@ -33,10 +33,15 @@ export function TestPage() {
         setOpenModal={setOpenModal}
         header={"Selecione as tags que pretende ver"}
       ></TagsFilterModal>
+
       <div className="flex flex-col w-full gap-4 min-h-max">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
           <label className="flex text-4xl text-slate-600 dark:text-white">
-            {kindOfTest === "Public" ? "Testes públicos" : "Os meus testes"}
+            {kindOfTest === "Public"
+              ? "Testes públicos"
+              : user.user?.role !== UserRole.STUDENT
+              ? "Os meus testes"
+              : "Testes de Autoavaliação"}
           </label>
           {user.user?.role == UserRole.SPECIALIST ? (
             <button
@@ -64,9 +69,12 @@ export function TestPage() {
               onClick={() => setKindOfTest("Private")}
               className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
             >
-              Os meus testes
+              {user.user?.role !== UserRole.STUDENT
+                ? "Os meus testes"
+                : "Testes de Autoavaliação"}
             </button>
           )}
+
           {view === ViewType.GRID ? (
             <button
               className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"

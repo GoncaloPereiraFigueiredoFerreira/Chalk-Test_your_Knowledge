@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Pagination } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-import { UserRole, UserContext } from "../../../UserContext.tsx";
+import { UserRole, UserContext, User } from "../../../UserContext.tsx";
 import {
   CircularProgressbar,
   CircularProgressbarWithChildren,
@@ -14,17 +14,18 @@ import { APIContext } from "../../../APIContext.tsx";
 import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
 import { TagBlock } from "../../interactiveElements/TagBlock";
 import "./ListTest.css";
+import { Floating } from "flowbite-react/lib/esm/components/Floating/Floating";
 
 function ShowTestList(
   test: TestPreview,
   index: number,
-  role: UserRole,
+  user: User,
   deleteTest: () => void,
   navigate: (url: string) => void
 ) {
   return (
     <>
-      {role == UserRole.STUDENT ? (
+      {user.role == UserRole.STUDENT ? (
         <div
           key={index}
           onClick={(e) => {
@@ -40,7 +41,8 @@ function ShowTestList(
               </h5>
 
               <p className="mb-1 font-normal text-slate-700 dark:text-slate-400">
-                <strong>Autor:</strong> {test.specialistId}
+                <strong>Author:</strong>{" "}
+                {test.specialistId === user.id ? user.email : test.specialistId}
               </p>
             </div>
             <div className="flex flex-wrap gap-3 items-center mb-4 text-slate-700 dark:text-slate-400 w-80">
@@ -85,7 +87,8 @@ function ShowTestList(
                 {test.title}
               </h5>
               <p className="font-normal text-slate-700 dark:text-slate-400">
-                <strong>Autor:</strong> {test.specialistId}
+                <strong>Author:</strong>
+                {test.specialistId === user.id ? user.email : test.specialistId}
               </p>
             </div>
             <div className="flex flex-wrap justify-start gap-2 items-center text-slate-700 dark:text-slate-200">
@@ -111,7 +114,7 @@ function ShowTestList(
                     onConfirm={() => {
                       deleteTest();
                     }}
-                    confirmationMessage="Tem acerteza que deseja apagar este Teste?"
+                    confirmationMessage="Tem a certeza que deseja apagar este Teste?"
                     button={
                       <button
                         type="button"
@@ -145,13 +148,13 @@ function ShowTestList(
 function ShowTestGrid(
   test: TestPreview,
   index: number,
-  role: UserRole,
+  user: User,
   deleteTest: () => void,
   navigate: (url: string) => void
 ) {
   return (
     <>
-      {role == UserRole.STUDENT ? (
+      {user.role == UserRole.STUDENT ? (
         <div
           key={index}
           onClick={(e) => {
@@ -160,28 +163,27 @@ function ShowTestGrid(
           }}
           className="flex flex-col max-w-lg rounded-lg shadow-2xl bg-white dark:bg-slate-800 shadow-slate-400 dark:shadow-black overflow-hidden"
         >
-
-            {test.globalPoints === undefined ? (
-              <div className="flex justify-center py-16 bg-[#bdcee6] dark:bg-slate-700">
-                <FaTasks
-                  size="120"
-                  className="text-slate-800 dark:text-slate-400"
-                />
-              </div>
-            ) : (
-              <CircularProgressbar
-                value={test.globalPoints}
-                text={`${test.globalPoints}%`}
-                styles={buildStyles({
-                  textColor: `rgba(${480 - test.globalPoints * 4.8}, ${
-                    4.8 * test.globalPoints
-                  }, ${0})`,
-                  pathColor: `rgba(${480 - test.globalPoints * 4.8}, ${
-                    4.8 * test.globalPoints
-                  }, ${0})`,
-                })}
+          {test.globalPoints === undefined ? (
+            <div className="flex justify-center py-16 bg-[#bdcee6] dark:bg-slate-700">
+              <FaTasks
+                size="120"
+                className="text-slate-800 dark:text-slate-400"
               />
-            )}
+            </div>
+          ) : (
+            <CircularProgressbar
+              value={test.globalPoints}
+              text={`${test.globalPoints}%`}
+              styles={buildStyles({
+                textColor: `rgba(${480 - test.globalPoints * 4.8}, ${
+                  4.8 * test.globalPoints
+                }, ${0})`,
+                pathColor: `rgba(${480 - test.globalPoints * 4.8}, ${
+                  4.8 * test.globalPoints
+                }, ${0})`,
+              })}
+            />
+          )}
 
           <div className="flex flex-col justify-between p-4 gap-4 h-full">
             <div className="flex flex-col gap-4">
@@ -190,7 +192,10 @@ function ShowTestGrid(
               </p>
               <div className="flex flex-col px-2 gap-2">
                 <p className="font-normal text-slate-700 dark:text-slate-200">
-                  <strong>Autor:</strong> {test.specialistId}
+                  <strong>Author:</strong>
+                  {test.specialistId === user.id
+                    ? user.email
+                    : test.specialistId}
                 </p>
                 <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
                   <strong>Tópicos:</strong>
@@ -200,7 +205,7 @@ function ShowTestGrid(
                 </div>
               </div>
             </div>
-          
+
             <div className="flex w-full px-2 justify-between">
               <div className="flex gap-3 items-center mb-4 text-slate-700 dark:text-slate-400">
                 <strong>Avaliação Final:</strong>
@@ -243,7 +248,10 @@ function ShowTestGrid(
               </p>
               <div className="flex flex-col px-2 gap-2">
                 <p className="font-normal text-slate-700 dark:text-slate-200">
-                  <strong>Autor:</strong> {test.specialistId}
+                  <strong>Author:</strong>
+                  {test.specialistId === user.id
+                    ? user.email
+                    : test.specialistId}
                 </p>
                 <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
                   <strong>Tópicos:</strong>
@@ -270,7 +278,7 @@ function ShowTestGrid(
                     onConfirm={() => {
                       deleteTest();
                     }}
-                    confirmationMessage="Tem acerteza que deseja apagar este Teste?"
+                    confirmationMessage="Tem a certeza que deseja apagar este Teste?"
                     button={
                       <button
                         onClick={(e) => {
@@ -372,23 +380,35 @@ export function ListTests({
           promises.push(
             contactBACK(
               "tests/" + test.id + "/resolutions/" + user.user!.id + "/count",
-              "GET"
+              "GET",
+              undefined,
+              undefined,
+              "string"
             ).then((any) => {
-              if(any){
-                contactBACK(
-                  "tests/" + test.id + "/resolutions/" + user.user!.id + "/count",
+              if (any != "0") {
+                return contactBACK(
+                  "tests/" +
+                    test.id +
+                    "/resolutions/" +
+                    user.user!.id +
+                    "/last",
                   "GET"
                 ).then((exam) => {
                   return exam && exam.status === "REVISED"
                     ? exam.totalPoints
-                    : undefined;})
-                    }else return undefined;
-            }));
+                    : undefined;
+                });
+              } else return undefined;
+            })
+          );
         });
         Promise.all(promises).then((results) => {
           tests.map((teste: any, index: number) => {
             if (results[index])
-              teste.globalPoints = (results[index] / teste.globalPoints) * 100;
+              teste.globalPoints = (
+                (results[index] / teste.globalPoints) *
+                100
+              ).toFixed(2);
             else teste.globalPoints = undefined;
             let tags = teste.tags.map((tag: any) => {
               return tag.name;
@@ -422,7 +442,7 @@ export function ListTests({
               return ShowTestGrid(
                 test,
                 index,
-                user.user!.role,
+                user.user!,
                 () => deleteTest(test.id),
                 navigate
               );
@@ -434,7 +454,7 @@ export function ListTests({
               return ShowTestList(
                 test,
                 index,
-                user.user!.role,
+                user.user!,
                 () => deleteTest(test.id),
                 navigate
               );

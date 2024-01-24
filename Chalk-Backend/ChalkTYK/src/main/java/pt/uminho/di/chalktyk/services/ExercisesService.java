@@ -197,9 +197,7 @@ public class ExercisesService implements IExercisesService{
     }
 
     /**
-     * Delete exercise by id. If the exercise has copies, it won't be deleted,
-     * but instead, its visibility will be set to "deleted",
-     * the specialist, course and institution will be set to null.
+     * Delete exercise by id.
      * Calling method should be transactional, to rollback changes in case of
      * an exception.
      *

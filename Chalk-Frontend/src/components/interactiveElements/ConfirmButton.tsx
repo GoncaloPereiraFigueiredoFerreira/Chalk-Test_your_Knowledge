@@ -1,8 +1,10 @@
-import React, { useState, ReactNode } from 'react';
-import { Button, Modal } from 'flowbite-react';
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import React, { useState, ReactNode } from "react";
+import { Button, Modal } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
-type OptionalEventHandler = (event?: React.SyntheticEvent<Element, Event>) => void;
+type OptionalEventHandler = (
+  event?: React.SyntheticEvent<Element, Event>
+) => void;
 
 interface ConfirmButtonProps {
   onConfirm: OptionalEventHandler;
@@ -27,7 +29,13 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({
           setOpenModal(true);
         },
       })}
-      <Modal dismissible show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
+      <Modal
+        dismissible
+        show={openModal}
+        size="md"
+        onClose={() => setOpenModal(false)}
+        popup
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -36,10 +44,24 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({
               {confirmationMessage}
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={(event: React.MouseEvent) => { event.stopPropagation();setOpenModal(false); onConfirm && onConfirm(); }}>
+              <Button
+                color="failure"
+                onClick={(event: React.MouseEvent) => {
+                  event.stopPropagation();
+                  setOpenModal(false);
+                  onConfirm && onConfirm();
+                }}
+              >
                 Confirmar
               </Button>
-              <Button color="gray" onClick={(event: React.MouseEvent) => { event.stopPropagation();setOpenModal(false); onCancel && onCancel(); }}>
+              <Button
+                color="gray"
+                onClick={(event: React.MouseEvent) => {
+                  event.stopPropagation();
+                  setOpenModal(false);
+                  onCancel && onCancel();
+                }}
+              >
                 Cancelar
               </Button>
             </div>

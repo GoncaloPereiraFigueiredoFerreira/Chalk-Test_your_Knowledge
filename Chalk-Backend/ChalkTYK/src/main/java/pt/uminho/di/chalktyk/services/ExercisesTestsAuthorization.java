@@ -29,24 +29,34 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
     public boolean canStudentGetExercise(String studentId, Visibility vis, String courseId, String institutionId) {
         if(vis == null)
             return false;
-        switch (vis){
-            case PRIVATE, TEST, DELETED:
-                return false;
-            case INSTITUTION:
-                try {
-                    if(institutionId==null)
-                        return false;
-                    return institutionsService.isStudentOfInstitution(studentId, institutionId);
-                } catch (NotFoundException e) { return false; }
-            case COURSE:
-                try {
-                    if(courseId==null)
-                        return false;
-                    return coursesService.checkStudentInCourse(courseId, studentId);
-                } catch (NotFoundException e) { return false; }
-            default:
-                return true;
-        }
+
+        System.out.println("studentId: " + studentId);
+        System.out.println("vis: " + vis);
+        System.out.println("courseId: " + courseId);
+        System.out.println("institutionId: " + institutionId);
+
+        // if an institution is provided, the student can only
+        // check the exercises if the student belongs
+        // to the institution and if the visibility is set to INSTITUTION
+        try {
+            if (institutionId != null)
+                return institutionsService.isStudentOfInstitution(studentId, institutionId)
+                        && Visibility.INSTITUTION.equals(vis);
+        }catch (NotFoundException e) {return false;}
+
+        // if a course is provided, the student can only
+        // check the exercises if the student belongs
+        // to the course and if the visibility is set to COURSE
+        try {
+            if (courseId != null)
+                return coursesService.checkStudentInCourse(courseId, studentId)
+                        && Visibility.COURSE.equals(vis);
+        }catch (NotFoundException e) {return false;}
+
+        return switch (vis) {
+            case PUBLIC, NOT_LISTED -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -103,26 +113,28 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
         if(vis == null)
             return false;
 
-        switch (vis){
-            case TEST, PRIVATE, DELETED:
-                return false;
-            case INSTITUTION:
-                try {
-                    if(institutionId==null)
-                        return false;
-                    return institutionsService.isSpecialistOfInstitution(specialistId, institutionId);
-                }
-                catch (NotFoundException e) { return false; }
-            case COURSE:
-                try {
-                    if(courseId==null)
-                        return false;
-                    return coursesService.checkSpecialistInCourse(courseId, specialistId);
-                }
-                catch (NotFoundException e) { return false; }
-            default:
-                return true;
-        }
+        // if an institution is provided, the specialist can only
+        // check the exercises if the specialist belongs
+        // to the institution and if the visibility is set to INSTITUTION
+        try {
+            if (institutionId != null)
+                return institutionsService.isSpecialistOfInstitution(specialistId, institutionId)
+                        && Visibility.INSTITUTION.equals(vis);
+        }catch (NotFoundException e) {return false;}
+
+        // if a course is provided, the specialist can only
+        // check the exercises if the specialist belongs
+        // to the course and if the visibility is set to COURSE
+        try {
+            if (courseId != null)
+                return coursesService.checkSpecialistInCourse(courseId, specialistId)
+                        && Visibility.COURSE.equals(vis);
+        }catch (NotFoundException e) {return false;}
+
+        return switch (vis) {
+            case PUBLIC, NOT_LISTED -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -216,6 +228,6 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
 
     @Override
     public boolean specialistBelongsToCourse(String userId, String courseId) throws NotFoundException {
-        return coursesService.checkSpecialistInCourse(userId,courseId);
+        return coursesService.checkSpecialistInCourse(courseId,userId);
     }
 }

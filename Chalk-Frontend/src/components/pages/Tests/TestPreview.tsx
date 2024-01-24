@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -7,7 +7,11 @@ import {
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
-import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import {
+  textToHTML,
+  textToHTMLHooks,
+} from "../../interactiveElements/TextareaBlock";
+import { UserContext } from "../../../UserContext";
 
 function renderExercise(
   exercise: Exercise,
@@ -160,14 +164,7 @@ export function TestPreview({
 }: TestPreviewProps) {
   const [selectedGroup, setSelectedGroup] = useState(-1);
   const [selectedEx, setSelectedEx] = useState(-1);
-  const divRefGlobalInstructions = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRefGlobalInstructions.current)
-      divRefGlobalInstructions.current.innerHTML =
-        test.globalInstructions ?? "";
-  }, [divRefGlobalInstructions, test.globalInstructions]);
-
+  const { user } = useContext(UserContext);
   useEffect(() => {
     if (showExId !== "") {
       const { group, ex } = findId(showExId, test);
@@ -177,23 +174,27 @@ export function TestPreview({
       if (ex != selectedEx) setSelectedEx(ex);
     }
   }, [showExId]);
-
   return (
     <>
       <div className="flex flex-col px-4 pt-4 pb-8 gap-4">
         <strong className="text-xl">Informações Gerais do Teste:</strong>
         <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
           <p>Autor:</p>
-          <p> {test.author}</p>
+          <p>
+            {" "}
+            {test.specialistId === user.user?.id
+              ? user.user.email
+              : test.specialistId}
+          </p>
           <p>Data de criação do teste:</p>
-          <p>{test.creationDate}</p>
+          <p>{new Date(test.creationDate).toDateString()}</p>
           <p>Cotação máxima do teste:</p>
           <p>{test.globalPoints}</p>
         </div>
         <div className="flex flex-col pt-4 gap-4">
           <strong className="text-xl">Instruções do Teste</strong>
           <p className="text-md mx-4">
-            <div className="block" ref={divRefGlobalInstructions}></div>
+            {textToHTMLHooks(test.globalInstructions)}
           </p>
         </div>
       </div>
