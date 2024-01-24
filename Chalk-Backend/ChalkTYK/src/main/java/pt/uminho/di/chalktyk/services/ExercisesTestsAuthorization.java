@@ -216,6 +216,6 @@ public class ExercisesTestsAuthorization implements IExercisesTestsAuthorization
 
     @Override
     public boolean specialistBelongsToCourse(String userId, String courseId) throws NotFoundException {
-        return coursesService.checkSpecialistInCourse(userId,courseId);
+        return coursesService.checkSpecialistInCourse(courseId,userId);
     }
 }

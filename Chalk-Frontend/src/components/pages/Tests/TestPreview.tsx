@@ -162,6 +162,13 @@ export function TestPreview({
   const [selectedGroup, setSelectedGroup] = useState(-1);
   const [selectedEx, setSelectedEx] = useState(-1);
   const { user } = useContext(UserContext);
+  const divRefGlobalInstructions = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRefGlobalInstructions.current)
+      divRefGlobalInstructions.current.innerHTML =
+        test.globalInstructions ?? "";
+  }, [divRefGlobalInstructions, test.globalInstructions]);
 
   useEffect(() => {
     if (showExId !== "") {
@@ -177,8 +184,6 @@ export function TestPreview({
       <div className="flex flex-col px-4 pt-4 pb-8 gap-4">
         <strong className="text-xl">Informações Gerais do Teste:</strong>
         <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
-          <p>Instruções do Teste:</p>
-          <p>{test.globalInstructions}</p>
           <p>Autor:</p>
           <p>
             {" "}
@@ -190,6 +195,12 @@ export function TestPreview({
           <p>{new Date(test.creationDate).toDateString()}</p>
           <p>Cotação máxima do teste:</p>
           <p>{test.globalPoints}</p>
+        </div>
+        <div className="flex flex-col pt-4 gap-4">
+          <strong className="text-xl">Instruções do Teste</strong>
+          <p className="text-md mx-4">
+            <div className="block" ref={divRefGlobalInstructions}></div>
+          </p>
         </div>
       </div>
       <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-slate-400 dark:border-slate-600">

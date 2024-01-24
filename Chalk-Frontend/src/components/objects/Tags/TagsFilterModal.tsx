@@ -136,8 +136,8 @@ export function TagsFilterModal({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={() => addTagsList()}>Apply</Button>
-        <Button onClick={() => setSelectedTags([])}>Clear tags</Button>
+        <Button onClick={() => addTagsList()}>Aplicar</Button>
+        <Button onClick={() => setSelectedTags([])}>Remover tópicos</Button>
       </Modal.Footer>
     </Modal>
   );

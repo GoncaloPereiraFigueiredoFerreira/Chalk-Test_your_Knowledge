@@ -22,6 +22,7 @@ import { FaUserGraduate } from "react-icons/fa";
 import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;
@@ -463,9 +464,7 @@ export function ShowExerciseDragDrop({
         </div>
         <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2  border-slate-500 dark:border-slate-600">
           {exercise.base.tags.map((tag, key) => (
-            <div key={key} className="bg-yellow-600 tag-exercise">
-              {tag.name}
-            </div>
+            <TagBlock key={key}>{tag.name}</TagBlock>
           ))}
         </div>
         <div

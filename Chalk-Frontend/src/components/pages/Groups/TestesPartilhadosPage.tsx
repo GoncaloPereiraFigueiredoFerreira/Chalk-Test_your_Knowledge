@@ -9,9 +9,9 @@ import { APIContext } from "../../../APIContext";
 import { UserContext } from "../../../UserContext";
 import { Modal, Pagination } from "flowbite-react";
 import { Test } from "../../objects/Test/Test";
-import { Tag } from "../../interactiveElements/tag";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 
-function ListTestsModal({ modalState, closeModal, setTestId }: any) {
+function ListTestsModal({ modalState, closeModal }: any) {
   const [tests, setTests] = useState<Test[]>([]);
   const [page, setPage] = useState(1);
   const [maxPages, setMaxPage] = useState(1);
@@ -34,7 +34,7 @@ function ListTestsModal({ modalState, closeModal, setTestId }: any) {
       dismissible
       size="2xl"
       show={modalState}
-      onClose={() => closeModal()}
+      onClose={() => closeModal("")}
     >
       <Modal.Header>
         <p>Lista de testes disponíveis para adicionar ao grupo</p>
@@ -47,8 +47,7 @@ function ListTestsModal({ modalState, closeModal, setTestId }: any) {
                 <div
                   key={index}
                   onClick={(e) => {
-                    setTestId(test.id);
-                    closeModal();
+                    closeModal(test.id);
                     e.stopPropagation();
                   }}
                   className=" hover:bg-slate-400 select-pointer border-t border-b p-4 w-full border-slate-300 dark:border-slate-600"
@@ -62,7 +61,7 @@ function ListTestsModal({ modalState, closeModal, setTestId }: any) {
                     <div className="flex justify-start gap-2 items-center text-slate-700 dark:text-slate-200">
                       <strong>Tags:</strong>
                       {test.tags.map((tag, index) => {
-                        return <Tag key={index}>{tag.name}</Tag>;
+                        return <TagBlock key={index}>{tag.name}</TagBlock>;
                       })}
                     </div>
                   </div>
@@ -99,19 +98,23 @@ export function TestesPartilhadosPage() {
   const [, updateState] = useState<any>();
   const forceUpdate = useCallback(() => updateState({}), []);
 
-  const addTest = () => {
+  const addTest = (id: string) => {
+    setTestId(id);
     setTestsModal(false);
+  };
+
+  useEffect(() => {
     if (testID !== "")
       contactBACK(
-        "tests/" + testID + "/course",
-        "PUT",
+        "tests/" + testID + "/duplicate",
+        "POST",
         undefined,
-        id,
+        { courseId: id, visibility: "COURSE" },
         "none"
       ).then(() => {
         useCallback(() => forceUpdate(), []);
       });
-  };
+  }, [testID]);
 
   return (
     <div className="w-full h-screen py-24 overflow-auto bg-white dark:bg-black">
@@ -132,7 +135,6 @@ export function TestesPartilhadosPage() {
               ></TagsFilterModal>
               <ListTestsModal
                 modalState={testsModal}
-                setTestId={setTestId}
                 closeModal={addTest}
               ></ListTestsModal>
             </div>

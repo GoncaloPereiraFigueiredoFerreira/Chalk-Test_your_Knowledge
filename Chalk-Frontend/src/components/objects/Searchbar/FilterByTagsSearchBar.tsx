@@ -4,7 +4,7 @@ import { IoSearch } from "react-icons/io5";
 import { FaFilter } from "react-icons/fa";
 import "./Searchbar.css";
 import "../../interactiveElements/DropdownBlock.css";
-import { Tag } from "../../interactiveElements/tag";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 
 export function FilterByTagsSearchBar({
   setSearch,
@@ -26,7 +26,7 @@ export function FilterByTagsSearchBar({
             onClick={() => setOpenModal(true)}
             className="dropdown rounded-l-lg text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-700 border-slate-400 dark:border-slate-700 group"
           >
-            Filter by Tags
+            Filtrar por Tópicos
             <FaFilter className="size-4 group group-slate-icon" />
           </button>
           <form className="relative w-full justify-center">
@@ -34,9 +34,9 @@ export function FilterByTagsSearchBar({
               <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />
               <button
                 type="submit"
-                className="px-4 py-2 pointer-events-auto text-sm rounded-lg font-medium btn-base-color"
+                className="px-4 py-2 pointer-events-auto text-sm rounded-lg font-medium btn-base-color active:scale-90"
               >
-                Search
+                Procurar
               </button>
             </div>
             <input
@@ -54,10 +54,10 @@ export function FilterByTagsSearchBar({
             tagsList.length > 0 ? "" : "hidden"
           } flex items-center pt-2 max-w-xl`}
         >
-          <p className="font-semibold text-black dark:text-white">Tags:</p>
+          <p className="font-semibold text-black dark:text-white">Tópicos:</p>
           <div className="flex flex-wrap pl-4 gap-4">
             {tagsList.map((tag: any, index: any) => {
-              return <Tag key={index}>{tag.name}</Tag>;
+              return <TagBlock key={index}>{tag.name}</TagBlock>;
             })}
           </div>
         </div>

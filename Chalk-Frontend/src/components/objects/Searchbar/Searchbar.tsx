@@ -30,11 +30,8 @@ export function Searchbar({ setSearch }: any) {
           <form className="relative w-full justify-center">
             <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1.5 pointer-events-none">
               <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />
-              <button
-                type="submit"
-                className="px-4 py-2 pointer-events-auto text-sm rounded-lg font-medium btn-base-color"
-              >
-                Search
+              <button className="px-4 py-2 pointer-events-auto text-sm rounded-lg font-medium btn-base-color transition-all duration-100 active:scale-90">
+                Procurar
               </button>
             </div>
             <input

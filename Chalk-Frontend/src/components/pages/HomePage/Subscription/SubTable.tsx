@@ -11,21 +11,21 @@ export function SubTable({
   features,
   guaranted,
   buttonText,
+  link,
 }: SubTableProps) {
   return (
-    <div className="bg-white shadow-2xl rounded-lg py-4 hover:scale-105 transition-all duration-75">
+    <div className="flex flex-col bg-white shadow-2xl rounded-lg py-4 hover:scale-105 transition-all duration-100 h-fit">
       <p
         className={
-          "text-xl text-center font-bold text-" +
+          "text-2xl text-center font-bold text-" +
           color +
           "-" +
-          colorIntensity.toString() +
-          " hover:scale-125"
+          colorIntensity.toString()
         }
       >
         {name}
       </p>
-      <p className="text-center py-8 hover:scale-110">
+      <p className="text-center py-8 hover:scale-110 transition-all duration-100">
         <span className="text-4xl font-bold text-gray-700">
           <span>{price}</span>
         </span>
@@ -39,7 +39,7 @@ export function SubTable({
       </p>
       <ul className="border-t border-gray-300 py-8 space-y-6">
         {Object.entries(features).map(([, feature], index) => (
-          <li className="flex items-center space-x-2 px-8 hover:scale-105 hover:font-bold">
+          <li className="flex items-center space-x-2 px-8 hover:scale-105">
             <CheckMark
               style={` 
               ${
@@ -74,7 +74,7 @@ export function SubTable({
           }
           title="Purchase"
         >
-          <Link to="/register">{buttonText}</Link>
+          <Link to={link}>{buttonText}</Link>
         </a>
       </div>
     </div>

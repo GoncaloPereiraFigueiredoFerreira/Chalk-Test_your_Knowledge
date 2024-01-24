@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import "./NavBar.css";
 import { useEffect, useRef, useState } from "react";
 import { useIsVisible } from "../../pages/HomePage/HomePage";
@@ -21,58 +20,59 @@ export function NavBar() {
         }`}
       >
         <div className="flex flex-1 items-center sm:items-stretch justify-start">
-          <div className="flex flex-shrink-0 items-center left-0 hover:scale-125 transition-all duration-50">
-            <Link to="/">
+          <div className="flex flex-shrink-0 items-center left-0 hover:scale-125 transition-all duration-50 active:scale-110">
+            <a href="/">
               <img
                 className="h-12 w-auto"
                 src="chalk-logo.svg"
                 alt="Your Company"
               />
-            </Link>
+            </a>
           </div>
           <div className="hidden sm:ml-6 sm:block">
             <div className="flex space-x-4">
               <a
                 href="/webapp"
-                className="bg-gray-900 text-white rounded-md px-3 py-2 text-2xl font-medium font-pacifico hover:scale-110 transition-all duration-50"
+                className="bg-gray-900 text-white rounded-md px-3 py-2 text-2xl font-medium font-pacifico hover:scale-110 transition-all duration-50 active:scale-95"
                 aria-current="page"
               >
                 Chalk
               </a>
               <a
                 href="/#features"
-                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
+                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium active:scale-95"
               >
-                About
+                Sobre
               </a>
               <a
                 href="/#team"
-                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
+                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium active:scale-95"
               >
-                Team
+                Equipa
               </a>
               <a
                 href="/#contacts"
-                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
+                className="text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium active:scale-95"
               >
-                Contacts
+                Contactos
               </a>
             </div>
           </div>
         </div>
         <div className="absolute hidden sm:flex inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-          <button
-            type="button"
-            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
+          <a
+            href="/login"
+            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium active:scale-90"
           >
-            <Link to="/login">Login</Link>
-          </button>
-          <button
-            type="button"
-            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium"
+            Entra
+          </a>
+
+          <a
+            href="/register"
+            className="relative flex text-black hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium active:scale-90"
           >
-            <Link to="/register">Register</Link>
-          </button>
+            Regista-te
+          </a>
         </div>
 
         {/**<!-- Mobile menu -->*/}
@@ -82,7 +82,7 @@ export function NavBar() {
             className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
           >
             <span className="absolute -inset-0.5"></span>
-            <span className="sr-only">Open main menu</span>
+            <span className="sr-only">Abre o menu principal</span>
             <svg
               className="block h-6 w-6"
               fill="none"
@@ -119,28 +119,20 @@ export function NavBar() {
             aria-orientation="vertical"
           >
             <a
-              href="#"
+              href="/login"
               className=" px-4 py-2 text-xl text-gray-700"
               role="menuitem"
               id="user-menu-item-0"
             >
-              Your Profile
+              Entra
             </a>
             <a
-              href="/settings"
+              href="/register"
               className=" px-4 py-2 text-xl text-gray-700"
               role="menuitem"
               id="user-menu-item-1"
             >
-              Settings
-            </a>
-            <a
-              href="#"
-              className=" px-4 py-2 text-xl text-gray-700"
-              role="menuitem"
-              id="user-menu-item-2"
-            >
-              Sign out
+              Regista-te
             </a>
           </div>
         </div>

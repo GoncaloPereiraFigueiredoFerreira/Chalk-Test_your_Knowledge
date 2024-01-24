@@ -97,7 +97,7 @@ export function SolveTest() {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8 bg-white dark:bg-black h-screen overflow-y-scroll">
+      <div className="flex flex-col w-full gap-4 min-h-max px-8 pb-8 bg-white dark:bg-black h-screen overflow-y-scroll">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] mt-10">
           <label className="flex text-4xl text-gray-600 dark:text-white">
             Teste de Avaliação

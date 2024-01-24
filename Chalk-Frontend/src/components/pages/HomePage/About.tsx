@@ -59,7 +59,7 @@ export function About() {
             }`}
           >
             <div className="max-w-full">
-              <h2 className="mb-6 text-3xl font-bold">
+              {/* <h2 className="mb-6 text-3xl font-bold">
                 Why is{" "}
                 <text className="font-pacifico mb-6 text-3xl font-bold">
                   Chalk
@@ -70,6 +70,18 @@ export function About() {
               <p className="mb-16 text-neutral-500 dark:text-neutral-900">
                 It's because we care about providing the most suitable services
                 to our customers needs reliably and at anytime
+              </p> */}
+              <h2 className="mb-6 text-3xl font-bold">
+                Porque é que o{" "}
+                <text className="font-pacifico mb-6 text-3xl font-bold">
+                  Chalk
+                </text>{" "}
+                é tão <u className="text-primary dark:text-primary-400">bom</u>{" "}
+                no que faz?
+              </h2>
+              <p className="mb-16 text-neutral-500 dark:text-neutral-900">
+                É porque, é importante para nós, dar aos clientes os serviços
+                que mais se adequam quando necessários
               </p>
             </div>
           </div>
@@ -102,11 +114,13 @@ export function About() {
               </div>
               <div className="flex flex-col">
                 <h5 className="mb-2 text-3xl font-bold text-orange-400  text-left">
-                  Support 24/7
+                  Suporte 24/7
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-900">
-                  Chalk has people working to ensure that you receive any
-                  technical support needed as fast as possible.
+                  {/* Chalk has people working to ensure that you receive any
+                  technical support needed as fast as possible. */}{" "}
+                  O Chalk tem sempre pessoas a garantir que você receba qualquer
+                  suporte técnico necessário, o mais rápido possível.
                 </p>
               </div>
             </div>
@@ -138,11 +152,13 @@ export function About() {
               </div>
               <div className="flex flex-col">
                 <h5 className="mb-2 text-3xl font-bold text-green-400  text-left">
-                  Safe and solid
+                  {/*  Safe and solid */} Sólido e seguro
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-900">
-                  You are always Chalk's first priority so we take care of
-                  protecting your data.
+                  {/* You are always Chalk's first priority so we take care of
+                  protecting your data. */}{" "}
+                  Os utilizadores são primeira prioridade do Chalk, por isso
+                  fazemos o melhor para proteger os seus dados e browser
                 </p>
               </div>
             </div>
@@ -158,26 +174,37 @@ export function About() {
             >
               <div className=" inline-block rounded-full bg-primary-100 text-yellow-300  p-4 text-primary shadow-sm">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
+                  fill="currentColor"
+                  viewBox="0 0 36 36"
+                  version="1.1"
                   stroke="currentColor"
+                  preserveAspectRatio="xMidYMid meet"
+                  xmlns="http://www.w3.org/2000/svg"
                   className="h-14 w-14"
                 >
+                  <title>cursor-hand-click-line</title>
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
-                  />
+                    d="M30.4,17.6c-1.8-1.9-4.2-3.2-6.7-3.7c-1.1-0.3-2.2-0.5-3.3-0.6c2.8-3.3,2.3-8.3-1-11.1s-8.3-2.3-11.1,1s-2.3,8.3,1,11.1
+                    c0.6,0.5,1.2,0.9,1.8,1.1v2.2l-1.6-1.5c-1.4-1.4-3.7-1.4-5.2,0c-1.4,1.4-1.5,3.6-0.1,5l4.6,5.4c0.2,1.4,0.7,2.7,1.4,3.9
+                    c0.5,0.9,1.2,1.8,1.9,2.5v1.9c0,0.6,0.4,1,1,1h13.6c0.5,0,1-0.5,1-1v-2.6c1.9-2.3,2.9-5.2,2.9-8.1v-5.8
+                    C30.7,17.9,30.6,17.7,30.4,17.6z M8.4,8.2c0-3.3,2.7-5.9,6-5.8c3.3,0,5.9,2.7,5.8,6c0,1.8-0.8,3.4-2.2,4.5V7.9
+                    c-0.1-1.8-1.6-3.2-3.4-3.2c-1.8-0.1-3.4,1.4-3.4,3.2v5.2C9.5,12.1,8.5,10.2,8.4,8.2L8.4,8.2z M28.7,24c0.1,2.6-0.8,5.1-2.5,7.1
+                    c-0.2,0.2-0.4,0.4-0.4,0.7v2.1H14.2v-1.4c0-0.3-0.2-0.6-0.4-0.8c-0.7-0.6-1.3-1.3-1.8-2.2c-0.6-1-1-2.2-1.2-3.4
+                    c0-0.2-0.1-0.4-0.2-0.6l-4.8-5.7c-0.3-0.3-0.5-0.7-0.5-1.2c0-0.4,0.2-0.9,0.5-1.2c0.7-0.6,1.7-0.6,2.4,0l2.9,2.9v3l1.9-1V7.9
+                    c0.1-0.7,0.7-1.3,1.5-1.2c0.7,0,1.4,0.5,1.4,1.2v11.5l2,0.4v-4.6c0.1-0.1,0.2-0.1,0.3-0.2c0.7,0,1.4,0.1,2.1,0.2v5.1l1.6,0.3v-5.2
+                    l1.2,0.3c0.5,0.1,1,0.3,1.5,0.5v5l1.6,0.3v-4.6c0.9,0.4,1.7,1,2.4,1.7L28.7,24z"
+                  ></path>
                 </svg>
               </div>
               <div className="flex flex-col">
                 <h5 className="mb-2 text-3xl font-bold text-yellow-300 text-left">
-                  Extremely fast
+                  {/* Smooth and intuitive */} Rápido e intuitivo
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-900">
-                  Chalk is very optimized wink wink.
+                  {/* Chalk was made with the customer in mind, so we seek to
+                  provide the best use experience possible */}{" "}
+                  O Chalk foi feito pensando no cliente, por isso procuramos
+                  fornecer a melhor experiência de uso possível.
                 </p>
               </div>
             </div>
@@ -193,32 +220,27 @@ export function About() {
             >
               <div className=" inline-block rounded-full bg-primary-100 p-4 text-primary text-blue-300 shadow-sm">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
+                  fill="currentColor"
                   stroke="currentColor"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
                   className="h-14 w-14"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"
-                  />
+                  <path d="M38.478 42.632c-4.644-1.466-3.322-2.633 1.11-4.298c2.123-.799.832-2.484.89-3.832c.026-.617 2.452-.494 2.276-2.874c-.124-1.676-3.816-4.064-4.822-5.083c-.581-.588 1.184-2.197-.059-3.612c-1.697-1.934-1.965-5.299-2.992-7.181c0 0 .783-1.196.183-1.876c-5.176-5.859-24.491-5.321-29.427 3.302c-5.541 9.68-5.615 23.059 5.906 30.267C16.667 50.65 10.104 62 10.104 62h20.319c0-1.938-2.266-8.89 1.7-8.578c3.446.271 7.666.122 7.292-3.77c-.113-1.174-.246-2.231.574-3.204c.82-.972 2.007-2.706-1.511-3.816"></path>
+                  <path d="M43.129 40.805L62 43.277v-4.943z"></path>
+                  <path d="M58.46 57.081l2.024-4.281l-17.355-9.368z"></path>
+                  <path d="M60.484 28.766l-2.024-4.282l-15.331 13.651z"></path>
                 </svg>
               </div>
               <div className="flex flex-col">
                 <h5 className="mb-2 text-3xl font-bold text-blue-300  text-left">
-                  Live analytics
+                  {/* We listen to you */} Nós ouvimos
                 </h5>
                 <p className="text-neutral-500 dark:text-neutral-300">
-                  We provide you updated analytics about your personal use of
-                  the plattaform.
+                  {/* Chalk pays attention to all user suggestions for further
+                  improvement of this product */}{" "}
+                  Chalk está sempre atento às sugestões dos utilizadores, e
+                  considera-as no futuro desenvolvimento da aplicação
                 </p>
               </div>
             </div>

@@ -24,8 +24,7 @@ export function AvaliacoesPage() {
     contactBACK("tests", "GET", {
       page: "0",
       itemsPerPage: "20",
-      visibilityType: "",
-      specialistId: user.user?.role === UserRole.SPECIALIST ? user.user.id : "",
+      visibilityType: "COURSE",
       courseId: id!,
     }).then((page) => {
       const tests = page.items;

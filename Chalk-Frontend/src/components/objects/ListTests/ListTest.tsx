@@ -12,7 +12,7 @@ import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
 import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
-import { Tag } from "../../interactiveElements/tag.tsx";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 import "./ListTest.css";
 
 function ShowTestList(
@@ -45,14 +45,14 @@ function ShowTestList(
               </p>
             </div>
             <div className="flex flex-wrap gap-3 items-center mb-4 text-slate-700 dark:text-slate-400 w-80">
-              <strong>Tags:</strong>
+              <strong>Tópicos:</strong>
               {test.tags.map((tag, index) => {
-                return <Tag key={index}>{tag}</Tag>;
+                return <TagBlock key={index}>{tag}</TagBlock>;
               })}
             </div>
             <div className="flex justify-end space-x-2 w-60">
               <div className="flex gap-3 items-center mb-4 text-slate-700 dark:text-slate-400 w-36">
-                <strong>Last Grade:</strong>
+                <strong>Avaliação Final:</strong>
                 {test.globalPoints === undefined
                   ? "TBD"
                   : ` ${test.globalPoints}%`}
@@ -64,9 +64,9 @@ function ShowTestList(
                   navigate("/webapp/tests/" + test.id + "/solve");
                   e.stopPropagation();
                 }}
-                className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 active:scale-90"
               >
-                Solve
+                Resolver
               </button>
             </div>
           </div>
@@ -91,9 +91,9 @@ function ShowTestList(
               </p>
             </div>
             <div className="flex flex-wrap justify-start gap-2 items-center text-slate-700 dark:text-slate-200">
-              <strong>Tags:</strong>
+              <strong>Tópicos:</strong>
               {test.tags.map((tag, index) => {
-                return <Tag key={index}>{tag}</Tag>;
+                return <TagBlock key={index}>{tag}</TagBlock>;
               })}
             </div>
             <div className="flex gap-2 justify-end">
@@ -105,9 +105,9 @@ function ShowTestList(
                       navigate("/webapp/tests/" + test.id + "/edit");
                       e.stopPropagation();
                     }}
-                    className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-blue-600 dark:bg-slate-600 dark:hover:bg-blue-800 transition-all duration-100"
+                    className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-blue-600 dark:bg-slate-600 dark:hover:bg-blue-800 transition-all duration-100 active:scale-90"
                   >
-                    Edit
+                    Editar
                   </button>
                   <ConfirmButton
                     onConfirm={() => {
@@ -117,9 +117,9 @@ function ShowTestList(
                     button={
                       <button
                         type="button"
-                        className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-red-600 dark:bg-slate-600 dark:hover:bg-red-800 transition-all duration-100"
+                        className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-red-600 dark:bg-slate-600 dark:hover:bg-red-800 transition-all duration-100 active:scale-90"
                       >
-                        Delete
+                        Remover
                       </button>
                     }
                   ></ConfirmButton>
@@ -131,9 +131,9 @@ function ShowTestList(
                     navigate("/webapp/tests/" + test.id + "/correction");
                     e.stopPropagation();
                   }}
-                  className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100"
+                  className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100 active:scale-90"
                 >
-                  Evaluate
+                  Avaliar
                 </button>
               )}
             </div>
@@ -167,7 +167,7 @@ function ShowTestGrid(
               <CircularProgressbarWithChildren value={0}>
                 <AiTwotoneFileUnknown size="100" />
                 <div style={{ fontSize: 12, marginTop: -5 }}>
-                  <strong>Not Evaluated Yet...</strong>
+                  <strong>Por avaliar...</strong>
                 </div>
               </CircularProgressbarWithChildren>
             ) : (
@@ -196,14 +196,14 @@ function ShowTestGrid(
               {test.specialistId === user.id ? user.email : test.specialistId}
             </p>
             <div className="flex flex-wrap gap-3 px-2 items-center mb-4 text-slate-700 dark:text-slate-400">
-              <strong>Tags:</strong>
+              <strong>Tópicos:</strong>
               {test.tags.map((tag, index) => {
-                return <Tag key={index}>{tag}</Tag>;
+                return <TagBlock key={index}>{tag}</TagBlock>;
               })}
             </div>
             <div className="flex w-full px-2 justify-between">
               <div className="flex gap-3 items-center mb-4 text-slate-700 dark:text-slate-400">
-                <strong>Last Grade:</strong>
+                <strong>Avaliação Final:</strong>
                 {test.globalPoints === undefined
                   ? "TBD"
                   : ` ${test.globalPoints}%`}
@@ -214,9 +214,9 @@ function ShowTestGrid(
                   navigate("/webapp/tests/" + test.id + "/solve");
                   e.stopPropagation();
                 }}
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 active:scale-90"
               >
-                Solve
+                Resolver
               </button>
             </div>
           </div>
@@ -249,9 +249,9 @@ function ShowTestGrid(
                     : test.specialistId}
                 </p>
                 <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
-                  <strong>Tags:</strong>
+                  <strong>Tópicos:</strong>
                   {test.tags.map((tag, index) => {
-                    return <Tag key={index}>{tag}</Tag>;
+                    return <TagBlock key={index}>{tag}</TagBlock>;
                   })}
                 </div>
               </div>
@@ -265,9 +265,9 @@ function ShowTestGrid(
                       navigate("/webapp/tests/" + test.id + "/edit");
                       e.stopPropagation();
                     }}
-                    className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-blue-600 dark:bg-slate-600 dark:hover:bg-blue-800 transition-all duration-100"
+                    className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-blue-600 dark:bg-slate-600 dark:hover:bg-blue-800 transition-all duration-100 active:scale-90"
                   >
-                    Edit
+                    Editar
                   </button>
                   <ConfirmButton
                     onConfirm={() => {
@@ -280,9 +280,9 @@ function ShowTestGrid(
                           e.stopPropagation();
                         }}
                         type="button"
-                        className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-red-600 dark:bg-slate-600 dark:hover:bg-red-800 transition-all duration-100"
+                        className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-red-600 dark:bg-slate-600 dark:hover:bg-red-800 transition-all duration-100 active:scale-90"
                       >
-                        Delete
+                        Remover
                       </button>
                     }
                   ></ConfirmButton>
@@ -294,9 +294,9 @@ function ShowTestGrid(
                     navigate("/webapp/tests/" + test.id + "/correction");
                     e.stopPropagation();
                   }}
-                  className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100"
+                  className="flex px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100 active:scale-90"
                 >
-                  Evaluate
+                  Avaliar
                 </button>
               )}
             </div>
@@ -377,16 +377,22 @@ export function ListTests({
               "tests/" + test.id + "/resolutions/" + user.user!.id + "/count",
               "GET"
             ).then((any) => {
-              if(any){
+              if (any) {
                 contactBACK(
-                  "tests/" + test.id + "/resolutions/" + user.user!.id + "/count",
+                  "tests/" +
+                    test.id +
+                    "/resolutions/" +
+                    user.user!.id +
+                    "/count",
                   "GET"
                 ).then((exam) => {
                   return exam && exam.status === "REVISED"
                     ? exam.totalPoints
-                    : undefined;})
-                    }else return undefined;
-            }));
+                    : undefined;
+                });
+              } else return undefined;
+            })
+          );
         });
         Promise.all(promises).then((results) => {
           tests.map((teste: any, index: number) => {

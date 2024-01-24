@@ -25,7 +25,13 @@ export function Profile() {
               alt=""
             />
             <div className="">
-              <div><button  className="mb-4 btn-base-color" onClick={()=>alert("Not implemented")} /><a>Browse for files</a></div>
+              <div>
+                <button
+                  className="mb-4 btn-base-color"
+                  onClick={() => alert("Not implemented")}
+                />
+                <a>Browse for files</a>
+              </div>
               <button
                 data-te-ripple-init
                 data-te-ripple-color="light"

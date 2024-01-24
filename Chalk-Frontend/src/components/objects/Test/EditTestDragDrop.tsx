@@ -98,7 +98,7 @@ export function EditTestDragDrop({
           }
         ></ConfirmButton>
       </div>
-      <div className="flex flex-col px-4 pt-4 gap-4">
+      <div className="flex flex-col px-4 pt-4 pb-8 gap-4">
         <div className="flex items-center justify-between">
           <strong className="text-xl">Informações Gerais do Teste:</strong>
           <button
@@ -124,7 +124,7 @@ export function EditTestDragDrop({
           <p>Cotação máxima do teste: </p>
           <p>{testState.test.globalPoints} pts</p>
         </div>
-        <div className="flex flex-col py-4 gap-4">
+        <div className="flex flex-col pt-4 gap-4">
           <strong className="text-xl">Instruções do Teste</strong>
           <p className="text-md mx-4">
             <div className="block" ref={divRefGlobalInstructions}></div>
