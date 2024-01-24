@@ -22,6 +22,7 @@ import { FaUserGraduate } from "react-icons/fa";
 import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
+import { PiChalkboardTeacher } from "react-icons/pi";
 import { TagBlock } from "../../interactiveElements/TagBlock";
 
 interface ShowExerciseDragDropProps {
@@ -207,6 +208,12 @@ export function ShowExerciseDragDrop({
         );
         break;
       default:
+        setVisibility(
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
+            <PiChalkboardTeacher className="size-5" />
+            Exercício de teste
+          </label>
+        );
         break;
     }
   }, [exercise]);
