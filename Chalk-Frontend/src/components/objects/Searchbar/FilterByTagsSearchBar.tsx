@@ -54,7 +54,7 @@ export function FilterByTagsSearchBar({
             tagsList.length > 0 ? "" : "hidden"
           } flex items-center pt-2 max-w-xl`}
         >
-          <p className="font-semibold">Tags:</p>
+          <p className="font-semibold text-black dark:text-white">Tags:</p>
           <div className="flex flex-wrap pl-4 gap-4">
             {tagsList.map((tag: any, index: any) => {
               return <Tag key={index}>{tag.name}</Tag>;

@@ -13,6 +13,7 @@ import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
 import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
 import { Tag } from "../../interactiveElements/tag.tsx";
+import "./ListTest.css";
 
 function ShowTestList(
   test: TestPreview,
@@ -76,25 +77,24 @@ function ShowTestList(
             navigate("/webapp/tests/" + test.id + "/preview");
             e.stopPropagation();
           }}
-          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden z-10"
+          className="border-t border-b p-4 w-full border-slate-300 dark:border-slate-600"
         >
-          <div className="p-4 flex justify-between w-full">
-            <div className="flex-col w-60">
-              <h5 className="mb-1 text-xl font-bold tracking-tight text-black dark:text-white">
+          <div className="grid-ListTest w-full ">
+            <div className="flex flex-col">
+              <h5 className="text-xl font-bold tracking-tight text-black dark:text-white">
                 {test.title}
               </h5>
-
-              <p className="mb-1 font-normal text-slate-700 dark:text-slate-400">
+              <p className="font-normal text-slate-700 dark:text-slate-400">
                 <strong>Author:</strong> {test.specialistId}
               </p>
             </div>
-            <div className="flex flex-wrap gap-3 items-center mb-4 text-slate-700 dark:text-slate-400 w-80">
+            <div className="flex flex-wrap justify-start gap-2 items-center text-slate-700 dark:text-slate-200">
               <strong>Tags:</strong>
               {test.tags.map((tag, index) => {
                 return <Tag key={index}>{tag}</Tag>;
               })}
             </div>
-            <div className="flex space-x-2">
+            <div className="flex gap-2 justify-end">
               {test.publishDate === null || test.publishDate === "" ? (
                 <>
                   <button
@@ -103,7 +103,7 @@ function ShowTestList(
                       navigate("/webapp/tests/" + test.id + "/edit");
                       e.stopPropagation();
                     }}
-                    className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-blue-600 dark:bg-slate-600 dark:hover:bg-blue-800 transition-all duration-100"
                   >
                     Edit
                   </button>
@@ -115,7 +115,7 @@ function ShowTestList(
                     button={
                       <button
                         type="button"
-                        className="z-30 inline-flex items-center px-6 py-2 h-12  text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                        className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-red-600 dark:bg-slate-600 dark:hover:bg-red-800 transition-all duration-100"
                       >
                         Delete
                       </button>
@@ -129,7 +129,7 @@ function ShowTestList(
                     navigate("/webapp/tests/" + test.id + "/correction");
                     e.stopPropagation();
                   }}
-                  className="inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                  className="flex h-fit px-6 py-3 rounded-lg items-center text-sm font-medium text-black hover:text-white dark:text-white bg-[#95abca] hover:bg-green-600 dark:bg-slate-600 dark:hover:bg-green-800 transition-all duration-100"
                 >
                   Evaluate
                 </button>
@@ -225,7 +225,7 @@ function ShowTestGrid(
             navigate("/webapp/tests/" + test.id + "/preview");
             e.stopPropagation();
           }}
-          className="flex flex-col z-10 max-w-lg rounded-lg shadow-2xl bg-white dark:bg-slate-800 shadow-slate-400 dark:shadow-black overflow-hidden"
+          className="flex flex-col max-w-lg rounded-lg shadow-2xl bg-white dark:bg-slate-800 shadow-slate-400 dark:shadow-black overflow-hidden"
         >
           <div className="flex justify-center py-16 bg-[#bdcee6] dark:bg-slate-700">
             <FaTasks
@@ -239,10 +239,10 @@ function ShowTestGrid(
                 {test.title}
               </p>
               <div className="flex flex-col px-2 gap-2">
-                <p className="font-normal text-slate-700 dark:text-slate-400">
+                <p className="font-normal text-slate-700 dark:text-slate-200">
                   <strong>Author:</strong> {test.specialistId}
                 </p>
-                <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-400">
+                <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
                   <strong>Tags:</strong>
                   {test.tags.map((tag, index) => {
                     return <Tag key={index}>{tag}</Tag>;
@@ -421,7 +421,7 @@ export function ListTests({
             })}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-2">
+          <div className="flex flex-col">
             {filteredItems.map((test, index) => {
               return ShowTestList(
                 test,
