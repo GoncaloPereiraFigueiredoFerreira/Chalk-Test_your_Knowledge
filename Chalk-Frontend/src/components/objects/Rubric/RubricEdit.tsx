@@ -91,49 +91,53 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
           return (
             <div className="flex-col space-y-4 border-t-2 pt-3 border-t-black dark:border-[#dddddd]">
               <div className="flex flex-row space-x-4">
-                <label
-                  htmlFor="title-inpt"
-                  className="font-medium rounded-md dark:text-white"
-                >
-                  Title for the Criteria
-                </label>
-                <input
-                  id="title-inpt"
-                  type="text"
-                  className="rounded-md w-full"
-                  value={crt.title}
-                  onChange={(e) =>
-                    changeCriteriaTitle(critIndex, e.target.value)
-                  }
-                ></input>
-                <label
-                  htmlFor="points-inpt "
-                  className="font-medium rounded-md dark:text-white"
-                >
-                  Percentage of Cotation
-                </label>
-                <input
-                  id="points-inpt"
-                  type="number"
-                  className="rounded-md "
-                  value={crt.points}
-                  min={0}
-                  max={100}
-                  onChange={(e) =>
-                    changeCriteriaPoints(critIndex, e.target.value)
-                  }
-                ></input>
+                <div className="flex flex-col w-3/5">
+                  <label
+                    htmlFor="title-inpt"
+                    className="font-medium rounded-md dark:text-white"
+                  >
+                    Títlo do Critério
+                  </label>
+                  <input
+                    id="title-inpt"
+                    type="text"
+                    className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+                    value={crt.title}
+                    onChange={(e) =>
+                      changeCriteriaTitle(critIndex, e.target.value)
+                    }
+                  ></input>
+                </div>
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="points-inpt "
+                    className="font-medium rounded-md dark:text-white"
+                  >
+                    Percentagem da Cotação
+                  </label>
+                  <input
+                    id="points-inpt"
+                    type="number"
+                    className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+                    value={crt.points}
+                    min={0}
+                    max={100}
+                    onChange={(e) =>
+                      changeCriteriaPoints(critIndex, e.target.value)
+                    }
+                  ></input>
+                </div>
               </div>
-              <div className="mr-2 grid grid-cols-3 gap-4">
+              <div className="mr-2 flex flex-col gap-2">
                 {crt.standards.map((standard, standIndex) => {
                   return (
-                    <>
-                      <p className="font-medium dark:text-white">
+                    <div className=" flex flex-row gap-4">
+                      <p className="font-medium dark:text-white my-auto w-1/4">
                         {standard.title}
                       </p>
                       <input
                         type="number"
-                        className="rounded-md "
+                        className="rounded-lg w-fit border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
                         value={standard.percentage}
                         min={0}
                         max={100}
@@ -147,7 +151,7 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                       ></input>
                       <input
                         type="text"
-                        className="rounded-md"
+                        className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
                         value={standard.description}
                         onChange={(e) =>
                           changeStandardDescription(
@@ -158,15 +162,15 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                         }
                         placeholder="Descrição"
                       ></input>
-                    </>
+                    </div>
                   );
                 })}
               </div>
               <button
-                className="edit-btn mx-2 px-1 float-right bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black"
+                className=" mx-2 p-1 px-2 text-md rounded-md float-right btn-base-color active:scale-95"
                 onClick={() => remCriteria(critIndex)}
               >
-                Remove
+                Eliminar
               </button>
             </div>
           );
@@ -179,10 +183,10 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
     <>
       <Rubric context={{ context: RubricContext.PREVIEW }} rubric={rubric} />
       <button
-        className=" w-fit self-center cursor-pointer p-1 rounded-md bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black"
+        className=" w-full text-center self-center cursor-pointer p-1 my-2 rounded-md btn-base-color active:scale-95"
         onClick={() => addCriteria()}
       >
-        Add a new Criteria
+        Adicionar critério
       </button>
       {renderCriteria()}
     </>

@@ -34,7 +34,7 @@ export function CreateNewExercisePopUp({
               ExerciseType.MULTIPLE_CHOICE != newExercisetype
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <CiCircleList className="size-10 stroke-1" />
             Escolha múltipla
@@ -45,7 +45,7 @@ export function CreateNewExercisePopUp({
               ExerciseType.OPEN_ANSWER != newExercisetype
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <PiTextTBold className="size-10" />
             Resposta aberta
@@ -56,7 +56,7 @@ export function CreateNewExercisePopUp({
               ExerciseType.TRUE_OR_FALSE != newExercisetype
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <TbCheckbox className="size-10 stroke-[2.3]" />
             Verdadeiro ou falso
@@ -67,7 +67,7 @@ export function CreateNewExercisePopUp({
               ExerciseType.CHAT != newExercisetype
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <PiChatsBold className="size-10" />
             Chat
@@ -76,7 +76,7 @@ export function CreateNewExercisePopUp({
         <div className="flex justify-end mt-4">
           <button
             onClick={() => createNewExercise(newExercisetype)}
-            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
+            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color active:scale-95"
           >
             Criar Exercício
           </button>
