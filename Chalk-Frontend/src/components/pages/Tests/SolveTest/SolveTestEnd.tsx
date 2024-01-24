@@ -39,7 +39,7 @@ export function SolveTestEnd({ resolutionID, maxPoints }: any) {
         )}
       </div>
       <div className="flex w-1/2 justify-center">
-        <img src="/better-chalky.png" className="h-[35rem]"></img>
+        <img src="/better-chalky-thumbsup.webp" className="h-[35rem]"></img>
       </div>
     </div>
   );
