@@ -201,7 +201,7 @@ export function ShowExercise({
 
           <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
             <button
-              className="btn-options-exercise ex-icon"
+              className="btn-options-exercise ex-icon ease-in-out active:scale-90"
               onClick={() => {
                 if (
                   !editMenuIsOpen &&
@@ -224,7 +224,7 @@ export function ShowExercise({
               Editar
             </button>
             <button
-              className="btn-options-exercise ex-icon"
+              className="btn-options-exercise ex-icon ease-in-out active:scale-90"
               onClick={() => {
                 if (
                   changeVisibilityPopUp === "" &&
@@ -237,7 +237,7 @@ export function ShowExercise({
               Visibilidade
             </button>
             <button
-              className="btn-options-exercise ex-icon"
+              className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600 ease-in-out active:scale-90"
               onClick={() => {
                 if (exercise.identity.specialistId === user.user?.id!)
                   deleteEx();
