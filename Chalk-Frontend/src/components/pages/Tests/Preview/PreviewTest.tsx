@@ -97,7 +97,7 @@ export function PreviewTest() {
 
   return (
     <>
-      <div className="flex flex-col w-full h-screen overflow-auto min-h-max px-16 pb-8 text-black dark:text-white bg-white dark:bg-slate-900">
+      <div className="flex flex-col w-full h-screen overflow-auto min-h-max px-8 pb-8 text-black dark:text-white bg-white dark:bg-slate-900">
         <div className="flex w-full justify-between pt-8 px-4 pb-6 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
           <p className="flex text-4xl text-slate-600 dark:text-white">
             Pré-visualizar: {test.title}
