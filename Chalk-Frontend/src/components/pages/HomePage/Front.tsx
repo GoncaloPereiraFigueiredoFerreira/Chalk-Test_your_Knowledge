@@ -34,24 +34,26 @@ export function Front() {
                 testing your knowledge?
               </span>
             </h2>
-            <a
-              className="mb-2 inline-block rounded bg-black px-12 pt-4 pb-3.5 text-md font-medium uppercase text-white hover:scale-110 md:mr-2 md:mb-0"
-              data-te-ripple-init
-              data-te-ripple-color="light"
-              href="/pricing"
-              role="button"
-            >
-              Get started
-            </a>
-            <a
-              className="inline-block rounded px-12 pt-4 pb-3.5 text-lg font-medium uppercase transition duration-50 ease-in-out hover:scale-110 hover:font-bold hover:underline"
-              data-te-ripple-init
-              data-te-ripple-color="light"
-              href="#!"
-              role="button"
-            >
-              Learn more
-            </a>
+            <div className="flex lg:flex-col xl:flex-row">
+              <a
+                className="mb-2 inline-block hover:scale-110 active:scale-100 rounded bg-black px-12 pt-4 pb-3.5 text-md font-medium uppercase text-white transition-all duration-100 md:mr-2 md:mb-0"
+                data-te-ripple-init
+                data-te-ripple-color="light"
+                href="/register"
+                role="button"
+              >
+                Registe-se Gratuitamente
+              </a>
+              <a
+                className="inline-block btn-animation rounded px-12 pt-4 pb-3.5 text-lg font-medium uppercase transition duration-50 ease-in-out hover:scale-110 hover:font-bold hover:underline"
+                data-te-ripple-init
+                data-te-ripple-color="light"
+                href="/pricing"
+                role="button"
+              >
+                Planos de subscrição
+              </a>
+            </div>
           </div>
           <div
             className={`flex items-end transform transition-all ease-in duration-1000 ${

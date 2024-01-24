@@ -39,6 +39,12 @@ html {
 .chalkBackground {
   background-image: url(../public/blackboard.jpg);
 }
+
+.btn-animation {
+  @apply active:scale-90
+  transition-all
+  duration-100;
+}
 /* 
 text{
   black

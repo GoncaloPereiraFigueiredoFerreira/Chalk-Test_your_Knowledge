@@ -34,7 +34,8 @@ export function Team() {
                 : " -translate-y-96 opacity-0 scale-150"
             }`}
           >
-            Meet the <u className=" text-primary dark:text-primary-400">team</u>
+            Conhece a{" "}
+            <u className=" text-primary dark:text-primary-400">equipa</u>
           </h2>
 
           <div className="grid gap-x-6 gap-y-32 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-12">

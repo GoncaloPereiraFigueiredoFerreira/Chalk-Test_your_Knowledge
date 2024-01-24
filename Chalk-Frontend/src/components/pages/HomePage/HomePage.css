@@ -4,8 +4,8 @@
 @tailwind variants;
 
 .first-section {
-  /*background-image: url(../../../../public/blackboard.jpg);*/
-  background-color: #acacff;
+  background-image: url(../../../../public/blackboard.jpg);
+  /*  @apply bg-slate-400; */
 }
 
 .vomit {
@@ -19,6 +19,12 @@
 .shadowed {
   -webkit-filter: drop-shadow(100px 100px 30px #222);
   filter: drop-shadow(20px 10px 20px #222);
+}
+
+.btn-animation {
+  @apply active:scale-90
+  transition-all
+  duration-100;
 }
 
 @keyframes slide-in {
