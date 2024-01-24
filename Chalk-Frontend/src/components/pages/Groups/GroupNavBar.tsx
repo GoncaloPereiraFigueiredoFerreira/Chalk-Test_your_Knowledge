@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { APIContext } from "../../../APIContext";
 import { Course } from "../../../UserContext";
 
@@ -7,7 +7,32 @@ export function GroupNavBar() {
   const { id } = useParams();
   const { contactBACK } = useContext(APIContext);
   const [course, setCourse] = useState<Course>({ id: "-1", name: "" });
-  const [selectedOption, setSelectedOption] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const location = useLocation();
+
+  useEffect(() => {
+    let tab = location.pathname.match(/\/([^\/]+)$/);
+
+    if (tab && tab[1]) {
+      switch (tab[1]) {
+        case "alunos":
+          setSelectedTab(0);
+          break;
+        case "avaliacoes":
+          setSelectedTab(1);
+          break;
+        case "testes":
+          setSelectedTab(2);
+          break;
+        default:
+          setSelectedTab(3);
+          break;
+      }
+    } else {
+      console.log("No match found");
+    }
+    // setSelectedTab()
+  }, [location]);
 
   useEffect(() => {
     contactBACK("courses/" + id, "GET").then((json) => {
@@ -35,7 +60,7 @@ export function GroupNavBar() {
                 <button className="w-4"></button>
                 <Link
                   className="flex items-center"
-                  onClick={() => setSelectedOption(0)}
+                  onClick={() => setSelectedTab(0)}
                   to="alunos"
                 >
                   <div className="flex px-5 h-7 w-32 items-center justify-center text-lg font-medium">
@@ -45,7 +70,7 @@ export function GroupNavBar() {
 
                 <Link
                   className="flex items-center"
-                  onClick={() => setSelectedOption(1)}
+                  onClick={() => setSelectedTab(1)}
                   to="avaliacoes"
                 >
                   <div className="flex px-5 h-7 w-32 items-center justify-center border-l-2 text-lg font-medium border-slate-400 dark:border-slate-600">
@@ -55,7 +80,7 @@ export function GroupNavBar() {
 
                 <Link
                   className="flex items-center"
-                  onClick={() => setSelectedOption(2)}
+                  onClick={() => setSelectedTab(2)}
                   to="testes"
                 >
                   <div className="flex px-5 h-7 w-32 items-center justify-center border-l-2 text-lg font-medium border-slate-400 dark:border-slate-600">
@@ -64,8 +89,8 @@ export function GroupNavBar() {
                 </Link>
                 <Link
                   className="flex items-center"
-                  onClick={() => setSelectedOption(3)}
-                  to="testes"
+                  onClick={() => setSelectedTab(3)}
+                  to="definitions"
                 >
                   <div className="flex px-5 h-7 w-32 items-center justify-center border-l-2 text-lg font-medium border-slate-400 dark:border-slate-600">
                     Definições
@@ -79,7 +104,7 @@ export function GroupNavBar() {
               {/* left white area */}
               <span
                 className="bg-slate-400 dark:bg-slate-600"
-                style={{ width: 14 + 128 * selectedOption + "px" }}
+                style={{ width: 14 + 128 * selectedTab + "px" }}
               >
                 <span className="flex w-full h-full rounded-br-lg bg-white dark:bg-slate-900 transition-[width]" />
               </span>
@@ -93,7 +118,7 @@ export function GroupNavBar() {
               {/* right area */}
               <span
                 className="bg-slate-400 dark:bg-slate-600"
-                style={{ width: 14 + 128 * (3 - selectedOption) + "px" }}
+                style={{ width: 14 + 128 * (3 - selectedTab) + "px" }}
               >
                 <span className="flex w-full h-full rounded-bl-lg bg-white dark:bg-slate-900 transition-[width]" />
               </span>
