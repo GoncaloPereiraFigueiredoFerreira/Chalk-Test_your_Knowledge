@@ -89,7 +89,7 @@ export function Account() {
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
-            <h3 className="mb-5 text-lg font-normal text-black dark:text-white bg-white dark:bg-black">
+            <h3 className="mb-5 text-lg font-normal text-black dark:text-white">
               Are you sure you want to delete this product?
             </h3>
             <div className="flex justify-center gap-4">

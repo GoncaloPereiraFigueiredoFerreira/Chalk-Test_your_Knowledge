@@ -57,7 +57,7 @@ const Histogram: React.FC<HistogramProps> = ({ data }) => {
   }, [data]);
 
   return (
-    <div className="max-w-screen-xl mx-auto my-8">
+    <div className="max-w-screen-xl mx-auto my-8 dark:bg-slate-400">
       <canvas ref={chartRef} width={800} height={400}></canvas>{" "}
     </div>
   );

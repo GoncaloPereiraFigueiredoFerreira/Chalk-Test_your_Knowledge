@@ -137,7 +137,7 @@ export function AlunosPage() {
                 viewMode === "grid"
                   ? student.name == "Luis"
                     ? "https://i.pinimg.com/736x/7a/3c/37/7a3c375db24b716ada1f81f057d9f4cd.jpg"
-                    : "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg"
+                    : student.photoPath
                   : ""
               }
               alt={viewMode === "grid" ? "Student Avatar" : ""}

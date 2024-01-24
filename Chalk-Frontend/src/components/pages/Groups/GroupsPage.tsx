@@ -29,7 +29,7 @@ export function GroupsPage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen py-16 overflow-auto bg-white dark:bg-black">
+    <div className="flex flex-col w-full h-screen py-16 overflow-auto bg-white dark:bg-slate-900">
       <div className="flex flex-row w-11/12 self-center gap-4 min-h-max px-16 pb-4 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] justify-between">
         <div className="flex w-fit float-left justify-between p-4 pt-0 ">
           <label className="flex text-4xl text-gray-600 dark:text-white">

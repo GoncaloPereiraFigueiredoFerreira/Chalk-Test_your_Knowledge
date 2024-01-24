@@ -45,7 +45,7 @@ function lista_nota_exercicios(result: any): number[] {
 function ShowTestGrid(test: Result, maxCotation: number) {
   let totalPoints = (test.totalPoints / maxCotation) * 100;
   return (
-    <div className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+    <div className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 dark:shadow-black overflow-hidden">
       <div className="py-4 px-12 ">
         {test.status.toLowerCase() != "revised" ? (
           <CircularProgressbarWithChildren value={0}>
@@ -78,7 +78,7 @@ function ShowTestGrid(test: Result, maxCotation: number) {
         <div className="flex w-full px-2 justify-between">
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
             <strong>Nota:</strong>
-            {test.status.toLowerCase() == ("not_revised")
+            {test.status.toLowerCase() != ("revised")
               ? "TBD"
               : ` ${totalPoints} %`}
           </div>
@@ -91,7 +91,7 @@ function ShowTestGrid(test: Result, maxCotation: number) {
 function ShowTestList(test: Result, maxCotation: number) {
   let totalPoints = (test.totalPoints / maxCotation) * 100;
   return (
-    <div className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden">
+    <div className="max-h-[78px] rounded-lg w-full overflow-hidden">
       <div className="p-4 flex justify-between w-full">
         <div className="flex-col w-60">
           <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
@@ -102,7 +102,7 @@ function ShowTestList(test: Result, maxCotation: number) {
         <div className="flex justify-end space-x-2 w-60">
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-36">
             <strong>Nota:</strong>
-            {test.status.toLowerCase() == ("not_revised")
+            {test.status.toLowerCase() != ("revised")
               ? "TBD"
               : ` ${totalPoints}%`}
           </div>
@@ -128,7 +128,9 @@ function ShowExcelLike(resultsList: ResultList) {
           </tr>
         </thead>
         <tbody>
-          {resultsList.map((result) => {
+          {resultsList.filter(
+    (item) => item.status.toLowerCase() == "revised"
+  ).map((result) => {
             return (
               <tr>
                 <td className="border bg-white px-4 py-2">
@@ -211,9 +213,9 @@ export function EvaluationPage() {
 
   return (
     <>
-      <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-white dark:bg-black">
+      <div className="flex flex-col w-full h-screen py-24 overflow-auto">
         <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
-          <div className="flex w-full justify-end px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
+          <div className="flex w-full justify-end px-4 pb-6 mb-3 border-b-2 border-black dark:border-slate-600 divide-[#dddddd] dark:divide-[#dddddd]">
             <div className="flex  ">
               <button
                 className="px-2 w-12"

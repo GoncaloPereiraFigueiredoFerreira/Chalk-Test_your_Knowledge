@@ -41,7 +41,7 @@ export function SubscriptionBopy() {
     "Banco de perguntas privado",
   ];
   return(
-  <div className="min-h-[120%] py-12 first-section dark:bg-black">
+  <div className="min-h-[120%] py-12 first-section">
   <div className="w-full pt-16 pb-24 text-center hover:scale-125 transition-all duration-75">
     <h4 className=" text-4xl text-black font-pacifico dark:text-white">
       Choose the right plan for you

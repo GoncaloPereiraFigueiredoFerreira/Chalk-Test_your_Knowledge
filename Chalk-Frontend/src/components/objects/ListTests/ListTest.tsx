@@ -32,7 +32,7 @@ function ShowTestList(
             navigate("/webapp/tests/" + test.id + "/preview");
             e.stopPropagation();
           }}
-          className="max-h-[78px] rounded-lg w-full bg-white dark:bg-black overflow-hidden z-10"
+          className="max-h-[78px] rounded-lg w-full overflow-hidden z-10"
         >
           <div className="p-4 flex justify-between w-full">
             <div className="flex-col w-60">
