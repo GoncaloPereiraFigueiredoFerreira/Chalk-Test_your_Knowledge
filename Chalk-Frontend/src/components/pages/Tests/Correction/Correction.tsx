@@ -135,13 +135,13 @@ export function Correction() {
   return (
     <>
       <div className="h-screen overflow-auto">
-        <div className="flex flex-col w-full gap-4 min-h-max bg-white dark:bg-black ">
+        <div className="flex flex-col w-full gap-4 min-h-max bg-white dark:bg-slate-900 ">
           <div className="flex w-full justify-between border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd] dark:text-white">
             {/*
                 Test Preview
             */}
             <div className="w-full flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-              <div className="flex flex-col w-3/4 h-screen overflow-auto bg-white dark:bg-black px-4 pt-6">
+              <div className="flex flex-col w-3/4 h-screen overflow-auto px-4 pt-6">
                 <h1 className="text-3xl font-medium">
                   Correção do teste: {test.title}
                 </h1>
@@ -153,7 +153,7 @@ export function Correction() {
               </div>
 
               <div
-                className={`w-full flex flex-col h-screen overflow-auto bg-white dark:bg-black`}
+                className={`w-full flex flex-col h-screen overflow-auto`}
               >
                 <div className="p-4 flex flex-col w-full h-screen space-y-4">
                   {/* Solução se houver */}

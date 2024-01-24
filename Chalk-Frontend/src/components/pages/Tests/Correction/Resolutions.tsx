@@ -130,7 +130,7 @@ function ResolutionList(resolutions: Resolutions, setExId: Function) {
                     return (
                       <div
                         key={index2}
-                        className="p-8 rounded-lg bg-white dark:bg-black flex cursor-pointer"
+                        className="p-8 rounded-lg bg-white dark:bg-slate-700 flex cursor-pointer"
                         onClick={() => setExId(key1, key2)}
                       >
                         Resolução{" "}
