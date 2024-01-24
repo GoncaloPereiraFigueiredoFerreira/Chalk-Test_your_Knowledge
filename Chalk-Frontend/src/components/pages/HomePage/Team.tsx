@@ -34,7 +34,8 @@ export function Team() {
                 : " -translate-y-96 opacity-0 scale-150"
             }`}
           >
-            Meet the <u className=" text-primary dark:text-primary-400">team</u>
+            Conhece a{" "}
+            <u className=" text-primary dark:text-primary-400">equipa</u>
           </h2>
 
           <div className="grid gap-x-6 gap-y-32 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-12">
@@ -63,7 +64,7 @@ export function Team() {
             <TeamMember
               name="Alexandre Silva"
               position="Backend designer"
-              photoPath="alex.jpg"
+              photoPath="alex.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -74,7 +75,7 @@ export function Team() {
             <TeamMember
               name="Luís Peixoto"
               position="Backend developer"
-              photoPath="luis.jpg"
+              photoPath="luis.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -85,7 +86,7 @@ export function Team() {
             <TeamMember
               name="Hugo Nogueira"
               position="Security expert"
-              photoPath="hugo.jpg"
+              photoPath="hugo.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -96,7 +97,7 @@ export function Team() {
             <TeamMember
               name="Rui Braga"
               position="Backend Developer"
-              photoPath="rui.jpg"
+              photoPath="rui.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -107,7 +108,7 @@ export function Team() {
             <TeamMember
               name="Gonçalo dos Santos"
               position="AI expert"
-              photoPath="bronze.jpg"
+              photoPath="bronze.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -118,7 +119,7 @@ export function Team() {
             <TeamMember
               name="Diogo Casal Novo"
               position="Diogo Casal Novo"
-              photoPath="diogo.jpg"
+              photoPath="diogo.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}

@@ -38,7 +38,7 @@ export function TFEdit({ exercise, context }: TFEditProps) {
           ></TFStatementEdit>
         ))}
         <button
-          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
           onClick={() => {
             for (
               let newID = 0;
@@ -63,7 +63,7 @@ export function TFEdit({ exercise, context }: TFEditProps) {
           <input
             id="bordered-checkbox"
             type="checkbox"
-            className="p-2 rounded outline-0 border-[#dddddd] focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600 outline-none"
+            className="p-2 rounded outline-0 border-slate-300 focus:ring-0 dark:bg-slate-600 dark:border-slate-600 dark:focus:border-slate-600 outline-none"
             onChange={() => {
               if (openJustificationkind)
                 context.dispatch({
@@ -161,7 +161,7 @@ function TFStatementEdit({
         ></input>
         <input
           type="text"
-          className="w-full rounded-lg border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+          className="w-full rounded-lg border-2 border-slate-300 focus:border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
           onChange={(e) =>
             dispatch({
               type: EditActionKind.CHANGE_ITEM_TEXT,
@@ -174,7 +174,7 @@ function TFStatementEdit({
           value={solutionItem.text}
         ></input>
         <button
-          className="flex p-2.5 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          className="flex p-2.5 text-base rounded-lg font-medium btn-base-color group"
           onClick={() =>
             dispatch({
               type: EditActionKind.REMOVE_ITEM,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -7,6 +7,8 @@ import {
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
+import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import { UserContext } from "../../../UserContext";
 
 function renderExercise(
   exercise: Exercise,
@@ -20,7 +22,9 @@ function renderExercise(
   return (
     <div
       key={index}
-      className=" rounded-lg w-full p-4 bg-white dark:bg-black z-20 cursor-pointer"
+      className={`${
+        index == exerciseSelected ? "max-h-full" : "max-h-16"
+      } transition-[max-height] duration-500 overflow-hidden flex flex-col gap-4 w-full p-4 rounded-lg cursor-pointer bg-[#bdcee6] dark:bg-slate-700`}
       onClick={(e) => {
         setSelectedExercise(index == exerciseSelected ? -1 : index);
         setShowExID(index == exerciseSelected ? "" : exercise.identity.id);
@@ -44,33 +48,33 @@ function renderExercise(
           )}
         </div>
       </div>
-      {index == exerciseSelected ? (
-        <>
-          <ExerciseComponent
-            exercise={exercise}
-            context={{
-              context: ExerciseContext.PREVIEW,
-              resolution:
-                testResolutions &&
-                testResolutions.resolutions[exercise.identity.id]
-                  ? testResolutions.resolutions[exercise.identity.id].data
-                  : undefined,
-            }}
-            position={groupIndex + 1 + "." + (index + 1)}
-          ></ExerciseComponent>
-          {testResolutions &&
-          testResolutions.resolutions[exercise.identity.id] ? (
+      <div
+        className={`${
+          index == exerciseSelected ? "" : "scale-y-0"
+        } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-slate-500`}
+      >
+        <ExerciseComponent
+          exercise={exercise}
+          context={{
+            context: ExerciseContext.PREVIEW,
+            resolution:
+              testResolutions &&
+              testResolutions.resolutions[exercise.identity.id]
+                ? testResolutions.resolutions[exercise.identity.id].data
+                : undefined,
+          }}
+          position={groupIndex + 1 + "." + (index + 1)}
+        ></ExerciseComponent>
+        {testResolutions &&
+          testResolutions.resolutions[exercise.identity.id] && (
             <p className="">
               <strong>Comentário do Especialista: </strong>
-              {testResolutions.resolutions[exercise.identity.id].comment}
+              {textToHTML(
+                testResolutions.resolutions[exercise.identity.id].comment
+              )}
             </p>
-          ) : (
-            <></>
           )}
-        </>
-      ) : (
-        <></>
-      )}
+      </div>
     </div>
   );
 }
@@ -88,37 +92,46 @@ function renderGroup(
   return (
     <div
       key={index}
-      className="rounded-lg w-full p-4 bg-[#dddddd] dark:bg-gray-600 cursor-pointer"
+      className={`${
+        selectedGroup === index ? "max-h-full" : "max-h-16"
+      } transition-[max-height] duration-500 overflow-hidden h-full flex flex-col gap-4 rounded-lg px-8 py-4 text-black dark:text-white bg-[#d8e3f1] dark:bg-[#1e2a3f] cursor-default`}
       onClick={() => {
         setSelectedGroup(index == selectedGroup ? -1 : index);
         setSelectedEx(-1);
         setShowExID("");
       }}
     >
-      <div className="flex justify-between z-10">
-        <label className="text-xl font-medium">Grupo {index + 1}</label>
-        <p>Cotação do Grupo: {group.groupPoints}</p>
-      </div>
-      {selectedGroup == index ? (
-        <div>
-          <h2 className="py-3">{group.groupInstructions}</h2>
-          <div className="space-y-4">
-            {group.exercises.map((exercise, exId) => {
-              return renderExercise(
-                exercise,
-                exId,
-                index,
-                selectedEx,
-                setSelectedEx,
-                setShowExID,
-                testResolutions
-              );
-            })}
+      <div className="flex w-full px-4 justify-between cursor-pointer">
+        <label className="flex w-full items-center text-xl font-medium">
+          Grupo {index + 1}
+        </label>
+        <div className="flex w-full justify-end items-center gap-4">
+          Cotação do Grupo:
+          <div className="flex justify-center min-w-fit w-10 rounded-md px-3 py-1 bg-white dark:bg-slate-600">
+            {group.groupPoints} pts
           </div>
         </div>
-      ) : (
-        <></>
-      )}
+      </div>
+      <div
+        className={`${
+          selectedGroup === index ? "" : "scale-y-0"
+        } flex flex-col gap-4 pt-4 px-4 border-t-2 border-slate-400 dark:border-slate-600`}
+      >
+        {textToHTML(group.groupInstructions)}
+        <div className="space-y-4">
+          {group.exercises.map((exercise, exId) => {
+            return renderExercise(
+              exercise,
+              exId,
+              index,
+              selectedEx,
+              setSelectedEx,
+              setShowExID,
+              testResolutions
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -148,6 +161,14 @@ export function TestPreview({
 }: TestPreviewProps) {
   const [selectedGroup, setSelectedGroup] = useState(-1);
   const [selectedEx, setSelectedEx] = useState(-1);
+  const { user } = useContext(UserContext);
+  const divRefGlobalInstructions = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRefGlobalInstructions.current)
+      divRefGlobalInstructions.current.innerHTML =
+        test.globalInstructions ?? "";
+  }, [divRefGlobalInstructions, test.globalInstructions]);
 
   useEffect(() => {
     if (showExId !== "") {
@@ -158,49 +179,44 @@ export function TestPreview({
       if (ex != selectedEx) setSelectedEx(ex);
     }
   }, [showExId]);
-
   return (
     <>
-      <div className=" w-full justify-between mt-2 px-4 pb-6 mb-3">
-        <div className="flex flex-col">
-          <div className="ml-4 mt-4">
-            <h2 className="text-xl">Informações Gerais do Teste:</h2>
-            <div className="text-md ml-4">
-              <h3>
-                <strong>Instruções do Teste:</strong>
-                {test.globalInstructions}
-              </h3>
-              <h3>
-                <strong>Autor:</strong> {test.author}
-              </h3>
-              <h3>
-                <strong>Data de criação do teste:</strong>
-                {test.creationDate}
-              </h3>
-              <h3>
-                <strong>Cotação máxima do teste:</strong>
-                {test.globalPoints}
-              </h3>
-            </div>
-          </div>
+      <div className="flex flex-col px-4 pt-4 pb-8 gap-4">
+        <strong className="text-xl">Informações Gerais do Teste:</strong>
+        <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
+          <p>Autor:</p>
+          <p>
+            {" "}
+            {test.specialistId === user.user?.id
+              ? user.user.email
+              : test.specialistId}
+          </p>
+          <p>Data de criação do teste:</p>
+          <p>{new Date(test.creationDate).toDateString()}</p>
+          <p>Cotação máxima do teste:</p>
+          <p>{test.globalPoints}</p>
         </div>
-
-        <div className="space-y-4 mt-4">
-          <h2 className="text-xl ml-4">Exercícios:</h2>
-
-          {test.groups.map((group, index) => {
-            return renderGroup(
-              group,
-              index,
-              selectedEx,
-              setSelectedEx,
-              selectedGroup,
-              setSelectedGroup,
-              setShowExID,
-              testResolution
-            );
-          })}
+        <div className="flex flex-col pt-4 gap-4">
+          <strong className="text-xl">Instruções do Teste</strong>
+          <p className="text-md mx-4">
+            <div className="block" ref={divRefGlobalInstructions}></div>
+          </p>
         </div>
+      </div>
+      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-slate-400 dark:border-slate-600">
+        <strong className="text-xl">Exercícios:</strong>
+        {test.groups.map((group, index) => {
+          return renderGroup(
+            group,
+            index,
+            selectedEx,
+            setSelectedEx,
+            selectedGroup,
+            setSelectedGroup,
+            setShowExID,
+            testResolution
+          );
+        })}
       </div>
     </>
   );

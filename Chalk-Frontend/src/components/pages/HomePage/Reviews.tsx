@@ -5,24 +5,27 @@ import { useIsVisible } from "./HomePage";
 const reviews: Review[] = [
   {
     id: "feedback-1",
-    content: "Very useful, saved me a ton of time",
-    name: "Xico",
-    title: "Teacher",
-    img: "chico.jpg",
+    content:
+      "Muito útil. Poupou-me muito tempo na creação de exames e ajudou-me a identificar as difficulties dos alunos",
+    name: "Paula Rebelo",
+    title: "Professora",
+    img: "paula.jpg",
   },
   {
     id: "feedback-2",
-    content: "I was able to learn a lot.",
-    name: "Chico",
-    title: "Student",
-    img: "chico.jpg",
+    content:
+      "Para além se ser fácil de usar, nunca tinha encontrado um site que ajuda tanto na auto-avaliação como este",
+    name: "Maria Antunes",
+    title: "Estudante",
+    img: "maria.jpg",
   },
   {
     id: "feedback-3",
-    content: "Muito inovador.",
-    name: "Frank",
-    title: "Chihuahua",
-    img: "chico.jpg",
+    content:
+      "Muito inovador! Adorei as funcionalidades que implementam IA. \nA variedade de tópicos também me supreendeu pela positiva",
+    name: "António Oliveira",
+    title: "Explicador",
+    img: "antónio.jpg",
   },
 ];
 
@@ -47,9 +50,9 @@ export function Reviews() {
     <>
       <section
         id="clients"
-        className={`sm:py-16 py-6 flex justify-center items-center flex-col relative mx-20`}
+        className={`sm:py-16 py-6 flex justify-center items-center flex-col relative mx-20 overflow-hidden`}
       >
-        <div className="w-full flex justify-center items-center md:flex-row flex-col sm:mb-16 mb-6 relative z-[1]">
+        <div className="min-w-full flex justify-center items-center md:flex-row flex-col sm:mb-16 mb-6 relative z-[1]">
           <h2
             className={`font-poppins font-semibold pl-28 xs:text-5xl text-5xl text-black xs:leading-[76.8px] leading-[66.8px] w-full transform duration-[2s] transition-all${
               isVisible1 || triggered1
@@ -57,13 +60,13 @@ export function Reviews() {
                 : " scale-0 translate-x-full"
             }`}
           >
-            What users are saying about us
+            O que dizem de nós
           </h2>
         </div>
 
         <div
           ref={ref1}
-          className="flex flex-wrap overflow-x-auto justify-center w-full feedback-container relative z-[1]"
+          className="flex flex-wrap overflow-x-auto justify-center w-full feedback-container relative z-[1] overflow-hidden"
         >
           {reviews.map((review, index) => (
             <div

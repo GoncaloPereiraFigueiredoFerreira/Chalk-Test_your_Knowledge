@@ -3,10 +3,10 @@ import { RubricEdit } from "./RubricEdit";
 import { RubricPreview } from "./RubricPreview";
 
 export enum StardardLevels {
-  EXCELENT = "5",
-  WELL_DONE = "4",
-  SATISFACTORY = "3",
-  INSATISFACTORY = "2",
+  EXCELENT = "4",
+  WELL_DONE = "3",
+  SATISFACTORY = "2",
+  INSATISFACTORY = "1",
   NULL = "0",
 }
 

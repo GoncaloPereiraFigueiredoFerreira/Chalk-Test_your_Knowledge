@@ -1,14 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-
 import { useParams } from "react-router-dom";
-import {
-  GridIcon,
-  ListIcon,
-  SearchIcon,
-} from "../../objects/SVGImages/SVGImages";
 import { APIContext } from "../../../APIContext";
 
 import { Button, Modal, TextInput } from "flowbite-react";
+import { UserContext, UserRole } from "../../../UserContext";
+import { IoSearch } from "react-icons/io5";
+import { FaListUl } from "react-icons/fa";
+import { HiViewGrid } from "react-icons/hi";
 
 interface Student {
   id: string;
@@ -24,6 +22,7 @@ export function AlunosPage() {
   const { contactBACK } = useContext(APIContext);
   const [email, setEmail] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     contactBACK("courses/" + id + "/students", "GET", {
@@ -77,104 +76,109 @@ export function AlunosPage() {
   );
 
   return (
-    <div className="flex flex-col w-full h-screen py-24 overflow-auto bg-white dark:bg-black">
-      <div className="flex flex-col w-full gap-4 min-h-max px-16 pb-8">
-        <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-          <div className="">
-            <div className="relative w-full justify-center">
-              <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1 pointer-events-none">
-                <SearchIcon style="text-gray-400" size="size-4"></SearchIcon>
+    <div className="flex flex-col w-full overflow-auto">
+      <div className="flex w-full justify-around px-4 gap-16">
+        <div className="relative w-1/2 justify-center">
+          <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1.5 pointer-events-none">
+            <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />
+          </div>
+          <input
+            type="text"
+            className="py-2.5 pl-10 pr-24 rounded-lg w-full border-2 bg-inherit text-black border-slate-400 dark:text-white placeholder:dark:text-gray-400 dark:border-slate-700 focus:ring-0 focus:border-slate-400 focus:dark:border-slate-700"
+            placeholder="Search..."
+            value={searchKey}
+            onChange={(text) => setSearch(text.target.value)}
+            required
+          />
+        </div>
+        <div className="flex gap-4">
+          {user.user?.role === UserRole.SPECIALIST && (
+            <Button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+              onClick={() => setOpenModal(true)}
+            >
+              Adicionar Aluno
+            </Button>
+          )}
+          {viewMode === "grid" ? (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+              onClick={() => setViewMode("row")}
+            >
+              <FaListUl className="size-5 scale-90" />
+              <p>Lista</p>
+            </button>
+          ) : (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+              onClick={() => setViewMode("grid")}
+            >
+              <HiViewGrid className="size-5 scale-110" />
+              <p>Grelha</p>
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div
+        className={
+          viewMode === "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 py-10 px-4"
+            : "flex flex-col gap-4 px-10"
+        }
+      >
+        {filteredItems.map((student, index) => (
+          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+            <img
+              className={
+                viewMode === "grid" ? "w-20 h-20 rounded-full mx-auto mb-4" : ""
+              }
+              src={
+                viewMode === "grid"
+                  ? student.name == "Luis"
+                    ? "https://i.pinimg.com/736x/7a/3c/37/7a3c375db24b716ada1f81f057d9f4cd.jpg"
+                    : "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg"
+                  : ""
+              }
+              alt={viewMode === "grid" ? "Student Avatar" : ""}
+            />
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              {student.name}
+            </h2>
+
+            <p className="text-sm text-gray-600">Email: {student.email}</p>
+            <button onClick={() => removeStudent(student.email)}>Remove</button>
+          </div>
+        ))}
+      </div>
+      <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal.Header> Criar um Novo Grupo</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <div>
+              <div className="mb-2 block">
+                <label htmlFor="name">Email do aluno:</label>
               </div>
-              <input
+              <TextInput
                 type="text"
-                className="py-2.5 pl-10 pr-24 rounded-lg w-full z-20 border text-black bg-white border-[#dddddd] dark:text-black dark:bg-gray-600 dark:border-gray-600 focus:ring-0 focus:border-[#dddddd] focus:dark:border-gray-600"
-                placeholder="Search..."
-                value={searchKey}
-                onChange={(text) => setSearch(text.target.value)}
+                id="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onKeyDown={handleKeyDown}
                 required
               />
             </div>
           </div>
-          <div className="flex  ">
-            <Button onClick={() => setOpenModal(true)}>Adicionar Aluno</Button>
-            <Modal
-              dismissible
-              show={openModal}
-              onClose={() => setOpenModal(false)}
-            >
-              <Modal.Header> Criar um Novo Grupo</Modal.Header>
-              <Modal.Body>
-                <div className="space-y-6">
-                  <div>
-                    <div className="mb-2 block">
-                      <label htmlFor="name">Email do aluno:</label>
-                    </div>
-                    <TextInput
-                      type="text"
-                      id="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      onKeyDown={handleKeyDown}
-                      required
-                    />
-                  </div>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button onClick={() => addStudent()}>
-                  Criar novo Estudante
-                </Button>
-              </Modal.Footer>
-            </Modal>
-            <button
-              className="px-2 w-12"
-              onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
-            >
-              {viewMode === "grid" ? (
-                <ListIcon size="size-8" />
-              ) : (
-                <GridIcon size="size-8" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div
-          className={
-            viewMode === "grid"
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 py-10 px-4"
-              : "flex flex-col gap-4 px-10"
-          }
-        >
-          {filteredItems.map((student, index) => (
-            <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-              <img
-                className={
-                  viewMode === "grid"
-                    ? "w-20 h-20 rounded-full mx-auto mb-4"
-                    : ""
-                }
-                src={
-                  viewMode === "grid"
-                    ? student.name == "Luis"
-                      ? "https://i.pinimg.com/736x/7a/3c/37/7a3c375db24b716ada1f81f057d9f4cd.jpg"
-                      : "https://wowxwow.com/wp-content/uploads/2020/05/Redmer-Hoekstra-Hedgehog-on-Goose.jpg"
-                    : ""
-                }
-                alt={viewMode === "grid" ? "Student Avatar" : ""}
-              />
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                {student.name}
-              </h2>
-
-              <p className="text-sm text-gray-600">Email: {student.email}</p>
-              <button onClick={() => removeStudent(student.email)}>
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+            onClick={() => addStudent()}
+          >
+            Criar novo Estudante
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

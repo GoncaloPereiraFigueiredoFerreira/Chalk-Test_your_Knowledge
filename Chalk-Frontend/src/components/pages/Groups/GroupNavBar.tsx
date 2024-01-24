@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { APIContext } from "../../../APIContext";
 import { Course } from "../../../UserContext";
 
@@ -7,6 +7,32 @@ export function GroupNavBar() {
   const { id } = useParams();
   const { contactBACK } = useContext(APIContext);
   const [course, setCourse] = useState<Course>({ id: "-1", name: "" });
+  const [selectedTab, setSelectedTab] = useState(0);
+  const location = useLocation();
+
+  useEffect(() => {
+    let tab = location.pathname.match(/\/([^\/]+)$/);
+
+    if (tab && tab[1]) {
+      switch (tab[1]) {
+        case "alunos":
+          setSelectedTab(0);
+          break;
+        case "avaliacoes":
+          setSelectedTab(1);
+          break;
+        case "testes":
+          setSelectedTab(2);
+          break;
+        default:
+          setSelectedTab(3);
+          break;
+      }
+    } else {
+      console.log("No match found");
+    }
+    // setSelectedTab()
+  }, [location]);
 
   useEffect(() => {
     contactBACK("courses/" + id, "GET").then((json) => {
@@ -15,46 +41,93 @@ export function GroupNavBar() {
   }, [id]);
 
   return (
-    <div className="">
-      <div className="mb-6">
-        <div className="flex justify-center bg-yellow-300 py-7 text-3xl">
+    <>
+      <div className="flex justify-center font-pacifico font-medium max-w-full h-32 container pt-6 px-6 first-section overflow-hidden">
+        <div className="flex text-5xl items-center ">
           {course.name}
+          <img
+            src="/better-chalky.png"
+            className="shadowed object-contain h-32"
+            alt=""
+          />
         </div>
-        <nav className="bg-white fixed w-screen flex items-center justify-between drop-shadow overflow-visible">
-          <div className="flex  items-center">
-            <div className="flex ">
-              <Link
-                className="text-black hover:bg-gray-700  hover:text-white  px-3 py-7 text-lg font-medium"
-                to="alunos"
-              >
-                <div className="px-5 ">Alunos</div>
-              </Link>
+      </div>
+      <div className="flex flex-col w-full h-screen overflow-auto min-h-max px-8 pb-8 text-black dark:text-white bg-white dark:bg-slate-900">
+        <div className="flex w-full pt-8 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
+          <div className="relative">
+            <div className="absolute w-full h-11">
+              <div className="flex h-full">
+                <button className="w-4"></button>
+                <Link
+                  className="flex items-center"
+                  onClick={() => setSelectedTab(0)}
+                  to="alunos"
+                >
+                  <div className="flex px-5 h-7 w-32 items-center justify-center text-lg font-medium">
+                    Alunos
+                  </div>
+                </Link>
 
-              <Link
-                className="text-black hover:bg-gray-700 hover:text-white  px-3 py-7 text-lg font-medium"
-                to="avaliacoes"
-              >
-                <div className="px-5">Avaliações</div>
-              </Link>
+                <Link
+                  className="flex items-center"
+                  onClick={() => setSelectedTab(1)}
+                  to="avaliacoes"
+                >
+                  <div className="flex px-5 h-7 w-32 items-center justify-center border-l-2 text-lg font-medium border-slate-400 dark:border-slate-600">
+                    Avaliações
+                  </div>
+                </Link>
 
-              <Link
-                className="text-black hover:bg-gray-700 hover:text-white  px-3 py-7 text-lg font-medium"
-                to="testes"
+                <Link
+                  className="flex items-center"
+                  onClick={() => setSelectedTab(2)}
+                  to="testes"
+                >
+                  <div className="flex px-5 h-7 w-32 items-center justify-center border-l-2 text-lg font-medium border-slate-400 dark:border-slate-600">
+                    Testes
+                  </div>
+                </Link>
+                <Link
+                  className="flex items-center"
+                  onClick={() => setSelectedTab(3)}
+                  to="definitions"
+                >
+                  <div className="flex px-5 h-7 w-32 items-center justify-center border-l-2 text-lg font-medium border-slate-400 dark:border-slate-600">
+                    Definições
+                  </div>
+                </Link>
+                <button className="w-4"></button>
+              </div>
+            </div>
+            {/* selection shadow */}
+            <div className="flex w-full h-11">
+              {/* left white area */}
+              <span
+                className="bg-slate-400 dark:bg-slate-600"
+                style={{ width: 14 + 128 * selectedTab + "px" }}
               >
-                <div className="px-5 ">Testes</div>
-              </Link>
-              <Link
-                className="text-black hover:bg-gray-700 hover:text-white  px-3 py-7 text-lg font-medium"
-                to="testes"
+                <span className="flex w-full h-full rounded-br-lg bg-white dark:bg-slate-900 transition-[width]" />
+              </span>
+              {/* selected area */}
+              <span
+                className="bg-white dark:bg-slate-900"
+                style={{ width: "132px" }}
               >
-                <div className="px-5 ">Definições</div>
-              </Link>
+                <span className="flex w-full h-full rounded-t-lg bg-slate-400 dark:bg-slate-600" />
+              </span>
+              {/* right area */}
+              <span
+                className="bg-slate-400 dark:bg-slate-600"
+                style={{ width: 14 + 128 * (3 - selectedTab) + "px" }}
+              >
+                <span className="flex w-full h-full rounded-bl-lg bg-white dark:bg-slate-900 transition-[width]" />
+              </span>
             </div>
           </div>
-        </nav>
-      </div>
+        </div>
 
-      <Outlet />
-    </div>
+        <Outlet />
+      </div>
+    </>
   );
 }

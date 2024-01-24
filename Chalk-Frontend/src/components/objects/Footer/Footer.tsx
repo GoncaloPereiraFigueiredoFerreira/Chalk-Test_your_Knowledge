@@ -12,41 +12,33 @@ interface FooterColumn {
 
 const footer: FooterColumn[] = [
   {
-    header: "Services",
-    items: [
-      { link: "", name: "HR Consulting" },
-      { link: "", name: "1on1 Call" },
-    ],
-  },
-  {
     header: "Company",
     items: [
-      { link: "", name: "About" },
-      { link: "", name: "Meet the team" },
-      { link: "", name: "Reviews" },
+      { link: "#features", name: "Sobre" },
+      { link: "#team", name: "Equipa" },
+      { link: "#clients", name: "Reviews" },
     ],
   },
   {
-    header: "Helpful Links",
+    header: "Ajuda",
     items: [
-      { link: "", name: "Contacts" },
+      { link: "#contacts", name: "Contactos" },
       { link: "", name: "FAQs" },
-      { link: "", name: "Live Chat" },
     ],
   },
   {
-    header: "Legal",
+    header: "Aspeto Legal",
     items: [
-      { link: "", name: "Acessibility" },
-      { link: "", name: "Refund Policy" },
-      { link: "", name: "AI certificate" },
+      { link: "", name: "Acessibilidade" },
+      { link: "", name: "Regras de Retorno" },
+      { link: "", name: "Certificado IA" },
     ],
   },
   {
     header: "Download",
     items: [
-      { link: "", name: "Terms and Conditions" },
-      { link: "", name: "Contract docs" },
+      { link: "", name: "Termos and Condições" },
+      { link: "", name: "Contrato" },
     ],
   },
 ];

@@ -22,7 +22,7 @@ export function ChangeVisibility({
   return (
     <PopUp show={show} closePopUp={closePopUp}>
       <>
-        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-[#bbbbbb]">
+        <label className="flex w-full justify-between mb-4 px-4 pb-2.5 text-4xl text-slate-600 dark:text-white border-b-2 border-slate-400">
           Criar novo exercício
         </label>
         <div className="grid grid-cols-2 gap-4 py-4 px-4">
@@ -30,9 +30,9 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("private")}
             className={`${
               "private" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <BiSolidLock className="size-8 " />
             Privado
@@ -41,9 +41,9 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("not-listed")}
             className={`${
               "not-listed" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <TbLink className="size-8" />
             Não listado
@@ -52,9 +52,9 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("course")}
             className={`${
               "course" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
-                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+                ? "btn-base-color"
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black "
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <FaUserGraduate className="size-8" />
             Curso
@@ -63,9 +63,9 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("institutional")}
             className={`${
               "institutional" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <LuSchool className="size-8" />
             Institucional
@@ -74,9 +74,9 @@ export function ChangeVisibility({
             onClick={() => setSelectedVisibility("public")}
             className={`${
               "public" != selectedVisibility
-                ? "bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+                ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <MdPublic className="size-8" />
             Público
@@ -85,7 +85,7 @@ export function ChangeVisibility({
         <div className="flex justify-end mt-4">
           <button
             onClick={() => changeVisibility(selectedVisibility)}
-            className="py-4 px-8 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100"
+            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color active:scale-95"
           >
             Guardar
           </button>

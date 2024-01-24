@@ -22,6 +22,7 @@ import { FaUserGraduate } from "react-icons/fa";
 import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;
@@ -124,7 +125,7 @@ export function ShowExerciseDragDrop({
     switch (exercise.type) {
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
@@ -134,7 +135,7 @@ export function ShowExerciseDragDrop({
         break;
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
@@ -143,7 +144,7 @@ export function ShowExerciseDragDrop({
         break;
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
@@ -153,7 +154,7 @@ export function ShowExerciseDragDrop({
 
       case ExerciseType.CHAT:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <PiChatsBold className="size-5" />
             Chat Question
           </label>
@@ -167,7 +168,7 @@ export function ShowExerciseDragDrop({
     switch (exercise.identity.visibility) {
       case "private":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <BiSolidLock className="size-5" />
             Privado
           </label>
@@ -175,7 +176,7 @@ export function ShowExerciseDragDrop({
         break;
       case "not-listed":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <TbLink className="size-5" />
             Não listado
           </label>
@@ -183,7 +184,7 @@ export function ShowExerciseDragDrop({
         break;
       case "course":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <FaUserGraduate className="size-5" />
             Curso
           </label>
@@ -191,7 +192,7 @@ export function ShowExerciseDragDrop({
         break;
       case "institutional":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <LuSchool className="size-5" />
             Institucional
           </label>
@@ -199,7 +200,7 @@ export function ShowExerciseDragDrop({
         break;
       case "public":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <MdPublic className="size-5" />
             Público
           </label>
@@ -224,7 +225,9 @@ export function ShowExerciseDragDrop({
               }
         }
         {...listeners}
-        className="flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-[#a7bee0] dark:bg-slate-700"
+        className={
+          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-[#bdcee6] dark:bg-slate-700 cursor-grab active:cursor-grabbing"
+        }
       />
     );
 
@@ -241,10 +244,12 @@ export function ShowExerciseDragDrop({
                 transform: CSS.Translate.toString(transform),
               }
         }
-        className="h-[78px] overflow-hidden cursor-default rounded-lg bg-[#a7bee0] dark:bg-slate-700 group"
+        className={
+          "h-[78px] overflow-hidden cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700 "
+        }
         {...listeners}
       >
-        <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
+        <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white cursor-grabbing">
           <div className="flex items-center text-sm font-normal transition-all mb-4 group">
             <button className="flex flex-col gap-1.5 h-14 justify-center">
               <label className="flex min-w-max font-medium text-xl">
@@ -256,7 +261,7 @@ export function ShowExerciseDragDrop({
                 listExerciseButtons
                   ? "group-hover:mr-[75px]"
                   : "group-hover:mr-[118px]"
-              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 bg-[#a7bee0] dark:bg-slate-700 border-[#bbbbbb] dark:border-slate-600`}
+              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 border-slate-500 dark:border-slate-600 bg-[#bdcee6] dark:bg-slate-700`}
             >
               <div className="flex flex-col justify-around items-end">
                 {visibility}
@@ -271,7 +276,7 @@ export function ShowExerciseDragDrop({
                 </button>
               ) : (
                 <>
-                  <button className="btn-options-exercise ex-icon">
+                  <button className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600">
                     <HiOutlineTrash className="size-5" />
                     Eliminar
                   </button>
@@ -284,7 +289,7 @@ export function ShowExerciseDragDrop({
             </div>
 
             {!listExerciseButtons && (
-              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-white dark:bg-slate-600">
+              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-slate-200 dark:bg-slate-600">
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1 dark:text-white">
                   {value} pts
                 </p>
@@ -301,20 +306,22 @@ export function ShowExerciseDragDrop({
       ref={setNodeRef}
       className={`${
         exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-[#a7bee0] dark:bg-slate-700 group`}
-      {...listeners}
+      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700`}
     >
-      <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
-        <div className="flex items-center text-sm font-normal transition-all mb-4 group">
+      <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white ">
+        <div
+          className="flex items-center text-sm font-normal transition-all mb-4 group cursor-grab active:cursor-grabbing"
+          {...listeners}
+        >
           <button
-            className="flex flex-col gap-1.5 h-14 justify-center"
+            className="flex flex-col gap-1.5 h-14 justify-center cursor-grab active:cursor-grabbing"
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl">
+            <label className="flex min-w-max font-medium text-xl cursor-grab active:cursor-grabbing">
               {exercise.base.title}
             </label>
           </button>
@@ -327,22 +334,22 @@ export function ShowExerciseDragDrop({
                 : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default bg-[#a7bee0] dark:bg-slate-700 border-[#bbbbbb] dark:border-slate-600`}
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] border-slate-500 dark:border-slate-600 bg-[#bdcee6] dark:bg-slate-700 cursor-grab active:cursor-grabbing`}
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <div className="flex flex-col justify-around items-end">
+            <div className="flex flex-col justify-around items-end cursor-grab active:cursor-grabbing">
               {visibility}
               {typeLabel}
             </div>
           </button>
-          <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
+          <div className="flex flex-row-reverse w-0 items-center gap-4 z-0 cursor-grab active:cursor-grabbing">
             {listExerciseButtons ? (
               <button
-                className="btn-options-exercise ex-icon"
+                className="btn-options-exercise ex-icon active:scale-90"
                 onClick={() => {
                   contactBACK(
                     "tests/" + testState.test.id + "/createExercise",
@@ -384,7 +391,7 @@ export function ShowExerciseDragDrop({
             ) : (
               <>
                 <button
-                  className="btn-options-exercise ex-icon"
+                  className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600"
                   onClick={() => {
                     if (selectedMenu !== "edit-exercise") {
                       setExerciseID({
@@ -434,7 +441,7 @@ export function ShowExerciseDragDrop({
             (changeCotationIsActive ? (
               <input
                 id="cotation"
-                className="flex ml-4 w-14 px-3 py-1 rounded-lg border-0 focus:border-0 focus:ring-0 bg-white dark:bg-slate-600"
+                className="flex ml-4 w-14 px-3 py-1 rounded-lg border-0 focus:border-0 focus:ring-0 bg-slate-200 dark:bg-slate-600"
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
                 onKeyDown={(e) => {
@@ -446,7 +453,7 @@ export function ShowExerciseDragDrop({
               />
             ) : (
               <div
-                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-white dark:bg-slate-600"
+                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-slate-200 dark:bg-slate-600"
                 onClick={() => handleClick()}
               >
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1 dark:text-white">
@@ -455,17 +462,15 @@ export function ShowExerciseDragDrop({
               </div>
             ))}
         </div>
-        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2  border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2  border-slate-500 dark:border-slate-600">
           {exercise.base.tags.map((tag, key) => (
-            <div key={key} className="bg-yellow-600 tag-exercise">
-              {tag.name}
-            </div>
+            <TagBlock key={key}>{tag.name}</TagBlock>
           ))}
         </div>
         <div
           className={`${
             !exerciseIsSelected ? "scale-y-0" : ""
-          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500`}
+          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-slate-500`}
         >
           {preview}
         </div>

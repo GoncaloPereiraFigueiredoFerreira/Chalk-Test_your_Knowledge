@@ -116,16 +116,16 @@ export function TextareaBlock({
     <>
       <div
         className={
-          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#dddddd] dark:border-slate-700 overflow-hidden" +
+          "w-full mb-4 border-2 rounded-lg dark:text-white bg-inherit border-[#bdcee6] dark:border-slate-700 overflow-hidden" +
           (className !== undefined ? className : "")
         }
       >
         <div
           className={`${
             hasToolbar ? "" : "hidden"
-          } flex items-center justify-between px-3 py-2 border-b-2 bg-[#dddddd] border-[#dddddd] dark:border-slate-700 dark:bg-[#2e3c50]`}
+          } flex items-center rounded-t-md justify-between px-3 py-2 border-b-2 bg-[#d8e3f1] border-[#bdcee6] dark:border-slate-700 dark:bg-[#2e3c50]`}
         >
-          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#bbbbbb] dark:divide-slate-600">
+          <div className="flex flex-wrap items-center sm:divide-x-2 divide-[#bdcee6] dark:divide-slate-600">
             <div className="flex items-center space-x-1 sm:pr-4">
               <button
                 type="button"
@@ -182,4 +182,69 @@ export function TextareaBlock({
       </div>
     </>
   );
+}
+
+function decodeHTMLSymbols(encodedString: string): string {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = encodedString;
+  return textarea.value;
+}
+
+function decodeHTML(stringHTML: string) {
+  const pattern = /^(?:(?:<(\w+)>((?:.|\n)+?)<\/\1>)|([^<]+)|(<br>))/;
+  const match = stringHTML.match(pattern);
+  let element = <></>;
+  let restElement = <></>;
+
+  if (match) {
+    const rest = stringHTML.slice(match[0].length);
+
+    if (match[1] != undefined)
+      switch (match[1]) {
+        case "div":
+          element = <div>{decodeHTML(match[2])}</div>;
+          break;
+        case "p":
+          element = <p>{decodeHTML(match[2])}</p>;
+          break;
+        case "span":
+          element = <span>{decodeHTML(match[2])}</span>;
+          break;
+        case "b":
+        case "strong":
+          element = <strong>{decodeHTML(match[2])}</strong>;
+          break;
+        case "i":
+        case "em":
+          element = <em>{decodeHTML(match[2])}</em>;
+          break;
+        case "u":
+          element = <u>{decodeHTML(match[2])}</u>;
+          break;
+        case "code":
+          element = <code>{decodeHTML(match[2])}</code>;
+          break;
+        case "pre":
+          element = <pre>{decodeHTML(match[2])}</pre>;
+          break;
+        default:
+          element = <div>{decodeHTML(match[2])}</div>;
+          break;
+      }
+    else if (match[3] != undefined)
+      element = <>{decodeHTMLSymbols(match[3])}</>;
+    else element = <br></br>;
+
+    if (rest != "") restElement = decodeHTML(rest);
+  }
+  return (
+    <>
+      {element}
+      {restElement}
+    </>
+  );
+}
+
+export function textToHTML(stringHTML: string) {
+  return <div className="block">{decodeHTML(stringHTML)}</div>;
 }

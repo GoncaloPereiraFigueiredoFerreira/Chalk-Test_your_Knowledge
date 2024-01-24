@@ -15,21 +15,32 @@ export function SolveTestEnd({ resolutionID, maxPoints }: any) {
   }, []);
 
   return (
-    <div className="dark:text-white m-20">
-      <p className="text-2xl">
-        <strong>Completaste o teu teste!</strong>
-      </p>
-      {grade !== undefined ? (
-        <p className="text-4xl font-medium">
-          Nota obtida: {grade} / {maxPoints}
+    <div className="flex dark:text-white m-20">
+      <div className="w-1/2">
+        <p className="text-4xl mb-4">
+          <strong>Completaste o teu teste!</strong>
         </p>
-      ) : (
-        <p className="text-2xl font-medium">
-          Verifica mais tarde as tuas avaliações!
-        </p>
-      )}
-
-      <p className="ml-20 ">{context.test.conclusion}</p>
+        <div>
+          {grade !== undefined ? (
+            <p className="text-2xl mt-16">
+              Nota obtida: {grade} / {maxPoints}
+            </p>
+          ) : (
+            <p className="text-xl ">
+              Verifica mais tarde as tuas avaliações para consultar a tua nota!
+            </p>
+          )}
+        </div>
+        {context.test.conclusion !== "" && (
+          <div className="text-2xl w-full mt-10">
+            <p className="font-medium">Mensagem de conclusão do teste:</p>
+            <p className="mt-3 ml-4">{context.test.conclusion}</p>
+          </div>
+        )}
+      </div>
+      <div className="flex w-1/2 justify-center">
+        <img src="/better-chalky-thumbsup.webp" className="h-[35rem]"></img>
+      </div>
     </div>
   );
 }

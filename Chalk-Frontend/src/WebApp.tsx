@@ -10,12 +10,12 @@ export function WebApp() {
       <Sidebar isOpen={isOpen} toggle={toggle}></Sidebar>
       <div
         className={`z-10 h-full transition-all ${
-          isOpen ? "w-[calc(100vw-256px)] ml-64" : "w-[calc(100vw-64px)] ml-16"
+          isOpen ? "w-[calc(100vw-230px)] ml-64" : "w-[calc(100vw-50px)] ml-16"
         }`}
       >
         <Outlet />
       </div>
-      <div className="fixed top-0 left-0 h-screen w-screen bg-[#acacff] dark:bg-gray-900 -z-10"></div>
+      <div className="fixed top-0 left-0 h-screen w-screen bg-[#8ca1be] dark:bg-gray-900 -z-20"></div>
     </div>
   );
 }

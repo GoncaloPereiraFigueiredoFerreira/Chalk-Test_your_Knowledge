@@ -37,6 +37,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   const [openGroupModal, setGroupModal] = useState(false);
   const [openCreatModal, setCreatModal] = useState(false);
   const [tagList, setTagList] = useState<TagsList>([]);
+  const [profileOpen, setProfileDDopen] = useState(false);
 
   const { contactBACK } = useContext(APIContext);
   const [selectedGroup, setSelectedGroup] = useState<Course>({
@@ -124,7 +125,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           <ul
             className={`${
               selectedGroup.id !== "all" ? "" : "hidden"
-            } gap-2 transition-all sidebar-divisions border-[#dddddd] dark:border-slate-600 pb-4`}
+            } gap-2 transition-all sidebar-divisions border-slate-300 dark:border-slate-600 pb-4`}
           >
             <li>
               <Link to={`groups/${selectedGroup.id}/alunos`}>
@@ -135,20 +136,20 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               </Link>
             </li>
             <li>
+              <Link to={`groups/${selectedGroup.id}/avaliacoes`}>
+                <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
+                  <TbChartPieFilled className="size-6 group-slate-icon" />
+                  <span className={isOpen ? "" : "hidden"}>Avaliações</span>
+                </button>
+              </Link>
+            </li>
+            <li>
               <Link to={`groups/${selectedGroup.id}/testes`}>
                 <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
                   <MdPublic className="size-6 group-slate-icon" />
                   <span className={isOpen ? "" : "hidden"}>
                     Testes Partilhados
                   </span>
-                </button>
-              </Link>
-            </li>
-            <li>
-              <Link to={`groups/${selectedGroup.id}/avaliacoes`}>
-                <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
-                  <TbChartPieFilled className="size-6 group-slate-icon" />
-                  <span className={isOpen ? "" : "hidden"}>Avaliações</span>
                 </button>
               </Link>
             </li>
@@ -169,7 +170,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   return (
     <>
       <div
-        className={`sidebar-background bg-[#94a8c4] dark:bg-slate-800 ${
+        className={`sidebar-background bg-[#8ca1be] dark:bg-slate-800 ${
           isOpen ? "" : "w-max"
         }`}
         aria-label="Sidebar"
@@ -185,11 +186,14 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           >
             <LuAlignJustify className="size-6 group-slate-icon" />
           </button>
-          <div className={` ${isOpen ? "" : "hidden"}`}>
-            <Link to="/webapp">
-              <MainLogo></MainLogo>
-            </Link>
-          </div>
+          <Link
+            to="/webapp"
+            className={`transition-all duration-75 hover:scale-105 active:scale-100 ${
+              isOpen ? "" : "hidden"
+            }`}
+          >
+            <MainLogo></MainLogo>
+          </Link>
         </div>
 
         <ul className="sidebar-divisions border-t-0">
@@ -272,7 +276,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
           </li>
         </ul>
 
-        <ul className="sidebar-divisions border-[#dddddd] dark:border-slate-600  transition-all">
+        <ul className="sidebar-divisions border-slate-300 dark:border-slate-600  transition-all">
           <li>
             <button
               type="button"
@@ -349,18 +353,23 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
         </ul>
         {showGrupOptions()}
 
-        <div className="sidebar-divisions border-[#dddddd] dark:border-slate-600 mt-auto  transition-all">
+        <div className="sidebar-divisions border-slate-300 dark:border-slate-600 mt-auto  transition-all">
           <ul>
             <li onClick={() => toggle(true)}>
               <Dropdown
                 label=""
                 placement="top"
+                /*onClick={() => setProfileDDopen(!profileOpen)}*/
                 theme={{
                   content:
                     "py-1 rounded-lg focus:outline-none dark:bg-slate-700",
                 }}
                 renderTrigger={() => (
-                  <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
+                  <button
+                    className={`sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group active:scale-95 ${
+                      profileOpen ? "bg-white" : ""
+                    }`}
+                  >
                     <img
                       src={user.user?.photoPath ?? ""}
                       className={`${
@@ -392,7 +401,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 >
                   <FaUser className="size-6 group-slate-icon" />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>
-                    Profile Page
+                    Perfil
                   </span>
                 </Dropdown.Item>
                 <Dropdown.Item
@@ -404,7 +413,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                 >
                   <MdStars className="size-6 group-slate-icon" />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>
-                    Upgrade!
+                    Melhorar plano!
                   </span>
                 </Dropdown.Item>
                 <Dropdown.Item
@@ -415,7 +424,9 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   }}
                 >
                   <IoHelpOutline className="size-6 group-slate-icon" />
-                  <span className={`${isOpen ? "" : "hidden"} ml-2`}>Help</span>
+                  <span className={`${isOpen ? "" : "hidden"} ml-2`}>
+                    Ajuda
+                  </span>
                 </Dropdown.Item>
                 <Dropdown.Item
                   as="button"
@@ -427,13 +438,13 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                     handleLogout();
                   }}
                 >
-                  <TbLogout2 className="size-6 group-slate-icon" />
+                  <TbLogout2 className="size-6 group-slate-icon text-red-600" />
                   <span
                     className={`${
                       isOpen ? "" : "hidden"
                     } text-red-600 dark:group-hover:text-red-500 font-bold ml-3`}
                   >
-                    Log out
+                    Sair
                   </span>
                 </Dropdown.Item>
               </Dropdown>
@@ -441,22 +452,18 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
 
             <li>
               <button
-                className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group"
+                className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group active:scale-95"
                 onClick={toggleDarkMode}
               >
                 {darkMode ? (
                   <>
                     <IoIosSunny className="size-6 group-slate-icon" />
-                    <span className={isOpen ? "" : "hidden"}>
-                      Light Mode Toogle
-                    </span>
+                    <span className={isOpen ? "" : "hidden"}>Modo Claro</span>
                   </>
                 ) : (
                   <>
                     <FaMoon className="size-6 group-slate-icon" />{" "}
-                    <span className={isOpen ? "" : "hidden"}>
-                      Dark Mode Toogle
-                    </span>
+                    <span className={isOpen ? "" : "hidden"}>Modo Escuro</span>
                   </>
                 )}
               </button>
