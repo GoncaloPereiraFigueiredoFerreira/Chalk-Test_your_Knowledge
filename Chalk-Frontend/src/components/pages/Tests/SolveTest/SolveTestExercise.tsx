@@ -10,7 +10,7 @@ import { SolveTestContext } from "./SolveTest";
 import { Test } from "../../../objects/Test/Test";
 import { APIContext } from "../../../../APIContext";
 import { UserContext } from "../../../../UserContext";
-
+import ConfirmButton from "../../../interactiveElements/ConfirmButton";
 export function Progress(
   test: Test,
   currentGroup: number,
@@ -212,19 +212,22 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
           sendResolution
         )}
 
-        <button
+        <ConfirmButton
+        confirmationMessage="Tem acerteza que deseja finalizar o teste?"
+        onConfirm={() => {
+          sendResolution().then(() => {
+            endTestResolution().then(() => {
+              endTest(true);
+            });
+          });
+        }}
+        button={<button
           type="button"
           className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
-          onClick={() => {
-            sendResolution().then(() => {
-              endTestResolution().then(() => {
-                endTest(true);
-              });
-            });
-          }}
         >
           Finalizar Teste
-        </button>
+        </button>}>
+        </ConfirmButton>
       </div>
     </>
   );

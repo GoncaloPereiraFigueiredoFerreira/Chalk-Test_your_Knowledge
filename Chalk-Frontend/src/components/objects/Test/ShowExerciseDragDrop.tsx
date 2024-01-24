@@ -23,6 +23,8 @@ import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
 
+const classname = " bg-[#bdcee6]";
+
 interface ShowExerciseDragDropProps {
   groupPosition: number;
   exercisePosition: number;
@@ -224,7 +226,10 @@ export function ShowExerciseDragDrop({
               }
         }
         {...listeners}
-        className="flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-[#a7bee0] dark:bg-slate-700"
+        className={
+          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 dark:bg-slate-700" +
+          classname
+        }
       />
     );
 
@@ -241,7 +246,10 @@ export function ShowExerciseDragDrop({
                 transform: CSS.Translate.toString(transform),
               }
         }
-        className="h-[78px] overflow-hidden cursor-default rounded-lg bg-[#a7bee0] dark:bg-slate-700 group"
+        className={
+          "h-[78px] overflow-hidden cursor-default rounded-lg dark:bg-slate-700 group" +
+          classname
+        }
         {...listeners}
       >
         <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
@@ -252,11 +260,14 @@ export function ShowExerciseDragDrop({
               </label>
             </button>
             <button
-              className={` ${
-                listExerciseButtons
-                  ? "group-hover:mr-[75px]"
-                  : "group-hover:mr-[118px]"
-              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 bg-[#a7bee0] dark:bg-slate-700 border-[#bbbbbb] dark:border-slate-600`}
+              className={
+                ` ${
+                  listExerciseButtons
+                    ? "group-hover:mr-[75px]"
+                    : "group-hover:mr-[118px]"
+                } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 dark:bg-slate-700 border-slate-500 dark:border-slate-600` +
+                classname
+              }
             >
               <div className="flex flex-col justify-around items-end">
                 {visibility}
@@ -284,7 +295,7 @@ export function ShowExerciseDragDrop({
             </div>
 
             {!listExerciseButtons && (
-              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-white dark:bg-slate-600">
+              <div className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-slate-200 dark:bg-slate-600">
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1 dark:text-white">
                   {value} pts
                 </p>
@@ -299,13 +310,18 @@ export function ShowExerciseDragDrop({
     <div
       {...attributes}
       ref={setNodeRef}
-      className={`${
-        exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg bg-[#a7bee0] dark:bg-slate-700 group`}
-      {...listeners}
+      className={
+        `${
+          exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
+        } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg dark:bg-slate-700 group` +
+        classname
+      }
     >
       <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
-        <div className="flex items-center text-sm font-normal transition-all mb-4 group">
+        <div
+          className="flex items-center text-sm font-normal transition-all mb-4 group"
+          {...listeners}
+        >
           <button
             className="flex flex-col gap-1.5 h-14 justify-center"
             onClick={() =>
@@ -319,15 +335,18 @@ export function ShowExerciseDragDrop({
             </label>
           </button>
           <button
-            className={` ${
-              listExerciseButtons
-                ? exerciseIsSelected
-                  ? "mr-[75px] pr-4 border-r-2"
-                  : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
-                : exerciseIsSelected
-                ? "mr-[118px] pr-4 border-r-2"
-                : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default bg-[#a7bee0] dark:bg-slate-700 border-[#bbbbbb] dark:border-slate-600`}
+            className={
+              ` ${
+                listExerciseButtons
+                  ? exerciseIsSelected
+                    ? "mr-[75px] pr-4 border-r-2"
+                    : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
+                  : exerciseIsSelected
+                  ? "mr-[118px] pr-4 border-r-2"
+                  : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
+              } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default dark:bg-slate-700 border-slate-500 dark:border-slate-600` +
+              classname
+            }
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
@@ -434,7 +453,7 @@ export function ShowExerciseDragDrop({
             (changeCotationIsActive ? (
               <input
                 id="cotation"
-                className="flex ml-4 w-14 px-3 py-1 rounded-lg border-0 focus:border-0 focus:ring-0 bg-white dark:bg-slate-600"
+                className="flex ml-4 w-14 px-3 py-1 rounded-lg border-0 focus:border-0 focus:ring-0 bg-slate-200 dark:bg-slate-600"
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
                 onKeyDown={(e) => {
@@ -446,7 +465,7 @@ export function ShowExerciseDragDrop({
               />
             ) : (
               <div
-                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-white dark:bg-slate-600"
+                className="flex ml-4 min-w-fit rounded-lg appearance-none cursor-pointer bg-slate-200 dark:bg-slate-600"
                 onClick={() => handleClick()}
               >
                 <p className="flex justify-center text-base min-w-[56px] px-2 py-1 dark:text-white">
@@ -455,7 +474,7 @@ export function ShowExerciseDragDrop({
               </div>
             ))}
         </div>
-        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2  border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2  border-slate-500 dark:border-slate-600">
           {exercise.base.tags.map((tag, key) => (
             <div key={key} className="bg-yellow-600 tag-exercise">
               {tag.name}
@@ -465,7 +484,7 @@ export function ShowExerciseDragDrop({
         <div
           className={`${
             !exerciseIsSelected ? "scale-y-0" : ""
-          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500`}
+          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-slate-200 dark:bg-slate-800 border-slate-500`}
         >
           {preview}
         </div>

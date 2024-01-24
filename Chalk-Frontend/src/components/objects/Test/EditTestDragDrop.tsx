@@ -11,6 +11,7 @@ import { UserContext } from "../../../UserContext";
 import { translateVisibilityToString } from "./EditTestInfo";
 import { APIContext } from "../../../APIContext";
 import { useParams } from "react-router-dom";
+import ConfirmButton from "../../interactiveElements/ConfirmButton";
 
 interface EditTestProps {
   exerciseID: {
@@ -55,19 +56,14 @@ export function EditTestDragDrop({
 
   return (
     <div className="flex flex-col w-full min-h-max text-black dark:text-white">
-      <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+      <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-slate-400 dark:border-slate-600">
         <div className="flex text-4xl text-slate-600 dark:text-white">
           {testState.test.title
             ? testState.test.title
             : "Novo Teste - " + draggingExercises}
         </div>
-        <button
-          type="button"
-          disabled={
-            testState.test.publishDate !== null &&
-            testState.test.publishDate !== ""
-          }
-          onClick={() => {
+        <ConfirmButton
+          onConfirm={() => {
             let date = new Date().toISOString();
             contactBACK(
               "tests/" + testID + "/publishDate",
@@ -82,21 +78,31 @@ export function EditTestDragDrop({
               });
             });
           }}
-          className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
-        >
-          {testState.test.publishDate !== null &&
-          testState.test.publishDate !== "" ? (
-            <p>Teste publicado!</p>
-          ) : (
-            <p>Publicar Teste</p>
-          )}
-        </button>
+          confirmationMessage="Tem acerteza que deseja publicar o teste?"
+          button={
+            <button
+              type="button"
+              disabled={
+                testState.test.publishDate !== null &&
+                testState.test.publishDate !== ""
+              }
+              className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
+            >
+              {testState.test.publishDate !== null &&
+              testState.test.publishDate !== "" ? (
+                <p>Teste publicado!</p>
+              ) : (
+                <p>Publicar Teste</p>
+              )}
+            </button>
+          }
+        ></ConfirmButton>
       </div>
       <div className="flex flex-col px-4 pt-4 gap-4">
         <div className="flex items-center justify-between">
           <strong className="text-xl">Informações Gerais do Teste:</strong>
           <button
-            className="flex gap-2 py-2 px-3 text-base rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group"
             onClick={() => {
               setSelectedMenu("edit-test-info");
             }}
@@ -106,11 +112,11 @@ export function EditTestDragDrop({
           </button>
         </div>
         <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
-          <strong>Autor: </strong>
+          <p>Autor: </p>
           <p>{testState.test.author}</p>
-          <strong>Visibilidade do Teste: </strong>
+          <p>Visibilidade do Teste: </p>
           <p>{translateVisibilityToString(testState.test.visibility)}</p>
-          <strong>Cotação máxima do teste: </strong>
+          <p>Cotação máxima do teste: </p>
           <p>{testState.test.globalPoints} pts</p>
         </div>
         <div className="flex flex-col py-4 gap-4">
@@ -120,7 +126,7 @@ export function EditTestDragDrop({
           </p>
         </div>
       </div>
-      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+      <div className="flex flex-col px-4 py-8 gap-4 border-t-2 border-slate-400 dark:border-slate-600">
         <SortableContext items={testState.test.groups.map((group) => group.id)}>
           {testState.test.groups.map((group, index) => (
             <GroupDragDrop
@@ -141,7 +147,7 @@ export function EditTestDragDrop({
           ))}
         </SortableContext>
         <div
-          className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group"
           onClick={() => {
             if (selectedMenu !== "edit-group") {
               dispatch({ type: EditTestActionKind.ADD_GROUP });
@@ -152,12 +158,12 @@ export function EditTestDragDrop({
           <label className=" font-medium text-lg">Novo Grupo</label>
         </div>
       </div>
-      <div className="flex flex-col pt-4 gap-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+      <div className="flex flex-col pt-4 gap-4 border-t-2 border-slate-400 dark:border-slate-600">
         <div className="mx-4 mt-4">
           <div className="flex items-center justify-between">
             <strong className="text-xl">Conclusão</strong>
             <button
-              className="flex gap-2 py-2 px-3 text-base rounded-lg bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+              className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group"
               onClick={() => {
                 setSelectedMenu("edit-test-info");
               }}

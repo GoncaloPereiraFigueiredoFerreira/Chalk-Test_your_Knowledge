@@ -169,7 +169,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
   return (
     <>
       <div
-        className={`sidebar-background bg-[#94a8c4] dark:bg-slate-800 ${
+        className={`sidebar-background bg-[#8ca1be] dark:bg-slate-800 ${
           isOpen ? "" : "w-max"
         }`}
         aria-label="Sidebar"

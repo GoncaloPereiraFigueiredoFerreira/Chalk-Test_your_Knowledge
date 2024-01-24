@@ -11,6 +11,7 @@ import "react-circular-progressbar/dist/styles.css";
 import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
+import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
 
 function ShowTestList(
   test: TestPreview,
@@ -113,16 +114,19 @@ function ShowTestList(
                   >
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
+                  <ConfirmButton
+                  onConfirm={() => {
                       deleteTest();
-                      e.stopPropagation();
-                    }}
-                    className="z-30 inline-flex items-center px-3 h-12 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                  }}
+                  confirmationMessage="Tem acerteza que deseja apagar este Teste?"
+                  button={<button
+                    type="button"
+                    className="z-30 inline-flex items-center px-6 py-2 h-12  text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                   >
                     Delete
-                  </button>
+                  </button>}>
+
+                  </ConfirmButton>
                 </>
               ) : (
                 <button
@@ -268,16 +272,20 @@ function ShowTestGrid(
                   >
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
+                  <ConfirmButton
+                  onConfirm={() => {
                       deleteTest();
-                      e.stopPropagation();
-                    }}
+                  }}
+                  confirmationMessage="Tem acerteza que deseja apagar este Teste?"
+                  button={<button
+                    onClick={(e) => {e.stopPropagation();}}
+                    type="button"
                     className="z-30 inline-flex items-center px-6 py-2 h-12  text-sm font-medium text-center text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                   >
                     Delete
-                  </button>
+                  </button>}>
+
+                  </ConfirmButton>
                 </>
               ) : (
                 <button

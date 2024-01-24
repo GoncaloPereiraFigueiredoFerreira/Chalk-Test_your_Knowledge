@@ -30,11 +30,11 @@ export function Features() {
           <text className="font-pacifico ">Chalk</text> gives you the ability
           to...
         </div>
-        <div className=" relative w-full h-[250px] bg-[#5555ce] group mb-4">
+        <div className=" relative w-full h-[250px] bg-[#5555ce] text-white group mb-4">
           <div className="relative z-10 w-full h h-[250px] items-center text-center text-5xl py-[95px] bg-[#5555ce] group-hover:translate-x-full transform transition-all duration-700">
             Create exercises and tests quickly.
           </div>
-          <div className=" absolute w-full z-[5] h-[250px] top-0 left-0 text-white text-center p-16 text-3xl">
+          <div className=" absolute w-full z-[5] h-[250px] top-0 left-0 text-center p-16 text-3xl">
             <div className="flex flex-row">
               <div className="p-4 w-1/3">
                 Create uniques exercises and test with advanced options and with

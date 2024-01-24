@@ -15,7 +15,7 @@ export function WebApp() {
       >
         <Outlet />
       </div>
-      <div className="fixed top-0 left-0 h-screen w-screen bg-[#acacff] dark:bg-gray-900 -z-10"></div>
+      <div className="fixed top-0 left-0 h-screen w-screen bg-[#8ca1be] dark:bg-gray-900 -z-10"></div>
     </div>
   );
 }
