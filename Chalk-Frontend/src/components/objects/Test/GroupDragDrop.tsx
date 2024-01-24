@@ -2,10 +2,11 @@ import { ShowExerciseDragDrop } from "./ShowExerciseDragDrop";
 import { EditTestActionKind, useEditTestContext } from "./EditTestContext";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
+import { textToHTMLHooks } from "../../interactiveElements/TextareaBlock";
 
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
@@ -39,23 +40,6 @@ export function GroupDragDrop({
   draggingExercises,
 }: GroupDragDropProps) {
   const { testState, dispatch } = useEditTestContext();
-  const divRef = useRef<HTMLDivElement>(null);
-  const divRefOnDrag = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRefOnDrag.current)
-      divRefOnDrag.current.innerHTML =
-        testState.test.groups[exerciseGroupPosition].groupInstructions ?? "";
-  }, [
-    divRefOnDrag,
-    testState.test.groups[exerciseGroupPosition].groupInstructions,
-  ]);
-
-  useEffect(() => {
-    if (divRef.current)
-      divRef.current.innerHTML =
-        testState.test.groups[exerciseGroupPosition].groupInstructions ?? "";
-  }, [divRef, testState.test.groups[exerciseGroupPosition].groupInstructions]);
 
   const {
     attributes,
@@ -116,7 +100,9 @@ export function GroupDragDrop({
               </button>
             </div>
             <div className={"px-4"}>
-              <div className="block" ref={divRefOnDrag}></div>
+              {textToHTMLHooks(
+                testState.test.groups[exerciseGroupPosition].groupInstructions
+              )}
             </div>
           </div>
           <div className="flex gap-7 w-full">
@@ -217,7 +203,9 @@ export function GroupDragDrop({
             </button>
           </div>
           <div className={"px-4"}>
-            <div className="block" ref={divRef}></div>
+            {textToHTMLHooks(
+              testState.test.groups[exerciseGroupPosition].groupInstructions
+            )}
           </div>
         </div>
         <div className={"flex flex-col min-h-max gap-4"}>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -7,7 +7,10 @@ import {
 } from "../../objects/Exercise/Exercise";
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
-import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import {
+  textToHTML,
+  textToHTMLHooks,
+} from "../../interactiveElements/TextareaBlock";
 import { UserContext } from "../../../UserContext";
 
 function renderExercise(
@@ -162,14 +165,6 @@ export function TestPreview({
   const [selectedGroup, setSelectedGroup] = useState(-1);
   const [selectedEx, setSelectedEx] = useState(-1);
   const { user } = useContext(UserContext);
-  const divRefGlobalInstructions = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRefGlobalInstructions.current)
-      divRefGlobalInstructions.current.innerHTML =
-        test.globalInstructions ?? "";
-  }, [divRefGlobalInstructions, test.globalInstructions]);
-
   useEffect(() => {
     if (showExId !== "") {
       const { group, ex } = findId(showExId, test);
@@ -199,7 +194,7 @@ export function TestPreview({
         <div className="flex flex-col pt-4 gap-4">
           <strong className="text-xl">Instruções do Teste</strong>
           <p className="text-md mx-4">
-            <div className="block" ref={divRefGlobalInstructions}></div>
+            {textToHTMLHooks(test.globalInstructions)}
           </p>
         </div>
       </div>
