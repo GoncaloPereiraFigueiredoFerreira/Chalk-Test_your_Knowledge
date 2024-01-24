@@ -29,7 +29,6 @@ function defaultIcon(role: UserRole): string {
   }
 }
 
-
 function renderErrorToast(err: ErrorType, setError: Function) {
   let message = "";
   switch (err) {
@@ -82,7 +81,7 @@ export function Register() {
   const submitGoogleRegister = (acessToken: any) => {
     contactAUTH("google", "POST", undefined, {
       acess_token: acessToken,
-      role: role
+      role: role,
     }).then((response) => handleUserRegister(response));
   };
 
@@ -92,7 +91,7 @@ export function Register() {
         email: email,
         name: name,
         password: password,
-        role: role
+        role: role,
       }).then((response) => handleUserRegister(response));
     } else setErrorState(ErrorType.NOMATCH);
   };
@@ -104,7 +103,7 @@ export function Register() {
           const userInfo: User = {
             email: result.user.username,
             name: result.user.name,
-            photoPath : defaultIcon(role),
+            photoPath: defaultIcon(role),
             role: result.user.role,
             courses: [],
             id: "",
@@ -164,13 +163,13 @@ export function Register() {
                   role !== "" ? "h-0 opacity-0" : "opacity-100 h-auto"
                 } flex-col flex items center`}
               >
-                <p className="mb-0 mr-4 text-2xl">Choose a role</p>
+                <p className="mb-0 mr-4 text-2xl">Escolhe a tua identidade:</p>
                 <div
                   className={`flex m-10 justify-between items-center space-x-4`}
                 >
                   <label
                     htmlFor="roleProfessor"
-                    className={`flex flex-1 p-20 flex-col border-2 rounded-lg items-center  ${
+                    className={`flex flex-1 p-20 flex-col border-2 rounded-lg items-center active:scale-95  ${
                       role === UserRole.SPECIALIST
                         ? "bg-blue-400 border-blue-600"
                         : "border-zinc-300 hover:border-blue-300 hover:bg-blue-200"
@@ -190,7 +189,7 @@ export function Register() {
                   />
                   <label
                     htmlFor="roleStudent"
-                    className={`flex flex-1 p-20 flex-col border-2 rounded-lg transition-all duration-75  items-center ${
+                    className={`flex flex-1 p-20 flex-col border-2 rounded-lg transition-all duration-75  items-center active:scale-95 ${
                       role === UserRole.STUDENT
                         ? "bg-blue-400 border-blue-600 "
                         : "border-zinc-300 hover:border-blue-300 hover:bg-blue-200"

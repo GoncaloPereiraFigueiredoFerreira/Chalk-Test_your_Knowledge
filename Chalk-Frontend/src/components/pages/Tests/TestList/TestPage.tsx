@@ -9,6 +9,7 @@ import {
   TagsFilterModal,
 } from "../../../objects/Tags/TagsFilterModal.tsx";
 import { FilterByTagsSearchBar } from "../../../objects/Searchbar/FilterByTagsSearchBar.tsx";
+import { useNavigate } from "react-router-dom";
 
 export function TestPage() {
   const [view, setViewType] = useState(ViewType.GRID);
@@ -17,6 +18,7 @@ export function TestPage() {
   const { user } = useContext(UserContext);
   const [tagsList, setTagsList] = useState<TagsList>([]);
   const [openModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col w-full h-screen overflow-auto px-8 pb-8 bg-white dark:bg-slate-900 divide-slate-400 dark:divide-slate-600">
@@ -36,26 +38,32 @@ export function TestPage() {
           <label className="flex text-4xl text-slate-600 dark:text-white">
             {kindOfTest === "Public" ? "Testes públicos" : "Os meus testes"}
           </label>
-          <button
-            className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
-            onClick={() => {}}
-          >
-            Criar Teste
-          </button>
+          {user.user?.role == UserRole.SPECIALIST ? (
+            <button
+              className="py-2 px-4 text-base rounded-lg font-medium btn-base-color transition-all duration-75 active:scale-90"
+              onClick={() => {
+                navigate("/webapp/create-test");
+              }}
+            >
+              Criar Teste
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
         <div className="flex self-start gap-4 px-8">
           <div className="flex gap-4">
             {kindOfTest === "Private" ? (
               <button
                 onClick={() => setKindOfTest("Public")}
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
               >
                 Testes públicos
               </button>
             ) : (
               <button
                 onClick={() => setKindOfTest("Private")}
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
               >
                 Os meus testes
               </button>
@@ -64,7 +72,7 @@ export function TestPage() {
           <div className="flex gap-4">
             {view === ViewType.GRID ? (
               <button
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
                 onClick={() => setViewType(ViewType.LIST)}
               >
                 <FaListUl className="size-5 scale-90" />
@@ -72,7 +80,7 @@ export function TestPage() {
               </button>
             ) : (
               <button
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
                 onClick={() => setViewType(ViewType.GRID)}
               >
                 <HiViewGrid className="size-5 scale-110" />

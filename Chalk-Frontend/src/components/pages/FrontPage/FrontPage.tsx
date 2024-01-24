@@ -9,7 +9,7 @@ export function FrontPage() {
         <MainLogo size="big"></MainLogo>
         <div className="flex flex-row space-x-4 mt-4 ">
           <button
-            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color"
+            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color active:scale-95"
             onClick={() => navigate("exercise-bank")}
           >
             Banco de exercícios
@@ -18,7 +18,7 @@ export function FrontPage() {
             </div>
           </button>
           <button
-            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color"
+            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color active:scale-95"
             onClick={() => navigate("tests")}
           >
             Os meus Testes
@@ -29,7 +29,7 @@ export function FrontPage() {
         </div>
         <div className="flex flex-row space-x-4 mt-4 mb-28">
           <button
-            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color"
+            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color active:scale-95"
             onClick={() => navigate("create-test")}
           >
             Criar Novo Teste
@@ -38,7 +38,7 @@ export function FrontPage() {
             </div>
           </button>
           <button
-            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color"
+            className="flex flex-col items-center justify-center w-64 h-16 rounded-md font-medium btn-base-color active:scale-95"
             onClick={() => navigate("groups")}
           >
             Administrar Groups
