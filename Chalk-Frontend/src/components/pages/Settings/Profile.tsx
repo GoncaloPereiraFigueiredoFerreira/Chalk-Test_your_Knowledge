@@ -15,6 +15,8 @@ export function Profile() {
   //const [pp, setPP] = useState("");
 
   function onCloseModal() {
+    setName(user.user?.name);
+    setImagePath(user.user?.photoPath);
     setOpenModal(false);
   }
 
@@ -77,6 +79,17 @@ export function Profile() {
                       onChange={(event) => setName(event.target.value)}
                     />
                   </div>
+                  <div>
+                    <div className="mb-2 block">
+                      <Label htmlFor="imagePath" value="Imagem de Perfil" />
+                    </div>
+                    <TextInput
+                      id="imagePath"
+                      placeholder="imagePath"
+                      value={imagePath}
+                      onChange={(event) => setImagePath(event.target.value)}
+                    />
+                  </div>
 
                   <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-slate-300">
                   <ConfirmButton
@@ -89,7 +102,7 @@ export function Profile() {
                             name: name,
                             email: user.user?.email,
                             description: null,
-                            photoPath: user.user?.photoPath
+                            photoPath: imagePath
                           },
                           "none"
                         );
@@ -97,7 +110,7 @@ export function Profile() {
                             id: user.user?.id!,
                             email: user.user?.email!,
                             name: name!,
-                            photoPath: user.user?.photoPath!,
+                            photoPath: imagePath!,
                             role: user.user?.role!,
                             courses: user.user?.courses
                         };
