@@ -7,7 +7,7 @@ import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
 
-const classname = " bg-[#d8e3f1]";
+const classname = " bg-[#d8e3f1] dark:bg-[#1e2a3f]";
 
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
@@ -91,7 +91,7 @@ export function GroupDragDrop({
           className={
             `${
               isDragging && "opacity-40"
-            } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default dark:bg-[#1e2a3f] text-black dark:text-white h-56 overflow-hidden` +
+            } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default text-black dark:text-white h-56 overflow-hidden` +
             classname
           }
         >
@@ -151,7 +151,7 @@ export function GroupDragDrop({
         className={
           `${
             isDragging && "opacity-50"
-          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default dark:bg-[#1e2a3f] text-black dark:text-white` +
+          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default text-black dark:text-white` +
           classname
         }
       >

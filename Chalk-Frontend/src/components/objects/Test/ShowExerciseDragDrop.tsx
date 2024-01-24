@@ -23,7 +23,7 @@ import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
 
-const classname = " bg-[#bdcee6]";
+const classname = " bg-[#bdcee6] dark:bg-slate-700";
 
 interface ShowExerciseDragDropProps {
   groupPosition: number;
@@ -227,7 +227,7 @@ export function ShowExerciseDragDrop({
         }
         {...listeners}
         className={
-          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 dark:bg-slate-700" +
+          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500" +
           classname
         }
       />
@@ -247,8 +247,7 @@ export function ShowExerciseDragDrop({
               }
         }
         className={
-          "h-[78px] overflow-hidden cursor-default rounded-lg dark:bg-slate-700 group" +
-          classname
+          "h-[78px] overflow-hidden cursor-default rounded-lg group" + classname
         }
         {...listeners}
       >
@@ -265,7 +264,7 @@ export function ShowExerciseDragDrop({
                   listExerciseButtons
                     ? "group-hover:mr-[75px]"
                     : "group-hover:mr-[118px]"
-                } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 dark:bg-slate-700 border-slate-500 dark:border-slate-600` +
+                } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 border-slate-500 dark:border-slate-600` +
                 classname
               }
             >
@@ -313,7 +312,7 @@ export function ShowExerciseDragDrop({
       className={
         `${
           exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-        } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg dark:bg-slate-700 group` +
+        } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg group` +
         classname
       }
     >
@@ -344,7 +343,7 @@ export function ShowExerciseDragDrop({
                   : exerciseIsSelected
                   ? "mr-[118px] pr-4 border-r-2"
                   : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-              } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default dark:bg-slate-700 border-slate-500 dark:border-slate-600` +
+              } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default border-slate-500 dark:border-slate-600` +
               classname
             }
             onClick={() =>
