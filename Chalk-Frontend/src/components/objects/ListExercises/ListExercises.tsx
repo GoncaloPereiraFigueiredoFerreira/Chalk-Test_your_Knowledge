@@ -46,7 +46,7 @@ export function ListExercises({
       tags: requestTags,
     }).then((page) => {
       const exercises = page.items;
-      setTotalPages(page.totalPages);
+      setTotalPages(page.totalPages==0?1:page.totalPages);
       const exerciseL: Exercise[] = [];
       exercises.map((ex: any) => {
         exerciseL.push(TranslateExerciseIN(ex));

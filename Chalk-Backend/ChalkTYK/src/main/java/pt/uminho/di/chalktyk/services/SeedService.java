@@ -194,7 +194,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement("Preenche com a música dos patinhos","",""));
         exercise.setTitle("Patinhos sabem nadar FTB");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
         return exercisesService.createExercise(exercise,exerciseSolution,exerciseRubric, tags.stream().map(Tag::getId).toList());
     }
@@ -264,7 +264,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement(texto+"\n"+"Compare, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem à impossibilidade de usarem a mão esquerda.","",""));
         exercise.setTitle("Pergunta Pt 1.1");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -273,7 +273,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("Compare, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem à impossibilidade de usarem a mão esquerda.","",""));
         exercise2.setTitle("Pergunta Pt 1.1");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -341,7 +341,7 @@ public class SeedService implements ISeedService{
                 "Apresente duas evidências que comprovem esta afirmação.\r","",""));
         exercise.setTitle("Pergunta Pt 1.2");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
@@ -350,7 +350,7 @@ public class SeedService implements ISeedService{
                 "Apresente duas evidências que comprovem esta afirmação.\r","",""));
         exercise2.setTitle("Pergunta Pt 1.2");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -423,7 +423,7 @@ public class SeedService implements ISeedService{
                 "evidenciam a relação que, no excerto, se estabelece entre Baltasar e Blimunda","",""));
         exercise.setTitle("Pergunta Pt 1.3");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
@@ -433,7 +433,7 @@ public class SeedService implements ISeedService{
                 "evidenciam a relação que, no excerto, se estabelece entre Baltasar e Blimunda","",""));
         exercise2.setTitle("Pergunta Pt 1.3");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -507,7 +507,7 @@ public class SeedService implements ISeedService{
                 "evocada no poema. Fundamente a sua resposta com transcrições pertinentes.","",""));
         exercise.setTitle("Pergunta Pt 2.1");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
@@ -516,7 +516,7 @@ public class SeedService implements ISeedService{
                 "evocada no poema. Fundamente a sua resposta com transcrições pertinentes.","",""));
         exercise2.setTitle("Pergunta Pt 2.1");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
 
@@ -562,7 +562,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement(texto+"\nConsidere as afirmações seguintes sobre o soneto. \r\nIdentifique as duas afirmações falsas","",""));
         exercise.setTitle("Pergunta Pt 2.2");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null,multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -571,7 +571,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("Considere as afirmações seguintes sobre o soneto. \r\nIdentifique as duas afirmações falsas","",""));
         exercise2.setTitle("Pergunta Pt 2.2");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
         exercise2.setRubric(exerciseRubric.clone());
         exercise2.setSolution(new ExerciseSolution(null,multipleChoiceData.clone()));
@@ -612,7 +612,7 @@ public class SeedService implements ISeedService{
                 "Na segunda quadra, o sujeito poético pretende enfatizar","",""));
         exercise.setTitle("Pergunta Pt 2.3");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -622,7 +622,7 @@ public class SeedService implements ISeedService{
                 "Na segunda quadra, o sujeito poético pretende enfatizar","",""));
         exercise2.setTitle("Pergunta Pt 2.3");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -679,7 +679,7 @@ public class SeedService implements ISeedService{
                 "•  uma conclusão adequada ao desenvolvimento do texto.","",""));
         exercise.setTitle("Pergunta Pt 3.1");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
@@ -692,7 +692,7 @@ public class SeedService implements ISeedService{
                 "•  uma conclusão adequada ao desenvolvimento do texto.","",""));
         exercise2.setTitle("Pergunta Pt 3.1");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -735,7 +735,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement("Segundo o autor do texto, olhar o céu estrelado constitui uma experiência","",""));
         exercise.setTitle("Pergunta Pt 4.1");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -744,7 +744,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement(texto+"\nSegundo o autor do texto, olhar o céu estrelado constitui uma experiência","",""));
         exercise2.setTitle("Pergunta Pt 4.1");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -791,7 +791,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement("Através da expressão «estranho e paradoxal» (linha 7), depreende-se que","",""));
         exercise.setTitle("Pergunta Pt 4.2");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -800,7 +800,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("Através da expressão «estranho e paradoxal» (linha 7), depreende-se que","",""));
         exercise2.setTitle("Pergunta Pt 4.2");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -843,7 +843,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement(texto+"\nDe acordo com o autor do texto, os estudos levados a cabo sobre o Universo permitiram","",""));
         exercise.setTitle("Pergunta Pt 4.3");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -853,7 +853,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("De acordo com o autor do texto, os estudos levados a cabo sobre o Universo permitiram","",""));
         exercise2.setTitle("Pergunta Pt 4.3");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -896,7 +896,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement(texto+"\nA fim de pôr em destaque a intrínseca e inquebrável relação do homem com o Universo, o autor recorre a\r","",""));
         exercise.setTitle("Pergunta Pt 4.4");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -905,7 +905,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("A fim de pôr em destaque a intrínseca e inquebrável relação do homem com o Universo, o autor recorre a\r","",""));
         exercise2.setTitle("Pergunta Pt 4.4");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -948,7 +948,7 @@ public class SeedService implements ISeedService{
                 "abaixo apresentadas, exceto em","",""));
         exercise.setTitle("Pergunta Pt 4.5");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -958,7 +958,7 @@ public class SeedService implements ISeedService{
                 "abaixo apresentadas, exceto em","",""));
         exercise2.setTitle("Pergunta Pt 4.5");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -1001,7 +1001,7 @@ public class SeedService implements ISeedService{
                 "presente uma oração subordinada substantiva completiva em","",""));
         exercise.setTitle("Pergunta Pt 4.6");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -1011,7 +1011,7 @@ public class SeedService implements ISeedService{
                 "presente uma oração subordinada substantiva completiva em","",""));
         exercise2.setTitle("Pergunta Pt 4.6");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -1055,7 +1055,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement(texto+"\nA única expressão em que estão presentes exemplos dos três tipos de dêixis (temporal, espacial e pessoal) é","",""));
         exercise.setTitle("Pergunta Pt 4.7");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -1064,7 +1064,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("A única expressão em que estão presentes exemplos dos três tipos de dêixis (temporal, espacial e pessoal) é","",""));
         exercise2.setTitle("Pergunta Pt 4.7");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -1094,7 +1094,7 @@ public class SeedService implements ISeedService{
     //            "evocada no poema. Fundamente a sua resposta com transcrições pertinentes.","",""));
     //    exercise.setTitle("Pergunta 4");
     //    exercise.setSpecialist(new Specialist(specialistId));
-    //    exercise.setCourse(new Course(courseId));
+    //    
     //    exercise.setVisibility(Visibility.PUBLIC);
     //    return exercisesService.createExercise(exercise,null,exerciseRubric, tags.stream().map(Tag::getId).toList());
     //}
@@ -1195,7 +1195,7 @@ public class SeedService implements ISeedService{
                 "− utilize um discurso valorativo (juízo de valor explícito ou implícito).","",""));
         exercise.setTitle("Pergunta Pt 5.1");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
 
@@ -1210,7 +1210,7 @@ public class SeedService implements ISeedService{
                 "− utilize um discurso valorativo (juízo de valor explícito ou implícito).","",""));
         exercise2.setTitle("Pergunta Pt 5.1");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -1454,7 +1454,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement("Responda ás seguintes questões de verdadeiro ou falso, justificando as falsas","",""));
         exercise.setTitle("Pergunta Hist 1.1");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,new ExerciseSolution(null, multipleChoiceData.clone()),exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -1463,7 +1463,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("Responda ás seguintes questões de verdadeiro ou falso, justificando as falsas","",""));
         exercise2.setTitle("Pergunta Hist 1.1");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
 
         exercise2.setRubric(exerciseRubric.clone());
@@ -1491,7 +1491,7 @@ public class SeedService implements ISeedService{
         exercise.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
         exercise.setTitle("Pergunta Hist 1.2");
         exercise.setSpecialist(new Specialist(specialistId));
-        exercise.setCourse(new Course(courseId));
+        
         exercise.setVisibility(Visibility.PUBLIC);
 
         exercisesService.createExercise(exercise,null,exerciseRubric.clone(), tags.stream().map(Tag::getId).toList());
@@ -1500,7 +1500,7 @@ public class SeedService implements ISeedService{
         exercise2.setStatement(new ExerciseStatement("D.Sebastião I de Portugal, morreu em qual batalha?","",""));
         exercise2.setTitle("Pergunta Hist 1.2");
         exercise2.setSpecialist(new Specialist(specialistId));
-        exercise2.setCourse(new Course(courseId));
+        
         exercise2.setVisibility(Visibility.PUBLIC);
         exercise2.setRubric(exerciseRubric.clone());
         exercise2.setTags(new HashSet<>(tags));
