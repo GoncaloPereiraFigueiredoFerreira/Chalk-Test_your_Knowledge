@@ -29,7 +29,7 @@ export function Settings() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-white dark:bg-black">
+    <div className="h-screen overflow-auto bg-white dark:bg-slate-900">
       <div className=" h-screen sm:mx-10 md:mx-26 lg:mx-36 px-4 pt-7 ">
         <div className="flex h-full">
           <div

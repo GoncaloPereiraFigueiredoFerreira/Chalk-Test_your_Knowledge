@@ -410,6 +410,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   theme={{
                     base: "text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-slate-500 inline-flex px-4 py-2 w-full text-sm group",
                   }}
+                  onClick={() => navigate("subscription")}
                 >
                   <MdStars className="size-6 group-slate-icon" />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>
@@ -422,6 +423,7 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
                   theme={{
                     base: "text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-slate-500 inline-flex px-4 py-2 w-full text-sm group",
                   }}
+                  onClick={() => navigate("help")}
                 >
                   <IoHelpOutline className="size-6 group-slate-icon" />
                   <span className={`${isOpen ? "" : "hidden"} ml-2`}>
