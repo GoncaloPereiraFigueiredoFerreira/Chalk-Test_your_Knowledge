@@ -21,9 +21,9 @@ export function FilterByTagsSearchBar({
   return (
     <>
       <div
-        className={
-          "flex flex-col w-full items-center " + noOutterPadding ?? "py-8"
-        }
+        className={`${
+          noOutterPadding !== undefined ? "" : "py-8"
+        } flex flex-col w-full items-center`}
       >
         <div className="flex w-full max-w-xl">
           <button
