@@ -374,14 +374,19 @@ export function ListTests({
         tests.map((test: any) => {
           promises.push(
             contactBACK(
-              "tests/" + test.id + "/resolutions/" + user.user!.id + "/last",
+              "tests/" + test.id + "/resolutions/" + user.user!.id + "/count",
               "GET"
-            ).then((exam) => {
-              return exam && exam.status === "REVISED"
-                ? exam.totalPoints
-                : undefined;
-            })
-          );
+            ).then((any) => {
+              if(any){
+                contactBACK(
+                  "tests/" + test.id + "/resolutions/" + user.user!.id + "/count",
+                  "GET"
+                ).then((exam) => {
+                  return exam && exam.status === "REVISED"
+                    ? exam.totalPoints
+                    : undefined;})
+                    }else return undefined;
+            }));
         });
         Promise.all(promises).then((results) => {
           tests.map((teste: any, index: number) => {
