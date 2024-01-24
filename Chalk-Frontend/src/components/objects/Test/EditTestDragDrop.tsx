@@ -86,7 +86,7 @@ export function EditTestDragDrop({
                 testState.test.publishDate !== null &&
                 testState.test.publishDate !== ""
               }
-              className="py-2 px-4 items-center text-base rounded-lg font-medium btn-base-color"
+              className="py-2 px-4 items-center text-base rounded-lg font-medium btn-base-color  transition-all duration-75 ease-in-out active:scale-90"
             >
               {testState.test.publishDate !== null &&
               testState.test.publishDate !== "" ? (
@@ -102,7 +102,7 @@ export function EditTestDragDrop({
         <div className="flex items-center justify-between">
           <strong className="text-xl">Informações Gerais do Teste:</strong>
           <button
-            className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group"
+            className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group  transition-all duration-75 ease-in-out active:scale-90"
             onClick={() => {
               setSelectedMenu("edit-test-info");
             }}
@@ -168,7 +168,7 @@ export function EditTestDragDrop({
           <div className="flex items-center justify-between">
             <strong className="text-xl">Conclusão</strong>
             <button
-              className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group"
+              className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group  transition-all duration-75 ease-in-out active:scale-90"
               onClick={() => {
                 setSelectedMenu("edit-test-info");
               }}

@@ -57,44 +57,41 @@ export function TestPage() {
           )}
         </div>
         <div className="flex self-start gap-4 px-8">
-          <div className="flex gap-4">
-            {kindOfTest === "Private" ? (
-              <button
-                onClick={() => setKindOfTest("Public")}
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
-              >
-                Testes públicos
-              </button>
-            ) : (
-              <button
-                onClick={() => setKindOfTest("Private")}
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
-              >
-                {user.user?.role !== UserRole.STUDENT
-                  ? "Os meus testes"
-                  : "Testes de Autoavaliação"}
-              </button>
-            )}
-          </div>
-          <div className="flex gap-4">
-            {view === ViewType.GRID ? (
-              <button
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
-                onClick={() => setViewType(ViewType.LIST)}
-              >
-                <FaListUl className="size-5 scale-90" />
-                <p>Lista</p>
-              </button>
-            ) : (
-              <button
-                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
-                onClick={() => setViewType(ViewType.GRID)}
-              >
-                <HiViewGrid className="size-5 scale-110" />
-                <p>Grelha</p>
-              </button>
-            )}
-          </div>
+          {kindOfTest === "Private" ? (
+            <button
+              onClick={() => setKindOfTest("Public")}
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
+            >
+              Testes públicos
+            </button>
+          ) : (
+            <button
+              onClick={() => setKindOfTest("Private")}
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
+            >
+              {user.user?.role !== UserRole.STUDENT
+                ? "Os meus testes"
+                : "Testes de Autoavaliação"}
+            </button>
+          )}
+
+          {view === ViewType.GRID ? (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+              onClick={() => setViewType(ViewType.LIST)}
+            >
+              <FaListUl className="size-5 scale-90" />
+              <p>Lista</p>
+            </button>
+          ) : (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+              onClick={() => setViewType(ViewType.GRID)}
+            >
+              <HiViewGrid className="size-5 scale-110" />
+              <p>Grelha</p>
+            </button>
+          )}
         </div>
         <div className="px-4">
           <ListTests

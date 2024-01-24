@@ -136,20 +136,20 @@ export function Sidebar({ isOpen, toggle }: SidebarProps) {
               </Link>
             </li>
             <li>
+              <Link to={`groups/${selectedGroup.id}/avaliacoes`}>
+                <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
+                  <TbChartPieFilled className="size-6 group-slate-icon" />
+                  <span className={isOpen ? "" : "hidden"}>Avaliações</span>
+                </button>
+              </Link>
+            </li>
+            <li>
               <Link to={`groups/${selectedGroup.id}/testes`}>
                 <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
                   <MdPublic className="size-6 group-slate-icon" />
                   <span className={isOpen ? "" : "hidden"}>
                     Testes Partilhados
                   </span>
-                </button>
-              </Link>
-            </li>
-            <li>
-              <Link to={`groups/${selectedGroup.id}/avaliacoes`}>
-                <button className="sidebar-item text-black dark:text-white hover:bg-white hover:dark:bg-slate-500 group">
-                  <TbChartPieFilled className="size-6 group-slate-icon" />
-                  <span className={isOpen ? "" : "hidden"}>Avaliações</span>
                 </button>
               </Link>
             </li>
