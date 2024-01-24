@@ -1,14 +1,16 @@
 import { useState, useContext, useEffect } from "react";
-
+import { ViewType } from "../../objects/ListTests/ListTest.tsx";
 import { useNavigate } from "react-router-dom";
 import { Course } from "../../../UserContext.tsx";
 import { APIContext } from "../../../APIContext.tsx";
+import { FaListUl } from "react-icons/fa";
+import { HiViewGrid } from "react-icons/hi";
 
 export function GroupsPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const navigate = useNavigate();
   const { contactBACK } = useContext(APIContext);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [view, setViewType] = useState(ViewType.GRID);
 
   useEffect(() => {
     contactBACK(
@@ -34,19 +36,33 @@ export function GroupsPage() {
             Todos os grupos
           </label>
         </div>
-        <button
-          className=" px-2 w-fit float-right bg-[#acacff] hover:bg-[#5555ce] dark:bg-gray-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black bg-[#acacff] rounded-md p-1"
-          onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
-        >
-          Switch to {viewMode === "grid" ? "Row" : "Grid"} View
-        </button>
+
+        <div className="flex gap-4">
+          {view === ViewType.GRID ? (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+              onClick={() => setViewType(ViewType.LIST)}
+            >
+              <FaListUl className="size-5 scale-90" />
+              <p>Lista</p>
+            </button>
+          ) : (
+            <button
+              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90 ease-in-out"
+              onClick={() => setViewType(ViewType.GRID)}
+            >
+              <HiViewGrid className="size-5 scale-110" />
+              <p>Grelha</p>
+            </button>
+          )}
+        </div>
       </div>
 
       <div
         className={
-          viewMode === "grid"
-            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-10"
-            : "flex flex-col gap-4 px-10"
+          view === ViewType.GRID
+            ? "grid pt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-10"
+            : "flex pt-4 flex-col gap-4 px-10"
         }
       >
         {courses.map((item, index) => (
@@ -55,7 +71,7 @@ export function GroupsPage() {
             type="button"
             onClick={() => navigate(`${item.id}/alunos`)}
           >
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className=" p-6 btn-base-color rounded-lg shadow-md">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 {item.name}
               </h2>
