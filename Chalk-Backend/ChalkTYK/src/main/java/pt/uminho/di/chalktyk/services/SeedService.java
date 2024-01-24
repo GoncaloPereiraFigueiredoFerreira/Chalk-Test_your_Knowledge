@@ -178,7 +178,7 @@ public class SeedService implements ISeedService{
     private OpenAnswerRubric createOARubric(){
         OAStandard oaStandardMax = new OAStandard("Trató de resolver","Aquí todos pasan la prueba",100.0F);
         OAStandard oaStandardMin = new OAStandard("Ni siquiera intentó resolver","",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandardMin,oaStandardMax);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandardMax,oaStandardMin);
         return new OpenAnswerRubric(List.of(new OACriterion("Há intentado", 100f, oaStandards)));
     }
 
@@ -206,12 +206,12 @@ public class SeedService implements ISeedService{
         //ExerciseSolution exerciseSolution = new ExerciseSolution(null,openAnswerData);
 
         //Rubric
-        OAStandard oaStandard100 = new OAStandard("5","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar\r\n" + //
+        OAStandard oaStandard100 = new OAStandard("4","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar\r\n" + //
                 "reagem à impossibilidade de usarem a mão esquerda, abordando, adequadamente, os\r\n" + //
                 "dois tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias",100.0F);
-        OAStandard oaStandard80 = new OAStandard("4","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar\r\n" + //
+        OAStandard oaStandard80 = new OAStandard("3","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar\r\n" + //
                 "reagem à impossibilidade de usarem a mão esquerda, abordando, adequadamente, os\r\n" + //
                 "dois tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -222,7 +222,7 @@ public class SeedService implements ISeedService{
                 "adequadamente e outro com pequenas imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias",80.0F);
-        OAStandard oaStandard60 = new OAStandard("3","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem\r\n" + //
+        OAStandard oaStandard60 = new OAStandard("2","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem\r\n" + //
                 "à impossibilidade de usarem a mão esquerda, abordando os dois tópicos de resposta, um\r\n" + //
                 "adequadamente e outro com pequenas imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -239,7 +239,7 @@ public class SeedService implements ISeedService{
                 "dos tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias",60.0F);
-        OAStandard oaStandard40 = new OAStandard("2","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem\r\n" + //
+        OAStandard oaStandard40 = new OAStandard("1","Compara, com base em dois aspetos distintos, o modo como Marcenda e Baltasar reagem\r\n" + //
                 "à impossibilidade de usarem a mão esquerda, abordando os dois tópicos de resposta,\r\n" + //
                 "ambos com pequenas imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -250,13 +250,8 @@ public class SeedService implements ISeedService{
                 "dos tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias.",40.0F);
-        OAStandard oaStandard20 = new OAStandard("1","Compara, com base num aspeto, o modo como Marcenda e Baltasar reagem à\r\n" + //
-                "impossibilidade de usarem a mão esquerda, abordando, com pequenas imprecisões e/ou\r\n" + //
-                "omissões, apenas um dos tópicos de resposta.\r\n" + //
-                "Utiliza mecanismos de coesão textual com eventual ocorrência de falhas que podem\r\n" + //
-                "comprometer a progressão e o encadeamento das ideias.",20.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard100,oaStandard80,oaStandard60,oaStandard40,oaStandard0);
         ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
 
         //Exercise
@@ -288,11 +283,11 @@ public class SeedService implements ISeedService{
         //ExerciseSolution exerciseSolution = new ExerciseSolution(null,openAnswerData);
 
         //Rubric
-        OAStandard oaStandard100 = new OAStandard("5","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do hotel,\r\n" + //
+        OAStandard oaStandard100 = new OAStandard("4","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do hotel,\r\n" + //
                 "abordando, adequadamente, os dois tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias.",100.0F);
-        OAStandard oaStandard80 = new OAStandard("4","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do hotel,\r\n" + //
+        OAStandard oaStandard80 = new OAStandard("3","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do hotel,\r\n" + //
                 "abordando, adequadamente, os dois tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias.\r\n" + //
@@ -302,7 +297,7 @@ public class SeedService implements ISeedService{
                 "imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias",80.0F);
-        OAStandard oaStandard60 = new OAStandard("3","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do\r\n" + //
+        OAStandard oaStandard60 = new OAStandard("2","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do\r\n" + //
                 "hotel, abordando os dois tópicos de resposta, um adequadamente e outro com pequenas\r\n" + //
                 "imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -317,7 +312,7 @@ public class SeedService implements ISeedService{
                 "abordando, adequadamente, apenas um dos tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias.",60.0F);
-        OAStandard oaStandard40 = new OAStandard("2","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do hotel,\r\n" + //
+        OAStandard oaStandard40 = new OAStandard("1","Apresenta duas evidências que comprovam que pai e filha são clientes habituais do hotel,\r\n" + //
                 "abordando os dois tópicos de resposta, ambos com pequenas imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias.\r\n" + //
@@ -326,13 +321,8 @@ public class SeedService implements ISeedService{
                 "abordando, adequadamente, apenas um dos tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias",40.0F);
-        OAStandard oaStandard20 = new OAStandard("1","Apresenta uma evidência que comprova que pai e filha são clientes habituais do hotel,\r\n" + //
-                "abordando, com pequenas imprecisões e/ou omissões, apenas um dos tópicos de\r\n" + //
-                "resposta.\r\n" + //
-                "Utiliza mecanismos de coesão textual com eventual ocorrência de falhas que podem\r\n" + //
-                "comprometer a progressão e o encadeamento das ideias.",20.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard100,oaStandard80,oaStandard60,oaStandard40,oaStandard0);
         ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
 
         //Exercise
@@ -365,11 +355,11 @@ public class SeedService implements ISeedService{
         //ExerciseSolution exerciseSolution = new ExerciseSolution(null,openAnswerData);
 
         //Rubric
-        OAStandard oaStandard100 = new OAStandard("5","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
+        OAStandard oaStandard100 = new OAStandard("4","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
                 "entre Baltasar e Blimunda, abordando, adequadamente, os dois tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias.",100.0F);
-        OAStandard oaStandard80 = new OAStandard("4","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
+        OAStandard oaStandard80 = new OAStandard("3","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
                 "entre Baltasar e Blimunda, abordando, adequadamente, os dois tópicos de resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias.\r\n" + //
@@ -379,7 +369,7 @@ public class SeedService implements ISeedService{
                 "outro com pequenas imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias",80.0F);
-        OAStandard oaStandard60 = new OAStandard("3","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
+        OAStandard oaStandard60 = new OAStandard("2","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
                 "entre Baltasar e Blimunda, abordando os dois tópicos de resposta, um adequadamente e\r\n" + //
                 "outro com pequenas imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -396,7 +386,7 @@ public class SeedService implements ISeedService{
                 "resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias.",60.0F);
-        OAStandard oaStandard40 = new OAStandard("2","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
+        OAStandard oaStandard40 = new OAStandard("1","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
                 "entre Baltasar e Blimunda, abordando os dois tópicos de resposta, ambos com pequenas\r\n" + //
                 "imprecisões e/ou omissões.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -407,13 +397,8 @@ public class SeedService implements ISeedService{
                 "resposta.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias.",40.0F);
-        OAStandard oaStandard20 = new OAStandard("1","Explica em que medida as expressões transcritas evidenciam a relação que se estabelece\r\n" + //
-                "entre Baltasar e Blimunda, abordando, com pequenas imprecisões e/ou omissões, apenas\r\n" + //
-                "um dos tópicos de resposta.\r\n" + //
-                "Utiliza mecanismos de coesão textual com eventual ocorrência de falhas que podem\r\n" + //
-                "comprometer a progressão e o encadeamento das ideias.",20.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard100,oaStandard80,oaStandard60,oaStandard40,oaStandard0);
         ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
 
         //Exercise
@@ -448,12 +433,12 @@ public class SeedService implements ISeedService{
         //ExerciseSolution exerciseSolution = new ExerciseSolution(null,openAnswerData);
 
         //Rubric
-        OAStandard oaStandard100 = new OAStandard("5","Explicita, adequadamente, com base em dois aspetos significativos, o modo como o\r\n" + //
+        OAStandard oaStandard100 = new OAStandard("4","Explicita, adequadamente, com base em dois aspetos significativos, o modo como o\r\n" + //
                 "sujeito poético reage à figura feminina, fundamentando a resposta com transcrições\r\n" + //
                 "pertinentes em ambos os casos.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias.",100.0F);
-        OAStandard oaStandard80 = new OAStandard("4","Explicita, adequadamente, com base em dois aspetos significativos, o modo como o\r\n" + //
+        OAStandard oaStandard80 = new OAStandard("3","Explicita, adequadamente, com base em dois aspetos significativos, o modo como o\r\n" + //
                 "sujeito poético reage à figura feminina, fundamentando a resposta com transcrições\r\n" + //
                 "pertinentes em ambos os casos.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -464,7 +449,7 @@ public class SeedService implements ISeedService{
                 "fundamentando a resposta com transcrições pertinentes em ambos os casos.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias.",80.0F);
-        OAStandard oaStandard60 = new OAStandard("3","Explicita, com base em dois aspetos significativos, o modo como o sujeito poético reage\r\n" + //
+        OAStandard oaStandard60 = new OAStandard("2","Explicita, com base em dois aspetos significativos, o modo como o sujeito poético reage\r\n" + //
                 "à figura feminina, um adequadamente e outro com pequenas imprecisões e/ou omissões,\r\n" + //
                 "fundamentando a resposta com transcrições pertinentes em ambos os casos.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -481,7 +466,7 @@ public class SeedService implements ISeedService{
                 "pertinente.\r\n" + //
                 "Utiliza mecanismos de coesão textual que, apesar da eventual ocorrência de falhas,\r\n" + //
                 "asseguram a progressão e o encadeamento das ideias",60.0F);
-        OAStandard oaStandard40 = new OAStandard("2","Explicita, com base em dois aspetos significativos, o modo como o sujeito poético reage\r\n" + //
+        OAStandard oaStandard40 = new OAStandard("1","Explicita, com base em dois aspetos significativos, o modo como o sujeito poético reage\r\n" + //
                 "à figura feminina, ambos com pequenas imprecisões e/ou omissões, fundamentando a\r\n" + //
                 "resposta com transcrições pertinentes em ambos os casos.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
@@ -492,13 +477,8 @@ public class SeedService implements ISeedService{
                 "pertinente.\r\n" + //
                 "Utiliza mecanismos de coesão textual com falhas que comprometem a progressão e o\r\n" + //
                 "encadeamento das ideias.",40.0F);
-        OAStandard oaStandard20 = new OAStandard("1","Explicita, com pequenas imprecisões e/ou omissões, com base num aspeto significativo,\r\n" + //
-                "o modo como o sujeito poético reage à figura feminina, fundamentando a resposta com\r\n" + //
-                "uma transcrição pertinente.\r\n" + //
-                "Utiliza mecanismos de coesão textual com eventual ocorrência de falhas que podem\r\n" + //
-                "comprometer a progressão e o encadeamento das ideias.",20.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard100,oaStandard80,oaStandard60,oaStandard40,oaStandard0);
         ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
 
         //Exercise
@@ -637,22 +617,19 @@ public class SeedService implements ISeedService{
         //ExerciseSolution exerciseSolution = new ExerciseSolution(null,openAnswerData);
 
         //Rubric
-        OAStandard oaStandard80 = new OAStandard("4","Explicita, adequadamente, um aspeto em que os poemas se aproximam e um aspeto em\r\n" + //
+        OAStandard oaStandard80 = new OAStandard("3","Explicita, adequadamente, um aspeto em que os poemas se aproximam e um aspeto em\r\n" + //
                 "que os poemas se distinguem quanto às ideias expressas.",100.0F);
-        OAStandard oaStandard60 = new OAStandard("3","Explicita um aspeto em que os poemas se aproximam e um aspeto em que os poemas se\r\n" + //
+        OAStandard oaStandard60 = new OAStandard("2","Explicita um aspeto em que os poemas se aproximam e um aspeto em que os poemas se\r\n" + //
                 "distinguem quanto às ideias expressas, adequadamente num dos casos e com pequenas\r\n" + //
                 "imprecisões e/ou omissões no outro caso.",75.0F);
-        OAStandard oaStandard40 = new OAStandard("2","Explicita um aspeto em que os poemas se aproximam e um aspeto em que os poemas\r\n" + //
+        OAStandard oaStandard40 = new OAStandard("1","Explicita um aspeto em que os poemas se aproximam e um aspeto em que os poemas\r\n" + //
                 "se distinguem quanto às ideias expressas, com pequenas imprecisões e/ou omissões em\r\n" + //
                 "ambos os casos.\r\n" + //
                 "OU\r\n" + //
                 "Explicita, adequadamente, apenas um aspeto em que os poemas se aproximam ou\r\n" + //
                 "apenas um aspeto em que os poemas se distinguem quanto às ideias expressas.",50.0F);
-        OAStandard oaStandard20 = new OAStandard("1","Explicita, com pequenas imprecisões e/ou omissões, apenas um aspeto em que os\r\n" + //
-                "poemas se aproximam ou apenas um aspeto em que os poemas se distinguem quanto\r\n" + //
-                "às ideias expressas.",25.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard80,oaStandard60,oaStandard40,oaStandard0);
 
 
 
@@ -665,7 +642,7 @@ public class SeedService implements ISeedService{
                 "progressão e o encadeamento das ideias.",66.6F);
         OAStandard oaStandardDiscurso_1 = new OAStandard("1","Escreve um texto insuficientemente estruturado e/ou utiliza mecanismos de coesão textual\r\n" + //
                 "com falhas que comprometem a progressão e o encadeamento das ideias.",33.3F);
-        List<OAStandard> oaStandards2 = Arrays.asList(oaStandardDiscurso_1,oaStandardDiscurso_2,oaStandardDiscurso_3);
+        List<OAStandard> oaStandards2 = Arrays.asList(oaStandardDiscurso_3,oaStandardDiscurso_2,oaStandardDiscurso_1);
 
         ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Aspetos de conteúdo", 72.27f, oaStandards),new OACriterion("Descritores de desempenho",27.73f,oaStandards2)));
 
@@ -1134,7 +1111,7 @@ public class SeedService implements ISeedService{
                 "Escreve um texto em que as marcas do género/formato solicitado se misturam, sem\r\n" + //
                 "critério nem intencionalidade, com as de outros géneros/formatos.",30.0F);
 
-        List<OAStandard> oaStandards = Arrays.asList(oaFormato_textual3,oaFormato_textual5,oaFormato_textual8,oaFormato_textual10);
+        List<OAStandard> oaStandards = Arrays.asList(oaFormato_textual10,oaFormato_textual8,oaFormato_textual5,oaFormato_textual3);
 
 
         OAStandard oaTema10 = new OAStandard("4","Trata o tema proposto sem desvios e escreve um texto com eficácia argumentativa,\r\n" + //
@@ -1157,7 +1134,7 @@ public class SeedService implements ISeedService{
         OAStandard oaTema3 = new OAStandard("1","Trata o tema proposto com desvios significativos e escreve um texto com reduzida\r\n" + //
                 "eficácia argumentativa, mobilizando muito pouca informação pertinente.",30.0F);
 
-        List<OAStandard> oaStandards2 = Arrays.asList(oaTema3,oaTema5,oaTema8,oaTema10);
+        List<OAStandard> oaStandards2 = Arrays.asList(oaTema10,oaTema8,oaTema5,oaTema3);
 
 
         OAStandard oaOrganizacao10 = new OAStandard("4","Escreve um texto bem organizado, evidenciando um bom domínio dos mecanismos de\r\n" + //
@@ -1180,7 +1157,7 @@ public class SeedService implements ISeedService{
         OAStandard oaOrganizacao3 = new OAStandard("1","Escreve um texto com uma organização pouco satisfatória, recorrendo a insuficientes\r\n" + //
                 "mecanismos de coesão ou mobilizando-os de forma inadequada.",30.0F);
 
-        List<OAStandard> oaStandards3 = Arrays.asList(oaOrganizacao3,oaOrganizacao5,oaOrganizacao8,oaOrganizacao10);
+        List<OAStandard> oaStandards3 = Arrays.asList(oaOrganizacao10,oaOrganizacao8,oaOrganizacao5,oaOrganizacao3);
 
         ExerciseRubric exerciseRubric = new OpenAnswerRubric(List.of(new OACriterion("Género/Formato Textual", 100.0f/3, oaStandards),new OACriterion("Nivel de desempenho", 100.0f/3, oaStandards2),new OACriterion("Nivel de desempenho", 100.0f/3, oaStandards3)));
         //Exercise
@@ -1474,13 +1451,12 @@ public class SeedService implements ISeedService{
 
     private Exercise createChatExercise_History_1_2(String specialistId, String courseId, List<Tag> tags) throws BadInputException {
         //Rubric
-        OAStandard oaStandard100 = new OAStandard("5","Acertou em todas as perguntas.",100.0F);
-        OAStandard oaStandard80 = new OAStandard("4","Acertou em quatro perguntas.",80.0F);
-        OAStandard oaStandard60 = new OAStandard("3","Acertou em três perguntas.",60.0F);
-        OAStandard oaStandard40 = new OAStandard("2","Acertou em duas perguntas.",40.0F);
-        OAStandard oaStandard20 = new OAStandard("1","Acertou em uma pergunta.",20.0F);
+        OAStandard oaStandard100 = new OAStandard("4","Acertou em todas as perguntas.",100.0F);
+        OAStandard oaStandard80 = new OAStandard("3","Acertou em quatro perguntas.",80.0F);
+        OAStandard oaStandard60 = new OAStandard("2","Acertou em três perguntas.",60.0F);
+        OAStandard oaStandard40 = new OAStandard("1","Acertou em duas perguntas.",40.0F);
         OAStandard oaStandard0 = new OAStandard("0","Se nenhum critério se aplicar",0.0F);
-        List<OAStandard> oaStandards = Arrays.asList(oaStandard0,oaStandard20,oaStandard40,oaStandard60,oaStandard80,oaStandard100);
+        List<OAStandard> oaStandards = Arrays.asList(oaStandard100,oaStandard80,oaStandard60,oaStandard40,oaStandard0);
 
         ExerciseRubric exerciseRubric = new ChatExerciseRubric(null,List.of(new OACriterion("Nivel de desempenho", 100f, oaStandards)));
         List<String> tagsAI = new ArrayList<>(tags.stream().map(Tag::getName).toList());
