@@ -1,13 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { SearchIcon } from "../../objects/SVGImages/SVGImages";
 import { APIContext } from "../../../APIContext.tsx";
-import { UserContext, UserRole } from "../../../UserContext.tsx";
 import { IoSearch } from "react-icons/io5";
 import { FaListUl } from "react-icons/fa";
 import { HiViewGrid } from "react-icons/hi";
-import { ViewType } from "../../objects/ListTests/ListTest.tsx";
 
 interface Test {
   id: string;
@@ -22,7 +19,6 @@ export function AvaliacoesPage() {
   const { contactBACK } = useContext(APIContext);
   const [examList, setExamList] = useState<TestList>([]);
   const { id } = useParams();
-  const { user } = useContext(UserContext);
 
   useEffect(() => {
     // load different test
@@ -45,7 +41,7 @@ export function AvaliacoesPage() {
 
   return (
     <div className="flex flex-col w-full overflow-auto">
-      <div className="flex w-full justify-around px-4 gap-16">
+      <div className="flex w-full px-8 py-4 gap-4 justify-center">
         <div className="relative w-1/2 justify-center">
           <div className="absolute h-full w-full flex justify-between items-center pl-4 pr-1.5 pointer-events-none">
             <IoSearch className="size-5 text-slate-600 dark:text-slate-400" />

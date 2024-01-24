@@ -10,6 +10,7 @@ export function FilterByTagsSearchBar({
   setSearch,
   setOpenModal,
   tagsList,
+  noOutterPadding,
 }: any) {
   const [searchText, setSearchText] = useState("");
 
@@ -20,7 +21,11 @@ export function FilterByTagsSearchBar({
 
   return (
     <>
-      <div className="flex flex-col w-full items-center py-8 ">
+      <div
+        className={
+          "flex flex-col w-full items-center " + noOutterPadding ?? "py-8"
+        }
+      >
         <div className="flex w-full max-w-xl">
           <button
             onClick={() => setOpenModal(true)}

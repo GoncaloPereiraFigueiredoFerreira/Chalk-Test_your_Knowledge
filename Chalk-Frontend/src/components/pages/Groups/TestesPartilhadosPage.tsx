@@ -118,30 +118,18 @@ export function TestesPartilhadosPage() {
   }, [testID]);
 
   return (
-    <div className="w-full h-screen py-24 overflow-auto bg-white dark:bg-black">
-      <div className=" w-full gap-4 min-h-max px-16 pb-8">
-        <div className="flex w-full justify-between px-4 pb-6 mb-16 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-          <div className="">
-            <div className="relative w-full justify-center ">
-              <FilterByTagsSearchBar
-                setSearch={setSearch}
-                setOpenModal={setOpenModal}
-                tagsList={tagsList}
-              ></FilterByTagsSearchBar>
-              <TagsFilterModal
-                setTagsList={setTagsList}
-                openModal={openModal}
-                setOpenModal={setOpenModal}
-                header={"Selecione as tags que pretende ver"}
-              ></TagsFilterModal>
-              <ListTestsModal
-                modalState={testsModal}
-                closeModal={addTest}
-              ></ListTestsModal>
-            </div>
+    <div className="flex flex-col w-full overflow-auto">
+      <div className="flex w-full px-8 py-4 justify-center">
+        <div className="flex gap-4">
+          <div className="flex max-w-2xl w-full">
+            <FilterByTagsSearchBar
+              setSearch={setSearch}
+              setOpenModal={setOpenModal}
+              tagsList={tagsList}
+              noOutterPadding={false}
+            ></FilterByTagsSearchBar>
           </div>
-
-          <div className="flex  items-center">
+          <div className="flex h-12 gap-4 ">
             {user.user?.role === UserRole.SPECIALIST && (
               <button
                 className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
@@ -171,15 +159,25 @@ export function TestesPartilhadosPage() {
             )}
           </div>
         </div>
-        <ListTests
-          view={viewMode}
-          courseId={id}
-          visibilityType={"COURSE"}
-          searchKey={searchKey}
-          tagsList={tagsList}
-          differentRoute={""}
-        ></ListTests>
       </div>
+      <ListTests
+        view={viewMode}
+        courseId={id}
+        visibilityType={"COURSE"}
+        searchKey={searchKey}
+        tagsList={tagsList}
+        differentRoute={""}
+      ></ListTests>
+      <TagsFilterModal
+        setTagsList={setTagsList}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        header={"Selecione as tags que pretende ver"}
+      ></TagsFilterModal>
+      <ListTestsModal
+        modalState={testsModal}
+        closeModal={addTest}
+      ></ListTestsModal>
     </div>
   );
 }
