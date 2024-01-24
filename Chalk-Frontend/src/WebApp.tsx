@@ -10,7 +10,7 @@ export function WebApp() {
       <Sidebar isOpen={isOpen} toggle={toggle}></Sidebar>
       <div
         className={`z-10 h-full transition-all ${
-          isOpen ? "w-[calc(100vw-256px)] ml-64" : "w-[calc(100vw-64px)] ml-16"
+          isOpen ? "w-[calc(100vw-230px)] ml-64" : "w-[calc(100vw-50px)] ml-16"
         }`}
       >
         <Outlet />

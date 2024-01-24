@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Exercise,
   ExerciseComponent,
@@ -8,6 +8,7 @@ import {
 import { Test, ExerciseGroup } from "../../objects/Test/Test";
 import { TestResolution } from "./Preview/PreviewTest";
 import { textToHTML } from "../../interactiveElements/TextareaBlock";
+import { UserContext } from "../../../UserContext";
 
 function renderExercise(
   exercise: Exercise,
@@ -160,6 +161,7 @@ export function TestPreview({
 }: TestPreviewProps) {
   const [selectedGroup, setSelectedGroup] = useState(-1);
   const [selectedEx, setSelectedEx] = useState(-1);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     if (showExId !== "") {
@@ -170,7 +172,6 @@ export function TestPreview({
       if (ex != selectedEx) setSelectedEx(ex);
     }
   }, [showExId]);
-
   return (
     <>
       <div className="flex flex-col px-4 pt-4 pb-8 gap-4">
@@ -179,9 +180,14 @@ export function TestPreview({
           <p>Instruções do Teste:</p>
           <p>{test.globalInstructions}</p>
           <p>Autor:</p>
-          <p> {test.author}</p>
+          <p>
+            {" "}
+            {test.specialistId === user.user?.id
+              ? user.user.email
+              : test.specialistId}
+          </p>
           <p>Data de criação do teste:</p>
-          <p>{test.creationDate}</p>
+          <p>{new Date(test.creationDate).toDateString()}</p>
           <p>Cotação máxima do teste:</p>
           <p>{test.globalPoints}</p>
         </div>

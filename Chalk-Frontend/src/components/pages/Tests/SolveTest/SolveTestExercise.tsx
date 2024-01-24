@@ -197,21 +197,23 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
         )}
 
         <ConfirmButton
-        confirmationMessage="Tem acerteza que deseja finalizar o teste?"
-        onConfirm={() => {
-          sendResolution().then(() => {
-            endTestResolution().then(() => {
-              endTest(true);
+          confirmationMessage="Tem a certeza que deseja finalizar o teste?"
+          onConfirm={() => {
+            sendResolution().then(() => {
+              endTestResolution().then(() => {
+                endTest(true);
+              });
             });
-          });
-        }}
-        button={<button
-          type="button"
-          className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
-        >
-          Finalizar Teste
-        </button>}>
-        </ConfirmButton>
+          }}
+          button={
+            <button
+              type="button"
+              className="p-4 rounded-lg bg-red-800 hover:scale-110 transition-all duration-100 ease-in-out text-white"
+            >
+              Finalizar Teste
+            </button>
+          }
+        ></ConfirmButton>
       </div>
     </>
   );

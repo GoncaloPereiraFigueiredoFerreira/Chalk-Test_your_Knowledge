@@ -9,6 +9,7 @@ import {
   TagsFilterModal,
 } from "../../../objects/Tags/TagsFilterModal.tsx";
 import { FilterByTagsSearchBar } from "../../../objects/Searchbar/FilterByTagsSearchBar.tsx";
+import { useNavigate } from "react-router-dom";
 
 export function TestPage() {
   const [view, setViewType] = useState(ViewType.GRID);
@@ -17,6 +18,7 @@ export function TestPage() {
   const { user } = useContext(UserContext);
   const [tagsList, setTagsList] = useState<TagsList>([]);
   const [openModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col w-full h-screen overflow-auto px-8 pb-8 bg-white dark:bg-slate-900 divide-slate-400 dark:divide-slate-600">
@@ -31,6 +33,7 @@ export function TestPage() {
         setOpenModal={setOpenModal}
         header={"Selecione as tags que pretende ver"}
       ></TagsFilterModal>
+
       <div className="flex flex-col w-full gap-4 min-h-max">
         <div className="flex w-full justify-between px-4 pb-6 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
           <label className="flex text-4xl text-slate-600 dark:text-white">
@@ -38,7 +41,9 @@ export function TestPage() {
           </label>
           <button
             className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
-            onClick={() => {}}
+            onClick={() => {
+              navigate("/webapp/create-test");
+            }}
           >
             Criar Teste
           </button>

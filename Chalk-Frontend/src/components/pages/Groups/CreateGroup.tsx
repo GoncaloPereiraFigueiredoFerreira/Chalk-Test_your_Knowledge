@@ -68,9 +68,6 @@ export function CreateGroupModal({ open, close }: any) {
           </div>
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={() => onCloseModal()}>Submeter Novo Grupo</Button>
-      </Modal.Footer>
     </Modal>
   );
 }

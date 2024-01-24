@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Pagination } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-import { UserRole, UserContext } from "../../../UserContext.tsx";
+import { UserRole, UserContext, User } from "../../../UserContext.tsx";
 import {
   CircularProgressbar,
   CircularProgressbarWithChildren,
@@ -18,13 +18,13 @@ import "./ListTest.css";
 function ShowTestList(
   test: TestPreview,
   index: number,
-  role: UserRole,
+  user: User,
   deleteTest: () => void,
   navigate: (url: string) => void
 ) {
   return (
     <>
-      {role == UserRole.STUDENT ? (
+      {user.role == UserRole.STUDENT ? (
         <div
           key={index}
           onClick={(e) => {
@@ -40,7 +40,8 @@ function ShowTestList(
               </h5>
 
               <p className="mb-1 font-normal text-slate-700 dark:text-slate-400">
-                <strong>Author:</strong> {test.specialistId}
+                <strong>Author:</strong>{" "}
+                {test.specialistId === user.id ? user.email : test.specialistId}
               </p>
             </div>
             <div className="flex flex-wrap gap-3 items-center mb-4 text-slate-700 dark:text-slate-400 w-80">
@@ -85,7 +86,8 @@ function ShowTestList(
                 {test.title}
               </h5>
               <p className="font-normal text-slate-700 dark:text-slate-400">
-                <strong>Author:</strong> {test.specialistId}
+                <strong>Author:</strong>
+                {test.specialistId === user.id ? user.email : test.specialistId}
               </p>
             </div>
             <div className="flex flex-wrap justify-start gap-2 items-center text-slate-700 dark:text-slate-200">
@@ -111,7 +113,7 @@ function ShowTestList(
                     onConfirm={() => {
                       deleteTest();
                     }}
-                    confirmationMessage="Tem acerteza que deseja apagar este Teste?"
+                    confirmationMessage="Tem a certeza que deseja apagar este Teste?"
                     button={
                       <button
                         type="button"
@@ -145,13 +147,13 @@ function ShowTestList(
 function ShowTestGrid(
   test: TestPreview,
   index: number,
-  role: UserRole,
+  user: User,
   deleteTest: () => void,
   navigate: (url: string) => void
 ) {
   return (
     <>
-      {role == UserRole.STUDENT ? (
+      {user.role == UserRole.STUDENT ? (
         <div
           key={index}
           onClick={(e) => {
@@ -190,7 +192,8 @@ function ShowTestGrid(
             </h5>
 
             <p className="mb-2  px-2 font-normal text-slate-700 dark:text-slate-400">
-              <strong>Author:</strong> {test.specialistId}
+              <strong>Author:</strong>
+              {test.specialistId === user.id ? user.email : test.specialistId}
             </p>
             <div className="flex flex-wrap gap-3 px-2 items-center mb-4 text-slate-700 dark:text-slate-400">
               <strong>Tags:</strong>
@@ -240,7 +243,10 @@ function ShowTestGrid(
               </p>
               <div className="flex flex-col px-2 gap-2">
                 <p className="font-normal text-slate-700 dark:text-slate-200">
-                  <strong>Author:</strong> {test.specialistId}
+                  <strong>Author:</strong>
+                  {test.specialistId === user.id
+                    ? user.email
+                    : test.specialistId}
                 </p>
                 <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
                   <strong>Tags:</strong>
@@ -267,7 +273,7 @@ function ShowTestGrid(
                     onConfirm={() => {
                       deleteTest();
                     }}
-                    confirmationMessage="Tem acerteza que deseja apagar este Teste?"
+                    confirmationMessage="Tem a certeza que deseja apagar este Teste?"
                     button={
                       <button
                         onClick={(e) => {
@@ -414,7 +420,7 @@ export function ListTests({
               return ShowTestGrid(
                 test,
                 index,
-                user.user!.role,
+                user.user!,
                 () => deleteTest(test.id),
                 navigate
               );
@@ -426,7 +432,7 @@ export function ListTests({
               return ShowTestList(
                 test,
                 index,
-                user.user!.role,
+                user.user!,
                 () => deleteTest(test.id),
                 navigate
               );

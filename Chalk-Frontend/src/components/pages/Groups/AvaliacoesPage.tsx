@@ -1,12 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  GridIcon,
-  ListIcon,
-  SearchIcon,
-} from "../../objects/SVGImages/SVGImages";
+import { SearchIcon } from "../../objects/SVGImages/SVGImages";
 import { APIContext } from "../../../APIContext.tsx";
+import { UserContext, UserRole } from "../../../UserContext.tsx";
 
 interface Test {
   id: string;
@@ -16,19 +13,20 @@ interface Test {
 type TestList = Test[];
 
 export function AvaliacoesPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "row">("grid");
   const [searchKey, setSearch] = useState("");
   const { contactBACK } = useContext(APIContext);
   const [examList, setExamList] = useState<TestList>([]);
   const { id } = useParams();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     // load different test
     contactBACK("tests", "GET", {
       page: "0",
       itemsPerPage: "20",
+      visibilityType: "",
+      specialistId: user.user?.role === UserRole.SPECIALIST ? user.user.id : "",
       courseId: id!,
-      visibilityType: "COURSE",
     }).then((page) => {
       const tests = page.items;
       setExamList(tests);
@@ -39,9 +37,6 @@ export function AvaliacoesPage() {
     item.title.toLowerCase().includes(searchKey.toLowerCase())
   );
 
-  const addEvaluation = () => {
-    //falta fazer
-  };
   const navigate = useNavigate();
 
   return (
@@ -62,24 +57,6 @@ export function AvaliacoesPage() {
                 required
               />
             </div>
-          </div>
-          <div className="flex  ">
-            <button
-              className=" items-center justify-center w-24 h-10 text-sm font-medium text-black focus:outline-none bg-gray-100 rounded-lg border border-gray-900 hover:bg-gray-500 hover:text-white focus:z-10   dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              onClick={addEvaluation}
-            >
-              Adicionar Avaliacao
-            </button>
-            <button
-              className="px-2 w-12"
-              onClick={() => setViewMode(viewMode === "grid" ? "row" : "grid")}
-            >
-              {viewMode === "grid" ? (
-                <ListIcon size="size-8" />
-              ) : (
-                <GridIcon size="size-8" />
-              )}
-            </button>
           </div>
         </div>
 

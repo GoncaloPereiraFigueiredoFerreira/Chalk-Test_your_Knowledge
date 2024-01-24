@@ -1,9 +1,11 @@
 import { useContext, useEffect, useRef } from "react";
 import { SolveTestContext } from "./SolveTest";
+import { UserContext } from "../../../../UserContext";
 
 export function SolveTestLanding(props: any) {
   const { test, nExercises } = useContext(SolveTestContext);
   const divRef = useRef<HTMLDivElement>(null);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     if (divRef.current)
@@ -18,7 +20,10 @@ export function SolveTestLanding(props: any) {
             <strong>Título:</strong> {test.title}
           </p>
           <p className="text-xl">
-            <strong>Autor:</strong> {test.author}
+            <strong>Autor:</strong>{" "}
+            {test.specialistId === user.user?.id
+              ? user.user.email
+              : test.specialistId}
           </p>
           <p className="text-xl">
             <strong>Data:</strong> {test.creationDate}

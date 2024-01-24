@@ -78,7 +78,7 @@ export function EditTestDragDrop({
               });
             });
           }}
-          confirmationMessage="Tem acerteza que deseja publicar o teste?"
+          confirmationMessage="Tem a certeza que deseja publicar o teste?"
           button={
             <button
               type="button"
@@ -113,7 +113,12 @@ export function EditTestDragDrop({
         </div>
         <div className="gridTestInfo text-md pl-4 gap-x-5 gap-y-3">
           <p>Autor: </p>
-          <p>{testState.test.author}</p>
+          <p>
+            {" "}
+            {testState.test.specialistId === user.user?.id
+              ? user.user.email
+              : testState.test.specialistId}
+          </p>
           <p>Visibilidade do Teste: </p>
           <p>{translateVisibilityToString(testState.test.visibility)}</p>
           <p>Cotação máxima do teste: </p>
