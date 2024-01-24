@@ -18,9 +18,9 @@ export function SolveTestLanding(props: any) {
           </p>
           <div className="text-xl flex space-x-4">
             <strong>Tópicos:</strong>{" "}
-            <p className=" px-1 mr-1 rounded-lg bg-gray-600 text-white dark:bg-[#dddddd] dark:text-black ">
-              RPCW
-            </p>
+            {test.tags.map((tag, key) => {
+              return <Tag key={key}>{tag.name}</Tag>;
+            })}
           </div>
         </div>
 

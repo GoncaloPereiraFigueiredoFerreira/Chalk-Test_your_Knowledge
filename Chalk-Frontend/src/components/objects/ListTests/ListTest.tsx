@@ -12,7 +12,7 @@ import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
 import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
-import { Tag } from "../../interactiveElements/tag.tsx";
+import { Tag } from "../../interactiveElements/Tag.tsx";
 import "./ListTest.css";
 
 function ShowTestList(

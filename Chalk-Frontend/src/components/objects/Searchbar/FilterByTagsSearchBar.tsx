@@ -4,7 +4,7 @@ import { IoSearch } from "react-icons/io5";
 import { FaFilter } from "react-icons/fa";
 import "./Searchbar.css";
 import "../../interactiveElements/DropdownBlock.css";
-import { Tag } from "../../interactiveElements/tag";
+import { Tag } from "../../interactiveElements/Tag";
 
 export function FilterByTagsSearchBar({
   setSearch,
