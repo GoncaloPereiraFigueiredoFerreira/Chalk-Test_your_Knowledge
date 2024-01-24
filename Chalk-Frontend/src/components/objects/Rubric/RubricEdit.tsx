@@ -96,7 +96,7 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
                     htmlFor="title-inpt"
                     className="font-medium rounded-md dark:text-white"
                   >
-                    Títlo do Critério
+                    Título do Critério
                   </label>
                   <input
                     id="title-inpt"
