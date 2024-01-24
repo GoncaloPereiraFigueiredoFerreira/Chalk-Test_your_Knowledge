@@ -64,7 +64,7 @@ export function Team() {
             <TeamMember
               name="Alexandre Silva"
               position="Backend designer"
-              photoPath="alex.jpg"
+              photoPath="alex.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -75,7 +75,7 @@ export function Team() {
             <TeamMember
               name="Luís Peixoto"
               position="Backend developer"
-              photoPath="luis.jpg"
+              photoPath="luis.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -86,7 +86,7 @@ export function Team() {
             <TeamMember
               name="Hugo Nogueira"
               position="Security expert"
-              photoPath="hugo.jpg"
+              photoPath="hugo.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -97,7 +97,7 @@ export function Team() {
             <TeamMember
               name="Rui Braga"
               position="Backend Developer"
-              photoPath="rui.jpg"
+              photoPath="rui.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -108,7 +108,7 @@ export function Team() {
             <TeamMember
               name="Gonçalo dos Santos"
               position="AI expert"
-              photoPath="bronze.jpg"
+              photoPath="bronze.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -119,7 +119,7 @@ export function Team() {
             <TeamMember
               name="Diogo Casal Novo"
               position="Diogo Casal Novo"
-              photoPath="diogo.jpg"
+              photoPath="diogo.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}

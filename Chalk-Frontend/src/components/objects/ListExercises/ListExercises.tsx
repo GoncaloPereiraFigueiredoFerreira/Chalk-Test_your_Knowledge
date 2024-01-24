@@ -81,7 +81,7 @@ export function ListExercises({
             Exercícios
           </label>
           <button
-            className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+            className="py-2 px-4 text-base rounded-lg font-medium btn-base-color active:scale-90"
             onClick={() => {
               setNewExercisePopUp(true);
               setEditMenuIsOpen(false);
