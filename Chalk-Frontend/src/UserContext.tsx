@@ -20,7 +20,7 @@ export interface User {
   courses?: Course[];
 }
 
-interface UserState {
+export interface UserState {
   authenticated: boolean;
   user?: User;
 }

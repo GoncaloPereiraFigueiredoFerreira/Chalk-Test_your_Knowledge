@@ -1,10 +1,14 @@
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import { useState, useContext } from "react";
-import { Course, UserContext, UserRole } from "../../../UserContext.tsx";
+import { Course, UserContext, UserRole, UserState, User } from "../../../UserContext.tsx";
+import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
+import { APIContext } from "../../../APIContext.tsx";
+import { Login } from "../Login&Register/Login.tsx";
 
 export function Profile() {
+  const { contactBACK } = useContext(APIContext);
   const [openModal, setOpenModal] = useState(false);
-  const { user } = useContext(UserContext);
+  const { user , login} = useContext(UserContext);
   const [email, setEmail] = useState(user.user?.email);
   const [name, setName] = useState(user.user?.name);
   const [imagePath, setImagePath] = useState(user.user?.photoPath);
@@ -25,14 +29,8 @@ export function Profile() {
               alt=""
             />
             <div className="">
-              <div><button  className="mb-4 btn-base-color" onClick={()=>alert("Not implemented")} /><a>Browse for files</a></div>
-              <button
-                data-te-ripple-init
-                data-te-ripple-color="light"
-                className="mb-6 inline-block w-fit h-fit rounded bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] dark:text-black px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal"
-              >
-                Change Avatar
-              </button>
+              <dt className="text-md font-medium leading-6 ">Change Avatar</dt>
+              <div><button  className="mb-4 px-4 py-2 rounded-lg btn-base-color" onClick={()=>alert("Not implemented")}>Browse...</button><a> Browse for files</a></div>
             </div>
           </div>
           <div className="px-0 sm:px-4 pb-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
@@ -50,7 +48,7 @@ export function Profile() {
 
           <div className="px-0 sm:px-4 pb-6 grid grid-cols-1 md:grid-cols-3 sm:gap-4 ">
             <button
-              className="mt-6 inline-block w-fit h-fit rounded bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] px-6 pt-2.5 pb-2 text-xs font-medium uppercase p-4"
+              className="mb-4 px-4 py-2 rounded-lg btn-base-color"
               onClick={() => setOpenModal(true)}
             >
               Edit Profile
@@ -79,22 +77,39 @@ export function Profile() {
                       onChange={(event) => setName(event.target.value)}
                     />
                   </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="email" value="Your email" />
-                    </div>
-                    <TextInput
-                      id="email"
-                      placeholder="name@company.com"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                    />
-                  </div>
 
                   <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-slate-300">
-                    <button className="bg-[#acacff] hover:bg-[#5555ce] text-black hover:text-white dark:bg-[#dddddd] hover:dark:text-black dark:hover:bg-[#ffd025] rounded-md p-3">
-                      Edit
-                    </button>
+                  <ConfirmButton
+                      onConfirm={() => {
+                        contactBACK(
+                          "users",
+                          "PUT",
+                          undefined,
+                          {
+                            name: name,
+                            email: user.user?.email,
+                            description: null,
+                            photoPath: user.user?.photoPath
+                          },
+                          "none"
+                        );
+                        const newUser: User = {
+                            id: user.user?.id!,
+                            email: user.user?.email!,
+                            name: name!,
+                            photoPath: user.user?.photoPath!,
+                            role: user.user?.role!,
+                            courses: user.user?.courses
+                        };
+                        login(newUser);
+                      }}
+                      confirmationMessage="Tem acerteza confirmar a edição de perfil?"
+                      button={
+                        <button className="mb-4 px-4 py-2 rounded-lg btn-base-color">
+                          Edit
+                        </button>
+                      }
+                    />
                   </div>
                 </div>
               </Modal.Body>
