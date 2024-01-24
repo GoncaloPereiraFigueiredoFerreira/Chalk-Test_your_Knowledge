@@ -16,7 +16,6 @@ public enum Visibility {
 	PRIVATE("private"),
 	COURSE("course"),
 	INSTITUTION("institution"),
-	DELETED("deleted"),
 	TEST("test");
 
 	private String value;

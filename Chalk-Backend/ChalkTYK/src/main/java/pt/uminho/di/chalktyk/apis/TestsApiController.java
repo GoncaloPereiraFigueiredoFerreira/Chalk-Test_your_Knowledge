@@ -407,6 +407,8 @@ public class TestsApiController implements TestsApi {
             String userId = token.getUserId(),
                     role = token.getUserRole();
 
+            System.out.println("testid: " + testId);
+
             if((role.equals("SPECIALIST") || role.equals("STUDENT")) && canGetTest(userId, role, testId)!=null){
                 return ResponseEntity.ok(testsService.countStudentSubmissionsForTest(testId,studentId));
             }

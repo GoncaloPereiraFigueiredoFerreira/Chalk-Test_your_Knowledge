@@ -1613,14 +1613,14 @@ public class TestsService implements ITestsService {
         List<ExerciseResolution> res = new ArrayList<>();
         for (TestResolutionGroup trg: testResolution.getGroups()){
             for (Map.Entry<String, TestExerciseResolutionBasic> entry: trg.getResolutions().entrySet()){
-                String exeResId = entry.getValue().getResolutionId();
+                TestExerciseResolutionBasic erb = entry.getValue();
                 ExerciseResolution exeRes;
-                if (exeResId.isEmpty()){
+                if (erb == null || erb.getResolutionId().isEmpty()){
                     exeRes = new ExerciseResolution();
                     exeRes.setSubmissionNr(-1);
                 }
                 else {
-                    exeRes = exercisesService.getExerciseResolution(exeResId);
+                    exeRes = exercisesService.getExerciseResolution(erb.getResolutionId());
                 }
                 res.add(exeRes);
             }
