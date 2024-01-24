@@ -23,6 +23,7 @@ import { FaUserGraduate } from "react-icons/fa";
 import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { HiOutlineEyeOff } from "react-icons/hi";
+import { useContext } from "react";
 
 interface ExerciseProps {
   position: string;
@@ -36,6 +37,8 @@ interface ExerciseProps {
   setChangeVisibilityPopUp: (value: string) => void;
   deleteEx: () => void;
 }
+
+import { Course, UserContext, UserRole } from "../../../UserContext.tsx";
 
 export function ShowExercise({
   position,
@@ -58,6 +61,7 @@ export function ShowExercise({
     position: position,
     context: { context: ExerciseContext.PREVIEW },
   };
+  const { user, logout } = useContext(UserContext);
 
   useEffect(() => {
     switch (exercise.type) {
@@ -149,14 +153,10 @@ export function ShowExercise({
     }
   }, [exercise]);
 
-  return (
-    <div
-      className={`${
-        selectedExercise ? "max-h-full" : "max-h-[78px]"
-      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-[#dddddd] dark:bg-[#2e3c50]`}
-    >
-      <div className="flex flex-col h-full px-5 py-2.5">
-        <div className="flex items-center text-sm font-normal transition-all mb-4 group">
+  var edit_exe
+  if (user.user?.role == UserRole.SPECIALIST && exercise.identity.specialistId === user.user?.id){
+    edit_exe = (
+      <div className="flex items-center text-sm font-normal transition-all mb-4 group">
           <button
             className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
             onClick={() =>
@@ -185,7 +185,7 @@ export function ShowExercise({
               selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#dddddd] dark:bg-[#2e3c50] border-[#bbbbbb] dark:border-slate-500`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#bdcee6] dark:bg-[#2e3c50] border-slate-500 dark:border-slate-500`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")
@@ -197,50 +197,100 @@ export function ShowExercise({
               {typeLabel}
             </div>
           </button>
-          <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
-            <button
-              className="btn-options-exercise ex-icon"
-              onClick={() => {
-                if (!editMenuIsOpen) {
-                  dispatch({
-                    type: ListExerciseActionKind.EDIT_EXERCISE,
-                    payload: {
-                      exercise: exercise,
-                    },
-                  });
-
-                  setEditMenuIsOpen(true);
-                  setExerciseID(exercise.identity.id);
-                }
-                setSelectedExercise(exercise.identity.id);
-              }}
+          
+      <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
+        <button
+          className="btn-options-exercise ex-icon"
+          onClick={() => {
+            if (!editMenuIsOpen) {
+              dispatch({
+                type: ListExerciseActionKind.EDIT_EXERCISE,
+                payload: {
+                  exercise: exercise,
+                },
+              });
+    
+              setEditMenuIsOpen(true);
+              setExerciseID(exercise.identity.id);
+            }
+            setSelectedExercise(exercise.identity.id);
+          }}
+        >
+          <FaPencil className="size-5" />
+          Editar
+        </button>
+        <button
+          className="btn-options-exercise ex-icon"
+          onClick={() => {
+            if (changeVisibilityPopUp === "") {
+              setChangeVisibilityPopUp(exercise.identity.id);
+            }
+          }}
+        >
+          <HiOutlineEyeOff className="size-6" />
+          Visibilidade
+        </button>
+        <button
+          className="btn-options-exercise ex-icon"
+          onClick={() => deleteEx()}
+        >
+          <HiOutlineTrash className="size-6" />
+          Eliminar
+        </button>
+      </div>
+    </div>
+    );
+  }
+  else {
+    edit_exe = (
+      <div className="flex items-center text-sm font-normal transition-all mb-4 group">
+        <button
+              className="flex flex-col gap-1.5 h-14 justify-center cursor-default"
+              onClick={() =>
+                selectedExercise
+                  ? setSelectedExercise("")
+                  : setSelectedExercise(exercise.identity.id)
+              }
             >
-              <FaPencil className="size-5" />
-              Editar
-            </button>
-            <button
-              className="btn-options-exercise ex-icon"
-              onClick={() => {
-                if (changeVisibilityPopUp === "")
-                  setChangeVisibilityPopUp(exercise.identity.id);
-              }}
-            >
-              <HiOutlineEyeOff className="size-6" />
-              Visibilidade
-            </button>
-            <button
-              className="btn-options-exercise ex-icon"
-              onClick={() => deleteEx()}
-            >
-              <HiOutlineTrash className="size-6" />
-              Eliminar
-            </button>
-          </div>
+              <label className="flex min-w-max font-medium text-xl text-slate-800 dark:text-white">
+                {exercise.base.title}
+              </label>
+              <div
+                className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
+              >
+                {exercise.base.tags.map((tag, key) => {
+                  return (
+                    <div key={key} className="bg-yellow-600 tag-exercise">
+                      {tag.name}
+                    </div>
+                  );
+                })}
+              </div>
+        </button>
+        <div className="pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#bdcee6] dark:bg-[#2e3c50] border-slate-500 dark:border-slate-500">
+              <div className="flex flex-col justify-center">
+                {visibility}
+                {typeLabel}
+              </div>
         </div>
+      </div>
+      );
+  }
+
+  return (
+    <div
+      className={`${
+        selectedExercise ? "max-h-full" : "max-h-[78px]"
+      } mx-4 transition-[max-height] overflow-hidden duration-300 rounded-lg bg-[#bdcee6] dark:bg-[#2e3c50]`}
+    >
+      <div className="flex flex-col h-full px-5 py-2.5">
+        
+        {edit_exe}
+
         <div
           className={`${
             !selectedExercise ? "hidden" : "flex"
-          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-[#bbbbbb] dark:border-slate-500`}
+          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-slate-500 dark:border-slate-500`}
         >
           {exercise.base.tags.map((tag, key) => (
             <div key={key} className="bg-yellow-600 tag-exercise">
@@ -251,7 +301,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "scale-y-0" : ""
-          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-[#bbbbbb] dark:border-slate-500`}
+          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-slate-500 dark:border-slate-500`}
         >
           {preview}
         </div>
