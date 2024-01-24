@@ -172,7 +172,9 @@ export function ShowExercise({
               {exercise.base.title}
             </label>
             <div
-              className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
+              className={`${
+                selectedExercise ? "hidden" : "flex"
+              } flex-wrap min-w-max ml-1 gap-2`}
             >
               {exercise.base.tags.map((tag, key) => {
                 return <TagBlock key={key}>{tag.name}</TagBlock>;
