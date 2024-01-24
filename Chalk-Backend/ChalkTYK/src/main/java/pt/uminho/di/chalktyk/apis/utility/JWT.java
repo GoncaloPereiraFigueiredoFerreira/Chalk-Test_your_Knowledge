@@ -48,26 +48,32 @@ public class JWT {
         if(jws == null)
             throw new ParseException("Token string is null.");
 
-        this.jwsString = jws;
+        try {
+            this.jwsString = jws;
 
-        if(jws.startsWith("Bearer "))
-            jws = jws.substring("Bearer ".length());
+            if (jws.startsWith("Bearer "))
+                jws = jws.substring("Bearer ".length());
 
-        // Convert the input string to a byte array for key creation
-        byte[] secretKeyBytes = getPrivateKey().getBytes();
+            // Convert the input string to a byte array for key creation
+            byte[] secretKeyBytes = getPrivateKey().getBytes();
 
-        // Build the secret key using the specified algorithm (HS256)
-        SecretKey key = Keys.hmacShaKeyFor(secretKeyBytes);
+            // Build the secret key using the specified algorithm (HS256)
+            SecretKey key = Keys.hmacShaKeyFor(secretKeyBytes);
 
-        // Verify and parse the JWT using the same key
-        Jwts.parser().setSigningKey(key).build().parseClaimsJws(jws);
+            // Verify and parse the JWT using the same key
+            Jwts.parser().setSigningKey(key).build().parseClaimsJws(jws);
 
-        String[] chunks = jws.split("\\.");
+            String[] chunks = jws.split("\\.");
 
-        Base64.Decoder decoder = Base64.getDecoder();
+            Base64.Decoder decoder = Base64.getDecoder();
 
-        this.header = new JSONParser(new String(decoder.decode(chunks[0]))).parseObject();
-        this.payload = new JSONParser(new String(decoder.decode(chunks[1]))).parseObject();
+            this.header = new JSONParser(new String(decoder.decode(chunks[0]))).parseObject();
+            this.payload = new JSONParser(new String(decoder.decode(chunks[1]))).parseObject();
+        }catch (JwtException | ParseException e){
+            throw e;
+        }catch (Exception e){
+            throw new JwtException("Could not parse authentication token.");
+        }
     }
 
     public Object getPayloadParam(String key){

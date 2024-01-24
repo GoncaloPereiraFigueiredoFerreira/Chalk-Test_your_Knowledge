@@ -182,7 +182,7 @@ public class TestsApiController implements TestsApi {
             else
                 return new ExceptionResponseEntity<Test>().createRequest(
                         HttpStatus.FORBIDDEN.value(),
-                        "User does not have permission to access the test.");
+                        "User does not have permission to get the test.");
         } catch (ServiceException e) {
             return new ExceptionResponseEntity<Test>().createRequest(e);
         }
