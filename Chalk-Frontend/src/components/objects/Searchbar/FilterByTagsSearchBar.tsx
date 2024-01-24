@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Badge } from "flowbite-react";
 import { IoSearch } from "react-icons/io5";
 import { FaFilter } from "react-icons/fa";
 import "./Searchbar.css";
@@ -10,6 +9,7 @@ export function FilterByTagsSearchBar({
   setSearch,
   setOpenModal,
   tagsList,
+  noOutterPadding,
 }: any) {
   const [searchText, setSearchText] = useState("");
 
@@ -20,7 +20,11 @@ export function FilterByTagsSearchBar({
 
   return (
     <>
-      <div className="flex flex-col w-full items-center py-8 ">
+      <div
+        className={`${
+          noOutterPadding !== undefined ? "" : "py-8"
+        } flex flex-col w-full items-center`}
+      >
         <div className="flex w-full max-w-xl">
           <button
             onClick={() => setOpenModal(true)}

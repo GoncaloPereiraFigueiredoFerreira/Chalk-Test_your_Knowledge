@@ -248,3 +248,14 @@ function decodeHTML(stringHTML: string) {
 export function textToHTML(stringHTML: string) {
   return <div className="block">{decodeHTML(stringHTML)}</div>;
 }
+
+export function textToHTMLHooks(stringHTML: string) {
+  const divRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.innerHTML = stringHTML ?? "";
+    }
+  }, [divRef, stringHTML]);
+
+  return <div className="block" ref={divRef}></div>;
+}

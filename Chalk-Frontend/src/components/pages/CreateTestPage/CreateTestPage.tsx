@@ -648,8 +648,9 @@ export function CreateTest({ test }: CreateTestProps) {
                 }
                 saveEdit={(state) => {
                   const id = state.exercise.identity.id;
-                  const { exerciseTR, solutionTR, tagsTR } =
-                    TranslateExerciseOUT(state.exercise);
+                  const { exerciseTR, solutionTR } = TranslateExerciseOUT(
+                    state.exercise
+                  );
                   const rubricTR = TranslateRubricOut(
                     state.exercise.type,
                     state.rubric

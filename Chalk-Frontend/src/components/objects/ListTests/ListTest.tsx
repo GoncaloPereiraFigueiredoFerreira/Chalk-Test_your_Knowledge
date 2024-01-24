@@ -356,13 +356,13 @@ export function ListTests({
       contactBACK("tests", "GET", {
         page: (currentPage - 1).toString(),
         itemsPerPage: "20",
-        specialistId: user.user.id,
         courseId: courseId,
         visibilityType: visibilityType,
+        specialistId: visibilityType === "" ? user.user.id : "",
         tags: requestTags,
       }).then((page) => {
         const tests = page.items;
-        setTotalPages(page.totalPages);
+        setTotalPages(page.totalPages==0?1:page.totalPages);
         tests.map((test: any) => {
           return (test["tags"] = test.tags.map((tag: any) => {
             return tag.name;
@@ -390,7 +390,7 @@ export function ListTests({
               undefined,
               "string"
             ).then((any) => {
-              if (any) {
+              if (any != "0") {
                 return contactBACK(
                   "tests/" +
                     test.id +
@@ -467,12 +467,13 @@ export function ListTests({
           </div>
         )}
         <div className="flex w-full justify-center">
+          {totalPages!=1&&
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
             showIcons
-          />
+          />}
         </div>
       </div>
     </>

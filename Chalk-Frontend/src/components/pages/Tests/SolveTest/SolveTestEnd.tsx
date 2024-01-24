@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { SolveTestContext } from "./SolveTest";
 import { APIContext } from "../../../../APIContext";
+import { textToHTMLHooks } from "../../../interactiveElements/TextareaBlock";
 
 export function SolveTestEnd({ resolutionID, maxPoints }: any) {
   const context = useContext(SolveTestContext);
@@ -34,7 +35,7 @@ export function SolveTestEnd({ resolutionID, maxPoints }: any) {
         {context.test.conclusion !== "" && (
           <div className="text-2xl w-full mt-10">
             <p className="font-medium">Mensagem de conclusão do teste:</p>
-            <p className="mt-3 ml-4">{context.test.conclusion}</p>
+            {textToHTMLHooks(context.test.conclusion)}
           </div>
         )}
       </div>

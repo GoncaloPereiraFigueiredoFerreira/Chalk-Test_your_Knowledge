@@ -47,7 +47,7 @@ function ShowTestGrid(test: Result, maxCotation: number) {
   return (
     <div className=" max-w-lg  bg-white border-2 border-slate-300 rounded-lg shadow-lg shadow-slate-400 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
       <div className="py-4 px-12 ">
-        {!test.status.toLowerCase().includes("revised") ? (
+        {test.status.toLowerCase() != "revised" ? (
           <CircularProgressbarWithChildren value={0}>
             <AiTwotoneFileUnknown size="100" />
             <div style={{ fontSize: 12, marginTop: -5 }}>
@@ -78,7 +78,7 @@ function ShowTestGrid(test: Result, maxCotation: number) {
         <div className="flex w-full px-2 justify-between">
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400">
             <strong>Nota:</strong>
-            {!test.status.toLowerCase().includes("revised")
+            {test.status.toLowerCase() == ("not_revised")
               ? "TBD"
               : ` ${totalPoints} %`}
           </div>
@@ -102,7 +102,7 @@ function ShowTestList(test: Result, maxCotation: number) {
         <div className="flex justify-end space-x-2 w-60">
           <div className="flex gap-3 items-center mb-4 text-gray-700 dark:text-gray-400 w-36">
             <strong>Nota:</strong>
-            {!test.status.toLowerCase().includes("revised")
+            {test.status.toLowerCase() == ("not_revised")
               ? "TBD"
               : ` ${totalPoints}%`}
           </div>
@@ -157,8 +157,11 @@ function ShowExcelLike(resultsList: ResultList) {
 }
 
 function histogramData(resultsList: ResultList, maxCotation: number) {
+  const newresultslist = resultsList.filter(
+    (item) => item.status.toLowerCase() == "revised"
+  );
   let grade_distribution = [0, 0, 0, 0, 0];
-  resultsList.map((result) => {
+  newresultslist.map((result) => {
     let totalPoints = (result.totalPoints / maxCotation) * 100;
     if (totalPoints < 40) {
       grade_distribution[0] += 1;
