@@ -136,7 +136,9 @@ export function CQSolve(props: CQSolveProps) {
                       <p className="text-sm">{msg}</p>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                    <img src={user.user?.photoPath}></img>
+                  </div>
                 </div>
               ) : (
                 <div

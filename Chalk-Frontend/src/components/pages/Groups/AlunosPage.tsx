@@ -9,6 +9,7 @@ import {
 import { APIContext } from "../../../APIContext";
 
 import { Button, Modal, TextInput } from "flowbite-react";
+import { UserContext, UserRole } from "../../../UserContext";
 
 interface Student {
   id: string;
@@ -24,6 +25,7 @@ export function AlunosPage() {
   const { contactBACK } = useContext(APIContext);
   const [email, setEmail] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     contactBACK("courses/" + id + "/students", "GET", {
@@ -96,7 +98,14 @@ export function AlunosPage() {
             </div>
           </div>
           <div className="flex  ">
-            <Button onClick={() => setOpenModal(true)}>Adicionar Aluno</Button>
+            {user.user?.role === UserRole.SPECIALIST && (
+              <Button
+                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                onClick={() => setOpenModal(true)}
+              >
+                Adicionar Aluno
+              </Button>
+            )}
             <Modal
               dismissible
               show={openModal}
@@ -169,7 +178,7 @@ export function AlunosPage() {
 
               <p className="text-sm text-gray-600">Email: {student.email}</p>
               <button onClick={() => removeStudent(student.email)}>
-                Remove
+                Remover
               </button>
             </div>
           ))}

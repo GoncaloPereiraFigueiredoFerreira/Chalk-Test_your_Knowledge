@@ -5,6 +5,8 @@
 
 .first-section {
   background-image: url(../../../../public/blackboard.jpg);
+  background-size: cover;
+
   /*  @apply bg-slate-400; */
 }
 

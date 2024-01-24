@@ -6,7 +6,7 @@ import { FaListUl } from "react-icons/fa";
 import { HiViewGrid } from "react-icons/hi";
 import { FilterByTagsSearchBar } from "../../objects/Searchbar/FilterByTagsSearchBar";
 import { APIContext } from "../../../APIContext";
-import { UserContext } from "../../../UserContext";
+import { UserContext, UserRole } from "../../../UserContext";
 import { Modal, Pagination } from "flowbite-react";
 import { Test } from "../../objects/Test/Test";
 import { TagBlock } from "../../interactiveElements/TagBlock";
@@ -91,6 +91,7 @@ export function TestesPartilhadosPage() {
   const [testsModal, setTestsModal] = useState(false);
   const [testID, setTestId] = useState("");
   const { id } = useParams();
+  const { user } = useContext(UserContext);
   const [tagsList, setTagsList] = useState<TagsList>([]);
   const { contactBACK } = useContext(APIContext);
 
@@ -141,14 +142,16 @@ export function TestesPartilhadosPage() {
           </div>
 
           <div className="flex  items-center">
-            <button
-              className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
-              onClick={() => {
-                setTestsModal(true);
-              }}
-            >
-              Adicionar teste
-            </button>
+            {user.user?.role === UserRole.SPECIALIST && (
+              <button
+                className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                onClick={() => {
+                  setTestsModal(true);
+                }}
+              >
+                Adicionar teste
+              </button>
+            )}
             {viewMode === ViewType.GRID ? (
               <button
                 className="flex w-fit items-center gap-2 py-2 px-4 text-base rounded-lg font-medium btn-base-color"
