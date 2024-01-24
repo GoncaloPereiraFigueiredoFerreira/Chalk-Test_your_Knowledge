@@ -108,9 +108,9 @@ public class SeedService implements ISeedService{
         coursesService.addStudentsToCourse(course2, l1);
         coursesService.addStudentsToCourse(course3, l2);
 
-        //Create tests
-        createPortugueseExam(ganso,c1, Arrays.asList(tagPortugues,tagPoesia));
-        createHistoria(ganso,c1,Arrays.asList(tagHistoria,tagHistoriaPortugalReis));
+        //Create tests (new Course(null) to create exercises and tests without course)
+        createPortugueseExam(ganso,new Course(null), Arrays.asList(tagPortugues,tagPoesia));
+        createHistoria(ganso,new Course(null),Arrays.asList(tagHistoria,tagHistoriaPortugalReis));
         //Filosofia
 
         // test resolutions
