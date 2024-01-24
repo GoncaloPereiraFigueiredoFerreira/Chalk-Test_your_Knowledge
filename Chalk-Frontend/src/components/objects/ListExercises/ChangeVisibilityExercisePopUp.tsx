@@ -32,7 +32,7 @@ export function ChangeVisibility({
               "private" != selectedVisibility
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <BiSolidLock className="size-8 " />
             Privado
@@ -43,7 +43,7 @@ export function ChangeVisibility({
               "not-listed" != selectedVisibility
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <TbLink className="size-8" />
             Não listado
@@ -53,8 +53,8 @@ export function ChangeVisibility({
             className={`${
               "course" != selectedVisibility
                 ? "btn-base-color"
-                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+                : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black "
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <FaUserGraduate className="size-8" />
             Curso
@@ -65,7 +65,7 @@ export function ChangeVisibility({
               "institutional" != selectedVisibility
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <LuSchool className="size-8" />
             Institucional
@@ -76,7 +76,7 @@ export function ChangeVisibility({
               "public" != selectedVisibility
                 ? "btn-base-color"
                 : "bg-[#5555ce] dark:bg-[#ffd025] text-white dark:text-black"
-            } rounded-xl btn-PopUp group`}
+            } rounded-xl btn-PopUp group active:scale-95`}
           >
             <MdPublic className="size-8" />
             Público
@@ -85,7 +85,7 @@ export function ChangeVisibility({
         <div className="flex justify-end mt-4">
           <button
             onClick={() => changeVisibility(selectedVisibility)}
-            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
+            className="py-4 px-8 text-base rounded-lg font-medium btn-base-color active:scale-95"
           >
             Guardar
           </button>

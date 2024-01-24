@@ -198,7 +198,7 @@ export function ShowExercise({
 
         <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
           <button
-            className="btn-options-exercise ex-icon"
+            className="btn-options-exercise ex-icon active:scale-90"
             onClick={() => {
               if (!editMenuIsOpen) {
                 dispatch({
@@ -218,7 +218,7 @@ export function ShowExercise({
             Editar
           </button>
           <button
-            className="btn-options-exercise ex-icon"
+            className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600 ease-in-out active:scale-90"
             onClick={() => {
               if (changeVisibilityPopUp === "") {
                 setChangeVisibilityPopUp(exercise.identity.id);
@@ -284,7 +284,7 @@ export function ShowExercise({
         <div
           className={`${
             !selectedExercise ? "hidden" : "flex"
-          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-slate-500 dark:border-slate-500`}
+          } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-slate-500 dark:border-slate-500 `}
         >
           {exercise.base.tags.map((tag, key) => (
             <TagBlock key={key}>{tag.name}</TagBlock>

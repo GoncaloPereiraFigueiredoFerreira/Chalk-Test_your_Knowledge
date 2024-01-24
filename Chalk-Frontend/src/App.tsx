@@ -24,6 +24,7 @@ import "./App.css";
 import "./components/interactiveElements/Icon.css";
 import { EditTest } from "./components/pages/Tests/EditTest/EditTest";
 import { CreateTestPage } from "./components/pages/Tests/EditTest/CreateTest";
+import { UnderMaintenance } from "./components/UnderMaintenence";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -59,6 +60,7 @@ function App() {
           <Route path="groups/:id" element={<GroupNavBar />}>
             <Route path="alunos" element={<AlunosPage />} />
             <Route path="testes" element={<TestesPartilhadosPage />} />
+            <Route path="definitions" element={<UnderMaintenance />} />
             <Route path="avaliacoes">
               <Route index path="" element={<AvaliacoesPage />} />
               <Route path=":results_id" element={<EvaluationPage />} />

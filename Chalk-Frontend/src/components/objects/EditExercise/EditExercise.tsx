@@ -510,7 +510,7 @@ export function EditExercise({
             Editar
           </label>
           <button
-            className="flex py-3 px-4 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
+            className="flex py-3 px-4 items-center gap-2 text-base rounded-lg font-medium btn-base-color group active:scale-90"
             onClick={() => cancelEdit(state)}
           >
             <IoClose className="size-5" />
@@ -585,7 +585,7 @@ export function EditExercise({
                     <div className="flex justify-between w-full">
                       <button
                         type="button"
-                        className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
+                        className="py-4 px-8 text-base rounded-lg font-medium btn-base-color active:scale-90"
                         onClick={() => {
                           generateEx();
                         }}
@@ -595,7 +595,7 @@ export function EditExercise({
                       {exSugestion && (
                         <button
                           type="button"
-                          className="py-4 px-8 text-base rounded-lg font-medium btn-base-color"
+                          className="py-4 px-8 text-base rounded-lg font-medium btn-base-color active:scale-90"
                           onClick={() => {
                             acceptQuestion();
                           }}
@@ -634,7 +634,7 @@ export function EditExercise({
 
         <div className="px-5 py-2 rounded-lg flex justify-between">
           <div className="flex space-x-3 items-center">
-            <p className="text-xl font-medium">Tags:</p>
+            <p className="text-xl font-medium">Tópicos:</p>
             {state.exercise.base.tags.map((tag) => {
               return <p>{tag.name}</p>;
             })}
