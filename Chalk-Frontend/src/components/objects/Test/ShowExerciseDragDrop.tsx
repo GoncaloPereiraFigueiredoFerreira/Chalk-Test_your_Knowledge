@@ -23,8 +23,6 @@ import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { APIContext } from "../../../APIContext";
 
-const classname = " bg-[#bdcee6] dark:bg-slate-700";
-
 interface ShowExerciseDragDropProps {
   groupPosition: number;
   exercisePosition: number;
@@ -227,8 +225,7 @@ export function ShowExerciseDragDrop({
         }
         {...listeners}
         className={
-          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500" +
-          classname
+          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-[#bdcee6] dark:bg-slate-700"
         }
       />
     );
@@ -247,7 +244,7 @@ export function ShowExerciseDragDrop({
               }
         }
         className={
-          "h-[78px] overflow-hidden cursor-default rounded-lg group" + classname
+          "h-[78px] overflow-hidden cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700"
         }
         {...listeners}
       >
@@ -259,14 +256,11 @@ export function ShowExerciseDragDrop({
               </label>
             </button>
             <button
-              className={
-                ` ${
-                  listExerciseButtons
-                    ? "group-hover:mr-[75px]"
-                    : "group-hover:mr-[118px]"
-                } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 border-slate-500 dark:border-slate-600` +
-                classname
-              }
+              className={` ${
+                listExerciseButtons
+                  ? "group-hover:mr-[75px]"
+                  : "group-hover:mr-[118px]"
+              } group-hover:pr-4 group-hover:border-r-2 pl-4 w-full py-1 justify-end z-10 border-slate-500 dark:border-slate-600 bg-[#bdcee6] dark:bg-slate-700`}
             >
               <div className="flex flex-col justify-around items-end">
                 {visibility}
@@ -309,12 +303,9 @@ export function ShowExerciseDragDrop({
     <div
       {...attributes}
       ref={setNodeRef}
-      className={
-        `${
-          exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
-        } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg group` +
-        classname
-      }
+      className={`${
+        exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
+      } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700`}
     >
       <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
         <div
@@ -334,18 +325,15 @@ export function ShowExerciseDragDrop({
             </label>
           </button>
           <button
-            className={
-              ` ${
-                listExerciseButtons
-                  ? exerciseIsSelected
-                    ? "mr-[75px] pr-4 border-r-2"
-                    : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
-                  : exerciseIsSelected
-                  ? "mr-[118px] pr-4 border-r-2"
-                  : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-              } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default border-slate-500 dark:border-slate-600` +
-              classname
-            }
+            className={` ${
+              listExerciseButtons
+                ? exerciseIsSelected
+                  ? "mr-[75px] pr-4 border-r-2"
+                  : "group-hover:mr-[75px] group-hover:pr-4 group-hover:border-r-2"
+                : exerciseIsSelected
+                ? "mr-[118px] pr-4 border-r-2"
+                : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default border-slate-500 dark:border-slate-600 bg-[#bdcee6] dark:bg-slate-700`}
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
@@ -483,7 +471,7 @@ export function ShowExerciseDragDrop({
         <div
           className={`${
             !exerciseIsSelected ? "scale-y-0" : ""
-          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-slate-200 dark:bg-slate-800 border-slate-500`}
+          } mx-4 mb-4 border rounded-lg text-black dark:text-white bg-white dark:bg-slate-800 border-slate-500`}
         >
           {preview}
         </div>
