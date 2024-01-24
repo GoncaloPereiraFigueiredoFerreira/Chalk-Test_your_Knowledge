@@ -357,7 +357,7 @@ export function ListTests({
         tags: requestTags,
       }).then((page) => {
         const tests = page.items;
-        setTotalPages(page.totalPages);
+        setTotalPages(page.totalPages==0?1:page.totalPages);
         tests.map((test: any) => {
           return (test["tags"] = test.tags.map((tag: any) => {
             return tag.name;
@@ -462,12 +462,13 @@ export function ListTests({
           </div>
         )}
         <div className="flex w-full justify-center">
+          {totalPages!=1&&
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
             showIcons
-          />
+          />}
         </div>
       </div>
     </>
