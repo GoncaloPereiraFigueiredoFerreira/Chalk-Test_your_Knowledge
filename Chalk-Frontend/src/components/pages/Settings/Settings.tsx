@@ -129,9 +129,9 @@ export function Settings() {
             </div>
           </div>
         </div>
-        <div className="flex h-fit">
+        <div className="flex h-full">
           <div
-            className=" flex justify-normal sm:grid h-5/6 grid-cols-1 border-r border-black dark:text-white dark:border-gray-700 text-right space-y-4 text-md font-medium md:me-4 mb-4 md:mb-0"
+            className="border-r border-gray-600 h-5/6 flex flex-col justify-normal grid-cols-1 dark:text-white dark:border-gray-700 text-right space-y-4 text-md font-medium mb-4"
             id="tabs"
           >
             <button
@@ -193,7 +193,7 @@ export function Settings() {
               Account
             </button>
           </div>
-          <div className=" h-5/6 px-0 lg:px-8 w-10/12">
+          <div className="h-5/6 px-0 lg:px-8 w-10/12">
             <div
               className=" rounded-lg p-4 text-black dark:text-white tabcontent"
               id="profile"
