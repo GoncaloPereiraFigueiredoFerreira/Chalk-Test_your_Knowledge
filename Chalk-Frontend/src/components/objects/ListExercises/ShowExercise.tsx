@@ -186,7 +186,7 @@ export function ShowExercise({
               selectedExercise
                 ? "mr-[204px] pr-4 border-r-2"
                 : "group-hover:mr-[204px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#bdcee6] dark:bg-[#2e3c50] border-slate-500 dark:border-slate-500 ease-in-out active:scale-90`}
+            } pl-4 w-full h-full flex relative justify-end items-center gap-4 z-10 duration-100 transition-[margin] cursor-default bg-[#bdcee6] dark:bg-[#2e3c50] border-slate-500 dark:border-slate-500`}
             onClick={() =>
               selectedExercise
                 ? setSelectedExercise("")
