@@ -21,7 +21,7 @@ html {
     dark:bg-slate-500 
     rounded;
   }
-  /* 5555ce */
+
   .btn-base-color {
     @apply bg-[#95abca]
     hover:bg-[#4e6ec7]
@@ -46,54 +46,46 @@ html {
   duration-100;
 }
 /* 
-text{
-  black
-  white
-  slate-300
-}
+page:
+  bg-white
+  dark:bg-slate-900
+  divide-slate-400
+  dark:divide-slate-600
 
-placeholder:dark:text-slate-400
+text
+  title: text-slate-600 dark:text-white
+  text:  text-black dark:text-white
 
-blue {
-  #acacff
-  #5555ce
-  slate-400 (buttons)
-}
+sidebar:
+  light: bg-[#8ca1be]
+  dark:  bg-slate-800
 
-yellow{
-  #ffd025 (buttons)
-}
+group:
+  light: bg-[#d8e3f1]
+  dark:  bg-[#1e2a3f]
 
-light gray{
-  #dddddd
-  #bbbbbb
-}
+exercise:
+  light: bg-[#bdcee6]
+  dark:  bg-slate-700
 
-light slate{
-  slate-300
-  slate-400
-  slate-500
-  slate-600
-}
+button:
+  light: bg-[#95abca]
+  dark:  bg-slate-600
 
-dark slate{
-  slate-900
-  slate-800
-  #1e2a3f (grupos)
-  #2e3c50
-  slate-700
-}
-
-main button color{
-  bg-[#acacff]
-  hover:bg-[#5555ce]
-  dark:bg-slate-600
-  hover:dark:bg-[#ffd025]
-  text-black
-  hover:text-white
-  dark:text-white
-  hover:dark:text-black
-  transition-all
-  duration-100
-}
+border/divide:
+  exercises:
+    light: border-slate-500
+    dark:  border-slate-600
+  groups/pages:
+    light: border-slate-400
+    dark:  border-slate-600
+  sidebar:
+    light: border-slate-300
+    dark:  border-slate-600
+  searchbar:
+    light: border-slate-400
+    dark:  border-slate-700
+  dropdown:
+    light: border-slate-300
+    dark:  border-slate-700
 */

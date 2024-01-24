@@ -7,8 +7,6 @@ import { RiAddFill } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineTrash } from "react-icons/hi";
 
-const classname = " bg-[#d8e3f1]";
-
 interface GroupDragDropProps {
   exerciseGroupPosition: number;
   exerciseGroupID: string;
@@ -88,12 +86,9 @@ export function GroupDragDrop({
             transition,
             transform: CSS.Translate.toString(transform),
           }}
-          className={
-            `${
-              isDragging && "opacity-40"
-            } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default dark:bg-[#1e2a3f] text-black dark:text-white h-56 overflow-hidden` +
-            classname
-          }
+          className={`${
+            isDragging && "opacity-40"
+          } flex flex-col gap-4 rounded-lg px-8 py-5 cursor-default text-black dark:text-white h-56 overflow-hidden bg-[#d8e3f1] dark:bg-[#1e2a3f]`}
         >
           <div className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600">
             <label className="flex w-full items-center text-xl font-medium">
@@ -148,12 +143,9 @@ export function GroupDragDrop({
       <div
         {...attributes}
         ref={setNodeRef}
-        className={
-          `${
-            isDragging && "opacity-50"
-          } flex flex-col gap-4 rounded-lg px-7 py-5 cursor-default dark:bg-[#1e2a3f] text-black dark:text-white` +
-          classname
-        }
+        className={`${
+          isDragging && "opacity-50"
+        } flex flex-col gap-4 rounded-lg px-8 py-5 cursor-default text-black dark:text-white bg-[#d8e3f1] dark:bg-[#1e2a3f]`}
       >
         <div
           className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600"
