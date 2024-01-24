@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Badge } from "flowbite-react";
 import { IoSearch } from "react-icons/io5";
 import { FaFilter } from "react-icons/fa";
 import "./Searchbar.css";
