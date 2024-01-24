@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { SolveTestContext } from "./SolveTest";
+import { Tag } from "../../../interactiveElements/Tag";
 
 export function SolveTestLanding(props: any) {
   const { test, nExercises } = useContext(SolveTestContext);
