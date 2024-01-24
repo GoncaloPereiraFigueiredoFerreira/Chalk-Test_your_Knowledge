@@ -88,7 +88,7 @@ export function GroupDragDrop({
           }}
           className={`${
             isDragging && "opacity-40"
-          } flex flex-col gap-4 rounded-lg px-8 py-5 cursor-default text-black dark:text-white h-56 overflow-hidden bg-[#d8e3f1] dark:bg-[#1e2a3f]`}
+          } flex flex-col gap-4 rounded-lg px-8 py-5 text-black dark:text-white h-56 overflow-hidden bg-[#d8e3f1] dark:bg-[#1e2a3f] cursor-grabbing`}
         >
           <div className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600">
             <label className="flex w-full items-center text-xl font-medium">
@@ -100,7 +100,7 @@ export function GroupDragDrop({
                 {testState.test.groups[exerciseGroupPosition].groupPoints} pts
               </div>
               <div className="flex border-l-2 pl-4 border-slate-400 dark:border-slate-600">
-                <button className="btn-options-exercise ex-icon">
+                <button className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600">
                   <HiOutlineTrash className="size-5" />
                   Eliminar
                 </button>
@@ -145,10 +145,10 @@ export function GroupDragDrop({
         ref={setNodeRef}
         className={`${
           isDragging && "opacity-50"
-        } flex flex-col gap-4 rounded-lg px-8 py-5 cursor-default text-black dark:text-white bg-[#d8e3f1] dark:bg-[#1e2a3f]`}
+        } flex flex-col gap-4 rounded-lg px-8 py-5 text-black dark:text-white bg-[#d8e3f1] dark:bg-[#1e2a3f] cursor-default`}
       >
         <div
-          className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600"
+          className="flex w-full justify-between pb-4 px-4 border-b-2 border-slate-400 dark:border-slate-600 cursor-grab active:cursor-grabbing"
           {...listeners}
           onClick={() =>
             setExerciseID({
@@ -157,7 +157,7 @@ export function GroupDragDrop({
             })
           }
         >
-          <label className="flex w-full items-center text-xl font-medium">
+          <label className="flex w-full items-center text-xl font-medium cursor-grab active:cursor-grabbing">
             Grupo {exerciseGroupPosition + 1}
           </label>
           <div className="flex w-full justify-end items-center gap-4">
@@ -167,7 +167,7 @@ export function GroupDragDrop({
             </div>
             <div className="flex border-l-2 pl-4 border-slate-400 dark:border-slate-600">
               <button
-                className="btn-options-exercise ex-icon"
+                className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600"
                 onClick={() => {
                   if (
                     selectedMenu === "" ||
@@ -194,7 +194,7 @@ export function GroupDragDrop({
           <div className="flex items-center justify-between">
             <strong>Instruções do grupo:</strong>
             <button
-              className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group"
+              className="flex gap-2 py-2 px-3 text-base rounded-lg btn-base-color group  transition-all duration-75 ease-in-out active:scale-90"
               onClick={() => {
                 if (selectedMenu !== "edit-group") {
                   setExerciseID({
@@ -264,7 +264,7 @@ export function GroupDragDrop({
           </SortableContext>
           <div className="flex gap-7 w-full">
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group"
+              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group transition-all duration-75 ease-in-out active:scale-90"
               onClick={() => {
                 setExerciseID({
                   groupPosition: exerciseGroupPosition,
@@ -279,7 +279,7 @@ export function GroupDragDrop({
               </label>
             </button>
             <button
-              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group"
+              className="flex w-full p-3 gap-2 justify-center items-center cursor-pointer rounded-lg btn-base-color group transition-all duration-75 ease-in-out active:scale-90"
               onClick={() => {
                 setSelectedMenu("");
                 setNewExercisePopUp(exerciseGroupPosition);

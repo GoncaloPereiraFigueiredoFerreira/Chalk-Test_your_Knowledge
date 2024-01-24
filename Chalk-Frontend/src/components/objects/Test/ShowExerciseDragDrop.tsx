@@ -125,7 +125,7 @@ export function ShowExerciseDragDrop({
     switch (exercise.type) {
       case ExerciseType.MULTIPLE_CHOICE:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <CiCircleList className="size-5 stroke-1" />
             Escolha múltipla
           </label>
@@ -135,7 +135,7 @@ export function ShowExerciseDragDrop({
         break;
       case ExerciseType.OPEN_ANSWER:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <PiTextTBold className="size-5" />
             Resposta aberta
           </label>
@@ -144,7 +144,7 @@ export function ShowExerciseDragDrop({
         break;
       case ExerciseType.TRUE_OR_FALSE:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <TbCheckbox className="size-5 stroke-[2.3]" />
             Verdadeiro ou falso
           </label>
@@ -154,7 +154,7 @@ export function ShowExerciseDragDrop({
 
       case ExerciseType.CHAT:
         setTypeLabel(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <PiChatsBold className="size-5" />
             Chat Question
           </label>
@@ -168,7 +168,7 @@ export function ShowExerciseDragDrop({
     switch (exercise.identity.visibility) {
       case "private":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <BiSolidLock className="size-5" />
             Privado
           </label>
@@ -176,7 +176,7 @@ export function ShowExerciseDragDrop({
         break;
       case "not-listed":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <TbLink className="size-5" />
             Não listado
           </label>
@@ -184,7 +184,7 @@ export function ShowExerciseDragDrop({
         break;
       case "course":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <FaUserGraduate className="size-5" />
             Curso
           </label>
@@ -192,7 +192,7 @@ export function ShowExerciseDragDrop({
         break;
       case "institutional":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <LuSchool className="size-5" />
             Institucional
           </label>
@@ -200,7 +200,7 @@ export function ShowExerciseDragDrop({
         break;
       case "public":
         setVisibility(
-          <label className="caracteristics-exercise ex-icon">
+          <label className="caracteristics-exercise ex-icon cursor-grab active:cursor-grabbing">
             <MdPublic className="size-5" />
             Público
           </label>
@@ -226,7 +226,7 @@ export function ShowExerciseDragDrop({
         }
         {...listeners}
         className={
-          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-[#bdcee6] dark:bg-slate-700"
+          "flex h-[78px] border-2 rounded-lg opacity-50 border-blue-500 bg-[#bdcee6] dark:bg-slate-700 cursor-grab active:cursor-grabbing"
         }
       />
     );
@@ -245,11 +245,11 @@ export function ShowExerciseDragDrop({
               }
         }
         className={
-          "h-[78px] overflow-hidden cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700"
+          "h-[78px] overflow-hidden cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700 "
         }
         {...listeners}
       >
-        <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
+        <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white cursor-grabbing">
           <div className="flex items-center text-sm font-normal transition-all mb-4 group">
             <button className="flex flex-col gap-1.5 h-14 justify-center">
               <label className="flex min-w-max font-medium text-xl">
@@ -276,7 +276,7 @@ export function ShowExerciseDragDrop({
                 </button>
               ) : (
                 <>
-                  <button className="btn-options-exercise ex-icon">
+                  <button className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600">
                     <HiOutlineTrash className="size-5" />
                     Eliminar
                   </button>
@@ -308,20 +308,20 @@ export function ShowExerciseDragDrop({
         exerciseIsSelected ? "max-h-full" : "max-h-[78px]"
       } transition-[max-height] overflow-hidden duration-200 cursor-default rounded-lg group bg-[#bdcee6] dark:bg-slate-700`}
     >
-      <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white">
+      <div className="flex flex-col h-full px-5 py-2.5 text-black dark:text-white ">
         <div
-          className="flex items-center text-sm font-normal transition-all mb-4 group"
+          className="flex items-center text-sm font-normal transition-all mb-4 group cursor-grab active:cursor-grabbing"
           {...listeners}
         >
           <button
-            className="flex flex-col gap-1.5 h-14 justify-center"
+            className="flex flex-col gap-1.5 h-14 justify-center cursor-grab active:cursor-grabbing"
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <label className="flex min-w-max font-medium text-xl">
+            <label className="flex min-w-max font-medium text-xl cursor-grab active:cursor-grabbing">
               {exercise.base.title}
             </label>
           </button>
@@ -334,22 +334,22 @@ export function ShowExerciseDragDrop({
                 : exerciseIsSelected
                 ? "mr-[118px] pr-4 border-r-2"
                 : "group-hover:mr-[118px] group-hover:pr-4 group-hover:border-r-2"
-            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] cursor-default border-slate-500 dark:border-slate-600 bg-[#bdcee6] dark:bg-slate-700`}
+            } pl-4 w-full py-1 justify-end z-10 duration-100 transition-[margin] border-slate-500 dark:border-slate-600 bg-[#bdcee6] dark:bg-slate-700 cursor-grab active:cursor-grabbing`}
             onClick={() =>
               exerciseIsSelected
                 ? setSelectedExercise("")
                 : setSelectedExercise(exercise.identity.id)
             }
           >
-            <div className="flex flex-col justify-around items-end">
+            <div className="flex flex-col justify-around items-end cursor-grab active:cursor-grabbing">
               {visibility}
               {typeLabel}
             </div>
           </button>
-          <div className="flex flex-row-reverse w-0 items-center gap-4 z-0">
+          <div className="flex flex-row-reverse w-0 items-center gap-4 z-0 cursor-grab active:cursor-grabbing">
             {listExerciseButtons ? (
               <button
-                className="btn-options-exercise ex-icon"
+                className="btn-options-exercise ex-icon active:scale-90"
                 onClick={() => {
                   contactBACK(
                     "tests/" + testState.test.id + "/createExercise",
@@ -391,7 +391,7 @@ export function ShowExerciseDragDrop({
             ) : (
               <>
                 <button
-                  className="btn-options-exercise ex-icon"
+                  className="btn-options-exercise ex-icon hover:text-red-600 dark:hover:text-red-600"
                   onClick={() => {
                     if (selectedMenu !== "edit-exercise") {
                       setExerciseID({
