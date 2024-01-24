@@ -166,7 +166,9 @@ function ShowTestGrid(
             navigate("/webapp/tests/" + test.id + "/preview");
             e.stopPropagation();
           }}
-          className="flex flex-col max-w-lg rounded-lg shadow-2xl bg-white dark:bg-slate-800 shadow-slate-400 dark:shadow-black overflow-hidden"
+          className={` flex flex-col max-w-lg rounded-lg shadow-2xl ${
+            test.globalPoints === undefined ? "bg-white" : "bg-[#bdcee6]"
+          } dark:bg-slate-800 shadow-slate-400 dark:shadow-black overflow-hidden `}
         >
           {test.globalPoints === undefined ? (
             <div className="flex justify-center py-16 bg-[#bdcee6] dark:bg-slate-700">
@@ -176,18 +178,21 @@ function ShowTestGrid(
               />
             </div>
           ) : (
-            <CircularProgressbar
-              value={test.globalPoints}
-              text={`${test.globalPoints}%`}
-              styles={buildStyles({
-                textColor: `rgba(${480 - test.globalPoints * 4.8}, ${
-                  4.8 * test.globalPoints
-                }, ${0})`,
-                pathColor: `rgba(${480 - test.globalPoints * 4.8}, ${
-                  4.8 * test.globalPoints
-                }, ${0})`,
-              })}
-            />
+            <div className=" h-[248px] bg-white dark:bg-slate-700">
+              <CircularProgressbar
+                className="h-[248px] p-2"
+                value={test.globalPoints}
+                text={`${test.globalPoints}%`}
+                styles={buildStyles({
+                  textColor: `rgba(${480 - test.globalPoints * 4.8}, ${
+                    4.8 * test.globalPoints
+                  }, ${0})`,
+                  pathColor: `rgba(${480 - test.globalPoints * 4.8}, ${
+                    4.8 * test.globalPoints
+                  }, ${0})`,
+                })}
+              />
+            </div>
           )}
 
           <div className="flex flex-col justify-between p-4 gap-4 h-full">
