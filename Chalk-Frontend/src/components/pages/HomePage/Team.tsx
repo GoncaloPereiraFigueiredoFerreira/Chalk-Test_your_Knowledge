@@ -51,6 +51,26 @@ export function Team() {
             />
 
             <TeamMember
+              name="Alexandre Silva"
+              position="CTO"
+              photoPath="alex.png"
+              facebook={"/#"}
+              twitter={undefined}
+              github={undefined}
+              linkdin={"undefined"}
+              instagram={"/#"}
+            />
+            <TeamMember
+              name="Diogo Casal Novo"
+              position="Frontend Designer"
+              photoPath="diogo.png"
+              facebook={"/#"}
+              twitter={undefined}
+              github={undefined}
+              linkdin={"undefined"}
+              instagram={"/#"}
+            />
+            <TeamMember
               name="Francisco Faria"
               position="Frontend Developer"
               photoPath="chico.jpg"
@@ -62,31 +82,9 @@ export function Team() {
             />
 
             <TeamMember
-              name="Alexandre Silva"
-              position="Backend designer"
-              photoPath="alex.png"
-              facebook={"/#"}
-              twitter={undefined}
-              github={undefined}
-              linkdin={"undefined"}
-              instagram={"/#"}
-            />
-
-            <TeamMember
               name="Luís Peixoto"
-              position="Backend developer"
+              position="Backend Developer"
               photoPath="luis.png"
-              facebook={"/#"}
-              twitter={undefined}
-              github={undefined}
-              linkdin={"undefined"}
-              instagram={"/#"}
-            />
-
-            <TeamMember
-              name="Hugo Nogueira"
-              position="Security expert"
-              photoPath="hugo.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -106,9 +104,9 @@ export function Team() {
             />
 
             <TeamMember
-              name="Gonçalo dos Santos"
-              position="AI expert"
-              photoPath="bronze.png"
+              name="Hugo Nogueira"
+              position="Security Developer"
+              photoPath="hugo.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}
@@ -117,9 +115,9 @@ export function Team() {
             />
 
             <TeamMember
-              name="Diogo Casal Novo"
-              position="Diogo Casal Novo"
-              photoPath="diogo.png"
+              name="Gonçalo dos Santos"
+              position="AI Developer"
+              photoPath="bronze.png"
               facebook={"/#"}
               twitter={undefined}
               github={undefined}

@@ -41,7 +41,7 @@ function ShowTestList(
               </h5>
 
               <p className="mb-1 font-normal text-slate-700 dark:text-slate-400">
-                <strong>Author:</strong>{" "}
+                <strong>Autor:</strong>{" "}
                 {test.specialistId === user.id ? user.email : test.specialistId}
               </p>
             </div>
@@ -87,7 +87,7 @@ function ShowTestList(
                 {test.title}
               </h5>
               <p className="font-normal text-slate-700 dark:text-slate-400">
-                <strong>Author:</strong>
+                <strong>Autor:</strong>
                 {test.specialistId === user.id ? user.email : test.specialistId}
               </p>
             </div>
@@ -202,7 +202,7 @@ function ShowTestGrid(
               </p>
               <div className="flex flex-col px-2 gap-2">
                 <p className="font-normal text-slate-700 dark:text-slate-200">
-                  <strong>Author:</strong>
+                  <strong>Autor:</strong>
                   {test.specialistId === user.id
                     ? user.email
                     : test.specialistId}
@@ -258,7 +258,7 @@ function ShowTestGrid(
               </p>
               <div className="flex flex-col px-2 gap-2">
                 <p className="font-normal text-slate-700 dark:text-slate-200">
-                  <strong>Author:</strong>
+                  <strong>Autor:</strong>
                   {test.specialistId === user.id
                     ? user.email
                     : test.specialistId}

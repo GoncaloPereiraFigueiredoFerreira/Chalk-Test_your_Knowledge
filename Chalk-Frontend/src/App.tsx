@@ -25,6 +25,7 @@ import "./components/interactiveElements/Icon.css";
 import { EditTest } from "./components/pages/Tests/EditTest/EditTest";
 import { CreateTestPage } from "./components/pages/Tests/EditTest/CreateTest";
 import { UnderMaintenance } from "./components/UnderMaintenence";
+import { SubscriptionPan } from "./components/pages/Settings/SubscriptionPlan";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -55,6 +56,8 @@ function App() {
               <Route path="correction" element={<Correction />} />
             </Route>
           </Route>
+          <Route path="help" element={<UnderMaintenance />} />
+          <Route path="subscription" element={<UnderMaintenance />} />
           <Route path="profile" element={<Settings />} />
           <Route path="groups" element={<GroupsPage />} />
           <Route path="groups/:id" element={<GroupNavBar />}>
