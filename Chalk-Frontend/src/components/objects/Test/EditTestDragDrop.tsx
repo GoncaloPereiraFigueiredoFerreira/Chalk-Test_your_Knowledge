@@ -86,7 +86,7 @@ export function EditTestDragDrop({
                 testState.test.publishDate !== null &&
                 testState.test.publishDate !== ""
               }
-              className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
+              className="py-2 px-4 items-center text-base rounded-lg font-medium btn-base-color"
             >
               {testState.test.publishDate !== null &&
               testState.test.publishDate !== "" ? (

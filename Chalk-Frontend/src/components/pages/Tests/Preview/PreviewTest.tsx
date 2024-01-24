@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-
 import { TestPreview } from "../TestPreview";
 import {
   ResolutionData,
@@ -98,47 +97,43 @@ export function PreviewTest() {
 
   return (
     <>
-      <div className="flex flex-row divide-x-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-        <div className="flex flex-col w-full h-screen overflow-auto bg-white dark:bg-black min-h-max px-16 pb-8 dark:text-white">
-          <div className="flex  w-full justify-between mt-8 px-4 pb-6 mb-3 border-b-2 border-black dark:border-black divide-[#dddddd] dark:divide-[#dddddd]">
-            <div className="flex flex-col">
-              <label className=" text-4xl text-gray-600 dark:text-white">
-                Pré-visualizar: {test.title}
-              </label>
-            </div>
-            <div className="flex space-x-4">
-              {user.user?.role === UserRole.SPECIALIST ? (
-                <>
-                  <Link
-                    to="../edit"
-                    className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
-                  >
-                    Editar teste
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="../solve"
-                    className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800"
-                  >
-                    Resolver teste
-                  </Link>
-                  <div className=" p-4 rounded-lg bg-blue-300  dark:bg-blue-800">
-                    Nota: {testResolution ? testResolution.totalPoints : "-"} /{" "}
-                    {test.globalPoints}
-                  </div>
-                </>
-              )}
-            </div>
+      <div className="flex flex-col w-full h-screen overflow-auto min-h-max px-16 pb-8 text-black dark:text-white bg-white dark:bg-slate-900">
+        <div className="flex w-full justify-between pt-8 px-4 pb-6 mb-3 border-b-2 border-slate-400 dark:border-slate-600">
+          <p className="flex text-4xl text-slate-600 dark:text-white">
+            Pré-visualizar: {test.title}
+          </p>
+          <div className="flex gap-4">
+            {user.user?.role === UserRole.SPECIALIST ? (
+              <>
+                <Link
+                  to="../edit"
+                  className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                >
+                  Editar teste
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="py-2 px-4 text-base rounded-lg font-medium border-2 bg-[#d8e3f1] dark:bg-[#1e2a3f] border-[#95abca] dark:border-slate-600">
+                  Nota: {testResolution ? testResolution.totalPoints : "-"} /{" "}
+                  {test.globalPoints}
+                </div>
+                <Link
+                  to="../solve"
+                  className="py-2 px-4 text-base rounded-lg font-medium btn-base-color"
+                >
+                  Resolver teste
+                </Link>
+              </>
+            )}
           </div>
-          <TestPreview
-            test={test}
-            setShowExID={setSelectedEx}
-            showExId={selEx}
-            testResolution={testResolution}
-          ></TestPreview>
         </div>
+        <TestPreview
+          test={test}
+          setShowExID={setSelectedEx}
+          showExId={selEx}
+          testResolution={testResolution}
+        ></TestPreview>
       </div>
     </>
   );
