@@ -53,7 +53,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
               }}
             />
             <button
-              className="flex p-2.5 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+              className="flex p-2.5 text-base rounded-lg font-medium btn-base-color group"
               onClick={() => deleteTopic(index)}
             >
               <HiOutlineTrash className="size-5" />
@@ -61,7 +61,7 @@ export function CQEdit({ context, exercise }: CQEditProps) {
           </div>
         ))}
         <button
-          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+          className="flex justify-center w-full p-2 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
           onClick={() => {
             addTopic();
           }}

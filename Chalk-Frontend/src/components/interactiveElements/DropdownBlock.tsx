@@ -31,7 +31,7 @@ export function DropdownBlock({
       }}
       renderTrigger={() => (
         <button
-          className={`dropdown group text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-slate-700 border-[#dddddd] dark:border-slate-700
+          className={`dropdown group text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700
             ${style ? style : ""}`}
         >
           <label> {chosenOption === null ? text : chosenOption} </label>
@@ -47,7 +47,7 @@ export function DropdownBlock({
         <Dropdown.Item
           as="button"
           theme={{
-            base: "text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-slate-500 inline-flex px-4 py-2 w-full text-sm group",
+            base: "text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-500 inline-flex px-4 py-2 w-full text-sm group",
           }}
           onClick={() => {
             setChosenOption(null);
@@ -61,7 +61,7 @@ export function DropdownBlock({
           <Dropdown.Item
             as="button"
             theme={{
-              base: "text-black dark:text-white hover:bg-[#dddddd] dark:hover:bg-slate-500 inline-flex px-4 py-2 w-full text-sm group",
+              base: "text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-500 inline-flex px-4 py-2 w-full text-sm group",
             }}
             key={index}
             onClick={() => {

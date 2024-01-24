@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import {
   SolveProps,
   ExerciseContext,
@@ -96,6 +96,13 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
   const groupData = test.groups[currentGroup - 1];
   const exerciseData = groupData.exercises[currentEx - 1];
 
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRef.current)
+      divRef.current.innerHTML = test.globalInstructions ?? "";
+  }, [divRef, test.globalInstructions]);
+
   const exerciseContext: SolveProps = {
     context: ExerciseContext.SOLVE,
     resolutionData: resolutions[currentGroup - 1][currentEx - 1],
@@ -146,32 +153,9 @@ export function SolveTestExercise({ endTest, resolutionID }: any) {
 
       <div className="w-full relative border-b-2 pb-4 dark:text-white">
         <div className="space-y-4">
-          <h1 className="text-2xl font-bold">
-            Grupo {currentGroup}{" "}
-            <div className="float-right space-x-5 dark:text-white">
-              {PreviousExerciseButton(
-                currentEx,
-                currentGroup,
-                currentGroup - 2 >= 0
-                  ? test.groups[currentGroup - 2].exercises.length
-                  : 0,
-                setCurrentEx,
-                setCurrentGroup,
-                sendResolution
-              )}
-              {NextExerciseButton(
-                currentEx,
-                currentGroup,
-                test.groups.length,
-                groupData.exercises.length,
-                setCurrentEx,
-                setCurrentGroup,
-                sendResolution
-              )}
-            </div>
-          </h1>
+          <h1 className="text-2xl font-bold">Grupo {currentGroup} </h1>
 
-          <h2 className="ml-5 text-justify">{groupData.groupInstructions}</h2>
+          <h2 className="ml-5 text-justify" ref={divRef}></h2>
         </div>
         <p className="absolute right-4 top-0 text-xl ">
           Cotação do Grupo: {groupData.groupPoints} valores

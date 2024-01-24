@@ -97,12 +97,12 @@ export function EditTestInfo({
   return (
     <>
       <div className="flex flex-col w-full gap-4 min-h-max text-black dark:text-white">
-        <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex w-full justify-between mt-8 mb-3 px-4 pb-6 border-b-2 border-slate-400 dark:border-slate-600">
           <label className="flex text-4xl text-slate-600 dark:text-white">
             Editar
           </label>
           <button
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() =>
               saveEdit({
                 type: type,
@@ -122,7 +122,7 @@ export function EditTestInfo({
           <div className="flex gap-4 items-center">
             <strong>Título:</strong>
             <input
-              className="rounded-lg w-full border-2 border-[#dddddd] focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
+              className="rounded-lg w-full border-2 border-slate-300 focus:ring-0 bg-inherit dark:border-slate-700 dark:focus:border-slate-700"
               placeholder="Novo Teste"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -180,9 +180,9 @@ export function EditTestInfo({
             onChange={(value) => setConclusion(value)}
           />
         </div>
-        <div className="flex gap-2 p-4 border-t-2 border-[#bbbbbb] dark:border-slate-600">
+        <div className="flex gap-2 p-4 border-t-2 border-slate-400 dark:border-slate-600">
           <button
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() =>
               saveEdit({
                 type: type,
@@ -198,7 +198,7 @@ export function EditTestInfo({
             Guardar e fechar
           </button>
           <button
-            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium bg-[#acacff] hover:bg-[#5555ce] dark:bg-slate-600 hover:dark:bg-[#ffd025] text-black hover:text-white dark:text-white hover:dark:text-black transition-all duration-100 group"
+            className="flex p-3 items-center gap-2 text-base rounded-lg font-medium btn-base-color group"
             onClick={() => cancelEdit()}
           >
             <IoClose className="size-5" />

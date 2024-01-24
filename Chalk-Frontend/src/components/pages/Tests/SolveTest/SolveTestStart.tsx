@@ -1,8 +1,15 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { SolveTestContext } from "./SolveTest";
 
 export function SolveTestLanding(props: any) {
   const { test, nExercises } = useContext(SolveTestContext);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRef.current)
+      divRef.current.innerHTML = test.globalInstructions ?? "";
+  }, [divRef, test.globalInstructions]);
+
   return (
     <>
       <div className="space-y-12 w-full text-black dark:text-white">
@@ -27,7 +34,7 @@ export function SolveTestLanding(props: any) {
         <div className="w-full">
           <h2 className=" font-bold text-lg">Instruções básicas do teste:</h2>
 
-          <p className="w-full text-lg p-4">{test.globalInstructions}</p>
+          <p className="w-full text-lg p-4" ref={divRef}></p>
         </div>
         <p className=" text-lg">
           <strong>Número de exercicios:</strong> {nExercises}

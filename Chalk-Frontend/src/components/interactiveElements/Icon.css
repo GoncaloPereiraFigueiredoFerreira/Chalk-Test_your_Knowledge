@@ -58,7 +58,7 @@
   }
 
   .ex-icon {
-    @apply text-slate-500
+    @apply text-slate-600
     transition-all
     dark:text-slate-400
     hover:text-black
