@@ -12,7 +12,7 @@ import { AiTwotoneFileUnknown } from "react-icons/ai";
 import { FaTasks } from "react-icons/fa";
 import { APIContext } from "../../../APIContext.tsx";
 import ConfirmButton from "../../interactiveElements/ConfirmButton.tsx";
-import { Tag } from "../../interactiveElements/Tag.tsx";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 import "./ListTest.css";
 
 function ShowTestList(
@@ -46,7 +46,7 @@ function ShowTestList(
             <div className="flex flex-wrap gap-3 items-center mb-4 text-slate-700 dark:text-slate-400 w-80">
               <strong>Tags:</strong>
               {test.tags.map((tag, index) => {
-                return <Tag key={index}>{tag}</Tag>;
+                return <TagBlock key={index}>{tag}</TagBlock>;
               })}
             </div>
             <div className="flex justify-end space-x-2 w-60">
@@ -91,7 +91,7 @@ function ShowTestList(
             <div className="flex flex-wrap justify-start gap-2 items-center text-slate-700 dark:text-slate-200">
               <strong>Tags:</strong>
               {test.tags.map((tag, index) => {
-                return <Tag key={index}>{tag}</Tag>;
+                return <TagBlock key={index}>{tag}</TagBlock>;
               })}
             </div>
             <div className="flex gap-2 justify-end">
@@ -195,7 +195,7 @@ function ShowTestGrid(
             <div className="flex flex-wrap gap-3 px-2 items-center mb-4 text-slate-700 dark:text-slate-400">
               <strong>Tags:</strong>
               {test.tags.map((tag, index) => {
-                return <Tag key={index}>{tag}</Tag>;
+                return <TagBlock key={index}>{tag}</TagBlock>;
               })}
             </div>
             <div className="flex w-full px-2 justify-between">
@@ -245,7 +245,7 @@ function ShowTestGrid(
                 <div className="flex flex-wrap gap-2 items-center text-slate-700 dark:text-slate-200">
                   <strong>Tags:</strong>
                   {test.tags.map((tag, index) => {
-                    return <Tag key={index}>{tag}</Tag>;
+                    return <TagBlock key={index}>{tag}</TagBlock>;
                   })}
                 </div>
               </div>

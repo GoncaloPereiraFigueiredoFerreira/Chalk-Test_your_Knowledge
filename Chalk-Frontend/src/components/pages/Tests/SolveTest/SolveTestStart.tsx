@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { SolveTestContext } from "./SolveTest";
-import { Tag } from "../../../interactiveElements/Tag";
+import { TagBlock } from "../../../interactiveElements/TagBlock";
 
 export function SolveTestLanding(props: any) {
   const { test, nExercises } = useContext(SolveTestContext);
@@ -20,7 +20,7 @@ export function SolveTestLanding(props: any) {
           <div className="text-xl flex space-x-4">
             <strong>Tópicos:</strong>{" "}
             {test.tags.map((tag, key) => {
-              return <Tag key={key}>{tag.name}</Tag>;
+              return <TagBlock key={key}>{tag.name}</TagBlock>;
             })}
           </div>
         </div>

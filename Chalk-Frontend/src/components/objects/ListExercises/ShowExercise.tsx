@@ -23,7 +23,7 @@ import { FaUserGraduate } from "react-icons/fa";
 import { LuSchool } from "react-icons/lu";
 import { MdPublic } from "react-icons/md";
 import { HiOutlineEyeOff } from "react-icons/hi";
-import { Tag } from "../../interactiveElements/Tag";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 
 interface ExerciseProps {
   position: string;
@@ -173,7 +173,7 @@ export function ShowExercise({
               className={`${selectedExercise ? "hidden" : "flex"} ml-1 gap-2`}
             >
               {exercise.base.tags.map((tag, key) => {
-                return <Tag key={key}>{tag.name}</Tag>;
+                return <TagBlock key={key}>{tag.name}</TagBlock>;
               })}
             </div>
           </button>
@@ -240,7 +240,7 @@ export function ShowExercise({
           } flex-wrap w-full text-sm font-normal gap-2 mx-1 mb-4 pb-4 border-b-2 border-slate-500 dark:border-slate-500`}
         >
           {exercise.base.tags.map((tag, key) => (
-            <Tag key={key}>{tag.name}</Tag>
+            <TagBlock key={key}>{tag.name}</TagBlock>
           ))}
         </div>
         <div

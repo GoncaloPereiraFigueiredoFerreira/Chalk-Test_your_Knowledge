@@ -36,7 +36,7 @@ type TagProps = {
   onClick?: () => void;
 };
 
-export function Tag({ children, onClick }: TagProps) {
+export function TagBlock({ children, onClick }: TagProps) {
   const stringToColour = (str: string) => {
     let hash = 0;
     str.split("").forEach((char) => {

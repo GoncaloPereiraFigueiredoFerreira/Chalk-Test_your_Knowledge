@@ -4,7 +4,7 @@ import { IoSearch } from "react-icons/io5";
 import { FaFilter } from "react-icons/fa";
 import "./Searchbar.css";
 import "../../interactiveElements/DropdownBlock.css";
-import { Tag } from "../../interactiveElements/Tag";
+import { TagBlock } from "../../interactiveElements/TagBlock";
 
 export function FilterByTagsSearchBar({
   setSearch,
@@ -57,7 +57,7 @@ export function FilterByTagsSearchBar({
           <p className="font-semibold text-black dark:text-white">Tags:</p>
           <div className="flex flex-wrap pl-4 gap-4">
             {tagsList.map((tag: any, index: any) => {
-              return <Tag key={index}>{tag.name}</Tag>;
+              return <TagBlock key={index}>{tag.name}</TagBlock>;
             })}
           </div>
         </div>
