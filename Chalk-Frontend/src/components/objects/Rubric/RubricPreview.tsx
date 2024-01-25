@@ -29,7 +29,7 @@ export function RubricPreview(rubric: Rubric) {
                 </Table.Cell>
                 {criteria.standards
                   .sort(function (a, b) {
-                    // Compare the 2 dates
+                    // Compare the 2 title {"0","1","2","3","4"}
                     if (a.title < b.title) return -1;
                     if (a.title > b.title) return 1;
                     return 0;
