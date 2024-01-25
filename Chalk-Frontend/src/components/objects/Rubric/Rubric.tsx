@@ -49,7 +49,7 @@ function createStandards(): Standard[] {
   const standards: Standard[] = [];
   Object.keys(StardardLevels).map((title) => {
     standards.push({
-      title: title as StardardLevels,
+      title: StardardLevels[title as keyof typeof StardardLevels],
       description: "",
       percentage: 0,
     });
