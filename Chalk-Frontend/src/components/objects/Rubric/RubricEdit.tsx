@@ -14,7 +14,7 @@ export function standardLevelToString(num: string) {
     case "NULL":
       return "Reduzido";
     case StardardLevels.INSATISFACTORY:
-    case "SATISFACTORY":
+    case "INSATISFACTORY":
       return "Não Satisfaz";
     case StardardLevels.SATISFACTORY:
     case "SATISFACTORY":
@@ -153,7 +153,7 @@ export function RubricEdit(rubric: Rubric, setState: Function) {
               <div className="mr-2 flex flex-col gap-2">
                 {crt.standards
                   .sort(function (a, b) {
-                    // Compare the 2 title {"0","1","2","3","4"}
+                    // Compare the 2 titles {"0","1","2","3","4"}
                     if (a.title < b.title) return -1;
                     if (a.title > b.title) return 1;
                     return 0;
