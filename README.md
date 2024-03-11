@@ -1,4 +1,4 @@
-![](./report_images/chalk-tyk.png)
+![](./report_imgs/chalk-tyk.png)
 
 Final Grade: 18/20  
 Metainfo: Project developed by Software Engineering Students at Universidade do Minho, as part of the course "Projeto de Informática", which required students to develop a startup project. The code here available was part of this project, which also involved the creation of a complex business case, a thorough finacial evaluation, and multiple pitches and presentations.
@@ -23,7 +23,7 @@ Chalk - Test your Knowledge presents itself as a platform for sharing educationa
 
 ## Technologies and Architecture
 
-![](./report_images/Arquitetura.png)
+![](./report_imgs/Arquitetura.png)
 
 The main technologies used behind this project were:
 - __React__ (frontend library)
@@ -41,20 +41,20 @@ The main technologies used behind this project were:
 We'll now present some printscreens from our application running (note: these prints are in our native language, portuguese)
 
 ### Landing Page  
-![](./report_images/main.png)
-![](./report_images/team.png)
+![](./report_imgs/main.png)
+![](./report_imgs/team.png)
 
 ### Dashboard and Exercise Bank  
-![](./report_images/dashboard.png)
-![](./report_images/darkmode.png)
-![](./report_images/ExBankCreate.png)
+![](./report_imgs/dashboard.png)
+![](./report_imgs/darkmode.png)
+![](./report_imgs/ExBankCreate.png)
 
 ### Test related pages
-![](./report_images/Test.png)
-![](./report_images/TestBank.png)
-![](./report_images/TestRes.png)
-![](./report_images/TestCorr.png)
-![](./report_images/GroupTests2.png)
+![](./report_imgs/Test.png)
+![](./report_imgs/TestBank.png)
+![](./report_imgs/TestRes.png)
+![](./report_imgs/TestCorr.png)
+![](./report_imgs/GroupTests2.png)
 
 
 ## How to run ?
